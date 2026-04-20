@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Weekly Planner</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f5f3; --surface: #ffffff; --surface2: #f0efed;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.2);
+    --text: #1a1a1a; --text2: #666; --text3: #999;
+    --radius-md: 8px; --radius-lg: 12px;
+    --cal: #e8f0fe; --cal-text: #1a56c4; --cal-border: #b3c8f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a; --surface: #252525; --surface2: #2e2e2e;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.2);
+      --text: #f0f0f0; --text2: #aaa; --text3: #666;
+      --cal: #1a2a4a; --cal-text: #89b4f8; --cal-border: #2a4a8a;
+    }
+    .badge-high { background: #3a1a1a !important; color: #f09595 !important; }
+    .badge-medium { background: #2e2200 !important; color: #FAC775 !important; }
+    .badge-low { background: #1a2e10 !important; color: #97C459 !important; }
+    .badge-date { background: var(--surface2) !important; color: var(--text2) !important; }
+    .btn-save { background: #f0f0f0 !important; color: #1a1a1a !important; }
+    .drop-zone { border-color: rgba(255,255,255,0.2) !important; }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px; }
+  h1 { font-size: 20px; font-weight: 600; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .week-nav { display: flex; align-items: center; gap: 8px; }
+  #week-label { font-size: 13px; color: var(--text2); min-width: 160px; text-align: center; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  #status-msg { font-size: 11px; color: var(--text3); }
+
+  /* ICS drop zone */
+  .drop-zone {
+    display: flex; align-items: center; gap: 8px;
+    border: 1.5px dashed var(--border2); border-radius: var(--radius-md);
+    padding: 6px 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    font-size: 12px; color: var(--text2);
+  }
+  .drop-zone:hover, .drop-zone.dragover { border-color: #1a56c4; color: #1a56c4; background: var(--cal); }
+  .drop-zone input { display: none; }
+  .drop-zone-icon { font-size: 14px; }
+  .clear-cal { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 4px; }
+  .clear-cal:hover { color: #A32D2D; }
+
+  .board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 16px; min-height: 70vh; }
+  .col { flex: 0 0 200px; display: flex; flex-direction: column; gap: 8px; }
+  .col-header { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; padding: 4px 2px; }
+  .col-body { flex: 1; display: flex; flex-direction: column; gap: 8px; background: var(--surface2); border-radius: var(--radius-lg); padding: 8px; border: 0.5px solid var(--border); min-height: 80px; }
+  .col-body.drag-over { border: 2px dashed var(--border2); }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; cursor: grab; display: flex; flex-direction: column; gap: 6px; transition: opacity 0.15s; }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.35; }
+  .card-top { display: flex; align-items: flex-start; gap: 6px; }
+  .done-check { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; cursor: pointer; accent-color: var(--text2); }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; word-break: break-word; }
+  .card.done-line .card-title { text-decoration: line-through; opacity: 0.45; }
+  .card-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .badge-high { background: #FCEBEB; color: #A32D2D; }
+  .badge-medium { background: #FAEEDA; color: #854F0B; }
+  .badge-low { background: #EAF3DE; color: #3B6D11; }
+  .badge-date { background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border); }
+  .card-note { font-size: 11px; color: var(--text2); line-height: 1.5; border-top: 0.5px solid var(--border); padding-top: 6px; word-break: break-word; }
+  .card-actions { display: flex; justify-content: flex-end; opacity: 0; transition: opacity 0.1s; }
+  .card:hover .card-actions { opacity: 1; }
+  .card-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 5px; border-radius: 4px; }
+  .card-del:hover { color: #A32D2D; background: #FCEBEB; }
+  .cal-card { background: var(--cal); border: 0.5px solid var(--cal-border); border-radius: var(--radius-md); padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; cursor: default; }
+  .cal-card-title { font-size: 12px; font-weight: 500; color: var(--cal-text); line-height: 1.4; word-break: break-word; }
+  .cal-card-time { font-size: 10px; color: var(--cal-text); opacity: 0.75; }
+  .cal-card-loc { font-size: 10px; color: var(--cal-text); opacity: 0.65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-label { font-size: 10px; font-weight: 600; color: var(--cal-text); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 0; }
+  .divider { height: 0.5px; background: var(--border); margin: 2px 0; }
+  .add-btn { font-size: 12px; color: var(--text2); background: none; border: none; cursor: pointer; text-align: left; padding: 4px 2px; display: flex; align-items: center; gap: 4px; width: 100%; }
+  .add-btn:hover { color: var(--text); }
+  .add-form { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-md); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .add-form label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 2px; }
+  .add-form input, .add-form textarea, .add-form select {
+    font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text);
+    border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 5px 8px;
+    width: 100%; outline: none; resize: none;
+  }
+  .add-form input:focus, .add-form textarea:focus, .add-form select:focus { border-color: var(--border2); }
+  .form-row { display: flex; gap: 6px; }
+  .form-row > div { flex: 1; min-width: 0; }
+  .form-actions { display: flex; gap: 6px; justify-content: flex-end; }
+  .btn-save { font-size: 12px; font-weight: 600; background: #1a1a1a; color: #fff; border: none; border-radius: var(--radius-md); padding: 5px 14px; cursor: pointer; }
+  .btn-cancel { font-size: 12px; background: none; color: var(--text2); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; }
+  .btn-nav { font-size: 12px; background: none; color: var(--text2); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; }
+  .btn-nav:hover { color: var(--text); border-color: var(--border2); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>Weekly Planner</h1>
+    <div class="week-nav">
+      <button class="btn-nav" onclick="changeWeek(-1)">← prev</button>
+      <span id="week-label"></span>
+      <button class="btn-nav" onclick="changeWeek(1)">next →</button>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="status-msg"></span>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('ics-input').click()">
+      <span class="drop-zone-icon">📅</span>
+      <span id="drop-label">Import .ics calendar</span>
+      <input type="file" id="ics-input" accept=".ics" onchange="handleIcsFile(this.files[0])">
+    </div>
+    <button class="clear-cal" id="clear-cal-btn" onclick="clearCal()" style="display:none" title="Clear calendar events">✕ clear</button>
+  </div>
+</div>
+
+<div class="board" id="board"></div>
+
+<script>
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+let weekOffset = 0;
+let tasks = JSON.parse(localStorage.getItem('wtp_tasks') || '[]');
+let calEvents = JSON.parse(localStorage.getItem('wtp_cal') || '[]');
+let dragCard = null;
+
+function getMonday(offset) {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1) + offset * 7;
+  const m = new Date(d); m.setDate(diff); m.setHours(0,0,0,0);
+  return m;
+}
+function fmtDate(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+function fmtTime(iso) {
+  if (!iso) return 'All day';
+  const d = new Date(iso);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+function setStatus(msg) { document.getElementById('status-msg').textContent = msg; }
+function save() { localStorage.setItem('wtp_tasks', JSON.stringify(tasks)); }
+function saveEvents() { localStorage.setItem('wtp_cal', JSON.stringify(calEvents)); }
+function changeWeek(dir) { weekOffset += dir; render(); }
+function toggleDone(id) { const t = tasks.find(x => x.id === id); if (t) { t.done = !t.done; save(); render(); } }
+function delTask(id) { tasks = tasks.filter(x => x.id !== id); save(); render(); }
+function addTask(day, title, priority, due, note) {
+  tasks.push({ id: Date.now() + '', day, title, priority, due, note, done: false });
+  save(); render();
+}
+function clearCal() {
+  calEvents = []; saveEvents();
+  document.getElementById('clear-cal-btn').style.display = 'none';
+  document.getElementById('drop-label').textContent = 'Import .ics calendar';
+  setStatus('Calendar cleared');
+  render();
+}
+
+// --- ICS parser ---
+function parseIcs(text) {
+  const events = [];
+  const blocks = text.split('BEGIN:VEVENT');
+  blocks.shift();
+  for (const block of blocks) {
+    const get = (key) => {
+      const patterns = [
+        new RegExp(key + ';[^:]*:([^\\r\\n]+)'),
+        new RegExp(key + ':([^\\r\\n]+)')
+      ];
+      for (const p of patterns) {
+        const m = block.match(p);
+        if (m) return m[1].trim().replace(/\\n/g, '\n').replace(/\\,/g, ',').replace(/\\\\/g, '\\');
+      }
+      return '';
+    };
+
+    const summary = get('SUMMARY');
+    if (!summary) continue;
+
+    const dtstart = get('DTSTART');
+    const dtend = get('DTEND');
+    const location = get('LOCATION');
+    const allDay = dtstart && dtstart.length === 8;
+
+    let startDate = null;
+    if (dtstart) {
+      if (allDay) {
+        const y = dtstart.slice(0,4), mo = dtstart.slice(4,6), d = dtstart.slice(6,8);
+        startDate = new Date(+y, +mo-1, +d);
+      } else {
+        const clean = dtstart.replace(/Z$/, '');
+        const y = clean.slice(0,4), mo = clean.slice(4,6), d = clean.slice(6,8);
+        const h = clean.slice(9,11)||'00', mi = clean.slice(11,13)||'00', s = clean.slice(13,15)||'00';
+        startDate = dtstart.endsWith('Z')
+          ? new Date(Date.UTC(+y,+mo-1,+d,+h,+mi,+s))
+          : new Date(+y,+mo-1,+d,+h,+mi,+s);
+      }
+    }
+
+    let endDate = null;
+    if (dtend) {
+      if (allDay) {
+        const y = dtend.slice(0,4), mo = dtend.slice(4,6), d = dtend.slice(6,8);
+        endDate = new Date(+y, +mo-1, +d);
+      } else {
+        const clean = dtend.replace(/Z$/, '');
+        const y = clean.slice(0,4), mo = clean.slice(4,6), d = clean.slice(6,8);
+        const h = clean.slice(9,11)||'00', mi = clean.slice(11,13)||'00', s = clean.slice(13,15)||'00';
+        endDate = dtend.endsWith('Z')
+          ? new Date(Date.UTC(+y,+mo-1,+d,+h,+mi,+s))
+          : new Date(+y,+mo-1,+d,+h,+mi,+s);
+      }
+    }
+
+    if (!startDate || isNaN(startDate)) continue;
+
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    events.push({
+      id: Math.random().toString(36).slice(2),
+      day: dayNames[startDate.getDay()],
+      date: startDate.toISOString().slice(0,10),
+      title: summary,
+      start: allDay ? null : startDate.toISOString(),
+      end: allDay ? null : (endDate ? endDate.toISOString() : null),
+      location: location,
+      allDay: !!allDay
+    });
+  }
+  return events;
+}
+
+function handleIcsFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const events = parseIcs(e.target.result);
+    calEvents = events;
+    saveEvents();
+    const weekdays = events.filter(ev => ['Monday','Tuesday','Wednesday','Thursday','Friday'].includes(ev.day));
+    document.getElementById('drop-label').textContent = file.name;
+    document.getElementById('clear-cal-btn').style.display = '';
+    setStatus(weekdays.length + ' events imported');
+    render();
+  };
+  reader.readAsText(file);
+}
+
+// Drag and drop ICS onto page
+const dropZone = document.getElementById('drop-zone');
+document.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
+document.addEventListener('drop', e => {
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.ics')) {
+    e.preventDefault();
+    handleIcsFile(file);
+  }
+});
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleIcsFile(file);
+});
+
+// --- Render ---
+function renderCard(t) {
+  const div = document.createElement('div');
+  div.className = 'card' + (t.done ? ' done-line' : '');
+  div.draggable = true; div.dataset.id = t.id;
+
+  const top = document.createElement('div'); top.className = 'card-top';
+  const chk = document.createElement('input');
+  chk.type = 'checkbox'; chk.className = 'done-check'; chk.checked = t.done;
+  chk.onclick = e => { e.stopPropagation(); toggleDone(t.id); };
+  const title = document.createElement('div');
+  title.className = 'card-title'; title.textContent = t.title;
+  top.appendChild(chk); top.appendChild(title);
+  div.appendChild(top);
+
+  if (t.priority || t.due) {
+    const meta = document.createElement('div'); meta.className = 'card-meta';
+    if (t.priority) {
+      const b = document.createElement('span');
+      b.className = 'badge badge-' + t.priority; b.textContent = t.priority;
+      meta.appendChild(b);
+    }
+    if (t.due) {
+      const b = document.createElement('span');
+      b.className = 'badge badge-date'; b.textContent = t.due;
+      meta.appendChild(b);
+    }
+    div.appendChild(meta);
+  }
+
+  if (t.note) {
+    const n = document.createElement('div'); n.className = 'card-note'; n.textContent = t.note;
+    div.appendChild(n);
+  }
+
+  const actions = document.createElement('div'); actions.className = 'card-actions';
+  const del = document.createElement('button');
+  del.className = 'card-del'; del.textContent = 'delete';
+  del.onclick = () => delTask(t.id);
+  actions.appendChild(del); div.appendChild(actions);
+
+  div.addEventListener('dragstart', () => { dragCard = t.id; setTimeout(() => div.classList.add('dragging'), 0); });
+  div.addEventListener('dragend', () => div.classList.remove('dragging'));
+  return div;
+}
+
+function renderCalCard(e) {
+  const div = document.createElement('div'); div.className = 'cal-card';
+  const title = document.createElement('div'); title.className = 'cal-card-title'; title.textContent = e.title;
+  div.appendChild(title);
+  const time = document.createElement('div'); time.className = 'cal-card-time';
+  time.textContent = e.allDay ? 'All day' : fmtTime(e.start) + ' – ' + fmtTime(e.end);
+  div.appendChild(time);
+  if (e.location) {
+    const loc = document.createElement('div'); loc.className = 'cal-card-loc'; loc.textContent = '📍 ' + e.location;
+    div.appendChild(loc);
+  }
+  return div;
+}
+
+function renderAddForm(day, colBody, addBtn) {
+  addBtn.style.display = 'none';
+  const form = document.createElement('div'); form.className = 'add-form';
+  const tLabel = document.createElement('label'); tLabel.textContent = 'Task';
+  const tInput = document.createElement('input'); tInput.placeholder = 'What needs to be done?';
+  form.appendChild(tLabel); form.appendChild(tInput);
+
+  const row = document.createElement('div'); row.className = 'form-row';
+  const pDiv = document.createElement('div');
+  const pLabel = document.createElement('label'); pLabel.textContent = 'Priority';
+  const pSel = document.createElement('select');
+  [['','none'],['high','high'],['medium','medium'],['low','low']].forEach(([v,l]) => {
+    const o = document.createElement('option'); o.value = v; o.textContent = l; pSel.appendChild(o);
+  });
+  pDiv.appendChild(pLabel); pDiv.appendChild(pSel);
+  const dDiv = document.createElement('div');
+  const dLabel = document.createElement('label'); dLabel.textContent = 'Due date';
+  const dInput = document.createElement('input'); dInput.type = 'date';
+  dDiv.appendChild(dLabel); dDiv.appendChild(dInput);
+  row.appendChild(pDiv); row.appendChild(dDiv); form.appendChild(row);
+
+  const nLabel = document.createElement('label'); nLabel.textContent = 'Note';
+  const nInput = document.createElement('textarea'); nInput.rows = 2; nInput.placeholder = 'Optional note...';
+  form.appendChild(nLabel); form.appendChild(nInput);
+
+  const fa = document.createElement('div'); fa.className = 'form-actions';
+  const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = 'Add task';
+  saveBtn.onclick = () => {
+    if (!tInput.value.trim()) { tInput.focus(); return; }
+    let dueText = '';
+    if (dInput.value) { const dt = new Date(dInput.value + 'T00:00:00'); dueText = fmtDate(dt); }
+    addTask(day, tInput.value.trim(), pSel.value, dueText, nInput.value.trim());
+  };
+  tInput.addEventListener('keydown', e => { if (e.key === 'Enter') saveBtn.click(); });
+  const cancelBtn = document.createElement('button'); cancelBtn.className = 'btn-cancel'; cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => { form.remove(); addBtn.style.display = ''; };
+  fa.appendChild(cancelBtn); fa.appendChild(saveBtn); form.appendChild(fa);
+  colBody.appendChild(form); tInput.focus();
+}
+
+function render() {
+  const mon = getMonday(weekOffset);
+  const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+  document.getElementById('week-label').textContent = fmtDate(mon) + ' – ' + fmtDate(fri);
+
+  // Show clear button if events exist
+  if (calEvents.length > 0) document.getElementById('clear-cal-btn').style.display = '';
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+
+  DAYS.forEach((day, i) => {
+    const colDate = new Date(mon); colDate.setDate(mon.getDate() + i);
+    const colDateStr = colDate.toISOString().slice(0,10);
+    const dayTasks = tasks.filter(t => t.day === day);
+    const dayEvents = calEvents
+      .filter(e => e.date === colDateStr)
+      .sort((a, b) => {
+        if (a.allDay && !b.allDay) return -1;
+        if (!a.allDay && b.allDay) return 1;
+        return (a.start || '') < (b.start || '') ? -1 : 1;
+      });
+
+    const col = document.createElement('div'); col.className = 'col';
+    const hdr = document.createElement('div'); hdr.className = 'col-header';
+    hdr.textContent = day.slice(0,3) + '  ' + colDate.getDate();
+    col.appendChild(hdr);
+
+    const body = document.createElement('div'); body.className = 'col-body'; body.dataset.day = day;
+
+    if (dayEvents.length > 0) {
+      const lbl = document.createElement('div'); lbl.className = 'cal-label'; lbl.textContent = 'Calendar';
+      body.appendChild(lbl);
+      dayEvents.forEach(e => body.appendChild(renderCalCard(e)));
+      if (dayTasks.length > 0) {
+        const div = document.createElement('div'); div.className = 'divider'; body.appendChild(div);
+      }
+    }
+
+    dayTasks.forEach(t => body.appendChild(renderCard(t)));
+
+    body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
+    body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
+    body.addEventListener('drop', e => {
+      e.preventDefault(); body.classList.remove('drag-over');
+      if (dragCard) {
+        const t = tasks.find(x => x.id === dragCard);
+        if (t) { t.day = day; save(); render(); }
+        dragCard = null;
+      }
+    });
+
+    const addBtn = document.createElement('button'); addBtn.className = 'add-btn';
+    addBtn.innerHTML = '<span style="font-size:15px;line-height:1;">+</span> add task';
+    addBtn.onclick = () => renderAddForm(day, body, addBtn);
+    body.appendChild(addBtn);
+
+    col.appendChild(body); board.appendChild(col);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
