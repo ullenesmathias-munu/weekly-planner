@@ -14,7 +14,27 @@
     --accent: #7aadff; --radius-md: 8px; --radius-lg: 12px;
     --high-bg: #2d1515; --high-text: #ff8080; --med-bg: #2a1f08; --med-text: #ffb347; --low-bg: #0e2215; --low-text: #5fcc7a;
   }
+  .light-mode {
+    --bg: #f5f5f3; --surface: #ffffff; --surface2: #f0efed; --surface3: #e8e7e5;
+    --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.16); --border3: rgba(0,0,0,0.26);
+    --text: #1a1a1a; --text2: #666; --text3: #999;
+    --cal: #e8f0fe; --cal-text: #1a56c4; --cal-border: #b3c8f5;
+    --accent: #1a56c4;
+    --high-bg: #fce8e8; --high-text: #b91c1c; --med-bg: #fef3e2; --med-text: #92400e; --low-bg: #ecfdf5; --low-text: #065f46;
+  }
+  .light-mode .badge-high { background: var(--high-bg) !important; color: var(--high-text) !important; }
+  .light-mode .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
+  .light-mode .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
+  .light-mode .btn-save { background: #1a1a1a !important; color: #fff !important; }
+  .light-mode .card:hover { background: #f8f8f6 !important; }
+  .light-mode .s-d1 { background: #dbeafe; color: #1e3a8a; } .light-mode .s-d2 { background: #dcfce7; color: #14532d; } .light-mode .s-d3 { background: #fef9c3; color: #713f12; }
+  .light-mode .s-e { background: #fee2e2; color: #991b1b; } .light-mode .s-e2 { background: #fecaca; color: #991b1b; }
+  .light-mode .s-w1 { background: #fef08a; color: #713f12; } .light-mode .s-w2 { background: #fca5a5; color: #7f1d1d; } .light-mode .s-w3 { background: #fdba74; color: #7c2d12; }
+  .light-mode .s-h { background: #ef4444; color: #fff; } .light-mode .s-so { background: #e5e7eb; color: #6b7280; }
+  .light-mode .s-ol { background: #bbf7d0; color: #065f46; } .light-mode .s-abs { background: #e5e7eb; color: #6b7280; } .light-mode .s-flex { background: #d1fae5; color: #065f46; }
+  .light-mode #live-clock { color: var(--text); }
   html { color-scheme: dark; }
+  .light-mode { color-scheme: light; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
   .badge-high { background: var(--high-bg) !important; color: var(--high-text) !important; }
   .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
@@ -33,21 +53,38 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
   .topbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .topbar-right { display: flex; align-items: center; gap: 8px; }
-  #week-label, #sched-week-label { font-size: 13px; color: var(--text2); min-width: 150px; text-align: center; }
+  #week-label, #sched-week-label { font-size: 14px; font-weight: 600; color: var(--text); min-width: 150px; text-align: center; }
   #status-msg { font-size: 11px; color: var(--text3); }
   .drop-zone { display: flex; align-items: center; gap: 6px; border: 1px dashed var(--border2); border-radius: var(--radius-md); padding: 5px 12px; cursor: pointer; font-size: 12px; color: var(--text2); transition: border-color 0.2s, background 0.2s, color 0.2s; }
   .drop-zone:hover, .drop-zone.dragover { border-color: var(--cal-text); color: var(--cal-text); background: var(--cal); }
   .drop-zone input { display: none; }
   .clear-cal { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; }
   .clear-cal:hover { color: var(--high-text); }
-  .board { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 16px; min-height: 65vh; }
-  .col { flex: 0 0 195px; display: flex; flex-direction: column; gap: 8px; }
-  .col-header { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.09em; padding: 4px 2px 6px; }
+  .week-drag-zone { width: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-lg); border: 1.5px dashed transparent; color: var(--text3); font-size: 22px; cursor: default; transition: border-color 0.2s, background 0.2s, color 0.2s; align-self: stretch; }
+  .week-drag-zone.active { border-color: var(--cal-text); background: var(--cal); color: var(--cal-text); }
+  .planner-wrap { display: flex; gap: 8px; align-items: flex-start; }
+  .board { display: flex; gap: 10px; padding-bottom: 16px; min-height: 65vh; flex: 1; min-width: 0; }
+  .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  .notepad { flex: 0 0 220px; display: flex; flex-direction: column; gap: 8px; min-height: 65vh; }
+  .notepad-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px 6px; }
+  .notepad-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.09em; }
+  .notepad-clear { font-size: 10px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 1px 4px; border-radius: 4px; }
+  .notepad-clear:hover { color: var(--high-text); }
+  .notepad-body { flex: 1; background: var(--surface2); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .notepad-textarea { flex: 1; background: transparent; border: none; outline: none; resize: none; font-family: inherit; font-size: 12px; color: var(--text); line-height: 1.6; width: 100%; min-height: 200px; }
+  .notepad-textarea::placeholder { color: var(--text3); }
+  .notepad-saved { font-size: 10px; color: var(--text3); text-align: right; transition: opacity 0.3s; }
+  .col-header { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.09em; padding: 4px 2px 6px; }
   .col-body { flex: 1; display: flex; flex-direction: column; gap: 7px; background: var(--surface2); border-radius: var(--radius-lg); padding: 8px; border: 1px solid var(--border); min-height: 80px; transition: border-color 0.2s; }
   .col-body.drag-over { border: 1.5px dashed var(--border3); background: var(--surface3); }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; cursor: grab; display: flex; flex-direction: column; gap: 6px; transition: border-color 0.18s, background 0.18s, transform 0.15s; }
   .card:hover { border-color: var(--border2); background: #1e1e25; transform: translateY(-1px); }
   .card:active { cursor: grabbing; transform: translateY(0); }
+  .card-label-red    { border-left: 3px solid #ff5555 !important; }
+  .card-label-green  { border-left: 3px solid #5fcc7a !important; }
+  .card-label-blue   { border-left: 3px solid #7aadff !important; }
+  .card-label-amber  { border-left: 3px solid #ffb347 !important; }
+  .card-label-purple { border-left: 3px solid #c4b5fd !important; }
   .card.dragging { opacity: 0.3; transform: scale(0.97); }
   .card-top { display: flex; align-items: flex-start; gap: 6px; }
   .done-check { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; cursor: pointer; accent-color: var(--cal-text); }
@@ -64,8 +101,44 @@
   .card:hover .card-actions { opacity: 1; }
   .card-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 5px; border-radius: 4px; transition: color 0.15s, background 0.15s; }
   .card-del:hover { color: var(--high-text); background: var(--high-bg); }
-  .meeting-card { border-left: 2.5px solid var(--cal-text) !important; }
+  .btn-today-view { font-size: 12px; font-weight: 600; background: var(--surface2); color: var(--cal-text); border: 1px solid var(--cal-border); border-radius: var(--radius-md); padding: 5px 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .btn-today-view:hover { background: var(--cal); }
+  .search-wrap { position: relative; }
+  #task-search { font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 5px 10px; width: 180px; outline: none; transition: border-color 0.15s, width 0.2s; }
+  #task-search:focus { border-color: var(--cal-text); width: 220px; }
+  #task-search::placeholder { color: var(--text3); }
+  .search-results { position: absolute; top: calc(100% + 6px); right: 0; width: 280px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: none; z-index: 100; max-height: 320px; overflow-y: auto; }
+  .search-result-item { padding: 9px 14px; cursor: pointer; border-bottom: 0.5px solid var(--border); transition: background 0.1s; }
+  .search-result-item:last-child { border-bottom: none; }
+  .search-result-item:hover { background: var(--surface2); }
+  .search-result-title { font-size: 12px; font-weight: 500; color: var(--text); }
+  .search-result-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .search-result-empty { padding: 12px 14px; font-size: 12px; color: var(--text3); text-align: center; }
+  .search-highlight { color: var(--cal-text); font-weight: 700; }
+  .quote-strip { padding: 8px 2px 12px; font-size: 12px; color: var(--text3); font-style: italic; border-bottom: 0.5px solid var(--border); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .quote-strip::before { content: '"'; font-size: 20px; color: var(--border2); font-style: normal; line-height: 1; }
+  .today-modal-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px 24px; width: 90%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+  .today-modal-header { display: flex; align-items: flex-start; justify-content: space-between; }
+  .today-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
+  .today-empty { font-size: 12px; color: var(--text3); padding: 4px 0; }
+  .today-task-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface2); border-radius: var(--radius-md); margin-bottom: 4px; }
+  .today-task-check { width: 13px; height: 13px; flex-shrink: 0; accent-color: var(--cal-text); cursor: pointer; }
+  .today-task-title { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; }
+  .today-task-done { text-decoration: line-through; opacity: 0.4; }
+  .today-meeting-row { padding: 8px 10px; background: var(--cal); border: 0.5px solid var(--cal-border); border-radius: var(--radius-md); margin-bottom: 4px; }
+  .today-meeting-title { font-size: 12px; font-weight: 600; color: var(--cal-text); }
+  .today-meeting-meta { font-size: 11px; color: var(--cal-text); opacity: 0.7; margin-top: 2px; }
+  .today-team-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .today-person-pill { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; }
   .conflict-card { border-left: 2.5px solid var(--med-text) !important; }
+  .role-pill { display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 6px; white-space: nowrap; cursor: pointer; transition: opacity 0.15s; }
+  .role-pill:hover { opacity: 0.75; }
+  .role-phone-guru  { background: #1a1a55; color: #a5b4fc; }
+  .role-inbox-champ { background: #0d2e1a; color: #6ee7a0; }
+  .role-sla-sherpa  { background: #2a1a00; color: #fbbf24; }
+  .role-freelancer  { background: #1a1a22; color: #6b7280; }
+  .role-none        { color: var(--text3); font-size: 11px; cursor: pointer; }
+  .sched-table td.role-cell { background: rgba(255,255,255,0.018); border-left: 0.5px solid var(--border); }
   .cal-card { background: var(--cal); border: 0.5px solid var(--cal-border); border-radius: var(--radius-md); padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; cursor: default; transition: border-color 0.15s; }
   .cal-card:hover { border-color: var(--cal-text); }
   .cal-card-title { font-size: 12px; font-weight: 500; color: var(--cal-text); line-height: 1.4; word-break: break-word; }
@@ -84,43 +157,146 @@
   .form-actions { display: flex; gap: 6px; justify-content: flex-end; }
   .btn-save { font-size: 12px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 6px 14px; cursor: pointer; transition: opacity 0.15s; }
   .btn-save:hover { opacity: 0.85; }
-  .btn-cancel, .btn-nav { font-size: 12px; background: none; color: var(--text2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
-  .btn-cancel:hover, .btn-nav:hover { color: var(--text); border-color: var(--border2); }
+  .btn-cancel, .btn-nav { font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 5px 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .btn-cancel:hover, .btn-nav:hover { background: var(--surface3); border-color: var(--border3); }
   .sched-wrap { overflow-x: auto; }
   .sched-table { border-collapse: collapse; width: 100%; font-size: 12px; min-width: 700px; }
-  .sched-table th { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; padding: 6px 10px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .sched-table th { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.07em; padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border2); white-space: nowrap; }
   .sched-table th.name-col { text-align: left; min-width: 100px; }
-  .sched-table td { padding: 5px 6px; text-align: center; border-bottom: 0.5px solid var(--border); }
-  .sched-table td.name-cell { text-align: left; font-weight: 500; font-size: 12px; padding: 5px 10px; color: var(--text); white-space: nowrap; }
+  .sched-table td { padding: 6px 6px; text-align: center; border-bottom: 0.5px solid var(--border); }
+  .sched-table td.name-cell { text-align: left; font-weight: 600; font-size: 13px; padding: 6px 10px; color: var(--text); white-space: nowrap; }
   .sched-table tr:last-child td { border-bottom: none; }
   .sched-table tr:hover td { background: var(--surface2); }
   .sched-table td { transition: background 0.15s; }
   .sched-swap { background: rgba(122,173,255,0.15) !important; }
   .shift-dropdown { animation: fadeIn 0.1s ease; }
   @keyframes fadeIn { from { opacity:0; transform:translateX(-50%) translateY(-4px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
-  .shift-pill { display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 6px; white-space: nowrap; min-width: 62px; }
-  .s-d1 { background: #0d2240; color: #7aadff; } .s-d2 { background: #1a1a40; color: #a5b4fc; } .s-d3 { background: #22103a; color: #c4b5fd; }
-  .s-e { background: #0a0a14; color: #4a5568; } .s-e2 { background: #0f1420; color: #718096; }
-  .s-w1 { background: #2a1e04; color: #f6c90e; } .s-w2 { background: #2a1204; color: #ed8936; } .s-w3 { background: #241508; color: #dd6b20; }
-  .s-h { background: var(--high-bg); color: var(--high-text); } .s-so { background: var(--surface2); color: var(--text3); }
-  .s-ol { background: #0a2015; color: #48bb78; } .s-abs { background: var(--surface2); color: var(--text3); } .s-flex { background: #0a1f10; color: #5fcc7a; } .s-other { background: var(--surface2); color: var(--text2); }
-  .weekend-col { background: rgba(255,255,255,0.015); }
+  .shift-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; white-space: nowrap; min-width: 66px; }
+  .s-d1 { background: #0d2d4a; color: #7ec8f0; } .s-d2 { background: #0d2e1a; color: #6ee7a0; } .s-d3 { background: #2d2500; color: #fde68a; }
+  .s-e { background: #3b0d0d; color: #fca5a5; } .s-e2 { background: #2d0f0f; color: #f87171; }
+  .s-w1 { background: #2d2000; color: #fcd34d; } .s-w2 { background: #3b0d0d; color: #ff8080; } .s-w3 { background: #2d1500; color: #fb923c; }
+  .s-h { background: #4a0d0d; color: #fca5a5; } .s-so { background: #2a2a2a; color: #9ca3af; }
+  .s-ol { background: #0a2515; color: #4ade80; } .s-abs { background: var(--surface3); color: var(--text2); } .s-flex { background: #0d2814; color: #6ee7a0; } .s-other { background: var(--surface2); color: var(--text); }
+  .weekend-col { background: rgba(255,255,255,0.025); }
+  .wingman-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; }
+  .wingman-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .wingman-sub { font-size: 11px; color: var(--text3); margin-bottom: 14px; }
+  .wingman-timeline { display: flex; flex-direction: column; gap: 0; }
+  .wingman-slot { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 0.5px solid var(--border); position: relative; }
+  .wingman-slot:last-child { border-bottom: none; }
+  .wingman-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+  .wingman-dot.current { background: var(--cal-text); box-shadow: 0 0 0 3px rgba(122,173,255,0.2); }
+  .wingman-dot.past { background: var(--text3); }
+  .wingman-dot.future { background: var(--border2); }
+  .wingman-dates { font-size: 11px; color: var(--text3); min-width: 130px; flex-shrink: 0; }
+  .wingman-person { font-size: 13px; font-weight: 600; color: var(--text); }
+  .wingman-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-left: auto; flex-shrink: 0; }
+  .wingman-badge.current { background: var(--cal); color: var(--cal-text); }
+  .wingman-badge.past { background: var(--surface3); color: var(--text3); }
+  .wingman-badge.upcoming { background: var(--low-bg); color: var(--low-text); }
+  .role-summary-block { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
+  .role-summary-block-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); padding-bottom: 6px; border-bottom: 0.5px solid var(--border); }
+  .role-summary-row { display: flex; align-items: baseline; gap: 10px; }
+  .role-summary-label { flex-shrink: 0; }
+  .role-summary-names { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .role-summary-names.empty { color: var(--text3); font-style: italic; }
   .week-select { font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; outline: none; cursor: pointer; }
   .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; transition: border-color 0.2s; }
   .settings-card:hover { border-color: var(--border2); }
   .settings-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .settings-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
   .settings-upload-btn { font-size: 12px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border-radius: var(--radius-md); padding: 6px 14px; cursor: pointer; display: inline-block; transition: opacity 0.15s; }
-  .settings-upload-btn:hover { opacity: 0.85; }
+  .lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  .lock-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 36px 40px; width: 90%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .lock-logo { font-size: 28px; margin-bottom: 4px; }
+  .lock-title { font-size: 18px; font-weight: 700; color: var(--text); }
+  .lock-sub { font-size: 12px; color: var(--text3); margin-top: -8px; }
+  .lock-input { width: 100%; font-family: inherit; font-size: 14px; background: var(--surface2); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 10px 14px; outline: none; text-align: center; letter-spacing: 0.1em; transition: border-color 0.15s; }
+  .lock-input:focus { border-color: var(--cal-text); }
+  .lock-input.shake { animation: shake 0.35s ease; border-color: var(--high-text) !important; }
+  .lock-btn { width: 100%; font-family: inherit; font-size: 13px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 10px; cursor: pointer; transition: opacity 0.15s; }
+  .lock-btn:hover { opacity: 0.85; }
+  .lock-error { font-size: 12px; color: var(--high-text); min-height: 16px; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
 </style>
 </head>
 <body>
+
+<!-- Lock screen -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-logo">🗓</div>
+    <div class="lock-title">Weekly Planner</div>
+    <div class="lock-sub" id="lock-sub">Sign in to continue</div>
+    <input class="lock-input" id="lock-username" type="text" placeholder="Username" autocomplete="username" style="margin-bottom:0;">
+    <input class="lock-input" id="lock-input" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="lock-btn" onclick="tryUnlock()">Sign in</button>
+    <div class="lock-error" id="lock-error"></div>
+  </div>
+</div>
+
+<script>
+async function sha256(str) {
+  const buf = new TextEncoder().encode(str);
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', buf))).map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+// Default users: [{name, hash, isAdmin}]
+// Default: Mathias / 123
+const DEFAULT_USERS = [{name:'Mathias', hash:'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', isAdmin:true}];
+
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem('wtp_users')) || DEFAULT_USERS; }
+  catch { return DEFAULT_USERS; }
+}
+
+let currentUser = null;
+
+(function() {
+  const saved = localStorage.getItem('wtp_session');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      const users = getUsers();
+      const u = users.find(u => u.name === s.name && u.hash === s.hash);
+      if (u) { currentUser = u; document.getElementById('lock-screen').style.display = 'none'; return; }
+    } catch {}
+  }
+  document.getElementById('lock-username').focus();
+  document.getElementById('lock-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+  document.getElementById('lock-username').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lock-input').focus(); });
+})();
+
+window.tryUnlock = async function() {
+  const username = document.getElementById('lock-username').value.trim();
+  const password = document.getElementById('lock-input').value;
+  const hash = await sha256(password);
+  const users = getUsers();
+  const u = users.find(u => u.name.toLowerCase() === username.toLowerCase() && u.hash === hash);
+  if (u) {
+    currentUser = u;
+    localStorage.setItem('wtp_session', JSON.stringify({name: u.name, hash: u.hash}));
+    document.getElementById('lock-screen').style.display = 'none';
+    // Load this user's data
+    loadUserData();
+  } else {
+    const inp = document.getElementById('lock-input');
+    const err = document.getElementById('lock-error');
+    err.textContent = 'Incorrect username or password';
+    inp.classList.add('shake');
+    inp.value = '';
+    setTimeout(() => { inp.classList.remove('shake'); err.textContent = ''; }, 1200);
+  }
+};
+</script>
 
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">⚙ Settings</button>
   <div class="clock-wrap">
+    <span id="user-display" style="font-size:12px;color:var(--text2);margin-right:4px;"></span>
+    <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);font-size:12px;padding:3px 8px;cursor:pointer;transition:border-color 0.15s;" title="Toggle light/dark mode">🌙</button>
     <span id="live-clock"></span>
     <span id="live-date"></span>
   </div>
@@ -134,13 +310,37 @@
         <button class="btn-nav" onclick="changeWeek(-1)">← prev</button>
         <span id="week-label"></span>
         <button class="btn-nav" onclick="changeWeek(1)">next →</button>
+        <button class="btn-nav" onclick="weekOffset=0;renderPlanner();" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);">current</button>
       </div>
     </div>
     <div class="topbar-right">
       <span id="status-msg"></span>
+      <div class="search-wrap">
+        <input type="text" id="task-search" placeholder="🔍 Search tasks…" oninput="searchTasks(this.value)" autocomplete="off">
+        <div id="search-results" class="search-results"></div>
+      </div>
+      <button class="btn-today-view" onclick="showTodayView()">☀ Today</button>
     </div>
   </div>
-  <div class="board" id="board"></div>
+  <!-- Daily quote strip -->
+  <div class="quote-strip" id="quote-strip">
+    <span id="quote-text"></span>
+  </div>
+  <div class="planner-wrap">
+    <div class="week-drag-zone" id="drag-prev-week" ondragover="event.preventDefault();this.classList.add('active')" ondragleave="this.classList.remove('active')" ondrop="weekDragDrop(-1,event)">‹</div>
+    <div class="board" id="board"></div>
+    <div class="week-drag-zone" id="drag-next-week" ondragover="event.preventDefault();this.classList.add('active')" ondragleave="this.classList.remove('active')" ondrop="weekDragDrop(1,event)">›</div>
+    <div class="notepad" id="notepad">
+      <div class="notepad-header">
+        <span class="notepad-title">📝 Notes</span>
+        <button class="notepad-clear" onclick="clearNotepad()" title="Clear notes">✕ clear</button>
+      </div>
+      <div class="notepad-body">
+        <textarea class="notepad-textarea" id="notepad-text" placeholder="Jot anything down…&#10;Phone numbers, quick thoughts,&#10;things mentioned in passing…"></textarea>
+        <div class="notepad-saved" id="notepad-saved"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SCHEDULE TAB -->
@@ -148,12 +348,15 @@
   <div class="topbar">
     <div class="topbar-left">
       <select class="week-select" id="sched-week-select" onchange="renderSchedule()"></select>
+      <button class="btn-nav" onclick="jumpScheduleToCurrentWeek()" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);">current</button>
       <span id="sched-week-label" style="font-size:12px; color:var(--text3);"></span>
     </div>
   </div>
   <div class="sched-wrap">
     <table class="sched-table" id="sched-table"></table>
   </div>
+  <div id="role-summary" style="margin-top:20px;"></div>
+  <div id="wingman-section" style="margin-top:24px;"></div>
 </div>
 
 <!-- SETTINGS TAB -->
@@ -192,6 +395,54 @@
       </div>
     </div>
 
+    <!-- Users & Password -->
+    <div class="settings-card" id="users-card">
+      <div class="settings-card-title">👤 Users</div>
+      <div class="settings-card-desc">Manage who can access this planner. Each user has their own tasks and notes. The schedule is shared.</div>
+
+      <!-- Current user / change own password -->
+      <div style="margin-top:12px; padding:10px 12px; background:var(--surface2); border-radius:var(--radius-md); display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:12px; font-weight:600; color:var(--text);">Signed in as <span id="settings-username" style="color:var(--cal-text);"></span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input type="password" id="pw-new" placeholder="New password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
+          <input type="password" id="pw-confirm" placeholder="Confirm" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
+          <button class="btn-save" onclick="changePassword()" style="font-size:12px;white-space:nowrap;">Change password</button>
+        </div>
+        <span id="pw-msg" style="font-size:11px;color:var(--text3);"></span>
+      </div>
+
+      <!-- User list (admin only) -->
+      <div id="user-list-wrap" style="display:none; margin-top:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">All users</div>
+        <div id="user-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">Add user</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input type="text" id="new-username" placeholder="Username" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+          <input type="password" id="new-password" placeholder="Password" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+          <input type="checkbox" id="new-isadmin" style="accent-color:var(--cal-text);"> <label for="new-isadmin" style="font-size:12px;color:var(--text2);margin-right:4px;">Admin</label>
+          <button class="btn-save" onclick="addUser()" style="font-size:12px;">Add</button>
+        </div>
+        <span id="user-add-msg" style="font-size:11px;color:var(--text3);display:block;margin-top:6px;"></span>
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;align-items:center;gap:10px;">
+        <button class="btn-cancel" onclick="signOut()">Sign out</button>
+        <span style="font-size:11px;color:var(--text3);">Locks the planner and requires sign in again</span>
+      </div>
+    </div>
+
+    <!-- Backup & Restore -->
+    <div class="settings-card">
+      <div class="settings-card-title">💾 Backup & Restore</div>
+      <div class="settings-card-desc">Export all your data (tasks, notes, calendar) to a file you can keep as a backup. Restore it any time — on any device or browser.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <button class="btn-save" onclick="exportBackup()" style="font-size:12px;">⬇ Export backup</button>
+        <label class="btn-cancel" for="restore-input" style="cursor:pointer; display:inline-flex; align-items:center;">⬆ Restore from backup</label>
+        <input type="file" id="restore-input" accept=".json" style="display:none" onchange="importBackup(this.files[0])">
+      </div>
+      <div id="backup-msg" style="font-size:11px; color:var(--text3); margin-top:8px;"></div>
+    </div>
+
     <!-- Clear all tasks -->
     <div class="settings-card">
       <div class="settings-card-title">🗑 Clear all tasks</div>
@@ -210,9 +461,23 @@
   </div>
 </div>
 
+<!-- Today view modal -->
+<div id="today-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:500; align-items:center; justify-content:center;">
+  <div class="today-modal-box">
+    <div class="today-modal-header">
+      <div>
+        <div id="today-modal-date" style="font-size:13px; color:var(--text2); margin-bottom:2px;"></div>
+        <div style="font-size:18px; font-weight:700; color:var(--text);">What's on today</div>
+      </div>
+      <button onclick="document.getElementById('today-modal').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div id="today-modal-body" style="display:flex; flex-direction:column; gap:16px; overflow-y:auto; max-height:65vh; padding-top:4px;"></div>
+  </div>
+</div>
+
 <script>
 // ─── Schedule data ───────────────────────────────────────────────
-let SCHEDULE = [{"week":"Week 16","dates":["2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19"],"people":[{"name":"Jonas","shifts":["SO","SO","H","H","H","",""]},{"name":"Thomas","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Maylén","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","W1 (7-17)","W1 (7-17)"]},{"name":"Bernadett","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","",""]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","H","H","",""]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","E2 (16-21)","D3 (9-17)","D3 (9-17)","W3 (15-19)",""]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Andreas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W2 (17-6)","W2 (17-6)"]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","H","H","H","H"]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 17","dates":["2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26"],"people":[{"name":"Jonas","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Thomas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W2 (17-6)","W2 (17-6)"]},{"name":"Maylén","shifts":["SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Bernadett","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","W1 (7-17)","W1 (7-17)"]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Andreas","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","H","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 18","dates":["2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03"],"people":[{"name":"Jonas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","H","",""]},{"name":"Thomas","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Maylén","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","H1 (7-17)","W2 (17-6)","W2 (17-6)"]},{"name":"Bernadett","shifts":["SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","H","",""]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","H","W1 (7-17)","W1 (7-17)"]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","H","",""]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","H2 (17-6)","",""]},{"name":"Andreas","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Kristian","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","H","",""]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","H","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","H","",""]}]},{"week":"Week 19","dates":["2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10"],"people":[{"name":"Jonas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W1 (7-17)","W1 (7-17)"]},{"name":"Thomas","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Maylén","shifts":["SO","SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Bernadett","shifts":["D3 (9-17)","D2 (8-16)","D2 (8-16)","D2 (8-16)","H","",""]},{"name":"Benjamin","shifts":["SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W2 (17-6)","W2 (17-6)"]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","",""]},{"name":"Andreas","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 20","dates":["2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17"],"people":[{"name":"Jonas","shifts":["SO","D3 (9-17)","D3 (9-17)","H","H","H","H"]},{"name":"Thomas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","H","D3 (9-17)","","H"]},{"name":"Maylén","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","H1 (7-17)","D1 (7-15)","","H"]},{"name":"Bernadett","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","H","D2 (8-16)","","H"]},{"name":"Benjamin","shifts":["E (17-6)","E (17-6)","E (17-6)","H2 (17-6)","E (17-6)","","H"]},{"name":"Cecilie","shifts":["SO","SO","D3 (9-17)","H","H","","H"]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","H","D3 (9-17)","W1 (7-17)","H1 (7-17)"]},{"name":"Andreas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","H","D3 (9-17)","W2 (17-6)","H2 (17-6)"]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","H","D2 (8-16)","","H"]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","H","D2 (8-16)","","H"]},{"name":"Kristian","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","H","D3 (9-17)","W2 (17-6)","H2 (11-21)"]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","H","D2 (8-16)","","H"]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","H","D2 (8-16)","","H"]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","H","FLEX","","H"]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","H","FLEX","","H"]}]},{"week":"Week 21","dates":["2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24"],"people":[{"name":"Jonas","shifts":["H","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Thomas","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","W1 (7-17)","W1 (7-17)"]},{"name":"Maylén","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Bernadett","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W2 (17-6)","W2 (17-6)"]},{"name":"Cecilie","shifts":["H","H","H","D3 (9-17)","D3 (9-17)","",""]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["SO","D3 (9-17)","D3 (9-17)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Andreas","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["H","H","H","H","H","H","H"]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 22","dates":["2026-05-25","2026-05-26","2026-05-27","2026-05-28","2026-05-29","2026-05-30","2026-05-31"],"people":[{"name":"Jonas","shifts":["H","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Thomas","shifts":["SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Maylén","shifts":["H","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Bernadett","shifts":["H","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","W2 (17-6)","W2 (17-6)"]},{"name":"Benjamin","shifts":["SO","SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Cecilie","shifts":["H2 (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["H1 (7-17)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","W1 (7-17)","W1 (7-17)"]},{"name":"Andreas","shifts":["H","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Julie","shifts":["H","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Vetle","shifts":["H","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["H","H","H","H","H","H","H"]},{"name":"Markus","shifts":["H","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["H","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["H","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["H","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 23","dates":["2026-06-01","2026-06-02","2026-06-03","2026-06-04","2026-06-05","2026-06-06","2026-06-07"],"people":[{"name":"Jonas","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","W2 (17-6)","W2 (17-6)"]},{"name":"Thomas","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Maylén","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","",""]},{"name":"Bernadett","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W1 (7-17)","W1 (7-17)"]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Andreas","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Kristian","shifts":["H","H","H","H","H","H","H"]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 24","dates":["2026-06-08","2026-06-09","2026-06-10","2026-06-11","2026-06-12","2026-06-13","2026-06-14"],"people":[{"name":"Jonas","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Thomas","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","",""]},{"name":"Maylén","shifts":["SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Bernadett","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Tord","shifts":["ABS","ABS","ABS","ABS","ABS","ABS","ABS"]},{"name":"Marie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","W2 (17-6)","H2 (17-6)"]},{"name":"Andreas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W1 (7-17)","H1 (7-17)"]},{"name":"Julie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W2 (17-6)","H2 (17-6)"]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["H","H","H","H","H","H","H"]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 25","dates":["2026-06-15","2026-06-16","2026-06-17","2026-06-18","2026-06-19","2026-06-20","2026-06-21"],"people":[{"name":"Jonas","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Thomas","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","W2 (17-6)","W2 (17-6)"]},{"name":"Maylén","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Bernadett","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","",""]},{"name":"Benjamin","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W1 (7-17)","W1 (7-17)"]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Tord","shifts":["H","H","H","H","H","H","H"]},{"name":"Marie","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Andreas","shifts":["SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Julie","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Kristian","shifts":["H","H","H","H","D3 (9-17)","",""]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]},{"week":"Week 26","dates":["2026-06-22","2026-06-23","2026-06-24","2026-06-25","2026-06-26","2026-06-27","2026-06-28"],"people":[{"name":"Jonas","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Thomas","shifts":["SO","SO","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Maylén","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Bernadett","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","W1 (7-17)","W1 (7-17)"]},{"name":"Benjamin","shifts":["SO","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Cecilie","shifts":["D3 (9-17)","D3 (9-17)","H","H","H","H","H"]},{"name":"Tord","shifts":["H","H","H","H","H","H","H"]},{"name":"Marie","shifts":["E (17-6)","E (17-6)","E (17-6)","E (17-6)","E (17-6)","",""]},{"name":"Andreas","shifts":["D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","D1 (7-15)","W2 (17-6)","W2 (17-6)"]},{"name":"Julie","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Vetle","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Kristian","shifts":["D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","D3 (9-17)","",""]},{"name":"Markus","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Ulrik","shifts":["D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","D2 (8-16)","",""]},{"name":"Stian","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]},{"name":"Mathias","shifts":["FLEX","FLEX","FLEX","FLEX","FLEX","",""]}]}];
+let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "", ""], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylén", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "", ""], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "", ""], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "", ""], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "", ""], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "D1 (7-15)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (11-21)"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "H", "FLEX", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "H", "FLEX", "", "H"], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "", ""], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "", ""], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["H", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["H", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "", ""], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "", ""], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "", ""], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "", ""], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}];
 
 const MY_TEAM = ['Jonas','Thomas','Maylén','Bernadett','Benjamin','Cecilie','Tord','Marie','Andreas'];
 const EXCLUDE = ['Kristian','Markus','Ulrik','Stian','Mathias'];
@@ -259,7 +524,7 @@ function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'settings') renderHistory();
+  if (name === 'settings') { renderHistory(); renderUserList(); const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name; const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = (currentUser && currentUser.isAdmin) ? '' : 'none'; }
 }
 
 // ─── Incomplete task history ──────────────────────────────────────
@@ -349,17 +614,47 @@ function renderHistory() {
 }
 
 // ─── Schedule tab ─────────────────────────────────────────────────
+const ALL_ROLES = ['', 'Phone Guru', 'Inbox Champion', 'SLA Sherpa', 'Freelancer'];
+function roleClass(role) {
+  if (role === 'Phone Guru') return 'role-phone-guru';
+  if (role === 'Inbox Champion') return 'role-inbox-champ';
+  if (role === 'SLA Sherpa') return 'role-sla-sherpa';
+  if (role === 'Freelancer') return 'role-freelancer';
+  return '';
+}
+
 function initScheduleSelect() {
   const sel = document.getElementById('sched-week-select');
   const today = new Date().toISOString().slice(0,10);
   let bestIdx = 0;
+  let closestFuture = -1;
   SCHEDULE.forEach((w, i) => {
     const opt = document.createElement('option');
     opt.value = i; opt.textContent = w.week + '  (' + w.dates[0].slice(5).replace('-','/') + ' – ' + w.dates[4].slice(5).replace('-','/') + ')';
     sel.appendChild(opt);
-    if (w.dates[0] <= today && today <= w.dates[6]) bestIdx = i;
+    const weekStart = w.dates[0];
+    const weekEnd = w.dates[4]; // use Friday as end
+    if (weekStart <= today && today <= weekEnd) bestIdx = i;
+    else if (weekStart > today && closestFuture === -1) closestFuture = i;
   });
+  // If today is a weekend (past Friday), jump to next week
+  if (bestIdx === 0 && closestFuture !== -1) {
+    const w0 = SCHEDULE[0];
+    if (today > w0.dates[4]) bestIdx = closestFuture;
+  }
   sel.value = bestIdx;
+}
+
+function jumpScheduleToCurrentWeek() {
+  const today = new Date().toISOString().slice(0,10);
+  let bestIdx = 0, closestFuture = -1;
+  SCHEDULE.forEach((w, i) => {
+    if (w.dates[0] <= today && today <= w.dates[4]) bestIdx = i;
+    else if (w.dates[0] > today && closestFuture === -1) closestFuture = i;
+  });
+  if (bestIdx === 0 && closestFuture !== -1 && today > SCHEDULE[0].dates[4]) bestIdx = closestFuture;
+  document.getElementById('sched-week-select').value = bestIdx;
+  renderSchedule();
 }
 
 function renderSchedule() {
@@ -380,21 +675,60 @@ function renderSchedule() {
   w.dates.forEach((date, i) => {
     const th = document.createElement('th');
     if (i >= 5) th.className = 'weekend-col';
-    const d = new Date(date + 'T00:00:00');
-    th.innerHTML = DAY_NAMES[i] + '<br><span style="font-weight:400;font-size:10px;opacity:0.7;">' + d.getDate() + '/' + (d.getMonth()+1) + '</span>';
+    if (date) {
+      const d = new Date(date + 'T00:00:00');
+      th.innerHTML = DAY_NAMES[i] + '<br><span style="font-weight:700;font-size:13px;color:var(--text);opacity:1;">' + d.getDate() + '/' + (d.getMonth()+1) + '</span>';
+    } else {
+      th.innerHTML = DAY_NAMES[i];
+    }
     hrow.appendChild(th);
   });
   thead.appendChild(hrow); table.appendChild(thead);
 
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
 
-  // All known shift codes for the dropdown
   const ALL_SHIFTS = ['', 'D1 (7-15)', 'D2 (8-16)', 'D3 (9-17)', 'E (17-6)', 'E2 (16-21)',
-    'W1 (7-17)', 'W2 (17-6)', 'W3 (15-19)', 'H', 'SO', 'OL', 'ABS', 'FLEX'];
+    'W1 (7-17)', 'W2 (17-6)', 'W3 (15-19)', 'H', 'SO'];
 
   function saveSchedule() { localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE)); }
 
-  let swapHighlight = null; // { name1, day1, name2, day2 }
+  let dragSrc = null;
+  let swapHighlight = null;
+
+  function makeRoleCell(person, dayIdx) {
+    const td = document.createElement('td');
+    td.className = 'role-cell';
+    function renderRole() {
+      td.innerHTML = '';
+      const role = (person.roles && person.roles[dayIdx]) || '';
+      if (role) {
+        const pill = document.createElement('span'); pill.className = 'role-pill ' + roleClass(role); pill.textContent = role; td.appendChild(pill);
+      } else {
+        const dash = document.createElement('span'); dash.className = 'role-none'; dash.textContent = '—'; td.appendChild(dash);
+      }
+    }
+    renderRole();
+    td.addEventListener('click', e => {
+      e.stopPropagation();
+      document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
+      const dd = document.createElement('div'); dd.className = 'shift-dropdown';
+      dd.style.cssText = 'position:absolute;top:100%;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);z-index:200;min-width:140px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+      const currentRole = (person.roles && person.roles[dayIdx]) || '';
+      ALL_ROLES.forEach(code => {
+        const item = document.createElement('div'); item.style.cssText = 'padding:6px 12px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;';
+        if (code === currentRole) item.style.background = 'var(--surface2)';
+        if (code) { const p = document.createElement('span'); p.className = 'role-pill ' + roleClass(code); p.style.fontSize = '10px'; p.textContent = code; item.appendChild(p); }
+        else { item.appendChild(document.createTextNode('— clear')); }
+        item.onmouseover = () => item.style.background = 'var(--surface3)';
+        item.onmouseout = () => item.style.background = code === currentRole ? 'var(--surface2)' : '';
+        item.onclick = () => { if (!person.roles) person.roles = ['','','','','','','']; person.roles[dayIdx] = code; saveSchedule(); dd.remove(); renderRole(); };
+        dd.appendChild(item);
+      });
+      td.style.position = 'relative'; td.appendChild(dd);
+      setTimeout(() => document.addEventListener('click', () => dd.remove(), { once: true }), 0);
+    });
+    return td;
+  }
 
   function makeCell(person, dayIdx, isWeekend) {
     const td = document.createElement('td');
@@ -514,13 +848,129 @@ function renderSchedule() {
       });
     }, 20);
   }
+  renderRoleSummary(w);
+  renderWingman();
+}
+
+// ─── Project Wingman ──────────────────────────────────────────────
+const WINGMAN_SLOTS = [
+  { dates: '13/4 – 14/4', days: 'Mon–Tue', person: 'Andreas',  from: '2026-04-13', to: '2026-04-14' },
+  { dates: '15/4 – 16/4', days: 'Wed–Thu', person: 'Marie',     from: '2026-04-15', to: '2026-04-16' },
+  { dates: '20/4 – 21/4', days: 'Mon–Tue', person: 'Bernadett', from: '2026-04-20', to: '2026-04-21' },
+  { dates: '22/4 – 23/4', days: 'Wed–Thu', person: 'Cecilie',   from: '2026-04-22', to: '2026-04-23' },
+  { dates: '27/4 – 28/4', days: 'Mon–Tue', person: 'Maylén',    from: '2026-04-27', to: '2026-04-28' },
+  { dates: '29/4 – 30/4', days: 'Wed–Thu', person: 'Benjamin',  from: '2026-04-29', to: '2026-04-30' },
+  { dates: '11/5 – 12/5', days: 'Mon–Tue', person: 'Vetle',     from: '2026-05-11', to: '2026-05-12' },
+  { dates: '18/5 – 19/5', days: 'Mon–Tue', person: 'Thomas',    from: '2026-05-18', to: '2026-05-19' },
+  { dates: '1/6 – 2/6',   days: 'Mon–Tue', person: 'Julie',     from: '2026-06-01', to: '2026-06-02' },
+  { dates: '15/6 – 16/6', days: 'Mon–Tue', person: 'Jonas',     from: '2026-06-15', to: '2026-06-16' },
+];
+
+function renderWingman() {
+  const container = document.getElementById('wingman-section');
+  if (!container) return;
+  container.innerHTML = '';
+  const today = new Date().toISOString().slice(0,10);
+
+  const card = document.createElement('div'); card.className = 'wingman-card';
+  const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;align-items:baseline;gap:10px;margin-bottom:2px;';
+  const title = document.createElement('div'); title.className = 'wingman-title'; title.textContent = '🪂 Project Wingman';
+  const sub = document.createElement('div'); sub.className = 'wingman-sub'; sub.style.marginBottom = '0';
+  sub.textContent = 'L1 shadowing schedule — L2 member TBD';
+  hdr.appendChild(title);
+  card.appendChild(hdr); card.appendChild(sub);
+
+  const timeline = document.createElement('div'); timeline.className = 'wingman-timeline';
+
+  WINGMAN_SLOTS.forEach(slot => {
+    const isCurrent = slot.from <= today && today <= slot.to;
+    const isPast = slot.to < today;
+    const status = isCurrent ? 'current' : isPast ? 'past' : 'future';
+
+    const row = document.createElement('div'); row.className = 'wingman-slot';
+
+    const dot = document.createElement('div'); dot.className = 'wingman-dot ' + status;
+    const dates = document.createElement('div'); dates.className = 'wingman-dates';
+    dates.textContent = slot.days + '  ' + slot.dates;
+    const person = document.createElement('div'); person.className = 'wingman-person';
+    person.style.color = isCurrent ? 'var(--cal-text)' : isPast ? 'var(--text3)' : 'var(--text)';
+    person.textContent = slot.person;
+
+    row.appendChild(dot); row.appendChild(dates); row.appendChild(person);
+
+    if (isCurrent) {
+      const badge = document.createElement('span'); badge.className = 'wingman-badge current'; badge.textContent = '● Now';
+      row.appendChild(badge);
+    } else if (!isPast) {
+      // Show how many days away
+      const daysAway = Math.ceil((new Date(slot.from) - new Date(today)) / 86400000);
+      if (daysAway <= 14) {
+        const badge = document.createElement('span'); badge.className = 'wingman-badge upcoming';
+        badge.textContent = 'In ' + daysAway + 'd';
+        row.appendChild(badge);
+      }
+    }
+
+    timeline.appendChild(row);
+  });
+
+  card.appendChild(timeline);
+  container.appendChild(card);
+}
+
+function renderRoleSummary(w) {
+  const container = document.getElementById('role-summary');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
+  const ROLES = ['Phone Guru', 'Inbox Champion', 'SLA Sherpa', 'Freelancer'];
+
+  // Mon–Wed = days 0,1,2 — Thu–Fri = days 3,4
+  const blocks = [
+    { label: 'Mon – Wed', days: [0, 1, 2] },
+    { label: 'Thu – Fri', days: [3, 4] },
+  ];
+
+  const card = document.createElement('div'); card.className = 'role-summary-card';
+
+  blocks.forEach(block => {
+    const col = document.createElement('div'); col.className = 'role-summary-block';
+    const title = document.createElement('div'); title.className = 'role-summary-block-title';
+    title.textContent = block.label;
+    col.appendChild(title);
+
+    ROLES.forEach(role => {
+      // Find people who have this role on any day in this block
+      const people = myTeam.filter(p =>
+        block.days.some(di => (p.roles && p.roles[di]) === role)
+      ).map(p => p.name);
+
+      const row = document.createElement('div'); row.className = 'role-summary-row';
+      const lbl = document.createElement('span'); lbl.className = 'role-summary-label';
+      const pill = document.createElement('span'); pill.className = 'role-pill ' + roleClass(role); pill.textContent = role;
+      lbl.appendChild(pill);
+      const names = document.createElement('span');
+      if (people.length) {
+        names.className = 'role-summary-names'; names.textContent = people.join(', ');
+      } else {
+        names.className = 'role-summary-names empty'; names.textContent = 'none';
+      }
+      row.appendChild(lbl); row.appendChild(names);
+      col.appendChild(row);
+    });
+
+    card.appendChild(col);
+  });
+
+  container.appendChild(card);
 }
 
 // ─── Planner tab ──────────────────────────────────────────────────
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
-let weekOffset = 0;
-let tasks = JSON.parse(localStorage.getItem('wtp_tasks') || '[]');
-let calEvents = JSON.parse(localStorage.getItem('wtp_cal') || '[]');
+let weekOffset = 0; // always start on current week
+let tasks = [];
+let calEvents = [];
 let dragCard = null;
 
 function getMonday(offset) {
@@ -531,12 +981,10 @@ function getMonday(offset) {
 function fmtDate(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
 function fmtTime(iso) { if (!iso) return 'All day'; return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 function setStatus(msg) { document.getElementById('status-msg').textContent = msg; }
-function save() { localStorage.setItem('wtp_tasks', JSON.stringify(tasks)); }
-function saveEvents() { localStorage.setItem('wtp_cal', JSON.stringify(calEvents)); }
 function changeWeek(dir) { weekOffset += dir; renderPlanner(); }
 function toggleDone(id) { const t = tasks.find(x => x.id === id); if (t) { t.done = !t.done; save(); renderPlanner(); } }
 function delTask(id) { tasks = tasks.filter(x => x.id !== id); save(); renderPlanner(); }
-function addTask(day, title, priority, due, note, people, isMeeting, timeStart, timeEnd) { tasks.push({ id: Date.now()+'', day, title, priority, due, note, people: people||[], isMeeting: !!isMeeting, timeStart: timeStart||'', timeEnd: timeEnd||'', done: false }); save(); renderPlanner(); }
+function addTask(day, title, priority, due, note, people, isMeeting, timeStart, timeEnd, recurring, reminder, colour, pendingName) { tasks.push({ id: Date.now()+'', day, title, priority, due, note, people: people||[], isMeeting: !!isMeeting, timeStart: timeStart||'', timeEnd: timeEnd||'', recurring: !!recurring, reminder: reminder||'', colour: colour||'', pendingName: pendingName||'', done: false }); save(); scheduleReminder(tasks[tasks.length-1]); renderPlanner(); }
 function clearCal() {
   calEvents = []; saveEvents();
   const btn = document.getElementById('ics-clear-btn');
@@ -659,7 +1107,310 @@ function processXlsx(buffer, fileName, st, preview) {
   } catch(err) { st.textContent = '✗ Parse error: ' + err.message; }
 }
 
-// ─── Availability checker ─────────────────────────────────────────
+// ─── Notepad ──────────────────────────────────────────────────────
+(function() {
+  const ta = document.getElementById('notepad-text');
+  const savedEl = document.getElementById('notepad-saved');
+  if (!ta) return;
+  ta.value = currentUser ? (localStorage.getItem(userNoteKey(currentUser.name)) || '') : '';
+  let saveTimer;
+  ta.addEventListener('input', () => {
+    savedEl.style.opacity = '0';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      if (currentUser) localStorage.setItem(userNoteKey(currentUser.name), ta.value);
+      savedEl.textContent = 'saved';
+      savedEl.style.opacity = '1';
+      setTimeout(() => { savedEl.style.opacity = '0'; }, 1500);
+    }, 600);
+  });
+})();
+function clearNotepad() {
+  if (!confirm('Clear all notes?')) return;
+  const ta = document.getElementById('notepad-text');
+  if (ta) { ta.value = ''; if (currentUser) localStorage.removeItem(userNoteKey(currentUser.name)); }
+}
+
+// ─── Backup & Restore ─────────────────────────────────────────────
+function exportBackup() {
+  if (!currentUser) return;
+  const u = currentUser.name;
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    user: u,
+    tasks: JSON.parse(localStorage.getItem(userTaskKey(u)) || '[]'),
+    notes: localStorage.getItem(userNoteKey(u)) || '',
+    calEvents: JSON.parse(localStorage.getItem(userCalKey(u)) || '[]'),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const date = new Date().toISOString().slice(0,10);
+  a.download = 'planner-backup-' + u.toLowerCase() + '-' + date + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  const msg = document.getElementById('backup-msg');
+  if (msg) { msg.style.color = 'var(--low-text)'; msg.textContent = '✓ Backup downloaded'; setTimeout(() => msg.textContent = '', 3000); }
+}
+
+function importBackup(file) {
+  if (!file || !currentUser) return;
+  const msg = document.getElementById('backup-msg');
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.version || !Array.isArray(data.tasks)) throw new Error('Invalid backup file');
+      if (!confirm('This will replace your current tasks, notes and calendar with the backup from ' + (data.exportedAt ? data.exportedAt.slice(0,10) : 'unknown date') + '. Continue?')) return;
+      const u = currentUser.name;
+      localStorage.setItem(userTaskKey(u), JSON.stringify(data.tasks || []));
+      localStorage.setItem(userNoteKey(u), data.notes || '');
+      localStorage.setItem(userCalKey(u), JSON.stringify(data.calEvents || []));
+      loadUserData();
+      msg.style.color = 'var(--low-text)';
+      msg.textContent = '✓ Restored ' + data.tasks.length + ' tasks from backup';
+      setTimeout(() => msg.textContent = '', 4000);
+    } catch(err) {
+      msg.style.color = 'var(--high-text)';
+      msg.textContent = '✗ Invalid backup file: ' + err.message;
+    }
+    document.getElementById('restore-input').value = '';
+  };
+  reader.readAsText(file);
+}
+function userTaskKey(username) { return 'wtp_tasks_' + username.toLowerCase(); }
+function userNoteKey(username) { return 'wtp_notepad_' + username.toLowerCase(); }
+function userCalKey(username) { return 'wtp_cal_' + username.toLowerCase(); }
+
+function loadUserData() {
+  if (!currentUser) return;
+  const u = currentUser.name;
+  tasks = JSON.parse(localStorage.getItem(userTaskKey(u)) || '[]');
+  calEvents = JSON.parse(localStorage.getItem(userCalKey(u)) || '[]');
+  const ta = document.getElementById('notepad-text');
+  if (ta) ta.value = localStorage.getItem(userNoteKey(u)) || '';
+  const ud = document.getElementById('user-display');
+  if (ud) ud.textContent = u;
+  renderPlanner();
+  scheduleAllReminders();
+  requestNotificationPermission();
+  // Update settings panel
+  const sn = document.getElementById('settings-username');
+  if (sn) sn.textContent = u;
+  const wrap = document.getElementById('user-list-wrap');
+  if (wrap) wrap.style.display = currentUser.isAdmin ? '' : 'none';
+  renderUserList();
+}
+
+function save() { if (currentUser) localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); }
+function saveEvents() { if (currentUser) localStorage.setItem(userCalKey(currentUser.name), JSON.stringify(calEvents)); }
+
+function renderUserList() {
+  const list = document.getElementById('user-list');
+  if (!list) return;
+  const users = getUsers();
+  list.innerHTML = '';
+  users.forEach((u, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border-radius:var(--radius-md);';
+    const name = document.createElement('span'); name.style.cssText = 'flex:1;font-size:12px;font-weight:500;color:var(--text);'; name.textContent = u.name;
+    const badge = document.createElement('span'); badge.style.cssText = 'font-size:10px;padding:1px 6px;border-radius:8px;' + (u.isAdmin ? 'background:var(--cal);color:var(--cal-text);' : 'background:var(--surface3);color:var(--text3);'); badge.textContent = u.isAdmin ? 'admin' : 'user';
+    row.appendChild(name); row.appendChild(badge);
+    if (u.name !== currentUser.name) {
+      const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;'; del.textContent = 'remove';
+      del.onmouseover = () => { del.style.color = 'var(--high-text)'; del.style.background = 'var(--high-bg)'; };
+      del.onmouseout = () => { del.style.color = 'var(--text3)'; del.style.background = 'none'; };
+      del.onclick = () => { if (!confirm('Remove user ' + u.name + '?')) return; const users = getUsers(); users.splice(idx,1); localStorage.setItem('wtp_users', JSON.stringify(users)); renderUserList(); };
+      row.appendChild(del);
+    }
+    list.appendChild(row);
+  });
+}
+
+async function addUser() {
+  const nameEl = document.getElementById('new-username');
+  const pwEl = document.getElementById('new-password');
+  const isAdmin = document.getElementById('new-isadmin').checked;
+  const msg = document.getElementById('user-add-msg');
+  const name = nameEl.value.trim();
+  const pw = pwEl.value;
+  if (!name) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a username'; return; }
+  if (!pw) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a password'; return; }
+  const users = getUsers();
+  if (users.find(u => u.name.toLowerCase() === name.toLowerCase())) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Username already exists'; return; }
+  const hash = await sha256(pw);
+  users.push({ name, hash, isAdmin });
+  localStorage.setItem('wtp_users', JSON.stringify(users));
+  nameEl.value = ''; pwEl.value = ''; document.getElementById('new-isadmin').checked = false;
+  msg.style.color = 'var(--low-text)'; msg.textContent = '✓ User ' + name + ' added';
+  setTimeout(() => msg.textContent = '', 2000);
+  renderUserList();
+}
+
+async function changePassword() {
+  const np = document.getElementById('pw-new').value;
+  const cp = document.getElementById('pw-confirm').value;
+  const msg = document.getElementById('pw-msg');
+  if (!np) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a new password'; return; }
+  if (np !== cp) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Passwords do not match'; return; }
+  const hash = await sha256(np);
+  const users = getUsers();
+  const u = users.find(u => u.name === currentUser.name);
+  if (u) { u.hash = hash; localStorage.setItem('wtp_users', JSON.stringify(users)); }
+  currentUser.hash = hash;
+  localStorage.setItem('wtp_session', JSON.stringify({name: currentUser.name, hash}));
+  document.getElementById('pw-new').value = ''; document.getElementById('pw-confirm').value = '';
+  msg.style.color = 'var(--low-text)'; msg.textContent = '✓ Password updated';
+  setTimeout(() => msg.textContent = '', 2000);
+}
+
+function signOut() {
+  localStorage.removeItem('wtp_session');
+  location.reload();
+}
+const QUOTES = [
+  "The secret of getting ahead is getting started. — Mark Twain",
+  "Focus on being productive instead of busy. — Tim Ferriss",
+  "It's not about having time, it's about making time.",
+  "Done is better than perfect. — Sheryl Sandberg",
+  "One day or day one. You decide.",
+  "Small progress is still progress.",
+  "You don't have to be great to start, but you have to start to be great.",
+  "The best time to do something important is usually right now.",
+  "What you do today can improve all your tomorrows.",
+  "Clarity is the prerequisite of execution.",
+  "Hard work beats talent when talent doesn't work hard.",
+  "Your focus determines your reality.",
+  "Discipline is choosing between what you want now and what you want most.",
+  "Don't watch the clock; do what it does — keep going. — Sam Levenson",
+  "Success is the sum of small efforts repeated day in and day out.",
+  "If it's important, schedule it. If it's scheduled, protect it.",
+  "Motivation gets you started. Habit keeps you going.",
+  "Plan your work and work your plan.",
+  "The key is not to prioritise what's on your schedule, but to schedule your priorities. — Stephen Covey",
+  "A goal without a plan is just a wish.",
+  "Energy, not time, is the fundamental currency of high performance.",
+  "Work smarter, not just harder.",
+  "Every morning you have two choices: continue to sleep with your dreams, or wake up and chase them.",
+  "The most productive people don't work more — they work on the right things.",
+  "Start where you are. Use what you have. Do what you can. — Arthur Ashe",
+];
+(function() {
+  const el = document.getElementById('quote-text');
+  if (!el) return;
+  const idx = new Date().getDate() % QUOTES.length;
+  el.textContent = QUOTES[idx];
+})();
+
+// ─── Task search ──────────────────────────────────────────────────
+function searchTasks(query) {
+  const container = document.getElementById('search-results');
+  const q = query.trim().toLowerCase();
+  if (!q) { container.style.display = 'none'; return; }
+  const matches = tasks.filter(t =>
+    t.title.toLowerCase().includes(q) ||
+    (t.note && t.note.toLowerCase().includes(q)) ||
+    (t.people && t.people.some(p => p.toLowerCase().includes(q)))
+  ).slice(0, 8);
+  container.innerHTML = '';
+  if (!matches.length) {
+    const empty = document.createElement('div'); empty.className = 'search-result-empty';
+    empty.textContent = 'No tasks found for "' + query + '"';
+    container.appendChild(empty);
+  } else {
+    matches.forEach(t => {
+      const item = document.createElement('div'); item.className = 'search-result-item';
+      const title = document.createElement('div'); title.className = 'search-result-title';
+      const safe = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      title.innerHTML = t.title.replace(new RegExp('(' + safe + ')', 'gi'), '<span class="search-highlight">$1</span>');
+      if (t.done) title.style.cssText = 'text-decoration:line-through;opacity:0.45;';
+      const meta = document.createElement('div'); meta.className = 'search-result-meta';
+      const parts = [t.day];
+      if (t.isMeeting) parts.push('📅 meeting');
+      if (t.priority) parts.push(t.priority);
+      if (t.timeStart) parts.push(t.timeStart);
+      meta.textContent = parts.filter(Boolean).join(' · ');
+      item.appendChild(title); item.appendChild(meta);
+      item.onclick = () => {
+        document.getElementById('task-search').value = '';
+        container.style.display = 'none';
+        renderPlanner();
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.card');
+          cards.forEach(c => { if (c.dataset.id === t.id) { c.style.outline = '2px solid var(--cal-text)'; setTimeout(() => c.style.outline = '', 1800); c.scrollIntoView({ behavior:'smooth', block:'nearest' }); } });
+        }, 50);
+      };
+      container.appendChild(item);
+    });
+  }
+  container.style.display = '';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) document.getElementById('search-results').style.display = 'none';
+});
+
+// ─── Today view ───────────────────────────────────────────────────
+function showTodayView() {
+  const modal = document.getElementById('today-modal');
+  const body = document.getElementById('today-modal-body');
+  const dateEl = document.getElementById('today-modal-date');
+  const now = new Date();
+  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  const todayStr = now.toISOString().slice(0,10);
+  dateEl.textContent = now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  body.innerHTML = '';
+
+  const todayTasks = tasks.filter(t => t.day === todayDay && !t.isMeeting);
+  const todayMeetings = tasks.filter(t => t.day === todayDay && t.isMeeting).sort((a,b) => (a.timeStart||'') < (b.timeStart||'') ? -1 : 1);
+
+  // Meetings
+  const meetSec = document.createElement('div');
+  const meetTitle = document.createElement('div'); meetTitle.className = 'today-section-title'; meetTitle.textContent = '📅 Meetings today';
+  meetSec.appendChild(meetTitle);
+  if (!todayMeetings.length) {
+    const e = document.createElement('div'); e.className = 'today-empty'; e.textContent = 'No meetings scheduled'; meetSec.appendChild(e);
+  } else {
+    todayMeetings.forEach(t => {
+      const row = document.createElement('div'); row.className = 'today-meeting-row';
+      const tit = document.createElement('div'); tit.className = 'today-meeting-title'; tit.textContent = t.title;
+      const meta = document.createElement('div'); meta.className = 'today-meeting-meta';
+      const parts = [];
+      if (t.timeStart) parts.push(t.timeStart + (t.timeEnd ? ' – ' + t.timeEnd : ''));
+      if (t.people && t.people.length) parts.push(t.people.join(', '));
+      meta.textContent = parts.join(' · ');
+      row.appendChild(tit); if (parts.length) row.appendChild(meta);
+      meetSec.appendChild(row);
+    });
+  }
+  body.appendChild(meetSec);
+
+  // Tasks
+  const taskSec = document.createElement('div');
+  const taskTitle = document.createElement('div'); taskTitle.className = 'today-section-title'; taskTitle.textContent = '✓ Tasks today';
+  taskSec.appendChild(taskTitle);
+  if (!todayTasks.length) {
+    const e = document.createElement('div'); e.className = 'today-empty'; e.textContent = 'No tasks for today'; taskSec.appendChild(e);
+  } else {
+    todayTasks.forEach(t => {
+      const row = document.createElement('div'); row.className = 'today-task-row';
+      const chk = document.createElement('input'); chk.type = 'checkbox'; chk.className = 'today-task-check'; chk.checked = t.done;
+      const tit = document.createElement('div'); tit.className = 'today-task-title' + (t.done ? ' today-task-done' : ''); tit.textContent = t.title;
+      chk.onchange = () => { t.done = chk.checked; save(); renderPlanner(); tit.className = 'today-task-title' + (t.done ? ' today-task-done' : ''); };
+      const badges = document.createElement('div');
+      if (t.priority) { const b = document.createElement('span'); b.className = 'badge badge-'+t.priority; b.style.fontSize='10px'; b.textContent = t.priority; badges.appendChild(b); }
+      row.appendChild(chk); row.appendChild(tit); if (t.priority) row.appendChild(badges);
+      taskSec.appendChild(row);
+    });
+  }
+  body.appendChild(taskSec);
+
+  modal.style.display = 'flex';
+}
+document.getElementById('today-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('today-modal')) document.getElementById('today-modal').style.display = 'none';
+});
+
 const SHIFT_HOURS = {
   'D1': [7, 15], 'D2': [8, 16], 'D3': [9, 17],
   'E': [17, 7], 'E2': [16, 21],
@@ -733,7 +1484,7 @@ function renderCard(t) {
   const hasConflict = conflicts.length > 0;
 
   const div = document.createElement('div');
-  div.className = 'card' + (t.done ? ' done-line' : '') + (isMeeting ? ' meeting-card' : '') + (hasConflict ? ' conflict-card' : '');
+  div.className = 'card' + (t.done ? ' done-line' : '') + (isMeeting ? ' meeting-card' : '') + (hasConflict ? ' conflict-card' : '') + (t.colour ? ' card-label-' + t.colour : '');
   div.draggable = true; div.dataset.id = t.id;
 
   const top = document.createElement('div'); top.className = 'card-top';
@@ -758,16 +1509,22 @@ function renderCard(t) {
   const titleEl = document.createElement('div'); titleEl.className = 'card-title'; titleEl.textContent = t.title;
   titleWrap.appendChild(titleEl); top.appendChild(chk); top.appendChild(titleWrap); div.appendChild(top);
 
-  const meta = document.createElement('div'); meta.className = 'card-meta';
   if (isMeeting && t.timeStart) {
+    const meta2 = document.createElement('div'); meta2.className = 'card-meta';
     const b = document.createElement('span'); b.className = 'badge badge-date';
     b.textContent = '🕐 ' + t.timeStart + (t.timeEnd ? ' – ' + t.timeEnd : '');
-    meta.appendChild(b);
+    meta2.appendChild(b); div.appendChild(meta2);
   }
-  if (t.priority) { const b = document.createElement('span'); b.className = 'badge badge-'+t.priority; b.textContent = t.priority; meta.appendChild(b); }
-  if (t.due) { const b = document.createElement('span'); b.className = 'badge badge-date'; b.textContent = t.due; meta.appendChild(b); }
-  if (t.people && t.people.length) { t.people.forEach(p => { const b = document.createElement('span'); b.className = 'badge'; b.style.cssText = 'background:var(--surface2);color:var(--text2);border:0.5px solid var(--border);'; b.textContent = '👤 ' + p; meta.appendChild(b); }); }
-  if (meta.children.length) div.appendChild(meta);
+  if (t.priority || t.due || (t.people && t.people.length) || t.recurring) {
+    const meta = document.createElement('div'); meta.className = 'card-meta';
+    if (t.recurring) { const b = document.createElement('span'); b.className = 'badge'; b.style.cssText = 'background:#1a1a40;color:#a5b4fc;'; b.textContent = '↻ weekly'; meta.appendChild(b); }
+    if (t.reminder) { const b = document.createElement('span'); b.className = 'badge'; b.style.cssText = 'background:#1a2a1a;color:#6ee7a0;'; b.textContent = '🔔 ' + t.reminder; meta.appendChild(b); }
+    if (t.colour === 'blue' && t.pendingName) { const b = document.createElement('span'); b.className = 'badge'; b.style.cssText = 'background:#0d1e35;color:#7aadff;border:0.5px solid #1e3260;'; b.textContent = '⏳ ' + t.pendingName; meta.appendChild(b); }
+    if (t.priority) { const b = document.createElement('span'); b.className = 'badge badge-'+t.priority; b.textContent = t.priority; meta.appendChild(b); }
+    if (t.due) { const b = document.createElement('span'); b.className = 'badge badge-date'; b.textContent = t.due; meta.appendChild(b); }
+    if (t.people && t.people.length) { t.people.forEach(p => { const b = document.createElement('span'); b.className = 'badge'; b.style.cssText = 'background:var(--surface2);color:var(--text2);border:0.5px solid var(--border);'; b.textContent = '👤 ' + p; meta.appendChild(b); }); }
+    if (meta.children.length) div.appendChild(meta);
+  }
 
   if (t.note) { const n = document.createElement('div'); n.className = 'card-note'; n.textContent = t.note; div.appendChild(n); }
 
@@ -937,7 +1694,57 @@ function renderAddForm(day, colBody, addBtn) {
   const nInput = document.createElement('textarea'); nInput.rows = 2; nInput.placeholder = 'Optional note...';
   form.appendChild(nLabel); form.appendChild(nInput);
 
-  // Toggle meeting mode
+  // Recurring toggle (tasks only)
+  const recurRow = document.createElement('div'); recurRow.style.cssText = 'display:flex;align-items:center;gap:8px;';
+  const recurChk = document.createElement('input'); recurChk.type = 'checkbox'; recurChk.id = 'recur-chk-' + Date.now(); recurChk.style.cssText = 'accent-color:var(--cal-text);width:13px;height:13px;cursor:pointer;flex-shrink:0;';
+  const recurLabel = document.createElement('label'); recurLabel.htmlFor = recurChk.id; recurLabel.style.cssText = 'font-size:11px;color:var(--text2);cursor:pointer;'; recurLabel.textContent = 'Repeat every week on this day';
+  recurRow.appendChild(recurChk); recurRow.appendChild(recurLabel);
+  form.appendChild(recurRow);
+
+  // Reminder row
+  const reminderRow = document.createElement('div'); reminderRow.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
+  const reminderChk = document.createElement('input'); reminderChk.type = 'checkbox'; reminderChk.id = 'rem-chk-' + Date.now(); reminderChk.style.cssText = 'accent-color:var(--cal-text);width:13px;height:13px;cursor:pointer;flex-shrink:0;';
+  const reminderLabel = document.createElement('label'); reminderLabel.htmlFor = reminderChk.id; reminderLabel.style.cssText = 'font-size:11px;color:var(--text2);cursor:pointer;'; reminderLabel.textContent = 'Remind me at';
+  const reminderTime = makeTimeSelect('09:00');
+  reminderTime.style.cssText = 'background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);font-size:11px;padding:3px 6px;display:none;';
+  reminderChk.addEventListener('change', () => { reminderTime.style.display = reminderChk.checked ? '' : 'none'; });
+  reminderRow.appendChild(reminderChk); reminderRow.appendChild(reminderLabel); reminderRow.appendChild(reminderTime);
+  form.appendChild(reminderRow);
+
+  // Colour label row
+  const CARD_COLOURS = [
+    { id: '', label: 'None', dot: 'var(--text3)' },
+    { id: 'red', label: 'Urgent', dot: '#ff5555' },
+    { id: 'amber', label: 'In progress', dot: '#ffb347' },
+    { id: 'green', label: 'Done / easy', dot: '#5fcc7a' },
+    { id: 'blue', label: 'Pending', dot: '#7aadff' },
+    { id: 'purple', label: 'FYI', dot: '#c4b5fd' },
+  ];
+  const colourRow = document.createElement('div'); colourRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
+  const colourLbl = document.createElement('span'); colourLbl.style.cssText = 'font-size:11px;color:var(--text2);flex-shrink:0;'; colourLbl.textContent = 'Label:';
+  colourRow.appendChild(colourLbl);
+  let selectedColour = '';
+  const colourBtns = CARD_COLOURS.map(c => {
+    const btn = document.createElement('button'); btn.type = 'button';
+    btn.style.cssText = 'width:20px;height:20px;border-radius:50%;border:2px solid transparent;cursor:pointer;background:' + (c.id ? c.dot : 'var(--surface3)') + ';transition:border-color 0.15s,transform 0.1s;flex-shrink:0;';
+    btn.title = c.label;
+    btn.onclick = () => {
+      selectedColour = c.id;
+      colourBtns.forEach((b, i) => { b.style.borderColor = CARD_COLOURS[i].id === c.id ? 'var(--text)' : 'transparent'; b.style.transform = CARD_COLOURS[i].id === c.id ? 'scale(1.25)' : 'scale(1)'; });
+      // Show pending name field only for blue
+      pendingRow.style.display = c.id === 'blue' ? '' : 'none';
+    };
+    colourRow.appendChild(btn);
+    return btn;
+  });
+  form.appendChild(colourRow);
+
+  // Pending name row (blue only)
+  const pendingRow = document.createElement('div'); pendingRow.style.cssText = 'display:none;';
+  const pendingLbl = document.createElement('label'); pendingLbl.style.cssText = 'font-size:11px;color:var(--text2);display:block;margin-bottom:2px;'; pendingLbl.textContent = 'Waiting for…';
+  const pendingInput = document.createElement('input'); pendingInput.placeholder = 'e.g. Jonas, IT team…'; pendingInput.style.fontSize = '12px';
+  pendingRow.appendChild(pendingLbl); pendingRow.appendChild(pendingInput);
+  form.appendChild(pendingRow);
   toggleBtn.onclick = () => {
     isMeeting = !isMeeting;
     toggleBtn.textContent = isMeeting ? '✕ Meeting' : '+ Meeting';
@@ -950,6 +1757,7 @@ function renderAddForm(day, colBody, addBtn) {
     nLabel.textContent = isMeeting ? 'Agenda' : 'Note';
     nInput.placeholder = isMeeting ? 'Topics / agenda...' : 'Optional note...';
     saveBtn.textContent = isMeeting ? 'Schedule meeting' : 'Add task';
+    recurRow.style.display = isMeeting ? 'none' : '';
   };
 
   const fa = document.createElement('div'); fa.className = 'form-actions';
@@ -958,7 +1766,7 @@ function renderAddForm(day, colBody, addBtn) {
     if (!tInput.value.trim()) { tInput.focus(); return; }
     let dueText = '';
     if (dInput.value) { const dt = new Date(dInput.value+'T00:00:00'); dueText = fmtDate(dt); }
-    addTask(day, tInput.value.trim(), pSel.value, dueText, nInput.value.trim(), invited.slice(), isMeeting, tsInput.value, teInput.value);
+    addTask(day, tInput.value.trim(), pSel.value, dueText, nInput.value.trim(), invited.slice(), isMeeting, tsInput.value, teInput.value, recurChk.checked && !isMeeting, reminderChk.checked ? reminderTime.value : '', selectedColour, pendingInput.value.trim());
   };
   tInput.addEventListener('keydown', e => { if (e.key === 'Enter') saveBtn.click(); });
   const cancelBtn = document.createElement('button'); cancelBtn.className = 'btn-cancel'; cancelBtn.textContent = 'Cancel';
@@ -968,7 +1776,34 @@ function renderAddForm(day, colBody, addBtn) {
 }
 
 function renderPlanner() {
-  const mon = getMonday(weekOffset), fri = new Date(mon); fri.setDate(mon.getDate()+4);
+  // Auto-spawn recurring tasks for current week if not already present
+  const mon = getMonday(weekOffset);
+  tasks.filter(t => t.recurring && !t.done).forEach(t => {
+    // Check if this recurring task already exists for the current week
+    const alreadyThisWeek = tasks.some(x =>
+      x !== t && x.recurringFrom === t.id &&
+      x.day === t.day && x.weekStamp === mon.toISOString().slice(0,10)
+    );
+    if (!alreadyThisWeek && weekOffset !== 0) {
+      // Only spawn for non-current weeks when navigating — for current week, the original task shows
+    }
+    // Mark original task with weekStamp so we know which week it belongs to
+    if (!t.weekStamp) { t.weekStamp = mon.toISOString().slice(0,10); }
+  });
+
+  // For weeks other than the task's own week, show a copy of recurring tasks
+  const currentWeekStamp = mon.toISOString().slice(0,10);
+  const recurringTemplates = tasks.filter(t => t.recurring);
+  recurringTemplates.forEach(t => {
+    if (t.weekStamp === currentWeekStamp) return; // original week — shows naturally
+    const exists = tasks.some(x => x.recurringFrom === t.id && x.weekStamp === currentWeekStamp);
+    if (!exists) {
+      tasks.push({ id: Date.now() + Math.random() + '', day: t.day, title: t.title, priority: t.priority, due: '', note: t.note, people: t.people||[], isMeeting: t.isMeeting, timeStart: t.timeStart||'', timeEnd: t.timeEnd||'', recurring: false, recurringFrom: t.id, weekStamp: currentWeekStamp, done: false });
+      save();
+    }
+  });
+
+  const fri = new Date(mon); fri.setDate(mon.getDate()+4);
   document.getElementById('week-label').textContent = fmtDate(mon) + ' – ' + fmtDate(fri);
   if (calEvents.length > 0) document.getElementById('clear-cal-btn').style.display = '';
   const board = document.getElementById('board'); board.innerHTML = '';
@@ -1105,14 +1940,127 @@ function showMeetingDropDialog(task, newDay) {
   document.body.appendChild(overlay);
 }
 
+// ─── Theme toggle ─────────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light-mode');
+  localStorage.setItem('wtp_theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isLight ? '☀' : '🌙';
+}
+(function() {
+  if (localStorage.getItem('wtp_theme') === 'light') {
+    document.documentElement.classList.add('light-mode');
+    const btn = document.getElementById('theme-btn');
+    if (btn) btn.textContent = '☀';
+  }
+})();
+
+// ─── Reminders ────────────────────────────────────────────────────
+let reminderTimers = [];
+function clearReminders() { reminderTimers.forEach(clearTimeout); reminderTimers = []; }
+
+function scheduleReminder(task) {
+  if (!task.reminder || task.done) return;
+  const now = new Date();
+  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  if (task.day !== todayDay) return; // only schedule for today
+  const [h, m] = task.reminder.split(':').map(Number);
+  const fireAt = new Date(now); fireAt.setHours(h, m, 0, 0);
+  const ms = fireAt - now;
+  if (ms <= 0) return; // already passed
+  const t = setTimeout(async () => {
+    if (task.done) return;
+    if (Notification.permission === 'granted') {
+      new Notification('Planner reminder', { body: task.title, icon: '' });
+    } else {
+      // Fallback: in-app toast
+      showToast('⏰ Reminder: ' + task.title);
+    }
+  }, ms);
+  reminderTimers.push(t);
+}
+
+function scheduleAllReminders() {
+  clearReminders();
+  tasks.forEach(scheduleReminder);
+}
+
+async function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    await Notification.requestPermission();
+  }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:50px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--cal-border);color:var(--text);font-size:13px;font-weight:500;padding:10px 20px;border-radius:var(--radius-lg);box-shadow:0 4px 20px rgba(0,0,0,0.4);z-index:9000;animation:fadeIn 0.2s ease;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 5000);
+}
+
+// ─── Week drag drop ───────────────────────────────────────────────
+function weekDragDrop(dir, e) {
+  e.preventDefault();
+  document.getElementById(dir === -1 ? 'drag-prev-week' : 'drag-next-week').classList.remove('active');
+  if (!dragCard) return;
+  const t = tasks.find(x => x.id === dragCard);
+  if (!t) { dragCard = null; return; }
+  // Move task to same day next/prev week by updating its weekStamp and refreshing
+  // We do this by changing weekOffset temporarily to find the new week, then assigning
+  const targetOffset = weekOffset + dir;
+  const targetMon = getMonday(targetOffset);
+  t.weekStamp = targetMon.toISOString().slice(0,10);
+  dragCard = null;
+  save();
+  weekOffset = targetOffset;
+  renderPlanner();
+  // Show brief toast
+  showToast((dir === 1 ? 'Moved to next week →' : '← Moved to previous week'));
+}
+
 // Init
 const savedSched = localStorage.getItem('wtp_schedule');
 if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); } catch(e) {} }
 initScheduleSelect();
-renderPlanner();
 renderSchedule();
+loadUserData(); // loads tasks, notes, renders planner for current user
 
-// Live clock
+// ─── Keyboard shortcuts ───────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (!currentUser) return;
+  const tag = document.activeElement.tagName;
+  const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+  if (e.key === '/' && !typing) {
+    e.preventDefault();
+    const s = document.getElementById('task-search');
+    if (s) { s.focus(); s.select(); }
+  }
+  if (e.key === 't' && !typing && !e.metaKey && !e.ctrlKey) {
+    showTodayView();
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('today-modal').style.display = 'none';
+    document.getElementById('drop-dialog') && document.getElementById('drop-dialog').remove();
+    document.getElementById('search-results').style.display = 'none';
+    document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
+  }
+  if (e.key === 'q' && !typing && !e.metaKey && !e.ctrlKey) {
+    signOut();
+  }
+});
+
+// Show shortcuts hint
+(function() {
+  const hint = document.createElement('div');
+  hint.style.cssText = 'position:fixed;bottom:12px;right:16px;font-size:10px;color:var(--text3);display:flex;gap:12px;z-index:10;';
+  [['/', 'search'], ['T', 'today'], ['←→', 'week'], ['Q', 'sign out']].forEach(([key, label]) => {
+    const s = document.createElement('span');
+    s.innerHTML = '<span style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:monospace;margin-right:4px;">' + key + '</span>' + label;
+    hint.appendChild(s);
+  });
+  document.body.appendChild(hint);
+})();
 function updateClock() {
   const now = new Date();
   document.getElementById('live-clock').textContent =
