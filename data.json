@@ -9,6 +9,11 @@
       "name": "Andreas",
       "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
       "isAdmin": false
+    },
+    {
+      "name": "Michael",
+      "hash": "18f48b681eb76361ac6088b4edb29649ca92a27ba36cf857678dd417f4eafc41",
+      "isAdmin": false
     }
   ],
   "wtp_tasks_mathias": [
@@ -182,7 +187,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D2 (8-16)",
             "D2 (8-16)",
@@ -532,7 +537,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "SO",
             "D3 (9-17)",
@@ -882,7 +887,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1232,7 +1237,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "SO",
             "D3 (9-17)",
@@ -1582,7 +1587,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1932,7 +1937,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -2282,7 +2287,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "H",
             "D2 (8-16)",
@@ -2632,7 +2637,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -2982,7 +2987,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "SO",
             "D2 (8-16)",
@@ -3332,7 +3337,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -3682,7 +3687,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D3 (9-17)",
             "D3 (9-17)",
@@ -3989,7 +3994,7 @@
         "addedAt": "2026-01-01"
       },
       {
-        "name": "Maylén",
+        "name": "MaylÃ©n",
         "addedAt": "2026-01-01"
       },
       {
