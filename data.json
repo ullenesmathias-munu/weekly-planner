@@ -135,13 +135,13 @@
     {
       "week": "Week 16",
       "dates": [
+        "2026-04-12",
         "2026-04-13",
         "2026-04-14",
         "2026-04-15",
         "2026-04-16",
         "2026-04-17",
-        "",
-        ""
+        "2026-04-18"
       ],
       "people": [
         {
@@ -152,15 +152,6 @@
             "H",
             "H",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -175,19 +166,10 @@
             "E (17-6)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "D2 (8-16)",
             "D2 (8-16)",
@@ -196,15 +178,6 @@
             "D2 (8-16)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -217,15 +190,6 @@
             "D1 (7-15)",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
@@ -236,15 +200,6 @@
             "D3 (9-17)",
             "H",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            "",
             "",
             ""
           ]
@@ -259,15 +214,6 @@
             "D3 (9-17)",
             "W3 (15-19)",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -280,15 +226,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -299,15 +236,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -322,15 +250,6 @@
             "D3 (9-17)",
             "W2 (17-6)",
             "W2 (17-6)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -341,15 +260,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -364,15 +274,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -383,15 +284,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -406,15 +298,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -425,15 +308,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -448,15 +322,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -467,15 +332,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -485,13 +341,13 @@
     {
       "week": "Week 17",
       "dates": [
+        "2026-04-19",
         "2026-04-20",
         "2026-04-21",
         "2026-04-22",
         "2026-04-23",
         "2026-04-24",
-        "",
-        ""
+        "2026-04-25"
       ],
       "people": [
         {
@@ -502,15 +358,6 @@
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -525,34 +372,16 @@
             "D3 (9-17)",
             "W2 (17-6)",
             "W2 (17-6)"
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "SO",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -565,17 +394,8 @@
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
+            "W1 (7-17)",
+            "W1 (7-17)"
           ]
         },
         {
@@ -586,15 +406,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "W1 (7-17)",
-            "W1 (7-17)"
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -609,15 +420,6 @@
             "D3 (9-17)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -630,15 +432,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -649,15 +442,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Inbox Champion",
-            "Inbox Champion",
             "",
             ""
           ]
@@ -672,15 +456,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -691,15 +466,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -714,15 +480,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -733,15 +490,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -756,15 +504,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -775,15 +514,6 @@
             "D2 (8-16)",
             "H",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -798,15 +528,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -816,16 +537,7 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "FLEX",
             "",
             ""
           ]
@@ -835,13 +547,13 @@
     {
       "week": "Week 18",
       "dates": [
+        "2026-04-26",
         "2026-04-27",
         "2026-04-28",
         "2026-04-29",
         "2026-04-30",
         "2026-05-01",
-        "",
-        ""
+        "2026-05-02"
       ],
       "people": [
         {
@@ -854,15 +566,6 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
@@ -870,60 +573,33 @@
           "shifts": [
             "SO",
             "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
             "H",
-            "H",
-            "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Inbox Champion",
-            "Inbox Champion",
             "",
             ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
             "H1 (7-17)",
-            "W1 (7-17)",
-            "W1 (7-17)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
+            "W2 (17-6)",
+            "W2 (17-6)"
           ]
         },
         {
           "name": "Bernadett",
           "shifts": [
-            "D3 (9-17)",
+            "SO",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -931,22 +607,13 @@
         {
           "name": "Benjamin",
           "shifts": [
-            "SO",
+            "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
             "H",
-            "W2 (17-6)",
-            "W2 (17-6)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
+            "W1 (7-17)",
+            "W1 (7-17)"
           ]
         },
         {
@@ -957,15 +624,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -980,15 +638,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -999,15 +648,6 @@
             "E (17-6)",
             "E (17-6)",
             "H2 (17-6)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1022,15 +662,6 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1041,15 +672,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -1064,15 +686,6 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1083,15 +696,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1106,15 +710,6 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1125,15 +720,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1148,15 +734,6 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1167,15 +744,6 @@
             "FLEX",
             "FLEX",
             "H",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1185,13 +753,13 @@
     {
       "week": "Week 19",
       "dates": [
+        "2026-05-03",
         "2026-05-04",
         "2026-05-05",
         "2026-05-06",
         "2026-05-07",
         "2026-05-08",
-        "",
-        ""
+        "2026-05-09"
       ],
       "people": [
         {
@@ -1204,15 +772,6 @@
             "D3 (9-17)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1225,34 +784,16 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
+            "SO",
             "SO",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -1267,34 +808,16 @@
             "H",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
           "name": "Benjamin",
           "shifts": [
             "SO",
-            "SO",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
+            "D3 (9-17)",
             "",
             ""
           ]
@@ -1309,15 +832,6 @@
             "D3 (9-17)",
             "W2 (17-6)",
             "W2 (17-6)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1330,15 +844,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1349,15 +854,6 @@
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -1372,15 +868,6 @@
             "E (17-6)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1391,15 +878,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
             "",
             ""
           ]
@@ -1414,15 +892,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -1433,15 +902,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1456,15 +916,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1475,15 +926,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1498,15 +940,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1519,15 +952,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         }
       ]
@@ -1535,13 +959,13 @@
     {
       "week": "Week 20",
       "dates": [
+        "2026-05-10",
         "2026-05-11",
         "2026-05-12",
         "2026-05-13",
         "2026-05-14",
         "2026-05-15",
-        "",
-        ""
+        "2026-05-16"
       ],
       "people": [
         {
@@ -1554,15 +978,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1575,19 +990,10 @@
             "D3 (9-17)",
             "",
             "H"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1596,15 +1002,6 @@
             "D1 (7-15)",
             "",
             "H"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1617,15 +1014,6 @@
             "D2 (8-16)",
             "",
             "H"
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
@@ -1638,15 +1026,6 @@
             "E (17-6)",
             "",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1659,15 +1038,6 @@
             "H",
             "",
             "H"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1680,15 +1050,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1701,15 +1062,6 @@
             "D3 (9-17)",
             "W1 (7-17)",
             "H1 (7-17)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1722,15 +1074,6 @@
             "D3 (9-17)",
             "W2 (17-6)",
             "H2 (17-6)"
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -1743,15 +1086,6 @@
             "D2 (8-16)",
             "",
             "H"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1764,15 +1098,6 @@
             "D2 (8-16)",
             "",
             "H"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -1785,15 +1110,6 @@
             "D3 (9-17)",
             "W2 (17-6)",
             "H2 (11-21)"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1806,15 +1122,6 @@
             "D2 (8-16)",
             "",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1827,15 +1134,6 @@
             "D2 (8-16)",
             "",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1848,15 +1146,6 @@
             "FLEX",
             "",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -1869,15 +1158,6 @@
             "FLEX",
             "",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         }
       ]
@@ -1885,13 +1165,13 @@
     {
       "week": "Week 21",
       "dates": [
+        "2026-05-17",
         "2026-05-18",
         "2026-05-19",
         "2026-05-20",
         "2026-05-21",
         "2026-05-22",
-        "",
-        ""
+        "2026-05-23"
       ],
       "people": [
         {
@@ -1902,15 +1182,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Inbox Champion",
-            "Inbox Champion",
             "",
             ""
           ]
@@ -1925,34 +1196,16 @@
             "D1 (7-15)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -1965,15 +1218,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "W2 (17-6)",
-            "W2 (17-6)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -1986,17 +1230,8 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
+            "W2 (17-6)",
+            "W2 (17-6)"
           ]
         },
         {
@@ -2007,15 +1242,6 @@
             "H",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2030,15 +1256,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2049,15 +1266,6 @@
             "D3 (9-17)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2072,15 +1280,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -2091,15 +1290,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2114,15 +1304,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -2135,15 +1316,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2154,15 +1326,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -2177,15 +1340,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2196,15 +1350,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -2219,15 +1364,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         }
       ]
@@ -2235,13 +1371,13 @@
     {
       "week": "Week 22",
       "dates": [
+        "2026-05-24",
         "2026-05-25",
         "2026-05-26",
         "2026-05-27",
         "2026-05-28",
         "2026-05-29",
-        "",
-        ""
+        "2026-05-30"
       ],
       "people": [
         {
@@ -2252,15 +1388,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2275,19 +1402,10 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "H",
             "D2 (8-16)",
@@ -2296,55 +1414,28 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
           "name": "Bernadett",
           "shifts": [
-            "SO",
-            "SO",
+            "H",
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
+            "D2 (8-16)",
+            "W2 (17-6)",
+            "W2 (17-6)"
           ]
         },
         {
           "name": "Benjamin",
           "shifts": [
+            "SO",
+            "SO",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "D3 (9-17)",
-            "D3 (9-17)",
-            "W2 (17-6)",
-            "W2 (17-6)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2359,15 +1450,6 @@
             "E (17-6)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2380,15 +1462,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2401,15 +1474,6 @@
             "D1 (7-15)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -2420,15 +1484,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "SLA Sherpa",
-            "SLA Sherpa",
             "",
             ""
           ]
@@ -2443,15 +1498,6 @@
             "D3 (9-17)",
             "",
             ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -2462,15 +1508,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2485,15 +1522,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2504,15 +1532,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -2527,15 +1546,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2546,15 +1556,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -2569,15 +1570,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         }
       ]
@@ -2585,13 +1577,13 @@
     {
       "week": "Week 23",
       "dates": [
+        "2026-05-31",
         "2026-06-01",
         "2026-06-02",
         "2026-06-03",
         "2026-06-04",
         "2026-06-05",
-        "",
-        ""
+        "2026-06-06"
       ],
       "people": [
         {
@@ -2604,15 +1596,6 @@
             "D2 (8-16)",
             "W2 (17-6)",
             "W2 (17-6)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -2625,34 +1608,16 @@
             "E (17-6)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
             "D1 (7-15)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2660,20 +1625,11 @@
         {
           "name": "Bernadett",
           "shifts": [
+            "SO",
+            "SO",
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "D2 (8-16)",
-            "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2681,20 +1637,11 @@
         {
           "name": "Benjamin",
           "shifts": [
-            "SO",
-            "SO",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
+            "D3 (9-17)",
+            "D3 (9-17)",
             "",
             ""
           ]
@@ -2709,15 +1656,6 @@
             "D3 (9-17)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
@@ -2730,15 +1668,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2749,15 +1678,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2772,15 +1692,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -2791,15 +1702,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -2814,15 +1716,6 @@
             "D3 (9-17)",
             "",
             ""
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -2835,15 +1728,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2854,15 +1738,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -2877,15 +1752,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -2896,15 +1762,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -2919,15 +1776,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         }
       ]
@@ -2935,13 +1783,13 @@
     {
       "week": "Week 24",
       "dates": [
+        "2026-06-07",
         "2026-06-08",
         "2026-06-09",
         "2026-06-10",
         "2026-06-11",
         "2026-06-12",
-        "",
-        ""
+        "2026-06-13"
       ],
       "people": [
         {
@@ -2952,15 +1800,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Inbox Champion",
-            "Inbox Champion",
             "",
             ""
           ]
@@ -2975,34 +1814,16 @@
             "D1 (7-15)",
             "",
             ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "SO",
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3017,15 +1838,6 @@
             "E (17-6)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3036,15 +1848,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3059,15 +1862,6 @@
             "D3 (9-17)",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3080,15 +1874,6 @@
             "ABS",
             "ABS",
             "ABS"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3101,15 +1886,6 @@
             "D2 (8-16)",
             "W2 (17-6)",
             "H2 (17-6)"
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3122,15 +1898,6 @@
             "D3 (9-17)",
             "W1 (7-17)",
             "H1 (7-17)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3143,15 +1910,6 @@
             "D3 (9-17)",
             "W2 (17-6)",
             "H2 (17-6)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3162,15 +1920,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3185,15 +1934,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3204,15 +1944,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3227,15 +1958,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3248,15 +1970,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3267,15 +1980,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3285,13 +1989,13 @@
     {
       "week": "Week 25",
       "dates": [
+        "2026-06-14",
         "2026-06-15",
         "2026-06-16",
         "2026-06-17",
         "2026-06-18",
         "2026-06-19",
-        "",
-        ""
+        "2026-06-20"
       ],
       "people": [
         {
@@ -3302,15 +2006,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3325,34 +2020,16 @@
             "D2 (8-16)",
             "W2 (17-6)",
             "W2 (17-6)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3367,15 +2044,6 @@
             "D1 (7-15)",
             "",
             ""
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "",
-            ""
           ]
         },
         {
@@ -3388,15 +2056,6 @@
             "D3 (9-17)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -3407,15 +2066,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3430,15 +2080,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3449,15 +2090,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3472,15 +2104,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3491,15 +2114,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3514,15 +2128,6 @@
             "D3 (9-17)",
             "",
             ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3533,15 +2138,6 @@
             "H",
             "H",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3556,15 +2152,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3575,15 +2162,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3598,15 +2176,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3617,15 +2186,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3635,13 +2195,13 @@
     {
       "week": "Week 26",
       "dates": [
+        "2026-06-21",
         "2026-06-22",
         "2026-06-23",
         "2026-06-24",
         "2026-06-25",
         "2026-06-26",
-        "",
-        ""
+        "2026-06-27"
       ],
       "people": [
         {
@@ -3652,15 +2212,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3675,34 +2226,16 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
-          "name": "MaylÃÂ©n",
+          "name": "Maylén",
           "shifts": [
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3717,15 +2250,6 @@
             "D3 (9-17)",
             "W1 (7-17)",
             "W1 (7-17)"
-          ],
-          "roles": [
-            "Phone Guru",
-            "Phone Guru",
-            "Phone Guru",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3736,15 +2260,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "SLA Sherpa",
-            "SLA Sherpa",
             "",
             ""
           ]
@@ -3759,15 +2274,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "Inbox Champion",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3780,15 +2286,6 @@
             "H",
             "H",
             "H"
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3799,15 +2296,6 @@
             "E (17-6)",
             "E (17-6)",
             "E (17-6)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3822,15 +2310,6 @@
             "D1 (7-15)",
             "W2 (17-6)",
             "W2 (17-6)"
-          ],
-          "roles": [
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "SLA Sherpa",
-            "Inbox Champion",
-            "Inbox Champion",
-            "",
-            ""
           ]
         },
         {
@@ -3841,15 +2320,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
             "",
             ""
           ]
@@ -3864,15 +2334,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "Freelancer",
-            "",
-            ""
           ]
         },
         {
@@ -3883,15 +2344,6 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3906,15 +2358,6 @@
             "D2 (8-16)",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3925,15 +2368,6 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3948,15 +2382,6 @@
             "FLEX",
             "",
             ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
           ]
         },
         {
@@ -3967,15 +2392,6 @@
             "FLEX",
             "FLEX",
             "FLEX",
-            "",
-            ""
-          ],
-          "roles": [
-            "",
-            "",
-            "",
-            "",
-            "",
             "",
             ""
           ]
@@ -3994,7 +2410,7 @@
         "addedAt": "2026-01-01"
       },
       {
-        "name": "MaylÃ©n",
+        "name": "MaylÃÂ©n",
         "addedAt": "2026-01-01"
       },
       {
