@@ -1,4 +1,113 @@
 {
+  "wtp_users": [
+    {
+      "name": "Mathias",
+      "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "isAdmin": true
+    },
+    {
+      "name": "Andreas",
+      "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "isAdmin": false
+    }
+  ],
+  "wtp_tasks_mathias": [
+    {
+      "id": "1777282594906",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "medium",
+      "due": "26 Apr",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": true,
+      "reminder": "",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    },
+    {
+      "id": "1777282597751.1953",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "medium",
+      "due": "",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "recurringFrom": "1777282594906",
+      "weekStamp": "2026-05-03",
+      "colour": "amber",
+      "pendingName": "",
+      "reminder": "",
+      "done": false
+    },
+    {
+      "id": "1777282598128.9836",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "medium",
+      "due": "",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "recurringFrom": "1777282594906",
+      "weekStamp": "2026-05-10",
+      "colour": "amber",
+      "pendingName": "",
+      "reminder": "",
+      "done": false
+    },
+    {
+      "id": "1777282598506.8596",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "medium",
+      "due": "",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "recurringFrom": "1777282594906",
+      "weekStamp": "2026-05-17",
+      "colour": "amber",
+      "pendingName": "",
+      "reminder": "",
+      "done": false
+    },
+    {
+      "id": "1777316960543",
+      "day": "Monday",
+      "title": "1:1 with Thomas",
+      "priority": "",
+      "due": "",
+      "note": "",
+      "people": [
+        "Thomas"
+      ],
+      "isMeeting": true,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "blue",
+      "pendingName": "",
+      "weekStamp": "2026-04-27",
+      "done": false
+    }
+  ],
   "wtp_schedule": [
     {
       "week": "Week 16",
@@ -55,7 +164,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D2 (8-16)",
             "D2 (8-16)",
@@ -405,7 +514,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "SO",
             "D3 (9-17)",
@@ -755,7 +864,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1105,7 +1214,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "SO",
             "D3 (9-17)",
@@ -1455,7 +1564,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1805,7 +1914,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -2155,7 +2264,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "H",
             "D2 (8-16)",
@@ -2505,7 +2614,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -2855,7 +2964,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "SO",
             "D2 (8-16)",
@@ -3205,7 +3314,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -3555,7 +3664,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D3 (9-17)",
             "D3 (9-17)",
@@ -3851,93 +3960,60 @@
       ]
     }
   ],
-  "wtp_tasks_mathias": [
-    {
-      "id": "1777282594906",
-      "day": "Monday",
-      "title": "Approve Hours POGO",
-      "priority": "medium",
-      "due": "26 Apr",
-      "note": "",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": true,
-      "reminder": "",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-04-26",
-      "done": false
-    },
-    {
-      "id": "1777282597751.1953",
-      "day": "Monday",
-      "title": "Approve Hours POGO",
-      "priority": "medium",
-      "due": "",
-      "note": "",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "recurringFrom": "1777282594906",
-      "weekStamp": "2026-05-03",
-      "colour": "amber",
-      "pendingName": "",
-      "reminder": "",
-      "done": false
-    },
-    {
-      "id": "1777282598128.9836",
-      "day": "Monday",
-      "title": "Approve Hours POGO",
-      "priority": "medium",
-      "due": "",
-      "note": "",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "recurringFrom": "1777282594906",
-      "weekStamp": "2026-05-10",
-      "colour": "amber",
-      "pendingName": "",
-      "reminder": "",
-      "done": false
-    },
-    {
-      "id": "1777282598506.8596",
-      "day": "Monday",
-      "title": "Approve Hours POGO",
-      "priority": "medium",
-      "due": "",
-      "note": "",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "recurringFrom": "1777282594906",
-      "weekStamp": "2026-05-17",
-      "colour": "amber",
-      "pendingName": "",
-      "reminder": "",
-      "done": false
-    }
-  ],
-  "wtp_users": [
-    {
-      "name": "Mathias",
-      "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-      "isAdmin": true
-    },
-    {
-      "name": "Andreas",
-      "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-      "isAdmin": false
-    }
-  ]
+  "wtp_oto_mathias": {
+    "people": [
+      {
+        "name": "Jonas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Thomas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Maylén",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Bernadett",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Benjamin",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Cecilie",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Tord",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Marie",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Andreas",
+        "addedAt": "2026-01-01"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "1777314142339",
+        "person": "Thomas",
+        "date": "2026-04-27",
+        "notes": "",
+        "actions": []
+      },
+      {
+        "id": "1777316960538",
+        "person": "Thomas",
+        "date": "2026-04-27",
+        "notes": "",
+        "actions": []
+      }
+    ]
+  }
 }
