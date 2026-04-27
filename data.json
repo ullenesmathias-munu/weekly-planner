@@ -2434,7 +2434,7 @@
       "timeEnd": "09:30",
       "recurring": false,
       "reminder": "09:45",
-      "colour": "blue",
+      "colour": "amber",
       "pendingName": "",
       "weekStamp": "2026-04-26",
       "done": false
