@@ -4,6 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Weekly Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -13,6 +16,7 @@
     --cal: #141e35; --cal-text: #7aadff; --cal-border: #1e3260;
     --accent: #7aadff; --radius-md: 8px; --radius-lg: 12px;
     --high-bg: #2d1515; --high-text: #ff8080; --med-bg: #2a1f08; --med-text: #ffb347; --low-bg: #0e2215; --low-text: #5fcc7a;
+    --today-tint: rgba(122,173,255,0.05);
   }
   .light-mode {
     --bg: #f5f5f3; --surface: #ffffff; --surface2: #f0efed; --surface3: #e8e7e5;
@@ -21,6 +25,7 @@
     --cal: #e8f0fe; --cal-text: #1a56c4; --cal-border: #b3c8f5;
     --accent: #1a56c4;
     --high-bg: #fce8e8; --high-text: #b91c1c; --med-bg: #fef3e2; --med-text: #92400e; --low-bg: #ecfdf5; --low-text: #065f46;
+    --today-tint: rgba(26,86,196,0.05);
   }
   .light-mode .badge-high { background: var(--high-bg) !important; color: var(--high-text) !important; }
   .light-mode .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
@@ -35,7 +40,30 @@
   .light-mode #live-clock { color: var(--text); }
   html { color-scheme: dark; }
   .light-mode { color-scheme: light; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
+  /* Today column highlight */
+  .col.is-today > .col-header { color: var(--cal-text); }
+  .col.is-today > .col-body { background: rgba(122,173,255,0.08); border-color: var(--cal-border); border-width: 1.5px; }
+  .col.is-today .col-header-day { color: var(--cal-text); }
+  .light-mode .col.is-today > .col-body { background: rgba(26,86,196,0.07); }
+  /* Task count badge */
+  .col-task-count { font-size: 10px; font-weight: 600; color: var(--text3); background: var(--surface3); border-radius: 8px; padding: 1px 6px; margin-left: 5px; vertical-align: middle; transition: background 0.15s, color 0.15s; }
+  .col.is-today .col-task-count { background: var(--cal); color: var(--cal-text); }
+  /* Week progress bar */
+  .week-progress-wrap { display: flex; align-items: center; gap: 10px; padding: 0 2px 12px; }
+  .week-progress-bar { flex: 1; height: 3px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+  .week-progress-fill { height: 100%; background: var(--cal-text); border-radius: 4px; transition: width 0.4s ease; }
+  .week-progress-label { font-size: 11px; color: var(--text3); white-space: nowrap; flex-shrink: 0; }
+  /* Schedule today column */
+  .sched-table th.today-col { color: var(--cal-text) !important; background: var(--cal) !important; }
+  .sched-table td.today-col { background: var(--today-tint) !important; }
+  /* Advanced settings collapse */
+  .settings-advanced-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; color: var(--text3); font-size: 12px; font-weight: 600; user-select: none; }
+  .settings-advanced-toggle:hover { color: var(--text2); }
+  .settings-advanced-toggle::before { content: '›'; font-size: 14px; transition: transform 0.2s; display: inline-block; }
+  .settings-advanced-toggle.open::before { transform: rotate(90deg); }
+  .settings-advanced-body { display: none; flex-direction: column; gap: 16px; margin-top: 4px; }
+  .settings-advanced-body.open { display: flex; }
   .badge-high { background: var(--high-bg) !important; color: var(--high-text) !important; }
   .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
   .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
@@ -77,6 +105,27 @@
   .col-header { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.09em; padding: 4px 2px 6px; }
   .col-body { flex: 1; display: flex; flex-direction: column; gap: 7px; background: var(--surface2); border-radius: var(--radius-lg); padding: 8px; border: 1px solid var(--border); min-height: 80px; transition: border-color 0.2s; }
   .col-body.drag-over { border: 1.5px dashed var(--border3); background: var(--surface3); }
+  .card-drop-indicator { height: 2px; background: var(--cal-text); border-radius: 2px; margin: -2px 0; opacity: 0; transition: opacity 0.15s; pointer-events: none; }
+  .card-drop-indicator.visible { opacity: 1; }
+  /* Availability strip */
+  .avail-strip { display: flex; gap: 6px; flex-wrap: wrap; padding: 7px 0 10px; border-bottom: 0.5px solid var(--border); margin-bottom: 10px; align-items: center; }
+  .avail-strip-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-right: 4px; flex-shrink: 0; }
+  .avail-pill { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 10px; white-space: nowrap; }
+  .avail-in  { background: var(--low-bg); color: var(--low-text); }
+  .avail-off { background: var(--surface3); color: var(--text3); }
+  /* Today side panel */
+  .today-panel { flex: 0 0 220px; display: flex; flex-direction: column; gap: 0; min-height: 65vh; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: all 0.2s; }
+  .today-panel-header { padding: 12px 14px 10px; border-bottom: 0.5px solid var(--border); display: flex; flex-direction: column; gap: 2px; }
+  .today-panel-date { font-size: 11px; color: var(--text3); }
+  .today-panel-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .today-panel-body { flex: 1; overflow-y: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 14px; }
+  .today-panel-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 5px; }
+  .today-panel-empty { font-size: 12px; color: var(--text3); }
+  /* Carry forward banner */
+  .carry-banner { background: var(--cal); border: 1px solid var(--cal-border); border-radius: var(--radius-md); padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .carry-banner-text { font-size: 12px; color: var(--cal-text); flex: 1; }
+  .carry-banner-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+  .carry-banner-dismiss { font-size: 11px; color: var(--cal-text); background: none; border: none; cursor: pointer; opacity: 0.7; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; cursor: grab; display: flex; flex-direction: column; gap: 6px; transition: border-color 0.18s, background 0.18s, transform 0.15s; }
   .card:hover { border-color: var(--border2); background: #1e1e25; transform: translateY(-1px); }
   .card:active { cursor: grabbing; transform: translateY(0); }
@@ -201,7 +250,53 @@
   .role-summary-names { font-size: 12px; color: var(--text2); line-height: 1.5; }
   .role-summary-names.empty { color: var(--text3); font-style: italic; }
   .week-select { font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; outline: none; cursor: pointer; }
-  .settings-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; transition: border-color 0.2s; }
+  /* ─── 1:1 Tab ─────────────────────────────────────── */
+  .oto-layout { display: flex; gap: 0; min-height: 70vh; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); margin-top: 4px; }
+  .oto-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  .oto-sidebar-header { padding: 12px 14px 10px; border-bottom: 0.5px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); }
+  .oto-person-btn { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; text-align: left; transition: background 0.12s; border-bottom: 0.5px solid var(--border); }
+  .oto-person-btn:hover { background: var(--surface2); }
+  .oto-person-btn.active { background: var(--cal); border-left: 2.5px solid var(--cal-text); }
+  .oto-person-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+  .oto-person-btn.active .oto-person-avatar { background: var(--cal-text); color: #0f0f11; }
+  .oto-person-info { flex: 1; min-width: 0; }
+  .oto-person-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .oto-person-meta { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .oto-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .oto-empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text3); padding: 40px; }
+  .oto-person-header { padding: 16px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .oto-person-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .oto-person-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .oto-sessions { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .oto-session-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s; }
+  .oto-session-card:hover { border-color: var(--border2); }
+  .oto-session-card.upcoming { border-left: 3px solid var(--cal-text); }
+  .oto-session-card.past { opacity: 0.75; }
+  .oto-session-header { padding: 12px 14px 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .oto-session-date { font-size: 13px; font-weight: 600; color: var(--text); }
+  .oto-session-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px; }
+  .oto-session-badge.upcoming { background: var(--cal); color: var(--cal-text); }
+  .oto-session-badge.past { background: var(--surface3); color: var(--text3); }
+  .oto-session-badge.today { background: var(--low-bg); color: var(--low-text); }
+  .oto-session-body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .oto-field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 4px; }
+  .oto-notes-area { width: 100%; font-family: inherit; font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; outline: none; resize: vertical; min-height: 80px; line-height: 1.6; transition: border-color 0.15s; }
+  .oto-notes-area:focus { border-color: var(--cal-text); }
+  .oto-action-row { display: flex; gap: 6px; align-items: center; }
+  .oto-action-input { flex: 1; font-family: inherit; font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 8px; outline: none; }
+  .oto-action-input:focus { border-color: var(--cal-text); }
+  .oto-action-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 0.5px solid var(--border); }
+  .oto-action-item:last-child { border-bottom: none; }
+  .oto-action-check { accent-color: var(--cal-text); width: 13px; height: 13px; cursor: pointer; flex-shrink: 0; }
+  .oto-action-text { font-size: 12px; color: var(--text); flex: 1; }
+  .oto-action-text.done { text-decoration: line-through; color: var(--text3); }
+  .oto-action-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 0 4px; }
+  .oto-action-del:hover { color: var(--high-text); }
+  .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+  .oto-session-toggle { font-size: 12px; color: var(--text3); transition: transform 0.2s; display: inline-block; }
+  .oto-new-session-bar { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; flex-shrink: 0; background: var(--surface); }
+  .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
+  .oto-add-person-btn:hover { color: var(--cal-text); }
   .settings-card:hover { border-color: var(--border2); }
   .settings-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
   .settings-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
@@ -293,6 +388,7 @@ window.tryUnlock = async function() {
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
+  <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">💬 1:1s</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">⚙ Settings</button>
   <div class="clock-wrap">
     <span id="user-display" style="font-size:12px;color:var(--text2);margin-right:4px;"></span>
@@ -315,21 +411,37 @@ window.tryUnlock = async function() {
     </div>
     <div class="topbar-right">
       <span id="status-msg"></span>
+      <span id="sync-status" style="font-size:11px;color:var(--text3);transition:color 0.3s;"></span>
       <div class="search-wrap">
         <input type="text" id="task-search" placeholder="🔍 Search tasks…" oninput="searchTasks(this.value)" autocomplete="off">
         <div id="search-results" class="search-results"></div>
       </div>
-      <button class="btn-today-view" onclick="showTodayView()">☀ Today</button>
+      <button class="btn-today-view" onclick="toggleTodayPanel()" id="today-panel-btn">☀ Today</button>
     </div>
   </div>
   <!-- Daily quote strip -->
-  <div class="quote-strip" id="quote-strip">
-    <span id="quote-text"></span>
+  <div class="quote-strip" id="quote-strip"><span id="quote-text"></span></div>
+  <!-- Week progress bar -->
+  <div class="week-progress-wrap" id="week-progress-wrap">
+    <div class="week-progress-bar"><div class="week-progress-fill" id="week-progress-fill" style="width:0%"></div></div>
+    <span class="week-progress-label" id="week-progress-label"></span>
   </div>
+  <!-- Availability strip -->
+  <div class="avail-strip" id="avail-strip"></div>
+  <!-- Carry forward banner -->
+  <div id="carry-banner-wrap"></div>
   <div class="planner-wrap">
     <div class="week-drag-zone" id="drag-prev-week" ondragover="event.preventDefault();this.classList.add('active')" ondragleave="this.classList.remove('active')" ondrop="weekDragDrop(-1,event)">‹</div>
     <div class="board" id="board"></div>
     <div class="week-drag-zone" id="drag-next-week" ondragover="event.preventDefault();this.classList.add('active')" ondragleave="this.classList.remove('active')" ondrop="weekDragDrop(1,event)">›</div>
+    <!-- Right panel: today or notepad -->
+    <div id="today-panel" class="today-panel" style="display:none;">
+      <div class="today-panel-header">
+        <div class="today-panel-date" id="tp-date"></div>
+        <div class="today-panel-title">What's on today</div>
+      </div>
+      <div class="today-panel-body" id="tp-body"></div>
+    </div>
     <div class="notepad" id="notepad">
       <div class="notepad-header">
         <span class="notepad-title">📝 Notes</span>
@@ -359,9 +471,36 @@ window.tryUnlock = async function() {
   <div id="wingman-section" style="margin-top:24px;"></div>
 </div>
 
+<!-- 1:1 TAB -->
+<div id="tab-onetoone" class="tab-content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span style="font-size:14px;font-weight:700;color:var(--text);">1:1 Conversations</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-save" onclick="showAddPersonModal()" style="font-size:12px;">+ Add person</button>
+    </div>
+  </div>
+  <div class="oto-layout">
+    <div class="oto-sidebar" id="oto-sidebar"></div>
+    <div class="oto-main" id="oto-main">
+      <div class="oto-empty-state" id="oto-empty">
+        <div style="font-size:32px;margin-bottom:10px;">💬</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Select a person</div>
+        <div style="font-size:12px;color:var(--text3);">Pick someone from the left to view or schedule a 1:1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS TAB -->
 <div id="tab-settings" class="tab-content">
   <div style="max-width:520px; display:flex; flex-direction:column; gap:24px; padding-top:4px;">
+
+    <!-- Advanced settings toggle -->
+    <div>
+      <div class="settings-advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">Advanced settings</div>
+      <div class="settings-advanced-body" id="adv-body">
 
     <!-- ICS Calendar import -->
     <div class="settings-card">
@@ -392,6 +531,22 @@ window.tryUnlock = async function() {
       <div id="xlsx-preview" style="margin-top:10px; font-size:11px; color:var(--text3); display:none;"></div>
       <div style="font-size:11px; color:var(--text3); margin-top:10px; line-height:1.6;">
         Note: The schedule is saved in your browser. After uploading, switch to the Team Schedule tab to verify it loaded correctly.
+      </div>
+    </div>
+
+    <!-- GitHub Sync -->
+    <div class="settings-card">
+      <div class="settings-card-title">☁ GitHub Sync</div>
+      <div class="settings-card-desc">Sync your tasks, notes and schedule across devices via your GitHub repo. Paste your token once — it saves to this browser only and is never stored in the code.</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+        <input type="password" id="gh-token-input" placeholder="Paste GitHub token (ghp_...)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+        <button class="btn-save" onclick="saveGhToken()" style="font-size:12px;white-space:nowrap;">Connect</button>
+        <button class="btn-cancel" onclick="removeGhToken()" style="font-size:12px;">Disconnect</button>
+      </div>
+      <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
+        <button onclick="ghLoad()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Pull now</button>
+        <button onclick="ghSave()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Push now</button>
       </div>
     </div>
 
@@ -449,7 +604,10 @@ window.tryUnlock = async function() {
       <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
       <button class="btn-cancel" style="margin-top:10px; color:#A32D2D; border-color:#f09595;" onclick="if(confirm('Delete all tasks?')){ tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }">Clear all tasks</button>
       <span id="clear-tasks-msg" style="font-size:11px; color:var(--text3); margin-left:10px;"></span>
-    </div>
+    </div> <!-- end clear all tasks card -->
+
+      </div> <!-- end adv-body -->
+    </div> <!-- end advanced section -->
 
     <!-- Incomplete task history -->
     <div class="settings-card">
@@ -458,20 +616,6 @@ window.tryUnlock = async function() {
       <div id="history-list" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
-  </div>
-</div>
-
-<!-- Today view modal -->
-<div id="today-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:500; align-items:center; justify-content:center;">
-  <div class="today-modal-box">
-    <div class="today-modal-header">
-      <div>
-        <div id="today-modal-date" style="font-size:13px; color:var(--text2); margin-bottom:2px;"></div>
-        <div style="font-size:18px; font-weight:700; color:var(--text);">What's on today</div>
-      </div>
-      <button onclick="document.getElementById('today-modal').style.display='none'" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;">×</button>
-    </div>
-    <div id="today-modal-body" style="display:flex; flex-direction:column; gap:16px; overflow-y:auto; max-height:65vh; padding-top:4px;"></div>
   </div>
 </div>
 
@@ -525,13 +669,14 @@ function switchTab(name, btn) {
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
   if (name === 'settings') { renderHistory(); renderUserList(); const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name; const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = (currentUser && currentUser.isAdmin) ? '' : 'none'; }
+  if (name === 'onetoone') { renderOtoTab(); }
 }
 
 // ─── Incomplete task history ──────────────────────────────────────
 function renderHistory() {
   const container = document.getElementById('history-list');
   if (!container) return;
-  const todayStr = new Date().toISOString().slice(0,10);
+  const todayStr = localToday();
   const mon = getMonday(weekOffset);
   const thisWeekDays = DAYS.map((d, i) => { const dt = new Date(mon); dt.setDate(mon.getDate()+i); return dt.toISOString().slice(0,10); });
 
@@ -540,13 +685,8 @@ function renderHistory() {
   const currentMonStr = mon.toISOString().slice(0,10);
   const pastIncomplete = tasks.filter(t => {
     if (t.done) return false;
-    // Find what date this task belongs to by matching day name to past weeks
-    // We consider a task "past" if its due date is before today, or if it has no due and was created before this week
-    // Simple approach: check if the task's week (by matching day to current week) is before current week
-    // Since tasks store day name not date, use creation id timestamp
-    const created = parseInt(t.id);
-    const thisWeekStart = mon.getTime();
-    return created < thisWeekStart;
+    if (!t.weekStamp) return false;
+    return t.weekStamp < currentMonStr;
   });
 
   container.innerHTML = '';
@@ -625,7 +765,7 @@ function roleClass(role) {
 
 function initScheduleSelect() {
   const sel = document.getElementById('sched-week-select');
-  const today = new Date().toISOString().slice(0,10);
+  const today = localToday();
   let bestIdx = 0;
   let closestFuture = -1;
   SCHEDULE.forEach((w, i) => {
@@ -646,7 +786,7 @@ function initScheduleSelect() {
 }
 
 function jumpScheduleToCurrentWeek() {
-  const today = new Date().toISOString().slice(0,10);
+  const today = localToday();
   let bestIdx = 0, closestFuture = -1;
   SCHEDULE.forEach((w, i) => {
     if (w.dates[0] <= today && today <= w.dates[4]) bestIdx = i;
@@ -672,12 +812,15 @@ function renderSchedule() {
   const hrow = document.createElement('tr');
   const nameTh = document.createElement('th'); nameTh.className = 'name-col'; nameTh.textContent = 'Name';
   hrow.appendChild(nameTh);
+  const todayStr = localToday();
   w.dates.forEach((date, i) => {
     const th = document.createElement('th');
-    if (i >= 5) th.className = 'weekend-col';
+    const isWeekend = i >= 5;
+    const isTodayCol = date === todayStr;
+    th.className = (isWeekend ? 'weekend-col' : '') + (isTodayCol ? ' today-col' : '');
     if (date) {
       const d = new Date(date + 'T00:00:00');
-      th.innerHTML = DAY_NAMES[i] + '<br><span style="font-weight:700;font-size:13px;color:var(--text);opacity:1;">' + d.getDate() + '/' + (d.getMonth()+1) + '</span>';
+      th.innerHTML = DAY_NAMES[i] + '<br><span style="font-weight:700;font-size:13px;">' + d.getDate() + '/' + (d.getMonth()+1) + '</span>';
     } else {
       th.innerHTML = DAY_NAMES[i];
     }
@@ -690,7 +833,7 @@ function renderSchedule() {
   const ALL_SHIFTS = ['', 'D1 (7-15)', 'D2 (8-16)', 'D3 (9-17)', 'E (17-6)', 'E2 (16-21)',
     'W1 (7-17)', 'W2 (17-6)', 'W3 (15-19)', 'H', 'SO'];
 
-  function saveSchedule() { localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE)); }
+  function saveSchedule() { localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE)); scheduleSyncSave(); }
 
   let dragSrc = null;
   let swapHighlight = null;
@@ -708,7 +851,9 @@ function renderSchedule() {
       }
     }
     renderRole();
+    td.style.cursor = isAdmin() ? 'pointer' : 'default';
     td.addEventListener('click', e => {
+      if (!isAdmin()) return;
       e.stopPropagation();
       document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
       const dd = document.createElement('div'); dd.className = 'shift-dropdown';
@@ -753,10 +898,11 @@ function renderSchedule() {
     }
     renderPill();
 
-    // Click → dropdown
+    // Click → dropdown (admin only)
+    td.style.cursor = isAdmin() ? 'pointer' : 'default';
     td.addEventListener('click', e => {
+      if (!isAdmin()) return;
       e.stopPropagation();
-      // Close any open dropdowns
       document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
 
       const dd = document.createElement('div');
@@ -789,8 +935,9 @@ function renderSchedule() {
     });
 
     // Drag to swap
-    td.draggable = true;
+    td.draggable = isAdmin();
     td.addEventListener('dragstart', e => {
+      if (!isAdmin()) return;
       dragSrc = { person, dayIdx };
       td.style.opacity = '0.4';
       e.dataTransfer.effectAllowed = 'move';
@@ -827,7 +974,9 @@ function renderSchedule() {
     const nameTd = document.createElement('td'); nameTd.className = 'name-cell'; nameTd.textContent = p.name;
     tr.appendChild(nameTd);
     p.shifts.forEach((shift, i) => {
+      const isTodayCell = w.dates[i] === todayStr;
       const td = makeCell(p, i, i >= 5);
+      if (isTodayCell) td.classList.add('today-col');
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -853,7 +1002,7 @@ function renderSchedule() {
 }
 
 // ─── Project Wingman ──────────────────────────────────────────────
-const WINGMAN_SLOTS = [
+let wingmanSlots = JSON.parse(localStorage.getItem('wtp_wingman') || 'null') || [
   { dates: '13/4 – 14/4', days: 'Mon–Tue', person: 'Andreas',  from: '2026-04-13', to: '2026-04-14' },
   { dates: '15/4 – 16/4', days: 'Wed–Thu', person: 'Marie',     from: '2026-04-15', to: '2026-04-16' },
   { dates: '20/4 – 21/4', days: 'Mon–Tue', person: 'Bernadett', from: '2026-04-20', to: '2026-04-21' },
@@ -865,57 +1014,144 @@ const WINGMAN_SLOTS = [
   { dates: '1/6 – 2/6',   days: 'Mon–Tue', person: 'Julie',     from: '2026-06-01', to: '2026-06-02' },
   { dates: '15/6 – 16/6', days: 'Mon–Tue', person: 'Jonas',     from: '2026-06-15', to: '2026-06-16' },
 ];
+function saveWingman() { localStorage.setItem('wtp_wingman', JSON.stringify(wingmanSlots)); scheduleSyncSave(); }
 
 function renderWingman() {
   const container = document.getElementById('wingman-section');
   if (!container) return;
   container.innerHTML = '';
-  const today = new Date().toISOString().slice(0,10);
+  const today = localToday();
 
-  const card = document.createElement('div'); card.className = 'wingman-card';
-  const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;align-items:baseline;gap:10px;margin-bottom:2px;';
-  const title = document.createElement('div'); title.className = 'wingman-title'; title.textContent = '🪂 Project Wingman';
-  const sub = document.createElement('div'); sub.className = 'wingman-sub'; sub.style.marginBottom = '0';
-  sub.textContent = 'L1 shadowing schedule — L2 member TBD';
-  hdr.appendChild(title);
-  card.appendChild(hdr); card.appendChild(sub);
+  const card = document.createElement('div');
+  card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px;';
 
-  const timeline = document.createElement('div'); timeline.className = 'wingman-timeline';
+  // Header
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'padding:12px 18px 10px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;';
+  const hLeft = document.createElement('div');
+  const htitle = document.createElement('div'); htitle.style.cssText = 'font-size:13px;font-weight:700;color:var(--text);'; htitle.textContent = '🪂 Project Wingman';
+  const hsub = document.createElement('div'); hsub.style.cssText = 'font-size:11px;color:var(--text3);margin-top:1px;'; hsub.textContent = 'L1 shadowing — click a row to edit';
+  hLeft.appendChild(htitle); hLeft.appendChild(hsub);
+  const addBtn = document.createElement('button');
+  addBtn.style.cssText = 'font-size:11px;font-weight:600;background:var(--surface2);color:var(--text2);border:1px solid var(--border2);border-radius:var(--radius-md);padding:4px 10px;cursor:pointer;';
+  addBtn.textContent = '+ Add slot';
+  addBtn.onclick = () => showWingmanEditModal(null, -1);
+  if (!isAdmin()) addBtn.style.display = 'none';
+  hdr.appendChild(hLeft); hdr.appendChild(addBtn); card.appendChild(hdr);
 
-  WINGMAN_SLOTS.forEach(slot => {
+  // Timeline
+  const timeline = document.createElement('div');
+  wingmanSlots.forEach((slot, idx) => {
     const isCurrent = slot.from <= today && today <= slot.to;
     const isPast = slot.to < today;
-    const status = isCurrent ? 'current' : isPast ? 'past' : 'future';
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:0.5px solid var(--border);transition:background 0.12s;' + (isAdmin() ? 'cursor:pointer;' : '');
+    if (isAdmin()) row.onclick = () => showWingmanEditModal(slot, idx);
 
-    const row = document.createElement('div'); row.className = 'wingman-slot';
+    // Status dot
+    const dot = document.createElement('div');
+    dot.style.cssText = 'width:10px;height:10px;border-radius:50%;flex-shrink:0;' +
+      (isCurrent ? 'background:var(--cal-text);box-shadow:0 0 0 3px rgba(122,173,255,0.2);' :
+       isPast ? 'background:var(--surface3);border:1.5px solid var(--border2);' :
+       'background:var(--surface3);border:1.5px solid var(--border2);');
 
-    const dot = document.createElement('div'); dot.className = 'wingman-dot ' + status;
-    const dates = document.createElement('div'); dates.className = 'wingman-dates';
+    // Dates
+    const dates = document.createElement('div');
+    dates.style.cssText = 'font-size:11px;color:' + (isPast ? 'var(--text3)' : 'var(--text2)') + ';min-width:120px;flex-shrink:0;';
     dates.textContent = slot.days + '  ' + slot.dates;
-    const person = document.createElement('div'); person.className = 'wingman-person';
-    person.style.color = isCurrent ? 'var(--cal-text)' : isPast ? 'var(--text3)' : 'var(--text)';
+
+    // Person
+    const person = document.createElement('div');
+    person.style.cssText = 'font-size:13px;font-weight:600;flex:1;color:' +
+      (isCurrent ? 'var(--cal-text)' : isPast ? 'var(--text3)' : 'var(--text)') + ';';
     person.textContent = slot.person;
 
-    row.appendChild(dot); row.appendChild(dates); row.appendChild(person);
-
+    // Badge / edit hint
+    const right = document.createElement('div'); right.style.cssText = 'display:flex;align-items:center;gap:8px;';
     if (isCurrent) {
-      const badge = document.createElement('span'); badge.className = 'wingman-badge current'; badge.textContent = '● Now';
-      row.appendChild(badge);
+      const badge = document.createElement('span');
+      badge.style.cssText = 'font-size:10px;font-weight:700;background:var(--cal);color:var(--cal-text);border-radius:8px;padding:2px 8px;';
+      badge.textContent = '● Now';
+      right.appendChild(badge);
     } else if (!isPast) {
-      // Show how many days away
       const daysAway = Math.ceil((new Date(slot.from) - new Date(today)) / 86400000);
       if (daysAway <= 14) {
-        const badge = document.createElement('span'); badge.className = 'wingman-badge upcoming';
+        const badge = document.createElement('span');
+        badge.style.cssText = 'font-size:10px;font-weight:600;background:var(--low-bg);color:var(--low-text);border-radius:8px;padding:2px 8px;';
         badge.textContent = 'In ' + daysAway + 'd';
-        row.appendChild(badge);
+        right.appendChild(badge);
       }
     }
+    const editHint = document.createElement('span');
+    editHint.style.cssText = 'font-size:10px;color:var(--text3);opacity:0;transition:opacity 0.15s;';
+    editHint.textContent = 'edit';
+    if (isAdmin()) {
+      row.onmouseover = () => { row.style.background = 'var(--surface2)'; editHint.style.opacity = '1'; };
+      row.onmouseout = () => { row.style.background = ''; editHint.style.opacity = '0'; };
+    }
+    right.appendChild(editHint);
 
+    row.appendChild(dot); row.appendChild(dates); row.appendChild(person); row.appendChild(right);
     timeline.appendChild(row);
   });
-
   card.appendChild(timeline);
   container.appendChild(card);
+}
+
+function showWingmanEditModal(slot, idx) {
+  document.getElementById('wingman-edit-modal')?.remove();
+  const isNew = idx === -1;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'wingman-edit-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;display:flex;align-items:center;justify-content:center;';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px 24px;width:90%;max-width:380px;display:flex;flex-direction:column;gap:14px;';
+
+  const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+  const ht = document.createElement('div'); ht.style.cssText = 'font-size:14px;font-weight:700;color:var(--text);'; ht.textContent = isNew ? 'Add Wingman slot' : 'Edit slot';
+  const xb = document.createElement('button'); xb.style.cssText = 'background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;'; xb.textContent = '×'; xb.onclick = () => overlay.remove();
+  hdr.appendChild(ht); hdr.appendChild(xb); box.appendChild(hdr);
+
+  function field(label, val, ph) {
+    const w2 = document.createElement('div');
+    const l = document.createElement('label'); l.style.cssText = 'font-size:11px;color:var(--text2);display:block;margin-bottom:3px;'; l.textContent = label;
+    const i = document.createElement('input'); i.value = val||''; i.placeholder = ph||'';
+    i.style.cssText = 'width:100%;font-family:inherit;font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;';
+    w2.appendChild(l); w2.appendChild(i); box.appendChild(w2); return i;
+  }
+
+  const personEl = field('Person (L1)', slot?.person||'', 'e.g. Jonas');
+  const daysEl   = field('Days label', slot?.days||'', 'e.g. Mon–Tue');
+  const datesEl  = field('Date label', slot?.dates||'', 'e.g. 27/4 – 28/4');
+  const fromEl   = field('From date (YYYY-MM-DD)', slot?.from||'', '2026-05-01');
+  const toEl     = field('To date (YYYY-MM-DD)', slot?.to||'', '2026-05-02');
+
+  const fa = document.createElement('div'); fa.style.cssText = 'display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:4px;';
+  if (!isNew) {
+    const delBtn = document.createElement('button'); delBtn.className = 'btn-cancel';
+    delBtn.style.cssText = 'color:var(--high-text);border-color:var(--high-text);font-size:12px;';
+    delBtn.textContent = 'Delete slot';
+    delBtn.onclick = () => { if (!confirm('Delete this slot?')) return; wingmanSlots.splice(idx, 1); saveWingman(); renderWingman(); overlay.remove(); };
+    fa.appendChild(delBtn);
+  } else { fa.appendChild(document.createElement('div')); }
+
+  const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = isNew ? 'Add' : 'Save';
+  saveBtn.onclick = () => {
+    const updated = { person: personEl.value.trim(), days: daysEl.value.trim(), dates: datesEl.value.trim(), from: fromEl.value.trim(), to: toEl.value.trim() };
+    if (!updated.person || !updated.from || !updated.to) { personEl.style.borderColor = 'var(--high-text)'; return; }
+    if (isNew) wingmanSlots.push(updated);
+    else wingmanSlots[idx] = updated;
+    // Sort by from date
+    wingmanSlots.sort((a,b) => a.from < b.from ? -1 : 1);
+    saveWingman(); renderWingman(); overlay.remove();
+  };
+  fa.appendChild(saveBtn); box.appendChild(fa);
+  overlay.appendChild(box);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  personEl.focus();
 }
 
 function renderRoleSummary(w) {
@@ -925,45 +1161,123 @@ function renderRoleSummary(w) {
 
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
   const ROLES = ['Phone Guru', 'Inbox Champion', 'SLA Sherpa', 'Freelancer'];
-
-  // Mon–Wed = days 0,1,2 — Thu–Fri = days 3,4
   const blocks = [
     { label: 'Mon – Wed', days: [0, 1, 2] },
     { label: 'Thu – Fri', days: [3, 4] },
   ];
 
-  const card = document.createElement('div'); card.className = 'role-summary-card';
+  const card = document.createElement('div');
+  card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
 
-  blocks.forEach(block => {
-    const col = document.createElement('div'); col.className = 'role-summary-block';
-    const title = document.createElement('div'); title.className = 'role-summary-block-title';
-    title.textContent = block.label;
-    col.appendChild(title);
+  // Header
+  const cardHdr = document.createElement('div');
+  cardHdr.style.cssText = 'padding:12px 18px 10px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;';
+  const cardTitle = document.createElement('div');
+  cardTitle.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);';
+  cardTitle.textContent = 'Roles this week';
+  cardHdr.appendChild(cardTitle); card.appendChild(cardHdr);
+
+  // Two-column grid
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;';
+
+  blocks.forEach((block, bIdx) => {
+    const col = document.createElement('div');
+    col.style.cssText = 'padding:14px 18px;' + (bIdx === 0 ? 'border-right:0.5px solid var(--border);' : '');
+
+    const blkLabel = document.createElement('div');
+    blkLabel.style.cssText = 'font-size:11px;font-weight:700;color:var(--text2);margin-bottom:12px;letter-spacing:0.04em;';
+    blkLabel.textContent = block.label;
+    col.appendChild(blkLabel);
 
     ROLES.forEach(role => {
-      // Find people who have this role on any day in this block
-      const people = myTeam.filter(p =>
-        block.days.some(di => (p.roles && p.roles[di]) === role)
-      ).map(p => p.name);
+      const people = myTeam.filter(p => block.days.some(di => (p.roles && p.roles[di]) === role));
+      const peopleNames = people.map(p => p.name);
 
-      const row = document.createElement('div'); row.className = 'role-summary-row';
-      const lbl = document.createElement('span'); lbl.className = 'role-summary-label';
-      const pill = document.createElement('span'); pill.className = 'role-pill ' + roleClass(role); pill.textContent = role;
-      lbl.appendChild(pill);
-      const names = document.createElement('span');
-      if (people.length) {
-        names.className = 'role-summary-names'; names.textContent = people.join(', ');
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;';
+
+      const pill = document.createElement('span');
+      pill.className = 'role-pill ' + roleClass(role);
+      pill.style.cssText = 'flex-shrink:0;font-size:10px;';
+      pill.textContent = role;
+
+      const nameWrap = document.createElement('div');
+      nameWrap.style.cssText = 'flex:1;min-width:0;';
+
+      if (peopleNames.length) {
+        peopleNames.forEach(name => {
+          const chip = document.createElement('span');
+          chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:2px 8px;margin:1px 3px 1px 0;' + (isAdmin() ? 'cursor:pointer;transition:background 0.15s;' : 'cursor:default;');
+          if (isAdmin()) {
+            chip.title = 'Click to change role';
+            chip.onmouseover = () => chip.style.background = 'var(--surface3)';
+            chip.onmouseout = () => chip.style.background = 'var(--surface2)';
+            chip.onclick = () => showRoleEditPopup(chip, name, block.days, w, role);
+          }
+          nameWrap.appendChild(chip);
+        });
       } else {
-        names.className = 'role-summary-names empty'; names.textContent = 'none';
+        const empty = document.createElement('span');
+        empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
+        empty.textContent = 'none';
+        nameWrap.appendChild(empty);
       }
-      row.appendChild(lbl); row.appendChild(names);
-      col.appendChild(row);
+
+      row.appendChild(pill); row.appendChild(nameWrap); col.appendChild(row);
     });
 
-    card.appendChild(col);
+    grid.appendChild(col);
   });
 
+  card.appendChild(grid);
   container.appendChild(card);
+}
+
+function showRoleEditPopup(anchor, personName, dayIdxs, w, currentRole) {
+  document.querySelectorAll('.role-edit-popup').forEach(p => p.remove());
+  const person = w.people.find(p => p.name === personName);
+  if (!person) return;
+
+  const popup = document.createElement('div');
+  popup.className = 'role-edit-popup';
+  popup.style.cssText = 'position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);box-shadow:0 4px 20px rgba(0,0,0,0.5);z-index:300;min-width:160px;overflow:hidden;animation:fadeIn 0.1s ease;';
+
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'padding:8px 12px 6px;font-size:11px;color:var(--text3);border-bottom:0.5px solid var(--border);font-weight:600;';
+  hdr.textContent = personName;
+  popup.appendChild(hdr);
+
+  ['', ...ALL_ROLES.filter(r => r)].forEach(role => {
+    const item = document.createElement('div');
+    item.style.cssText = 'padding:7px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12px;transition:background 0.1s;' + (role === currentRole ? 'background:var(--surface2);' : '');
+    item.onmouseover = () => item.style.background = 'var(--surface3)';
+    item.onmouseout = () => item.style.background = role === currentRole ? 'var(--surface2)' : '';
+    if (role) {
+      const p2 = document.createElement('span'); p2.className = 'role-pill ' + roleClass(role); p2.style.fontSize = '10px'; p2.textContent = role;
+      item.appendChild(p2);
+    } else {
+      item.innerHTML = '<span style="color:var(--text3);">— clear role</span>';
+    }
+    item.onclick = () => {
+      dayIdxs.forEach(di => { if (!person.roles) person.roles = ['','','','','','','']; person.roles[di] = role; });
+      // saveSchedule is inside renderSchedule scope, use localStorage directly
+      localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE));
+      scheduleSyncSave();
+      popup.remove();
+      renderSchedule();
+    };
+    popup.appendChild(item);
+  });
+
+  const rect = anchor.getBoundingClientRect();
+  document.body.appendChild(popup);
+  const pw = popup.offsetWidth, ph = popup.offsetHeight;
+  let top = rect.bottom + 4, left = rect.left;
+  if (top + ph > window.innerHeight - 10) top = rect.top - ph - 4;
+  if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+  popup.style.top = top + 'px'; popup.style.left = left + 'px';
+  setTimeout(() => document.addEventListener('click', () => popup.remove(), { once: true }), 0);
 }
 
 // ─── Planner tab ──────────────────────────────────────────────────
@@ -972,6 +1286,11 @@ let weekOffset = 0; // always start on current week
 let tasks = [];
 let calEvents = [];
 let dragCard = null;
+
+function localToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 
 function getMonday(offset) {
   const d = new Date(), day = d.getDay();
@@ -984,7 +1303,11 @@ function setStatus(msg) { document.getElementById('status-msg').textContent = ms
 function changeWeek(dir) { weekOffset += dir; renderPlanner(); }
 function toggleDone(id) { const t = tasks.find(x => x.id === id); if (t) { t.done = !t.done; save(); renderPlanner(); } }
 function delTask(id) { tasks = tasks.filter(x => x.id !== id); save(); renderPlanner(); }
-function addTask(day, title, priority, due, note, people, isMeeting, timeStart, timeEnd, recurring, reminder, colour, pendingName) { tasks.push({ id: Date.now()+'', day, title, priority, due, note, people: people||[], isMeeting: !!isMeeting, timeStart: timeStart||'', timeEnd: timeEnd||'', recurring: !!recurring, reminder: reminder||'', colour: colour||'', pendingName: pendingName||'', done: false }); save(); scheduleReminder(tasks[tasks.length-1]); renderPlanner(); }
+function addTask(day, title, priority, due, note, people, isMeeting, timeStart, timeEnd, recurring, reminder, colour, pendingName) {
+  const weekStamp = getMonday(weekOffset).toISOString().slice(0,10);
+  tasks.push({ id: Date.now()+'', day, title, priority, due, note, people: people||[], isMeeting: !!isMeeting, timeStart: timeStart||'', timeEnd: timeEnd||'', recurring: !!recurring, reminder: reminder||'', colour: colour||'', pendingName: pendingName||'', weekStamp, done: false });
+  save(); scheduleReminder(tasks[tasks.length-1]); renderPlanner();
+}
 function clearCal() {
   calEvents = []; saveEvents();
   const btn = document.getElementById('ics-clear-btn');
@@ -1119,6 +1442,7 @@ function processXlsx(buffer, fileName, st, preview) {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
       if (currentUser) localStorage.setItem(userNoteKey(currentUser.name), ta.value);
+      scheduleSyncSave();
       savedEl.textContent = 'saved';
       savedEl.style.opacity = '1';
       setTimeout(() => { savedEl.style.opacity = '0'; }, 1500);
@@ -1131,7 +1455,435 @@ function clearNotepad() {
   if (ta) { ta.value = ''; if (currentUser) localStorage.removeItem(userNoteKey(currentUser.name)); }
 }
 
-// ─── Backup & Restore ─────────────────────────────────────────────
+function toggleAdvanced() {
+  const toggle = document.getElementById('adv-toggle');
+  const body = document.getElementById('adv-body');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ─── 1:1 System ───────────────────────────────────────────────────
+function otoKey() { return 'wtp_oto_' + (currentUser?.name||'').toLowerCase(); }
+
+function loadOto() {
+  try { return JSON.parse(localStorage.getItem(otoKey()) || '{}'); } catch { return {}; }
+}
+function saveOto(data) {
+  localStorage.setItem(otoKey(), JSON.stringify(data));
+  scheduleSyncSave();
+}
+
+// data shape: { people: [{name, role?, addedAt}], sessions: [{id, person, date, notes, actions:[{id,text,done,sentToPlanner}]}] }
+function getOtoData() {
+  const d = loadOto();
+  if (!d.people) d.people = MY_TEAM.map(n => ({ name: n, addedAt: '2026-01-01' }));
+  if (!d.sessions) d.sessions = [];
+  return d;
+}
+
+let otoPerson = null; // currently selected person name
+
+function renderOtoTab() {
+  if (!isAdmin()) return;
+  const data = getOtoData();
+  renderOtoSidebar(data);
+  if (otoPerson) renderOtoMain(otoPerson, data);
+}
+
+function renderOtoSidebar(data) {
+  const sidebar = document.getElementById('oto-sidebar');
+  if (!sidebar) return;
+  sidebar.innerHTML = '';
+
+  const hdr = document.createElement('div'); hdr.className = 'oto-sidebar-header'; hdr.textContent = 'Team';
+  sidebar.appendChild(hdr);
+
+  data.people.forEach(p => {
+    const sessions = data.sessions.filter(s => s.person === p.name);
+    const upcoming = sessions.filter(s => s.date >= localToday()).sort((a,b) => a.date < b.date ? -1 : 1);
+    const next = upcoming[0];
+
+    const btn = document.createElement('button'); btn.className = 'oto-person-btn' + (otoPerson === p.name ? ' active' : '');
+    const avatar = document.createElement('div'); avatar.className = 'oto-person-avatar';
+    avatar.textContent = p.name.slice(0,2).toUpperCase();
+    const info = document.createElement('div'); info.className = 'oto-person-info';
+    const name = document.createElement('div'); name.className = 'oto-person-name'; name.textContent = p.name;
+    const meta = document.createElement('div'); meta.className = 'oto-person-meta';
+    meta.textContent = next ? 'Next: ' + formatOtoDate(next.date) : sessions.length ? sessions.length + ' session' + (sessions.length>1?'s':'') : 'No sessions yet';
+    info.appendChild(name); info.appendChild(meta);
+    btn.appendChild(avatar); btn.appendChild(info);
+    btn.onclick = () => { otoPerson = p.name; renderOtoTab(); };
+    sidebar.appendChild(btn);
+  });
+
+  // Add person button at bottom
+  const addBtn = document.createElement('button'); addBtn.className = 'oto-add-person-btn';
+  addBtn.innerHTML = '+ Add person';
+  addBtn.onclick = showAddPersonModal;
+  sidebar.appendChild(addBtn);
+}
+
+function renderOtoMain(personName, data) {
+  const main = document.getElementById('oto-main');
+  if (!main) return;
+  main.innerHTML = '';
+
+  const sessions = data.sessions.filter(s => s.person === personName).sort((a,b) => b.date.localeCompare(a.date));
+  const today = localToday();
+
+  // Header
+  const hdr = document.createElement('div'); hdr.className = 'oto-person-header';
+  const hLeft = document.createElement('div');
+  const title = document.createElement('div'); title.className = 'oto-person-title'; title.textContent = personName;
+  const sub = document.createElement('div'); sub.className = 'oto-person-sub';
+  sub.textContent = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '') + ' total';
+  hLeft.appendChild(title); hLeft.appendChild(sub);
+
+  const hRight = document.createElement('div'); hRight.style.cssText = 'display:flex;gap:8px;align-items:center;';
+  // Remove person button
+  const removeBtn = document.createElement('button'); removeBtn.className = 'btn-cancel'; removeBtn.style.cssText = 'font-size:11px;color:var(--text3);';
+  removeBtn.textContent = 'Remove person';
+  removeBtn.onclick = () => {
+    if (!confirm('Remove ' + personName + ' from 1:1s? Their sessions will be deleted.')) return;
+    const d = getOtoData();
+    d.people = d.people.filter(p => p.name !== personName);
+    d.sessions = d.sessions.filter(s => s.person !== personName);
+    saveOto(d); otoPerson = null; renderOtoTab();
+    document.getElementById('oto-empty').style.display = '';
+    main.innerHTML = ''; main.appendChild(document.getElementById('oto-empty'));
+  };
+  hRight.appendChild(removeBtn);
+  hdr.appendChild(hLeft); hdr.appendChild(hRight); main.appendChild(hdr);
+
+  // Sessions list
+  const sessionsDiv = document.createElement('div'); sessionsDiv.className = 'oto-sessions';
+
+  if (!sessions.length) {
+    const empty = document.createElement('div'); empty.style.cssText = 'text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;';
+    empty.textContent = 'No 1:1 sessions yet. Schedule one below!';
+    sessionsDiv.appendChild(empty);
+  } else {
+    sessions.forEach(session => {
+      const isToday2 = session.date === today;
+      const isUpcoming = session.date > today;
+      const card = document.createElement('div');
+      card.className = 'oto-session-card ' + (isToday2 ? 'today' : isUpcoming ? 'upcoming' : 'past');
+
+      // Session header (collapsible)
+      const cardHdr = document.createElement('div'); cardHdr.className = 'oto-session-header';
+      const dateEl = document.createElement('div'); dateEl.className = 'oto-session-date';
+      dateEl.textContent = formatOtoDateFull(session.date);
+      const right = document.createElement('div'); right.style.cssText = 'display:flex;align-items:center;gap:8px;';
+      const badge = document.createElement('span'); badge.className = 'oto-session-badge ' + (isToday2 ? 'today' : isUpcoming ? 'upcoming' : 'past');
+      badge.textContent = isToday2 ? '● Today' : isUpcoming ? 'Upcoming' : 'Past';
+      const toggle = document.createElement('span'); toggle.className = 'oto-session-toggle'; toggle.textContent = '›';
+      right.appendChild(badge); right.appendChild(toggle); cardHdr.appendChild(dateEl); cardHdr.appendChild(right);
+
+      // Body (expanded by default for today/upcoming, collapsed for past)
+      const body = document.createElement('div'); body.className = 'oto-session-body';
+      if (!isUpcoming && !isToday2) body.style.display = 'none';
+      else toggle.style.transform = 'rotate(90deg)';
+
+      cardHdr.onclick = () => {
+        const open = body.style.display !== 'none';
+        body.style.display = open ? 'none' : '';
+        toggle.style.transform = open ? '' : 'rotate(90deg)';
+      };
+
+      // Notes field
+      const notesLabel = document.createElement('div'); notesLabel.className = 'oto-field-label'; notesLabel.textContent = '📝 Notes';
+      const notesArea = document.createElement('textarea'); notesArea.className = 'oto-notes-area';
+      notesArea.placeholder = 'Notes, talking points, observations…';
+      notesArea.value = session.notes || '';
+      let notesTimer;
+      notesArea.addEventListener('input', () => {
+        clearTimeout(notesTimer);
+        notesTimer = setTimeout(() => {
+          const d = getOtoData();
+          const s = d.sessions.find(x => x.id === session.id);
+          if (s) { s.notes = notesArea.value; saveOto(d); }
+        }, 600);
+      });
+      body.appendChild(notesLabel); body.appendChild(notesArea);
+
+      // Action items
+      const actLabel = document.createElement('div'); actLabel.className = 'oto-field-label'; actLabel.textContent = '✓ Action items';
+      body.appendChild(actLabel);
+
+      const actList = document.createElement('div');
+      function renderActions() {
+        actList.innerHTML = '';
+        const d = getOtoData();
+        const s = d.sessions.find(x => x.id === session.id);
+        (s?.actions || []).forEach((action, ai) => {
+          const row = document.createElement('div'); row.className = 'oto-action-item';
+          const chk = document.createElement('input'); chk.type = 'checkbox'; chk.className = 'oto-action-check'; chk.checked = action.done;
+          chk.onchange = () => { const d2 = getOtoData(); const s2 = d2.sessions.find(x=>x.id===session.id); if(s2?.actions[ai]) s2.actions[ai].done = chk.checked; saveOto(d2); txt.className = 'oto-action-text' + (chk.checked?' done':''); };
+          const txt = document.createElement('span'); txt.className = 'oto-action-text' + (action.done?' done':''); txt.textContent = action.text;
+          const plannerBtn = document.createElement('button'); plannerBtn.className = 'oto-action-del';
+          plannerBtn.title = action.sentToPlanner ? 'Already sent to planner' : 'Send to My Planner';
+          plannerBtn.textContent = action.sentToPlanner ? '✓' : '→';
+          plannerBtn.style.color = action.sentToPlanner ? 'var(--low-text)' : 'var(--cal-text)';
+          plannerBtn.onclick = () => {
+            if (action.sentToPlanner) return;
+            // Add to planner as a task for the session date day
+            const sessionDay = getDayName(session.date);
+            const sessionWeekStamp = getWeekStampForDate(session.date);
+            tasks.push({ id: Date.now()+'', day: sessionDay, title: action.text + ' (' + personName + ')', priority: 'medium', due: '', note: '1:1 action item', people: [personName], isMeeting: false, timeStart: '', timeEnd: '', recurring: false, reminder: '', colour: 'blue', pendingName: personName, weekStamp: sessionWeekStamp, done: false });
+            save();
+            const d2 = getOtoData(); const s2 = d2.sessions.find(x=>x.id===session.id);
+            if (s2?.actions[ai]) s2.actions[ai].sentToPlanner = true;
+            saveOto(d2); renderActions();
+            showToast('→ Added to planner: ' + action.text);
+          };
+          const del = document.createElement('button'); del.className = 'oto-action-del'; del.textContent = '✕';
+          del.onclick = () => { const d2=getOtoData(); const s2=d2.sessions.find(x=>x.id===session.id); if(s2) s2.actions.splice(ai,1); saveOto(d2); renderActions(); };
+          row.appendChild(chk); row.appendChild(txt); row.appendChild(plannerBtn); row.appendChild(del);
+          actList.appendChild(row);
+        });
+      }
+      renderActions();
+      body.appendChild(actList);
+
+      // Add action input
+      const addRow = document.createElement('div'); addRow.className = 'oto-action-row';
+      const addInp = document.createElement('input'); addInp.className = 'oto-action-input'; addInp.placeholder = 'Add action item…';
+      const addAct = document.createElement('button'); addAct.className = 'oto-send-btn'; addAct.textContent = 'Add';
+      addAct.onclick = () => {
+        const txt2 = addInp.value.trim(); if (!txt2) return;
+        const d2 = getOtoData(); const s2 = d2.sessions.find(x=>x.id===session.id);
+        if (!s2.actions) s2.actions = [];
+        s2.actions.push({ id: Date.now()+'', text: txt2, done: false, sentToPlanner: false });
+        saveOto(d2); addInp.value = ''; renderActions();
+      };
+      addInp.addEventListener('keydown', e => { if (e.key==='Enter') addAct.click(); });
+      addRow.appendChild(addInp); addRow.appendChild(addAct); body.appendChild(addRow);
+
+      // Delete session
+      const delSession = document.createElement('button');
+      delSession.style.cssText = 'align-self:flex-end;font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;';
+      delSession.textContent = 'Delete session';
+      delSession.onclick = () => { if(!confirm('Delete this session?')) return; const d2=getOtoData(); d2.sessions=d2.sessions.filter(x=>x.id!==session.id); saveOto(d2); renderOtoMain(personName, d2); };
+      body.appendChild(delSession);
+
+      card.appendChild(cardHdr); card.appendChild(body); sessionsDiv.appendChild(card);
+    });
+  }
+  main.appendChild(sessionsDiv);
+
+  // New session bar at bottom
+  const newBar = document.createElement('div'); newBar.className = 'oto-new-session-bar';
+  const dateInp = document.createElement('input'); dateInp.type = 'date'; dateInp.style.cssText = 'font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex-shrink:0;';
+  dateInp.value = localToday();
+  const schedBtn = document.createElement('button'); schedBtn.className = 'btn-save'; schedBtn.style.cssText = 'font-size:12px;white-space:nowrap;';
+  schedBtn.textContent = 'Schedule 1:1';
+  schedBtn.onclick = () => {
+    if (!dateInp.value) return;
+    const d2 = getOtoData();
+    d2.sessions.push({ id: Date.now()+'', person: personName, date: dateInp.value, notes: '', actions: [] });
+    saveOto(d2); renderOtoMain(personName, d2);
+    // Also add as a meeting in the planner
+    const day = getDayName(dateInp.value);
+    const ws = getWeekStampForDate(dateInp.value);
+    tasks.push({ id: Date.now()+1+'', day, title: '1:1 with ' + personName, priority: '', due: '', note: '', people: [personName], isMeeting: true, timeStart: '09:00', timeEnd: '09:30', recurring: false, reminder: '', colour: 'blue', pendingName: '', weekStamp: ws, done: false });
+    save(); showToast('📅 1:1 with ' + personName + ' added to planner');
+  };
+  const lbl = document.createElement('span'); lbl.style.cssText = 'font-size:11px;color:var(--text3);'; lbl.textContent = 'Schedule a new 1:1:';
+  newBar.appendChild(lbl); newBar.appendChild(dateInp); newBar.appendChild(schedBtn);
+  main.appendChild(newBar);
+}
+
+function getDayName(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
+}
+
+function getWeekStampForDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const mon = new Date(d); mon.setDate(diff);
+  return mon.getFullYear() + '-' + String(mon.getMonth()+1).padStart(2,'0') + '-' + String(mon.getDate()).padStart(2,'0');
+}
+
+function formatOtoDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+function formatOtoDateFull(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function showAddPersonModal() {
+  document.getElementById('add-person-modal')?.remove();
+  const overlay = document.createElement('div'); overlay.id = 'add-person-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;display:flex;align-items:center;justify-content:center;';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px 24px;width:90%;max-width:340px;display:flex;flex-direction:column;gap:14px;';
+  const hdr2 = document.createElement('div'); hdr2.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+  const ht2 = document.createElement('div'); ht2.style.cssText = 'font-size:14px;font-weight:700;color:var(--text);'; ht2.textContent = 'Add person to 1:1s';
+  const xb2 = document.createElement('button'); xb2.style.cssText = 'background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;'; xb2.textContent = '×'; xb2.onclick = () => overlay.remove();
+  hdr2.appendChild(ht2); hdr2.appendChild(xb2); box.appendChild(hdr2);
+
+  const inp2 = document.createElement('input'); inp2.placeholder = 'Name';
+  inp2.style.cssText = 'width:100%;font-family:inherit;font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;';
+
+  // Suggest team members not yet added
+  const d = getOtoData();
+  const existing = new Set(d.people.map(p => p.name));
+  const suggestions = MY_TEAM.filter(n => !existing.has(n));
+  if (suggestions.length) {
+    const sugLabel = document.createElement('div'); sugLabel.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:4px;'; sugLabel.textContent = 'Quick add from team:';
+    const sugRow = document.createElement('div'); sugRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;';
+    suggestions.forEach(n => {
+      const chip = document.createElement('button');
+      chip.style.cssText = 'font-size:12px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-md);padding:3px 10px;cursor:pointer;';
+      chip.textContent = n; chip.onclick = () => { inp2.value = n; };
+      sugRow.appendChild(chip);
+    });
+    box.appendChild(sugLabel); box.appendChild(sugRow);
+  }
+  box.appendChild(inp2);
+
+  const fa2 = document.createElement('div'); fa2.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
+  const cancel2 = document.createElement('button'); cancel2.className = 'btn-cancel'; cancel2.textContent = 'Cancel'; cancel2.onclick = () => overlay.remove();
+  const save2 = document.createElement('button'); save2.className = 'btn-save'; save2.textContent = 'Add';
+  save2.onclick = () => {
+    const name2 = inp2.value.trim(); if (!name2) return;
+    const d2 = getOtoData();
+    if (d2.people.find(p => p.name === name2)) { overlay.remove(); return; }
+    d2.people.push({ name: name2, addedAt: localToday() });
+    saveOto(d2); otoPerson = name2; overlay.remove(); renderOtoTab();
+  };
+  inp2.addEventListener('keydown', e => { if (e.key==='Enter') save2.click(); });
+  fa2.appendChild(cancel2); fa2.appendChild(save2); box.appendChild(fa2);
+  overlay.appendChild(box); overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay); inp2.focus();
+}
+const GH_REPO  = 'ullenesmathias-munu/weekly-planner';
+const GH_FILE  = 'data.json';
+const GH_API   = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
+let ghToken    = null;
+let ghFileSha  = null;
+let syncTimer  = null;
+let syncPending = false;
+
+function ghHeaders() {
+  return {
+    'Authorization': 'Bearer ' + ghToken,
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+}
+
+function setSyncStatus(msg, colour) {
+  [document.getElementById('sync-status'), document.getElementById('sync-status-detail')].forEach(el => {
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = colour || 'var(--text3)';
+  });
+}
+
+async function ghLoad() {
+  if (!ghToken) return;
+  setSyncStatus('⟳ Syncing…', 'var(--text3)');
+  try {
+    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers: ghHeaders() });
+    if (res.status === 404) { ghFileSha = null; setSyncStatus('☁ No data yet', 'var(--text3)'); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    ghFileSha = json.sha;
+    const data = JSON.parse(atob(json.content.replace(/\n/g,'')));
+    // Merge remote data into localStorage (remote wins for each user's keys)
+    Object.entries(data).forEach(([k, v]) => {
+      localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+    });
+    // Reload current user's data
+    if (currentUser) {
+      tasks = JSON.parse(localStorage.getItem(userTaskKey(currentUser.name)) || '[]');
+      calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
+      const ta = document.getElementById('notepad-text');
+      if (ta) ta.value = localStorage.getItem(userNoteKey(currentUser.name)) || '';
+      renderPlanner();
+    }
+    setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
+  } catch(e) {
+    setSyncStatus('✗ Sync failed', 'var(--med-text)');
+    console.warn('ghLoad error:', e);
+  }
+}
+
+async function ghSave() {
+  if (!ghToken || !currentUser) return;
+  syncPending = false;
+  setSyncStatus('⟳ Saving…', 'var(--text3)');
+  try {
+    // Build the full data object from all localStorage keys
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k === 'wtp_schedule' || k === 'wtp_users')) {
+        const v = localStorage.getItem(k);
+        try { data[k] = JSON.parse(v); } catch { data[k] = v; }
+      }
+    }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const body = { message: 'planner sync ' + new Date().toISOString().slice(0,16), content };
+    if (ghFileSha) body.sha = ghFileSha;
+    const res = await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: ghHeaders(), body: JSON.stringify(body) });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.message || 'HTTP ' + res.status); }
+    const json = await res.json();
+    ghFileSha = json.content.sha;
+    setSyncStatus('✓ Saved ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
+  } catch(e) {
+    setSyncStatus('✗ Save failed', 'var(--med-text)');
+    console.warn('ghSave error:', e);
+  }
+}
+
+function scheduleSyncSave() {
+  if (!ghToken) return;
+  clearTimeout(syncTimer);
+  syncPending = true;
+  syncTimer = setTimeout(ghSave, 2000); // debounce 2s
+}
+
+function initGitHubSync() {
+  // Pre-store token if not already set
+  ghToken = localStorage.getItem('wtp_gh_token') || null;
+  if (ghToken) {
+    document.getElementById('gh-token-input').value = '••••••••••••••••';
+    document.getElementById('gh-sync-status-wrap').style.display = '';
+    ghLoad();
+    // Auto-sync every 5 minutes
+    setInterval(ghLoad, 5 * 60 * 1000);
+  }
+}
+
+function saveGhToken() {
+  const val = document.getElementById('gh-token-input').value.trim();
+  if (!val || val.includes('•')) return;
+  localStorage.setItem('wtp_gh_token', val);
+  ghToken = val;
+  document.getElementById('gh-token-input').value = '••••••••••••••••';
+  document.getElementById('gh-sync-status-wrap').style.display = '';
+  setSyncStatus('Connecting…', 'var(--text3)');
+  ghLoad();
+  setInterval(ghLoad, 5 * 60 * 1000);
+}
+
+function removeGhToken() {
+  if (!confirm('Remove GitHub sync? Your data stays in localStorage but will no longer sync.')) return;
+  localStorage.removeItem('wtp_gh_token');
+  ghToken = null; ghFileSha = null;
+  document.getElementById('gh-token-input').value = '';
+  document.getElementById('gh-sync-status-wrap').style.display = 'none';
+  setSyncStatus('', '');
+}
+
+
 function exportBackup() {
   if (!currentUser) return;
   const u = currentUser.name;
@@ -1146,7 +1898,7 @@ function exportBackup() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  const date = new Date().toISOString().slice(0,10);
+  const date = localToday();
   a.download = 'planner-backup-' + u.toLowerCase() + '-' + date + '.json';
   a.click();
   URL.revokeObjectURL(a.href);
@@ -1192,7 +1944,12 @@ function loadUserData() {
   if (ta) ta.value = localStorage.getItem(userNoteKey(u)) || '';
   const ud = document.getElementById('user-display');
   if (ud) ud.textContent = u;
+  // Show 1:1 tab for admins only
+  const otoBtn = document.getElementById('tab-btn-onetoone');
+  if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
   renderPlanner();
+  renderAvailStrip();
+  checkCarryForward();
   scheduleAllReminders();
   requestNotificationPermission();
   // Update settings panel
@@ -1203,8 +1960,8 @@ function loadUserData() {
   renderUserList();
 }
 
-function save() { if (currentUser) localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); }
-function saveEvents() { if (currentUser) localStorage.setItem(userCalKey(currentUser.name), JSON.stringify(calEvents)); }
+function save() { if (currentUser) { localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); scheduleSyncSave(); } }
+function saveEvents() { if (currentUser) { localStorage.setItem(userCalKey(currentUser.name), JSON.stringify(calEvents)); scheduleSyncSave(); } }
 
 function renderUserList() {
   const list = document.getElementById('user-list');
@@ -1327,6 +2084,7 @@ function searchTasks(query) {
       if (t.done) title.style.cssText = 'text-decoration:line-through;opacity:0.45;';
       const meta = document.createElement('div'); meta.className = 'search-result-meta';
       const parts = [t.day];
+      if (t.weekStamp) parts.push('w/c ' + t.weekStamp.slice(5).replace('-','/'));
       if (t.isMeeting) parts.push('📅 meeting');
       if (t.priority) parts.push(t.priority);
       if (t.timeStart) parts.push(t.timeStart);
@@ -1335,6 +2093,13 @@ function searchTasks(query) {
       item.onclick = () => {
         document.getElementById('task-search').value = '';
         container.style.display = 'none';
+        // Navigate to the week the task belongs to
+        if (t.weekStamp) {
+          const taskMon = new Date(t.weekStamp + 'T00:00:00');
+          const currentMon = getMonday(0);
+          const diffWeeks = Math.round((taskMon - currentMon) / (7 * 86400000));
+          weekOffset = diffWeeks;
+        }
         renderPlanner();
         setTimeout(() => {
           const cards = document.querySelectorAll('.card');
@@ -1351,65 +2116,7 @@ document.addEventListener('click', e => {
 });
 
 // ─── Today view ───────────────────────────────────────────────────
-function showTodayView() {
-  const modal = document.getElementById('today-modal');
-  const body = document.getElementById('today-modal-body');
-  const dateEl = document.getElementById('today-modal-date');
-  const now = new Date();
-  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
-  const todayStr = now.toISOString().slice(0,10);
-  dateEl.textContent = now.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  body.innerHTML = '';
-
-  const todayTasks = tasks.filter(t => t.day === todayDay && !t.isMeeting);
-  const todayMeetings = tasks.filter(t => t.day === todayDay && t.isMeeting).sort((a,b) => (a.timeStart||'') < (b.timeStart||'') ? -1 : 1);
-
-  // Meetings
-  const meetSec = document.createElement('div');
-  const meetTitle = document.createElement('div'); meetTitle.className = 'today-section-title'; meetTitle.textContent = '📅 Meetings today';
-  meetSec.appendChild(meetTitle);
-  if (!todayMeetings.length) {
-    const e = document.createElement('div'); e.className = 'today-empty'; e.textContent = 'No meetings scheduled'; meetSec.appendChild(e);
-  } else {
-    todayMeetings.forEach(t => {
-      const row = document.createElement('div'); row.className = 'today-meeting-row';
-      const tit = document.createElement('div'); tit.className = 'today-meeting-title'; tit.textContent = t.title;
-      const meta = document.createElement('div'); meta.className = 'today-meeting-meta';
-      const parts = [];
-      if (t.timeStart) parts.push(t.timeStart + (t.timeEnd ? ' – ' + t.timeEnd : ''));
-      if (t.people && t.people.length) parts.push(t.people.join(', '));
-      meta.textContent = parts.join(' · ');
-      row.appendChild(tit); if (parts.length) row.appendChild(meta);
-      meetSec.appendChild(row);
-    });
-  }
-  body.appendChild(meetSec);
-
-  // Tasks
-  const taskSec = document.createElement('div');
-  const taskTitle = document.createElement('div'); taskTitle.className = 'today-section-title'; taskTitle.textContent = '✓ Tasks today';
-  taskSec.appendChild(taskTitle);
-  if (!todayTasks.length) {
-    const e = document.createElement('div'); e.className = 'today-empty'; e.textContent = 'No tasks for today'; taskSec.appendChild(e);
-  } else {
-    todayTasks.forEach(t => {
-      const row = document.createElement('div'); row.className = 'today-task-row';
-      const chk = document.createElement('input'); chk.type = 'checkbox'; chk.className = 'today-task-check'; chk.checked = t.done;
-      const tit = document.createElement('div'); tit.className = 'today-task-title' + (t.done ? ' today-task-done' : ''); tit.textContent = t.title;
-      chk.onchange = () => { t.done = chk.checked; save(); renderPlanner(); tit.className = 'today-task-title' + (t.done ? ' today-task-done' : ''); };
-      const badges = document.createElement('div');
-      if (t.priority) { const b = document.createElement('span'); b.className = 'badge badge-'+t.priority; b.style.fontSize='10px'; b.textContent = t.priority; badges.appendChild(b); }
-      row.appendChild(chk); row.appendChild(tit); if (t.priority) row.appendChild(badges);
-      taskSec.appendChild(row);
-    });
-  }
-  body.appendChild(taskSec);
-
-  modal.style.display = 'flex';
-}
-document.getElementById('today-modal').addEventListener('click', e => {
-  if (e.target === document.getElementById('today-modal')) document.getElementById('today-modal').style.display = 'none';
-});
+function showTodayView() { toggleTodayPanel(); }
 
 const SHIFT_HOURS = {
   'D1': [7, 15], 'D2': [8, 16], 'D3': [9, 17],
@@ -1529,6 +2236,10 @@ function renderCard(t) {
   if (t.note) { const n = document.createElement('div'); n.className = 'card-note'; n.textContent = t.note; div.appendChild(n); }
 
   const actions = document.createElement('div'); actions.className = 'card-actions'; actions.style.gap = '4px';
+  const editBtn = document.createElement('button'); editBtn.className = 'card-del'; editBtn.textContent = 'edit';
+  editBtn.style.cssText = 'font-size:11px;color:var(--cal-text);';
+  editBtn.onclick = (e) => { e.stopPropagation(); showEditModal(t); };
+  actions.appendChild(editBtn);
   if (isMeeting) {
     const copyBtn = document.createElement('button'); copyBtn.className = 'card-del'; copyBtn.textContent = 'copy invite';
     copyBtn.style.cssText = 'font-size:10px;color:var(--cal-text);padding:2px 6px;';
@@ -1547,7 +2258,9 @@ function renderCard(t) {
   actions.appendChild(del); div.appendChild(actions);
 
   div.addEventListener('dragstart', () => { dragCard = t.id; setTimeout(() => div.classList.add('dragging'), 0); });
-  div.addEventListener('dragend', () => div.classList.remove('dragging'));
+  div.addEventListener('dragend', () => { div.classList.remove('dragging'); document.querySelectorAll('.card-drop-indicator').forEach(el => el.classList.remove('visible')); });
+  // Reorder wired after card is appended to DOM (called from renderPlanner)
+  div._taskId = t.id; div._day = t.day; div._weekStamp = t.weekStamp;
   return div;
 }
 
@@ -1557,6 +2270,24 @@ function renderCalCard(e) {
   const time = document.createElement('div'); time.className = 'cal-card-time'; time.textContent = e.allDay ? 'All day' : fmtTime(e.start) + ' – ' + fmtTime(e.end); div.appendChild(time);
   if (e.location) { const loc = document.createElement('div'); loc.className = 'cal-card-loc'; loc.textContent = '📍 ' + e.location; div.appendChild(loc); }
   return div;
+}
+
+function isAdmin() { return !!(currentUser && currentUser.isAdmin); }
+
+// ─── Time slots (global) ──────────────────────────────────────────
+const TIME_SLOTS = [];
+for (let h = 7; h <= 17; h++) {
+  for (let m = 0; m < 60; m += 15) {
+    if (h === 17 && m > 0) break;
+    TIME_SLOTS.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
+  }
+}
+function makeTimeSelect(defaultVal) {
+  const sel = document.createElement('select');
+  sel.style.cssText = 'background:var(--cal);color:var(--cal-text);border-color:var(--cal-border);font-weight:500;font-family:inherit;font-size:12px;border-radius:var(--radius-md);padding:5px 8px;outline:none;';
+  const blank = document.createElement('option'); blank.value = ''; blank.textContent = '—'; sel.appendChild(blank);
+  TIME_SLOTS.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; if (t === defaultVal) o.selected = true; sel.appendChild(o); });
+  return sel;
 }
 
 function renderAddForm(day, colBody, addBtn) {
@@ -1575,22 +2306,6 @@ function renderAddForm(day, colBody, addBtn) {
   form.appendChild(toggleRow);
 
   const tInput = document.createElement('input'); tInput.placeholder = 'What needs to be done?'; form.appendChild(tInput);
-
-  // Generate time slots 07:00–17:00 in 15 min increments
-  const TIME_SLOTS = [];
-  for (let h = 7; h <= 17; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      if (h === 17 && m > 0) break;
-      TIME_SLOTS.push(String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'));
-    }
-  }
-  function makeTimeSelect(defaultVal) {
-    const sel = document.createElement('select');
-    sel.style.cssText = 'background:var(--cal);color:var(--cal-text);border-color:var(--cal-border);font-weight:500;';
-    const blank = document.createElement('option'); blank.value = ''; blank.textContent = '—'; sel.appendChild(blank);
-    TIME_SLOTS.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; if (t === defaultVal) o.selected = true; sel.appendChild(o); });
-    return sel;
-  }
 
   // Meeting time row (hidden by default)
   const timeRow = document.createElement('div'); timeRow.className = 'form-row'; timeRow.style.display = 'none';
@@ -1776,51 +2491,54 @@ function renderAddForm(day, colBody, addBtn) {
 }
 
 function renderPlanner() {
-  // Auto-spawn recurring tasks for current week if not already present
   const mon = getMonday(weekOffset);
-  tasks.filter(t => t.recurring && !t.done).forEach(t => {
-    // Check if this recurring task already exists for the current week
-    const alreadyThisWeek = tasks.some(x =>
-      x !== t && x.recurringFrom === t.id &&
-      x.day === t.day && x.weekStamp === mon.toISOString().slice(0,10)
-    );
-    if (!alreadyThisWeek && weekOffset !== 0) {
-      // Only spawn for non-current weeks when navigating — for current week, the original task shows
-    }
-    // Mark original task with weekStamp so we know which week it belongs to
-    if (!t.weekStamp) { t.weekStamp = mon.toISOString().slice(0,10); }
+  const currentWeekStamp = mon.toISOString().slice(0,10);
+
+  // Ensure every non-recurring-copy task has a weekStamp (stamp it to the week it was created in)
+  tasks.forEach(t => {
+    if (!t.weekStamp) t.weekStamp = currentWeekStamp;
   });
 
-  // For weeks other than the task's own week, show a copy of recurring tasks
-  const currentWeekStamp = mon.toISOString().slice(0,10);
-  const recurringTemplates = tasks.filter(t => t.recurring);
-  recurringTemplates.forEach(t => {
-    if (t.weekStamp === currentWeekStamp) return; // original week — shows naturally
+  // For recurring templates, spawn a copy for the viewed week if one doesn't exist yet
+  tasks.filter(t => t.recurring).forEach(t => {
+    if (t.weekStamp === currentWeekStamp) return; // original shows naturally
     const exists = tasks.some(x => x.recurringFrom === t.id && x.weekStamp === currentWeekStamp);
     if (!exists) {
-      tasks.push({ id: Date.now() + Math.random() + '', day: t.day, title: t.title, priority: t.priority, due: '', note: t.note, people: t.people||[], isMeeting: t.isMeeting, timeStart: t.timeStart||'', timeEnd: t.timeEnd||'', recurring: false, recurringFrom: t.id, weekStamp: currentWeekStamp, done: false });
+      tasks.push({ id: Date.now() + Math.random() + '', day: t.day, title: t.title, priority: t.priority, due: '', note: t.note, people: t.people||[], isMeeting: t.isMeeting, timeStart: t.timeStart||'', timeEnd: t.timeEnd||'', recurring: false, recurringFrom: t.id, weekStamp: currentWeekStamp, colour: t.colour||'', pendingName: t.pendingName||'', reminder: '', done: false });
       save();
     }
   });
 
   const fri = new Date(mon); fri.setDate(mon.getDate()+4);
   document.getElementById('week-label').textContent = fmtDate(mon) + ' – ' + fmtDate(fri);
-  if (calEvents.length > 0) document.getElementById('clear-cal-btn').style.display = '';
+  if (calEvents.length > 0) { const b = document.getElementById('ics-clear-btn'); if (b) b.style.display = ''; }
   const board = document.getElementById('board'); board.innerHTML = '';
   DAYS.forEach((day, i) => {
     const colDate = new Date(mon); colDate.setDate(mon.getDate()+i);
     const colDateStr = colDate.toISOString().slice(0,10);
-    const dayTasks = tasks.filter(t => t.day === day);
+    const dayTasks = tasks.filter(t => t.day === day && t.weekStamp === currentWeekStamp);
     const dayEvents = calEvents.filter(e => e.date === colDateStr).sort((a,b) => { if (a.allDay && !b.allDay) return -1; if (!a.allDay && b.allDay) return 1; return (a.start||'') < (b.start||'') ? -1 : 1; });
-    const col = document.createElement('div'); col.className = 'col';
-    const isToday = colDateStr === new Date().toISOString().slice(0,10);
+    const col = document.createElement('div');
+    const isToday = colDateStr === localToday();
+    col.className = 'col' + (isToday ? ' is-today' : '');
+
+    // Header with day name, date, task count
     const hdr = document.createElement('div'); hdr.className = 'col-header';
-    if (isToday) { hdr.style.cssText = 'color:var(--cal-text);font-weight:700;'; }
-    hdr.textContent = day.slice(0,3) + '  ' + colDate.getDate(); col.appendChild(hdr);
+    const daySpan = document.createElement('span');
+    if (isToday) {
+      daySpan.innerHTML = day.slice(0,3).toUpperCase() + ' <span style="font-size:15px;font-weight:700;">' + colDate.getDate() + '</span> <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cal-text);vertical-align:middle;margin-left:2px;"></span>';
+    } else {
+      daySpan.textContent = day.slice(0,3).toUpperCase() + ' ' + colDate.getDate();
+    }
+    const countBadge = document.createElement('span'); countBadge.className = 'col-task-count';
+    const total = dayTasks.length + dayEvents.length;
+    countBadge.textContent = total > 0 ? total : '';
+    countBadge.style.display = total > 0 ? '' : 'none';
+    hdr.appendChild(daySpan); hdr.appendChild(countBadge); col.appendChild(hdr);
+
     const body = document.createElement('div'); body.className = 'col-body'; body.dataset.day = day;
-    if (isToday) { body.style.cssText = 'border-color:var(--cal-border);border-width:1.5px;'; }
     if (dayEvents.length > 0) { const lbl = document.createElement('div'); lbl.className = 'cal-label'; lbl.textContent = 'Calendar'; body.appendChild(lbl); dayEvents.forEach(e => body.appendChild(renderCalCard(e))); if (dayTasks.length > 0) { const d = document.createElement('div'); d.className = 'divider'; body.appendChild(d); } }
-    dayTasks.forEach(t => body.appendChild(renderCard(t)));
+    dayTasks.forEach(t => { const cardEl = renderCard(t); body.appendChild(cardEl); enableReorder(cardEl, t.id, t.day, t.weekStamp); });
     body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
     body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
     body.addEventListener('drop', e => {
@@ -1840,6 +2558,14 @@ function renderPlanner() {
     const addBtn = document.createElement('button'); addBtn.className = 'add-btn'; addBtn.innerHTML = '<span style="font-size:15px;line-height:1;">+</span> add task'; addBtn.onclick = () => renderAddForm(day, body, addBtn); body.appendChild(addBtn);
     col.appendChild(body); board.appendChild(col);
   });
+  // Update week progress bar
+  const weekTasks = tasks.filter(t => t.weekStamp === currentWeekStamp && !t.isMeeting);
+  const doneTasks = weekTasks.filter(t => t.done);
+  const pct = weekTasks.length ? Math.round(doneTasks.length / weekTasks.length * 100) : 0;
+  const fill = document.getElementById('week-progress-fill');
+  const lbl = document.getElementById('week-progress-label');
+  if (fill) fill.style.width = pct + '%';
+  if (lbl) lbl.textContent = weekTasks.length === 0 ? '' : doneTasks.length + ' / ' + weekTasks.length + ' done';
 }
 
 // ─── Meeting drag-drop dialog ─────────────────────────────────────
@@ -1940,7 +2666,268 @@ function showMeetingDropDialog(task, newDay) {
   document.body.appendChild(overlay);
 }
 
-// ─── Theme toggle ─────────────────────────────────────────────────
+// ─── Availability strip ───────────────────────────────────────────
+function renderAvailStrip() {
+  const strip = document.getElementById('avail-strip');
+  if (!strip) return;
+  strip.innerHTML = '';
+  const today = localToday();
+  const week = SCHEDULE.find(w => w.dates[0] <= today && today <= (w.dates[4] || '9999'));
+  if (!week) { strip.style.display = 'none'; return; }
+  const dayIdx = week.dates.findIndex(d => d === today);
+  if (dayIdx < 0) { strip.style.display = 'none'; return; }
+  strip.style.display = 'flex';
+  const lbl = document.createElement('span'); lbl.className = 'avail-strip-label'; lbl.textContent = 'Today:';
+  strip.appendChild(lbl);
+  week.people.filter(p => MY_TEAM.includes(p.name)).forEach(p => {
+    const shift = p.shifts[dayIdx] || '';
+    const up = shift.toUpperCase();
+    const isOff = up === 'SO' || up === 'H' || up === 'ABS' || up.startsWith('E') || up.startsWith('W');
+    const pill = document.createElement('span');
+    pill.className = 'avail-pill ' + (isOff ? 'avail-off' : 'avail-in');
+    pill.textContent = p.name + (shift ? ' · ' + shift : '');
+    strip.appendChild(pill);
+  });
+}
+
+// ─── Carry forward ────────────────────────────────────────────────
+function checkCarryForward() {
+  const wrap = document.getElementById('carry-banner-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const today = new Date();
+  if (today.getDay() !== 1) return;
+  const dismissKey = 'wtp_carry_' + today.toISOString().slice(0,10);
+  if (localStorage.getItem(dismissKey)) return;
+  const thisWeekStamp = getMonday(0).toISOString().slice(0,10);
+  const lastWeekStamp = getMonday(-1).toISOString().slice(0,10);
+  const leftover = tasks.filter(t => !t.done && t.weekStamp === lastWeekStamp);
+  if (!leftover.length) return;
+  const banner = document.createElement('div'); banner.className = 'carry-banner';
+  const txt = document.createElement('span'); txt.className = 'carry-banner-text';
+  txt.textContent = `📋 You have ${leftover.length} unfinished task${leftover.length>1?'s':''} from last week — move them to this week?`;
+  const yesBtn = document.createElement('button'); yesBtn.className = 'carry-banner-btn'; yesBtn.textContent = 'Move forward';
+  yesBtn.onclick = () => { leftover.forEach(t => { t.weekStamp = thisWeekStamp; }); save(); renderPlanner(); wrap.innerHTML = ''; localStorage.setItem(dismissKey,'1'); };
+  const noBtn = document.createElement('button'); noBtn.className = 'carry-banner-dismiss'; noBtn.textContent = 'Dismiss';
+  noBtn.onclick = () => { localStorage.setItem(dismissKey,'1'); wrap.innerHTML = ''; };
+  banner.appendChild(txt); banner.appendChild(yesBtn); banner.appendChild(noBtn);
+  wrap.appendChild(banner);
+}
+
+// ─── Today side panel ─────────────────────────────────────────────
+let todayPanelOpen = false;
+function toggleTodayPanel() {
+  todayPanelOpen = !todayPanelOpen;
+  const panel = document.getElementById('today-panel');
+  const notepad = document.getElementById('notepad');
+  const btn = document.getElementById('today-panel-btn');
+  if (todayPanelOpen) {
+    panel.style.display = 'flex'; notepad.style.display = 'none';
+    btn.style.background = 'var(--cal)'; btn.style.borderColor = 'var(--cal-border)';
+    renderTodayPanel();
+  } else {
+    panel.style.display = 'none'; notepad.style.display = '';
+    btn.style.background = ''; btn.style.borderColor = '';
+  }
+}
+
+function renderTodayPanel() {
+  const body = document.getElementById('tp-body');
+  const dateEl = document.getElementById('tp-date');
+  if (!body) return;
+  const now = new Date();
+  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  dateEl.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  body.innerHTML = '';
+  const thisWeekStamp = getMonday(0).toISOString().slice(0,10);
+  const todayMeetings = tasks.filter(t => t.day===todayDay && t.isMeeting && t.weekStamp===thisWeekStamp).sort((a,b)=>(a.timeStart||'')<(b.timeStart||'')?-1:1);
+  const todayTasks   = tasks.filter(t => t.day===todayDay && !t.isMeeting && t.weekStamp===thisWeekStamp);
+
+  const mSec = document.createElement('div');
+  const mT = document.createElement('div'); mT.className='today-panel-section-title'; mT.textContent='📅 Meetings'; mSec.appendChild(mT);
+  if (!todayMeetings.length) { const e=document.createElement('div'); e.className='today-panel-empty'; e.textContent='No meetings today'; mSec.appendChild(e); }
+  else todayMeetings.forEach(t => {
+    const row=document.createElement('div'); row.className='today-meeting-row';
+    const tit=document.createElement('div'); tit.className='today-meeting-title'; tit.textContent=t.title;
+    const meta=document.createElement('div'); meta.className='today-meeting-meta'; if(t.timeStart) meta.textContent=t.timeStart+(t.timeEnd?' – '+t.timeEnd:'');
+    row.appendChild(tit); if(t.timeStart) row.appendChild(meta); mSec.appendChild(row);
+  });
+  body.appendChild(mSec);
+
+  const tSec = document.createElement('div');
+  const tT = document.createElement('div'); tT.className='today-panel-section-title'; tT.textContent='✓ Tasks'; tSec.appendChild(tT);
+  if (!todayTasks.length) { const e=document.createElement('div'); e.className='today-panel-empty'; e.textContent='No tasks today'; tSec.appendChild(e); }
+  else todayTasks.forEach(t => {
+    const row=document.createElement('div'); row.className='today-task-row';
+    const chk=document.createElement('input'); chk.type='checkbox'; chk.className='today-task-check'; chk.checked=t.done;
+    const tit=document.createElement('div'); tit.className='today-task-title'+(t.done?' today-task-done':''); tit.textContent=t.title;
+    chk.onchange=()=>{ t.done=chk.checked; save(); renderPlanner(); tit.className='today-task-title'+(t.done?' today-task-done':''); };
+    row.appendChild(chk); row.appendChild(tit);
+    if(t.priority){const b=document.createElement('span');b.className='badge badge-'+t.priority;b.style.fontSize='10px';b.textContent=t.priority;row.appendChild(b);}
+    tSec.appendChild(row);
+  });
+  body.appendChild(tSec);
+}
+
+// ─── Drag to reorder within column ───────────────────────────────
+let dragReorderCard = null;
+function enableReorder(cardEl, taskId, day, weekStamp) {
+  // Insert a drop indicator before and after this card
+  const before = document.createElement('div'); before.className = 'card-drop-indicator';
+  const after  = document.createElement('div'); after.className  = 'card-drop-indicator';
+  cardEl.parentNode?.insertBefore(before, cardEl);
+  cardEl.parentNode?.insertBefore(after, cardEl.nextSibling);
+
+  cardEl.addEventListener('dragover', e => {
+    e.preventDefault(); e.stopPropagation();
+    if (!dragCard || dragCard === taskId) return;
+    const srcTask = tasks.find(t => t.id === dragCard);
+    if (!srcTask || srcTask.day !== day || srcTask.weekStamp !== weekStamp) return;
+    const rect = cardEl.getBoundingClientRect();
+    cardEl.closest('.col-body')?.querySelectorAll('.card-drop-indicator').forEach(el => el.classList.remove('visible'));
+    (e.clientY < rect.top + rect.height / 2 ? before : after).classList.add('visible');
+  });
+  cardEl.addEventListener('dragleave', () => {
+    before.classList.remove('visible'); after.classList.remove('visible');
+  });
+  cardEl.addEventListener('drop', e => {
+    e.preventDefault(); e.stopPropagation();
+    before.classList.remove('visible'); after.classList.remove('visible');
+    if (!dragCard || dragCard === taskId) return;
+    const srcTask = tasks.find(t => t.id === dragCard);
+    const dstTask = tasks.find(t => t.id === taskId);
+    if (!srcTask || !dstTask || srcTask.day !== dstTask.day || srcTask.weekStamp !== dstTask.weekStamp) return;
+    const rect = cardEl.getBoundingClientRect();
+    const insertBefore = e.clientY < rect.top + rect.height / 2;
+    const dayTasks = tasks.filter(t => t.day === day && t.weekStamp === weekStamp);
+    const srcIdx = dayTasks.findIndex(t => t.id === dragCard);
+    dayTasks.splice(srcIdx, 1);
+    const dstIdx = dayTasks.findIndex(t => t.id === taskId);
+    dayTasks.splice(insertBefore ? dstIdx : dstIdx + 1, 0, srcTask);
+    const others = tasks.filter(t => !(t.day === day && t.weekStamp === weekStamp));
+    tasks.length = 0; [...others, ...dayTasks].forEach(t => tasks.push(t));
+    save(); renderPlanner(); dragCard = null;
+  });
+}
+
+// ─── Edit task modal ──────────────────────────────────────────────
+function showEditModal(t) {
+  document.getElementById('edit-modal')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'edit-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;display:flex;align-items:center;justify-content:center;';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px 24px;width:92%;max-width:420px;display:flex;flex-direction:column;gap:12px;max-height:90vh;overflow-y:auto;';
+
+  // Header
+  const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;';
+  const htitle = document.createElement('div'); htitle.style.cssText = 'font-size:14px;font-weight:700;color:var(--text);'; htitle.textContent = t.isMeeting ? 'Edit meeting' : 'Edit task';
+  const xBtn = document.createElement('button'); xBtn.style.cssText = 'background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;'; xBtn.textContent = '×'; xBtn.onclick = () => overlay.remove();
+  hdr.appendChild(htitle); hdr.appendChild(xBtn); box.appendChild(hdr);
+
+  function addField(label, el) {
+    const w = document.createElement('div');
+    const l = document.createElement('label'); l.style.cssText = 'font-size:11px;color:var(--text2);display:block;margin-bottom:3px;'; l.textContent = label;
+    w.appendChild(l); w.appendChild(el); box.appendChild(w); return el;
+  }
+  function makeInp(val, ph) {
+    const el = document.createElement('input'); el.value = val||''; el.placeholder = ph||'';
+    el.style.cssText = 'width:100%;font-family:inherit;font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;';
+    return el;
+  }
+
+  // Title
+  const titleEl = addField('Title', makeInp(t.title, 'Task title'));
+
+  // Priority
+  const prioSel = document.createElement('select');
+  prioSel.style.cssText = 'width:100%;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 8px;outline:none;';
+  ['','high','medium','low'].forEach(p => { const o = document.createElement('option'); o.value=p; o.textContent=p||'No priority'; if(p===t.priority) o.selected=true; prioSel.appendChild(o); });
+  addField('Priority', prioSel);
+
+  // Note
+  const noteEl = document.createElement('textarea'); noteEl.value=t.note||''; noteEl.rows=2; noteEl.placeholder='Note / agenda…';
+  noteEl.style.cssText = 'width:100%;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;resize:vertical;';
+  addField('Note', noteEl);
+
+  // Meeting times
+  let tsEl, teEl;
+  if (t.isMeeting) {
+    const tr2 = document.createElement('div'); tr2.style.cssText = 'display:flex;gap:8px;align-items:center;';
+    tsEl = makeTimeSelect(t.timeStart||'09:00'); tsEl.style.cssText = 'flex:1;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:5px 8px;outline:none;';
+    teEl = makeTimeSelect(t.timeEnd||'09:30');   teEl.style.cssText = tsEl.style.cssText;
+    const sep = document.createElement('span'); sep.textContent='–'; sep.style.cssText='color:var(--text3);font-size:12px;';
+    tr2.appendChild(tsEl); tr2.appendChild(sep); tr2.appendChild(teEl);
+    addField('Time', tr2);
+  }
+
+  // Colour label
+  const COLS = [{id:'',dot:'var(--surface3)',label:'None'},{id:'red',dot:'#ff5555',label:'Urgent'},{id:'amber',dot:'#ffb347',label:'In progress'},{id:'green',dot:'#5fcc7a',label:'Done / easy'},{id:'blue',dot:'#7aadff',label:'Pending'},{id:'purple',dot:'#c4b5fd',label:'FYI'}];
+  let selectedColour = t.colour||'';
+  const colRow = document.createElement('div'); colRow.style.cssText='display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
+  const colLbl = document.createElement('span'); colLbl.style.cssText='font-size:11px;color:var(--text2);flex-shrink:0;'; colLbl.textContent='Label:';
+  colRow.appendChild(colLbl);
+  const colBtns = COLS.map(c => {
+    const btn = document.createElement('button'); btn.type='button';
+    btn.style.cssText = 'width:20px;height:20px;border-radius:50%;cursor:pointer;flex-shrink:0;transition:border-color 0.15s,transform 0.1s;background:'+c.dot+';border:2px solid '+(c.id===selectedColour?'var(--text)':'transparent')+';transform:'+(c.id===selectedColour?'scale(1.25)':'scale(1)')+';';
+    btn.title = c.label;
+    btn.onclick = () => {
+      selectedColour = c.id;
+      colBtns.forEach((b,i) => { b.style.borderColor = COLS[i].id===c.id?'var(--text)':'transparent'; b.style.transform = COLS[i].id===c.id?'scale(1.25)':'scale(1)'; });
+      pendingWrap.style.display = c.id==='blue' ? '' : 'none';
+    };
+    colRow.appendChild(btn); return btn;
+  });
+  addField('Colour label', colRow);
+
+  // Pending name (blue only)
+  const pendingWrap = document.createElement('div'); pendingWrap.style.cssText = 'display:'+(t.colour==='blue'?'':'none')+';';
+  const pendingInner = makeInp(t.pendingName||'', 'e.g. Jonas, IT team…');
+  const pwLbl = document.createElement('label'); pwLbl.style.cssText='font-size:11px;color:var(--text2);display:block;margin-bottom:3px;'; pwLbl.textContent='Waiting for…';
+  pendingWrap.appendChild(pwLbl); pendingWrap.appendChild(pendingInner); box.appendChild(pendingWrap);
+
+  // Reminder
+  const remRow = document.createElement('div'); remRow.style.cssText='display:flex;align-items:center;gap:8px;';
+  const remChk = document.createElement('input'); remChk.type='checkbox'; remChk.checked=!!t.reminder; remChk.style.cssText='accent-color:var(--cal-text);width:13px;height:13px;cursor:pointer;';
+  const remLbl = document.createElement('label'); remLbl.style.cssText='font-size:11px;color:var(--text2);'; remLbl.textContent='Remind me at';
+  const remTime = makeTimeSelect(t.reminder||'09:00'); remTime.style.cssText='background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);font-size:11px;padding:3px 6px;display:'+(t.reminder?'':'none')+';';
+  remChk.addEventListener('change', () => remTime.style.display = remChk.checked?'':'none');
+  remRow.appendChild(remChk); remRow.appendChild(remLbl); remRow.appendChild(remTime); box.appendChild(remRow);
+
+  // Recurring (non-meetings only)
+  let recChk = null;
+  if (!t.isMeeting) {
+    const recRow = document.createElement('div'); recRow.style.cssText='display:flex;align-items:center;gap:8px;';
+    recChk = document.createElement('input'); recChk.type='checkbox'; recChk.checked=!!t.recurring; recChk.style.cssText='accent-color:var(--cal-text);width:13px;height:13px;cursor:pointer;';
+    const recLbl = document.createElement('label'); recLbl.style.cssText='font-size:11px;color:var(--text2);'; recLbl.textContent='Repeat every week on this day';
+    recRow.appendChild(recChk); recRow.appendChild(recLbl); box.appendChild(recRow);
+  }
+
+  // Actions
+  const fa = document.createElement('div'); fa.style.cssText='display:flex;gap:8px;justify-content:flex-end;margin-top:4px;';
+  const cancelBtn = document.createElement('button'); cancelBtn.className='btn-cancel'; cancelBtn.textContent='Cancel'; cancelBtn.onclick=()=>overlay.remove();
+  const saveBtn = document.createElement('button'); saveBtn.className='btn-save'; saveBtn.textContent='Save changes';
+  saveBtn.onclick = () => {
+    t.title     = titleEl.value.trim() || t.title;
+    t.priority  = prioSel.value;
+    t.note      = noteEl.value.trim();
+    if (tsEl) t.timeStart = tsEl.value;
+    if (teEl) t.timeEnd   = teEl.value;
+    t.colour      = selectedColour;
+    t.pendingName = selectedColour==='blue' ? pendingInner.value.trim() : '';
+    t.reminder    = remChk.checked ? remTime.value : '';
+    if (recChk !== null) t.recurring = recChk.checked;
+    save(); scheduleAllReminders(); renderPlanner(); overlay.remove();
+  };
+  fa.appendChild(cancelBtn); fa.appendChild(saveBtn); box.appendChild(fa);
+
+  overlay.appendChild(box);
+  overlay.addEventListener('click', e => { if (e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light-mode');
   localStorage.setItem('wtp_theme', isLight ? 'light' : 'dark');
@@ -2023,7 +3010,8 @@ const savedSched = localStorage.getItem('wtp_schedule');
 if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); } catch(e) {} }
 initScheduleSelect();
 renderSchedule();
-loadUserData(); // loads tasks, notes, renders planner for current user
+loadUserData();
+initGitHubSync();
 
 // ─── Keyboard shortcuts ───────────────────────────────────────────
 document.addEventListener('keydown', e => {
@@ -2037,11 +3025,12 @@ document.addEventListener('keydown', e => {
     if (s) { s.focus(); s.select(); }
   }
   if (e.key === 't' && !typing && !e.metaKey && !e.ctrlKey) {
-    showTodayView();
+    toggleTodayPanel();
   }
   if (e.key === 'Escape') {
-    document.getElementById('today-modal').style.display = 'none';
-    document.getElementById('drop-dialog') && document.getElementById('drop-dialog').remove();
+    if (todayPanelOpen) toggleTodayPanel();
+    document.getElementById('edit-modal')?.remove();
+    document.getElementById('drop-dialog')?.remove();
     document.getElementById('search-results').style.display = 'none';
     document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
   }
