@@ -169,6 +169,26 @@
       "done": false
     }
   ],
+  "wtp_tasks_michael": [
+    {
+      "id": "1777319031387",
+      "day": "Monday",
+      "title": "testing",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "test",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "09:45",
+      "colour": "blue",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    }
+  ],
   "wtp_schedule": [
     {
       "week": "Week 16",
@@ -207,7 +227,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D2 (8-16)",
             "D2 (8-16)",
@@ -413,7 +433,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "SO",
             "D3 (9-17)",
@@ -619,7 +639,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -825,7 +845,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "SO",
             "SO",
@@ -1031,7 +1051,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1237,7 +1257,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -1443,7 +1463,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "H",
             "D2 (8-16)",
@@ -1649,7 +1669,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1855,7 +1875,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "SO",
             "D2 (8-16)",
@@ -2061,7 +2081,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -2267,7 +2287,7 @@
           ]
         },
         {
-          "name": "MaylÃ©n",
+          "name": "MaylÃÂ©n",
           "shifts": [
             "D3 (9-17)",
             "D3 (9-17)",
@@ -2448,7 +2468,7 @@
         "addedAt": "2026-01-01"
       },
       {
-        "name": "MaylÃÂÃÂ©n",
+        "name": "MaylÃÂÃÂÃÂÃÂ©n",
         "addedAt": "2026-01-01"
       },
       {
