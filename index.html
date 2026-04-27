@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Weekly Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2697,8 +2698,13 @@ function zdInitDates() {
   if (t) t.value = fmt(fri);
 }
 
+const ZD_PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev';
+
 async function zdFetch(path) {
-  const res = await fetch(zdBase() + path, { headers: { 'Authorization': zdAuth(), 'Content-Type': 'application/json' } });
+  const c = getZdCreds();
+  const res = await fetch(ZD_PROXY + path, {
+    headers: { 'Authorization': 'Basic ' + btoa(c.email + '/token:' + c.token), 'Content-Type': 'application/json' }
+  });
   if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error((e.error || e.description || 'HTTP ' + res.status) + ' — ' + path); }
   return res.json();
 }
