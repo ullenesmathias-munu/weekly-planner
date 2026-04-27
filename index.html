@@ -2501,7 +2501,7 @@ async function renderTeamOverview(data) {
       const chip = document.querySelector(`[data-zdchip="${person.name}"]`);
       if (!chip) continue;
       try {
-        const solved = await zdCount(`assignee_id:${agent.id} status:solved solved>=${fromDate} solved<=${toDate}`);
+        const solved = await zdCount(`assignee_id:${agent.id} status:solved solved>${fromDate} solved<${toDate}`);
         chip.textContent = '🎫 ' + solved + ' solved this week';
         chip.style.color = solved > 0 ? 'var(--low-text)' : 'var(--text3)';
         chip.style.background = solved > 0 ? 'var(--low-bg)' : '';
@@ -2732,15 +2732,14 @@ async function zdCount(query) {
 }
 
 async function zdGetStats(agentId, fromDate, toDate) {
-  const base = `assignee_id:${agentId}`;
-  const solved = `${base} status:solved solved>=${fromDate} solved<=${toDate}`;
+  const base = `assignee_id:${agentId} status:solved solved>${fromDate} solved<${toDate}`;
   const [total, web, email, open, pending, onhold] = await Promise.all([
-    zdCount(solved),
-    zdCount(solved + ' via:web'),
-    zdCount(solved + ' via:email'),
-    zdCount(`${base} status:open`),
-    zdCount(`${base} status:pending`),
-    zdCount(`${base} status:hold`),
+    zdCount(`assignee_id:${agentId} status:solved solved>${fromDate} solved<${toDate}`),
+    zdCount(`assignee_id:${agentId} status:solved solved>${fromDate} solved<${toDate} via:web`),
+    zdCount(`assignee_id:${agentId} status:solved solved>${fromDate} solved<${toDate} via:email`),
+    zdCount(`assignee_id:${agentId} status:open`),
+    zdCount(`assignee_id:${agentId} status:pending`),
+    zdCount(`assignee_id:${agentId} status:hold`),
   ]);
   return { solved: total, web, email, open, pending, onhold };
 }
