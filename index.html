@@ -543,7 +543,7 @@ window.tryUnlock = async function() {
         <button class="btn-save" onclick="saveGhToken()" style="font-size:12px;white-space:nowrap;">Connect</button>
         <button class="btn-cancel" onclick="removeGhToken()" style="font-size:12px;">Disconnect</button>
       </div>
-      <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;align-items:center;gap:12px;flex-wrap:wrap;">
         <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
         <button onclick="ghLoad()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Pull now</button>
         <button onclick="ghSave()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Push now</button>
@@ -1791,26 +1791,35 @@ async function ghLoad() {
   setSyncStatus('⟳ Syncing…', 'var(--text3)');
   try {
     const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers: ghHeaders() });
-    if (res.status === 404) { ghFileSha = null; setSyncStatus('☁ No data yet', 'var(--text3)'); return; }
+    if (res.status === 401 || res.status === 403) {
+      setSyncStatus('✗ Token rejected — re-enter in Settings', 'var(--high-text)');
+      return;
+    }
+    if (res.status === 404) {
+      ghFileSha = null;
+      setSyncStatus('☁ Connected — no data yet', 'var(--text3)');
+      return;
+    }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     ghFileSha = json.sha;
-    const data = JSON.parse(atob(json.content.replace(/\n/g,'')));
-    // Merge remote data into localStorage (remote wins for each user's keys)
-    Object.entries(data).forEach(([k, v]) => {
-      localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
-    });
-    // Reload current user's data
-    if (currentUser) {
-      tasks = JSON.parse(localStorage.getItem(userTaskKey(currentUser.name)) || '[]');
-      calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
-      const ta = document.getElementById('notepad-text');
-      if (ta) ta.value = localStorage.getItem(userNoteKey(currentUser.name)) || '';
-      renderPlanner();
+    let data = {};
+    try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { console.warn('Parse error:', e); }
+    if (Object.keys(data).length > 0) {
+      Object.entries(data).forEach(([k, v]) => {
+        localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+      });
+      if (currentUser) {
+        tasks = JSON.parse(localStorage.getItem(userTaskKey(currentUser.name)) || '[]');
+        calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
+        const ta = document.getElementById('notepad-text');
+        if (ta) ta.value = localStorage.getItem(userNoteKey(currentUser.name)) || '';
+        renderPlanner();
+      }
     }
     setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
   } catch(e) {
-    setSyncStatus('✗ Sync failed', 'var(--med-text)');
+    setSyncStatus('✗ ' + e.message, 'var(--med-text)');
     console.warn('ghLoad error:', e);
   }
 }
@@ -1820,11 +1829,10 @@ async function ghSave() {
   syncPending = false;
   setSyncStatus('⟳ Saving…', 'var(--text3)');
   try {
-    // Build the full data object from all localStorage keys
     const data = {};
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k === 'wtp_schedule' || k === 'wtp_users')) {
+      if (k && (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k === 'wtp_schedule' || k === 'wtp_users' || k === 'wtp_wingman')) {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -1838,7 +1846,7 @@ async function ghSave() {
     ghFileSha = json.content.sha;
     setSyncStatus('✓ Saved ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
   } catch(e) {
-    setSyncStatus('✗ Save failed', 'var(--med-text)');
+    setSyncStatus('✗ Save failed: ' + e.message, 'var(--med-text)');
     console.warn('ghSave error:', e);
   }
 }
@@ -1847,29 +1855,35 @@ function scheduleSyncSave() {
   if (!ghToken) return;
   clearTimeout(syncTimer);
   syncPending = true;
-  syncTimer = setTimeout(ghSave, 2000); // debounce 2s
+  syncTimer = setTimeout(ghSave, 2000);
 }
 
 function initGitHubSync() {
-  // Pre-store token if not already set
   ghToken = localStorage.getItem('wtp_gh_token') || null;
   if (ghToken) {
-    document.getElementById('gh-token-input').value = '••••••••••••••••';
-    document.getElementById('gh-sync-status-wrap').style.display = '';
+    const inp = document.getElementById('gh-token-input');
+    const wrap = document.getElementById('gh-sync-status-wrap');
+    if (inp) inp.value = '••••••••••••••••';
+    if (wrap) wrap.style.display = 'flex';
     ghLoad();
-    // Auto-sync every 5 minutes
     setInterval(ghLoad, 5 * 60 * 1000);
   }
 }
 
 function saveGhToken() {
-  const val = document.getElementById('gh-token-input').value.trim();
-  if (!val || val.includes('•')) return;
+  const inp = document.getElementById('gh-token-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val || val.includes('•')) {
+    setSyncStatus('✗ Paste a valid token first', 'var(--high-text)');
+    return;
+  }
   localStorage.setItem('wtp_gh_token', val);
   ghToken = val;
-  document.getElementById('gh-token-input').value = '••••••••••••••••';
-  document.getElementById('gh-sync-status-wrap').style.display = '';
-  setSyncStatus('Connecting…', 'var(--text3)');
+  inp.value = '••••••••••••••••';
+  const wrap = document.getElementById('gh-sync-status-wrap');
+  if (wrap) wrap.style.display = 'flex';
+  setSyncStatus('⟳ Connecting…', 'var(--text3)');
   ghLoad();
   setInterval(ghLoad, 5 * 60 * 1000);
 }
@@ -1878,8 +1892,10 @@ function removeGhToken() {
   if (!confirm('Remove GitHub sync? Your data stays in localStorage but will no longer sync.')) return;
   localStorage.removeItem('wtp_gh_token');
   ghToken = null; ghFileSha = null;
-  document.getElementById('gh-token-input').value = '';
-  document.getElementById('gh-sync-status-wrap').style.display = 'none';
+  const inp = document.getElementById('gh-token-input');
+  const wrap = document.getElementById('gh-sync-status-wrap');
+  if (inp) inp.value = '';
+  if (wrap) wrap.style.display = 'none';
   setSyncStatus('', '');
 }
 
