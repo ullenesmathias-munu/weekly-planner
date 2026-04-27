@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>if(localStorage.getItem('wtp_theme')==='light')document.documentElement.classList.add('light-mode');</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -41,6 +42,54 @@
   html { color-scheme: dark; }
   .light-mode { color-scheme: light; }
   body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
+
+  /* ─── Confirm modal ──────────────────────────────── */
+  .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 900; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.15s ease; }
+  .confirm-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px 24px; max-width: 320px; width: 90%; display: flex; flex-direction: column; gap: 14px; }
+  .confirm-msg { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* ─── Tab badges ─────────────────────────────────── */
+  .tab-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 10px; font-weight: 700; background: var(--cal-text); color: #0f0f11; border-radius: 8px; padding: 0 4px; margin-left: 5px; vertical-align: middle; }
+  .light-mode .tab-badge { color: #fff; background: var(--cal-text); }
+
+  /* ─── Sync skeleton pulse ────────────────────────── */
+  @keyframes skeleton-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.9; } }
+  .skeleton { background: var(--surface3); border-radius: 6px; animation: skeleton-pulse 1.4s ease-in-out infinite; }
+
+  /* ─── Consistent empty states ────────────────────── */
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 16px; gap: 8px; color: var(--text3); }
+  .empty-state-icon { font-size: 24px; opacity: 0.5; }
+  .empty-state-title { font-size: 13px; font-weight: 600; color: var(--text2); }
+  .empty-state-sub { font-size: 12px; color: var(--text3); text-align: center; line-height: 1.5; }
+
+  /* ─── Mobile responsive ──────────────────────────── */
+  @media (max-width: 768px) {
+    body { padding: 12px; }
+    .tabs { padding: 0 0 0 4px; gap: 2px; }
+    .tab-btn { font-size: 11px; padding: 8px 10px; }
+    .planner-wrap { flex-direction: column; }
+    .board { overflow-x: auto; flex-wrap: nowrap; gap: 8px; }
+    .col { flex: 0 0 220px; }
+    .notepad, .today-panel { flex: none; width: 100%; min-height: 200px; }
+    .week-drag-zone { display: none; }
+    .avail-strip { overflow-x: auto; flex-wrap: nowrap; }
+    .oto-layout { flex-direction: column; }
+    .oto-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; overflow-y: auto; }
+    .topbar { flex-wrap: wrap; gap: 8px; }
+    .topbar-right { flex-wrap: wrap; gap: 6px; }
+    #task-search { width: 130px; }
+    #task-search:focus { width: 160px; }
+    .sched-wrap { overflow-x: auto; }
+    .role-summary-card, .wingman-card { overflow-x: auto; }
+    .clock-wrap { font-size: 11px; }
+    #live-date { display: none; }
+  }
+  @media (max-width: 480px) {
+    .col { flex: 0 0 180px; }
+    .tab-btn { font-size: 10px; padding: 7px 8px; }
+    .quote-strip { display: none; }
+  }
   /* Today column highlight */
   .col.is-today > .col-header { color: var(--cal-text); }
   .col.is-today > .col-body { background: rgba(122,173,255,0.08); border-color: var(--cal-border); border-width: 1.5px; }
@@ -327,6 +376,15 @@
     <input class="lock-input" id="lock-input" type="password" placeholder="••••••••" autocomplete="current-password">
     <button class="lock-btn" onclick="tryUnlock()">Sign in</button>
     <div class="lock-error" id="lock-error"></div>
+    <!-- Sync token — shown only if not yet saved -->
+    <div id="lock-sync-wrap" style="width:100%;margin-top:8px;display:none;border-top:0.5px solid var(--border);padding-top:12px;">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-align:center;">☁ First time on this device? Add your sync token</div>
+      <div style="display:flex;gap:6px;">
+        <input type="password" id="lock-token-input" placeholder="Paste GitHub token…" autocomplete="off"
+          style="flex:1;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;">
+        <button onclick="saveLockToken()" style="font-family:inherit;font-size:12px;font-weight:600;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:6px 10px;cursor:pointer;white-space:nowrap;">Save</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -348,6 +406,11 @@ function getUsers() {
 let currentUser = null;
 
 (function() {
+  // Show sync token field if no token saved yet on this device
+  if (!localStorage.getItem('wtp_gh_token')) {
+    const wrap = document.getElementById('lock-sync-wrap');
+    if (wrap) wrap.style.display = '';
+  }
   const saved = localStorage.getItem('wtp_session');
   if (saved) {
     try {
@@ -361,6 +424,18 @@ let currentUser = null;
   document.getElementById('lock-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
   document.getElementById('lock-username').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lock-input').focus(); });
 })();
+
+window.saveLockToken = function() {
+  const inp = document.getElementById('lock-token-input');
+  const val = inp ? inp.value.trim() : '';
+  if (!val) return;
+  localStorage.setItem('wtp_gh_token', val);
+  if (inp) inp.value = '••••••••••••••••';
+  const wrap = document.getElementById('lock-sync-wrap');
+  if (wrap) {
+    wrap.innerHTML = '<div style="font-size:11px;color:var(--low-text);text-align:center;padding:4px 0;">✓ Sync token saved</div>';
+  }
+};
 
 window.tryUnlock = async function() {
   const username = document.getElementById('lock-username').value.trim();
@@ -484,11 +559,7 @@ window.tryUnlock = async function() {
   <div class="oto-layout">
     <div class="oto-sidebar" id="oto-sidebar"></div>
     <div class="oto-main" id="oto-main">
-      <div class="oto-empty-state" id="oto-empty">
-        <div style="font-size:32px;margin-bottom:10px;">💬</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Select a person</div>
-        <div style="font-size:12px;color:var(--text3);">Pick someone from the left to view or schedule a 1:1</div>
-      </div>
+      <div class="oto-empty-state" id="oto-empty"></div>
     </div>
   </div>
 </div>
@@ -602,7 +673,7 @@ window.tryUnlock = async function() {
     <div class="settings-card">
       <div class="settings-card-title">🗑 Clear all tasks</div>
       <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
-      <button class="btn-cancel" style="margin-top:10px; color:#A32D2D; border-color:#f09595;" onclick="if(confirm('Delete all tasks?')){ tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }">Clear all tasks</button>
+      <button class="btn-cancel" style="margin-top:10px; color:#A32D2D; border-color:#f09595;" onclick="confirmDialog('Delete all tasks? This cannot be undone.', () => { tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }, 'Delete all')">Clear all tasks</button>
       <span id="clear-tasks-msg" style="font-size:11px; color:var(--text3); margin-left:10px;"></span>
     </div> <!-- end clear all tasks card -->
 
@@ -1133,7 +1204,7 @@ function showWingmanEditModal(slot, idx) {
     const delBtn = document.createElement('button'); delBtn.className = 'btn-cancel';
     delBtn.style.cssText = 'color:var(--high-text);border-color:var(--high-text);font-size:12px;';
     delBtn.textContent = 'Delete slot';
-    delBtn.onclick = () => { if (!confirm('Delete this slot?')) return; wingmanSlots.splice(idx, 1); saveWingman(); renderWingman(); overlay.remove(); };
+    delBtn.onclick = () => confirmDialog('Delete this slot?', () => { wingmanSlots.splice(idx, 1); saveWingman(); renderWingman(); overlay.remove(); }, 'Delete');
     fa.appendChild(delBtn);
   } else { fa.appendChild(document.createElement('div')); }
 
@@ -1450,9 +1521,10 @@ function processXlsx(buffer, fileName, st, preview) {
   });
 })();
 function clearNotepad() {
-  if (!confirm('Clear all notes?')) return;
-  const ta = document.getElementById('notepad-text');
-  if (ta) { ta.value = ''; if (currentUser) localStorage.removeItem(userNoteKey(currentUser.name)); }
+  confirmDialog('Clear all notes?', () => {
+    const ta = document.getElementById('notepad-text');
+    if (ta) { ta.value = ''; if (currentUser) localStorage.removeItem(userNoteKey(currentUser.name)); }
+  }, 'Clear');
 }
 
 function toggleAdvanced() {
@@ -1462,7 +1534,100 @@ function toggleAdvanced() {
   body.classList.toggle('open');
 }
 
-// ─── 1:1 System ───────────────────────────────────────────────────
+// ─── Confirm dialog (replaces browser confirm()) ──────────────────
+function confirmDialog(msg, onConfirm, confirmLabel = 'Delete', danger = true) {
+  const overlay = document.createElement('div'); overlay.className = 'confirm-overlay';
+  const box = document.createElement('div'); box.className = 'confirm-box';
+  const msgEl = document.createElement('div'); msgEl.className = 'confirm-msg'; msgEl.textContent = msg;
+  const actions = document.createElement('div'); actions.className = 'confirm-actions';
+  const cancel = document.createElement('button'); cancel.className = 'btn-cancel'; cancel.textContent = 'Cancel';
+  cancel.onclick = () => overlay.remove();
+  const ok = document.createElement('button'); ok.className = 'btn-save';
+  ok.style.cssText = danger ? 'background:var(--high-bg);color:var(--high-text);border:1px solid var(--high-text);' : '';
+  ok.textContent = confirmLabel;
+  ok.onclick = () => { overlay.remove(); onConfirm(); };
+  actions.appendChild(cancel); actions.appendChild(ok);
+  box.appendChild(msgEl); box.appendChild(actions); overlay.appendChild(box);
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', esc); } });
+  document.body.appendChild(overlay); ok.focus();
+}
+
+// ─── Tab badge counts ─────────────────────────────────────────────
+function updateTabBadges() {
+  // 1:1 tab — count upcoming sessions within 7 days
+  const today = localToday();
+  const soon = new Date(); soon.setDate(soon.getDate() + 7);
+  const soonStr = soon.getFullYear() + '-' + String(soon.getMonth()+1).padStart(2,'0') + '-' + String(soon.getDate()).padStart(2,'0');
+  const otoData = loadOto();
+  const upcomingSessions = (otoData.sessions || []).filter(s => s.date >= today && s.date <= soonStr);
+  const otoBtn = document.getElementById('tab-btn-onetoone');
+  if (otoBtn && isAdmin()) {
+    const existing = otoBtn.querySelector('.tab-badge');
+    if (existing) existing.remove();
+    if (upcomingSessions.length > 0) {
+      const badge = document.createElement('span'); badge.className = 'tab-badge'; badge.textContent = upcomingSessions.length;
+      otoBtn.appendChild(badge);
+    }
+  }
+  // Planner tab — count today's tasks
+  const thisWeekStamp = getMonday(0).toISOString().slice(0,10);
+  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const todayTasks = tasks.filter(t => t.day === todayDay && t.weekStamp === thisWeekStamp && !t.done && !t.isMeeting);
+  const plannerBtn = document.querySelector('.tab-btn.active') || document.querySelector('.tab-btn');
+  // Update planner tab badge
+  const allTabBtns = document.querySelectorAll('.tab-btn');
+  allTabBtns.forEach(btn => {
+    if (btn.textContent.includes('My Planner') || btn.getAttribute('onclick')?.includes('planner')) {
+      const ex = btn.querySelector('.tab-badge'); if (ex) ex.remove();
+      if (todayTasks.length > 0) {
+        const b = document.createElement('span'); b.className = 'tab-badge';
+        b.style.cssText = 'background:var(--med-text);color:#0f0f11;';
+        b.textContent = todayTasks.length; btn.appendChild(b);
+      }
+    }
+  });
+}
+
+// ─── Sync skeleton ────────────────────────────────────────────────
+function showSyncSkeleton() {
+  const board = document.getElementById('board');
+  if (!board) return;
+  board.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const col = document.createElement('div'); col.className = 'col';
+    const hdr = document.createElement('div'); hdr.className = 'skeleton'; hdr.style.cssText = 'height:16px;width:60px;margin-bottom:12px;';
+    const body = document.createElement('div'); body.className = 'col-body';
+    [80, 60, 90].forEach(w => {
+      const card = document.createElement('div'); card.className = 'skeleton';
+      card.style.cssText = 'height:52px;border-radius:8px;width:' + w + '%;';
+      body.appendChild(card);
+    });
+    col.appendChild(hdr); col.appendChild(body); board.appendChild(col);
+  }
+}
+
+// ─── Keyboard trap for modals ─────────────────────────────────────
+function trapFocus(modalEl) {
+  const focusable = modalEl.querySelectorAll('input,textarea,select,button,[tabindex]:not([tabindex="-1"])');
+  if (!focusable.length) return;
+  const first = focusable[0]; const last = focusable[focusable.length - 1];
+  modalEl.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+    else { if (document.activeElement === last) { e.preventDefault(); first.focus(); } }
+  });
+  first.focus();
+}
+
+// ─── Empty state helper ───────────────────────────────────────────
+function makeEmptyState(icon, title, sub) {
+  const div = document.createElement('div'); div.className = 'empty-state';
+  const i = document.createElement('div'); i.className = 'empty-state-icon'; i.textContent = icon;
+  const t = document.createElement('div'); t.className = 'empty-state-title'; t.textContent = title;
+  const s = document.createElement('div'); s.className = 'empty-state-sub'; s.textContent = sub;
+  div.appendChild(i); div.appendChild(t); div.appendChild(s); return div;
+}
 function otoKey() { return 'wtp_oto_' + (currentUser?.name||'').toLowerCase(); }
 
 function loadOto() {
@@ -1485,6 +1650,10 @@ let otoPerson = null; // currently selected person name
 
 function renderOtoTab() {
   if (!isAdmin()) return;
+  const emptyEl = document.getElementById('oto-empty');
+  if (emptyEl && !emptyEl.children.length) {
+    emptyEl.appendChild(makeEmptyState('💬', 'Select a person', 'Pick someone from the left to view or schedule a 1:1'));
+  }
   const data = getOtoData();
   renderOtoSidebar(data);
   if (otoPerson) renderOtoMain(otoPerson, data);
@@ -1544,16 +1713,33 @@ function renderOtoMain(personName, data) {
   const removeBtn = document.createElement('button'); removeBtn.className = 'btn-cancel'; removeBtn.style.cssText = 'font-size:11px;color:var(--text3);';
   removeBtn.textContent = 'Remove person';
   removeBtn.onclick = () => {
-    if (!confirm('Remove ' + personName + ' from 1:1s? Their sessions will be deleted.')) return;
-    const d = getOtoData();
-    d.people = d.people.filter(p => p.name !== personName);
-    d.sessions = d.sessions.filter(s => s.person !== personName);
-    saveOto(d); otoPerson = null; renderOtoTab();
-    document.getElementById('oto-empty').style.display = '';
-    main.innerHTML = ''; main.appendChild(document.getElementById('oto-empty'));
+    confirmDialog('Remove ' + personName + ' from 1:1s? All their sessions will be deleted.', () => {
+      const d = getOtoData();
+      d.people = d.people.filter(p => p.name !== personName);
+      d.sessions = d.sessions.filter(s => s.person !== personName);
+      saveOto(d); otoPerson = null; renderOtoTab();
+      const mainEl = document.getElementById('oto-main');
+      if (mainEl) { mainEl.innerHTML = ''; mainEl.appendChild(makeEmptyState('💬','Select a person','Pick someone from the left to view or schedule a 1:1')); }
+    }, 'Remove');
   };
   hRight.appendChild(removeBtn);
   hdr.appendChild(hLeft); hdr.appendChild(hRight); main.appendChild(hdr);
+
+  // Upcoming sessions summary strip
+  const upcoming7 = sessions.filter(s => s.date >= today && s.date <= (() => { const d=new Date(); d.setDate(d.getDate()+7); return d.toISOString().slice(0,10); })());
+  if (upcoming7.length) {
+    const strip = document.createElement('div');
+    strip.style.cssText = 'background:var(--cal);border-bottom:1px solid var(--cal-border);padding:8px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;';
+    const lbl = document.createElement('span'); lbl.style.cssText = 'font-size:11px;font-weight:700;color:var(--cal-text);'; lbl.textContent = '📅 Upcoming:';
+    strip.appendChild(lbl);
+    upcoming7.forEach(s => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'font-size:11px;color:var(--cal-text);background:rgba(122,173,255,0.15);border-radius:6px;padding:2px 8px;';
+      chip.textContent = formatOtoDate(s.date) + (s.date === today ? ' · Today' : '');
+      strip.appendChild(chip);
+    });
+    main.appendChild(strip);
+  }
 
   // Sessions list
   const sessionsDiv = document.createElement('div'); sessionsDiv.className = 'oto-sessions';
@@ -1663,7 +1849,7 @@ function renderOtoMain(personName, data) {
       const delSession = document.createElement('button');
       delSession.style.cssText = 'align-self:flex-end;font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;';
       delSession.textContent = 'Delete session';
-      delSession.onclick = () => { if(!confirm('Delete this session?')) return; const d2=getOtoData(); d2.sessions=d2.sessions.filter(x=>x.id!==session.id); saveOto(d2); renderOtoMain(personName, d2); };
+      delSession.onclick = () => confirmDialog('Delete this session?', () => { const d2=getOtoData(); d2.sessions=d2.sessions.filter(x=>x.id!==session.id); saveOto(d2); renderOtoMain(personName, d2); }, 'Delete');
       body.appendChild(delSession);
 
       card.appendChild(cardHdr); card.appendChild(body); sessionsDiv.appendChild(card);
@@ -1764,6 +1950,7 @@ function showAddPersonModal() {
 const GH_REPO  = 'ullenesmathias-munu/weekly-planner';
 const GH_FILE  = 'data.json';
 const GH_API   = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
+const GH_READONLY_TOKEN = 'READONLY_TOKEN_HERE';
 let ghToken    = null;
 let ghFileSha  = null;
 let syncTimer  = null;
@@ -1789,6 +1976,7 @@ function setSyncStatus(msg, colour) {
 async function ghLoad() {
   if (!ghToken) return;
   setSyncStatus('⟳ Syncing…', 'var(--text3)');
+  showSyncSkeleton();
   try {
     const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers: ghHeaders() });
     if (res.status === 401 || res.status === 403) {
@@ -1858,6 +2046,38 @@ function scheduleSyncSave() {
   syncTimer = setTimeout(ghSave, 2000);
 }
 
+async function ghReadOnlyLoad() {
+  // Used by non-admin users to pull shared data (schedule, roles, wingman)
+  const token = GH_READONLY_TOKEN;
+  if (!token || token === 'READONLY_TOKEN_HERE') return;
+  setSyncStatus('⟳ Fetching updates…', 'var(--text3)');
+  try {
+    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers: {
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    }});
+    if (!res.ok) { setSyncStatus('', ''); return; }
+    const json = await res.json();
+    let data = {};
+    try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { return; }
+    // For non-admins: only pull shared keys (schedule, users, wingman) — NOT other users' tasks
+    const sharedKeys = ['wtp_schedule', 'wtp_users', 'wtp_wingman'];
+    sharedKeys.forEach(k => {
+      if (data[k] !== undefined) localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]));
+    });
+    // Reload schedule data
+    const savedSched = localStorage.getItem('wtp_schedule');
+    if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); } catch(e) {} }
+    renderSchedule();
+    setSyncStatus('✓ Up to date', 'var(--low-text)');
+    setTimeout(() => setSyncStatus('', ''), 3000);
+  } catch(e) {
+    setSyncStatus('', '');
+    console.warn('ghReadOnlyLoad error:', e);
+  }
+}
+
 function initGitHubSync() {
   ghToken = localStorage.getItem('wtp_gh_token') || null;
   if (ghToken) {
@@ -1889,14 +2109,15 @@ function saveGhToken() {
 }
 
 function removeGhToken() {
-  if (!confirm('Remove GitHub sync? Your data stays in localStorage but will no longer sync.')) return;
-  localStorage.removeItem('wtp_gh_token');
-  ghToken = null; ghFileSha = null;
-  const inp = document.getElementById('gh-token-input');
-  const wrap = document.getElementById('gh-sync-status-wrap');
-  if (inp) inp.value = '';
-  if (wrap) wrap.style.display = 'none';
-  setSyncStatus('', '');
+  confirmDialog('Remove GitHub sync? Your data stays in localStorage but will no longer sync.', () => {
+    localStorage.removeItem('wtp_gh_token');
+    ghToken = null; ghFileSha = null;
+    const inp = document.getElementById('gh-token-input');
+    const wrap = document.getElementById('gh-sync-status-wrap');
+    if (inp) inp.value = '';
+    if (wrap) wrap.style.display = 'none';
+    setSyncStatus('', '');
+  }, 'Disconnect', false);
 }
 
 
@@ -1930,20 +2151,23 @@ function importBackup(file) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.version || !Array.isArray(data.tasks)) throw new Error('Invalid backup file');
-      if (!confirm('This will replace your current tasks, notes and calendar with the backup from ' + (data.exportedAt ? data.exportedAt.slice(0,10) : 'unknown date') + '. Continue?')) return;
-      const u = currentUser.name;
-      localStorage.setItem(userTaskKey(u), JSON.stringify(data.tasks || []));
-      localStorage.setItem(userNoteKey(u), data.notes || '');
-      localStorage.setItem(userCalKey(u), JSON.stringify(data.calEvents || []));
-      loadUserData();
-      msg.style.color = 'var(--low-text)';
-      msg.textContent = '✓ Restored ' + data.tasks.length + ' tasks from backup';
-      setTimeout(() => msg.textContent = '', 4000);
+      const dateStr = data.exportedAt ? data.exportedAt.slice(0,10) : 'unknown date';
+      confirmDialog('Replace your current tasks, notes and calendar with the backup from ' + dateStr + '?', () => {
+        const u = currentUser.name;
+        localStorage.setItem(userTaskKey(u), JSON.stringify(data.tasks || []));
+        localStorage.setItem(userNoteKey(u), data.notes || '');
+        localStorage.setItem(userCalKey(u), JSON.stringify(data.calEvents || []));
+        loadUserData();
+        msg.style.color = 'var(--low-text)';
+        msg.textContent = '✓ Restored ' + data.tasks.length + ' tasks from backup';
+        setTimeout(() => msg.textContent = '', 4000);
+        document.getElementById('restore-input').value = '';
+      }, 'Restore', false);
     } catch(err) {
       msg.style.color = 'var(--high-text)';
       msg.textContent = '✗ Invalid backup file: ' + err.message;
+      document.getElementById('restore-input').value = '';
     }
-    document.getElementById('restore-input').value = '';
   };
   reader.readAsText(file);
 }
@@ -1971,6 +2195,9 @@ function loadUserData() {
   if (localStorage.getItem('wtp_gh_token')) {
     ghToken = localStorage.getItem('wtp_gh_token');
     setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }), 500);
+  } else if (!currentUser?.isAdmin) {
+    // Non-admin: pull shared data (schedule, roles, wingman) using read-only token
+    setTimeout(() => ghReadOnlyLoad(), 500);
   }
   requestNotificationPermission();
   // Update settings panel
@@ -1999,7 +2226,7 @@ function renderUserList() {
       const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;'; del.textContent = 'remove';
       del.onmouseover = () => { del.style.color = 'var(--high-text)'; del.style.background = 'var(--high-bg)'; };
       del.onmouseout = () => { del.style.color = 'var(--text3)'; del.style.background = 'none'; };
-      del.onclick = () => { if (!confirm('Remove user ' + u.name + '?')) return; const users = getUsers(); users.splice(idx,1); localStorage.setItem('wtp_users', JSON.stringify(users)); renderUserList(); };
+      del.onclick = () => confirmDialog('Remove user ' + u.name + '?', () => { const users = getUsers(); users.splice(idx,1); localStorage.setItem('wtp_users', JSON.stringify(users)); renderUserList(); }, 'Remove');
       row.appendChild(del);
     }
     list.appendChild(row);
@@ -2587,6 +2814,7 @@ function renderPlanner() {
   const lbl = document.getElementById('week-progress-label');
   if (fill) fill.style.width = pct + '%';
   if (lbl) lbl.textContent = weekTasks.length === 0 ? '' : doneTasks.length + ' / ' + weekTasks.length + ' done';
+  updateTabBadges();
 }
 
 // ─── Meeting drag-drop dialog ─────────────────────────────────────
@@ -2685,6 +2913,7 @@ function showMeetingDropDialog(task, newDay) {
   overlay.appendChild(box);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   document.body.appendChild(overlay);
+  trapFocus(box);
 }
 
 // ─── Availability strip ───────────────────────────────────────────
@@ -2955,8 +3184,8 @@ function toggleTheme() {
   document.getElementById('theme-btn').textContent = isLight ? '☀' : '🌙';
 }
 (function() {
+  // Theme already applied in <head> — just sync the button icon
   if (localStorage.getItem('wtp_theme') === 'light') {
-    document.documentElement.classList.add('light-mode');
     const btn = document.getElementById('theme-btn');
     if (btn) btn.textContent = '☀';
   }
