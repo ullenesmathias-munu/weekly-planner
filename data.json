@@ -106,6 +106,24 @@
       "pendingName": "",
       "weekStamp": "2026-04-27",
       "done": false
+    },
+    {
+      "id": "1777317034827",
+      "day": "Tuesday",
+      "title": "Powerpoint",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "Need to create the Powerpoint for the Customer support weekly meeting.",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
     }
   ],
   "wtp_schedule": [
