@@ -2701,6 +2701,19 @@ function fbMakeCard(post, showAuthor, onDelete) {
 }
 
 
+// ─── Data migrations ──────────────────────────────────────────────
+function runMigrations() {
+  // Fix any garbled Maylen name variants in stored data
+  ['wtp_schedule', 'wtp_wingman'].forEach(key => {
+    const val = localStorage.getItem(key);
+    if (!val || !val.includes('Mayl')) return;
+    // Replace any "Mayl" followed by garbage characters until "n" or "en"
+    const fixed = val.replace(/Mayl[^\u0000-\u007F"]{0,200}?(?:en|n)/g, 'Maylen')
+                     .replace(/Mayl\\u[0-9a-f]{4}n/g, 'Maylen');
+    if (fixed !== val) localStorage.setItem(key, fixed);
+  });
+}
+
 const ZD_BASE_URL = 'zendesk.com/api/v2';
 
 function getZdCreds() {
@@ -2771,15 +2784,13 @@ async function zdCount(query) {
 
 async function zdGetStats(agentId, fromDate, toDate) {
   const solvedBase = `type:ticket assignee_id:${agentId} status:solved solved>=${fromDate} solved<=${toDate}`;
-  const [total, web, email, open, pending, onhold] = await Promise.all([
+  const [total, open, pending, onhold] = await Promise.all([
     zdCount(solvedBase),
-    zdCount(solvedBase + ' via:web'),
-    zdCount(solvedBase + ' via:email'),
     zdCount(`type:ticket assignee_id:${agentId} status:open`),
     zdCount(`type:ticket assignee_id:${agentId} status:pending`),
     zdCount(`type:ticket assignee_id:${agentId} status:hold`),
   ]);
-  return { solved: total, web, email, open, pending, onhold };
+  return { solved: total, web: 0, email: 0, open, pending, onhold };
 }
 
 async function zdRefresh() {
@@ -3027,6 +3038,7 @@ async function ghLoad() {
       Object.entries(data).forEach(([k, v]) => {
         localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
       });
+      runMigrations(); // fix any garbled names from old synced data
       // Reload SCHEDULE array if it was updated
       const savedSched = localStorage.getItem('wtp_schedule');
       if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); initScheduleSelect(); renderSchedule(); } catch(e) {} }
@@ -4309,6 +4321,7 @@ function weekDragDrop(dir, e) {
 // Init
 const savedSched = localStorage.getItem('wtp_schedule');
 if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); } catch(e) {} }
+runMigrations();
 initScheduleSelect();
 renderSchedule();
 loadUserData();
