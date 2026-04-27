@@ -1,4 +1,3856 @@
 {
+  "wtp_schedule": [
+    {
+      "week": "Week 16",
+      "dates": [
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "SO",
+            "SO",
+            "H",
+            "H",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "E2 (16-21)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W3 (15-19)",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 17",
+      "dates": [
+        "2026-04-20",
+        "2026-04-21",
+        "2026-04-22",
+        "2026-04-23",
+        "2026-04-24",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 18",
+      "dates": [
+        "2026-04-27",
+        "2026-04-28",
+        "2026-04-29",
+        "2026-04-30",
+        "2026-05-01",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "H",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "H1 (7-17)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "H2 (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 19",
+      "dates": [
+        "2026-05-04",
+        "2026-05-05",
+        "2026-05-06",
+        "2026-05-07",
+        "2026-05-08",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D3 (9-17)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "SO",
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 20",
+      "dates": [
+        "2026-05-11",
+        "2026-05-12",
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-15",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "D3 (9-17)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "H1 (7-17)",
+            "D1 (7-15)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "D2 (8-16)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "H2 (17-6)",
+            "E (17-6)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "SO",
+            "SO",
+            "D3 (9-17)",
+            "H",
+            "H",
+            "",
+            "H"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "H1 (7-17)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "H2 (17-6)"
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "D2 (8-16)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "D2 (8-16)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "H2 (11-21)"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "D2 (8-16)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "H",
+            "D2 (8-16)",
+            "",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "H",
+            "FLEX",
+            "",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "H",
+            "FLEX",
+            "",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 21",
+      "dates": [
+        "2026-05-18",
+        "2026-05-19",
+        "2026-05-20",
+        "2026-05-21",
+        "2026-05-22",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "H",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 22",
+      "dates": [
+        "2026-05-25",
+        "2026-05-26",
+        "2026-05-27",
+        "2026-05-28",
+        "2026-05-29",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "H",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "H",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "H2 (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "H1 (7-17)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "H",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "H",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "H",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "H",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "H",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "H",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "H",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 23",
+      "dates": [
+        "2026-06-01",
+        "2026-06-02",
+        "2026-06-03",
+        "2026-06-04",
+        "2026-06-05",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "SO",
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 24",
+      "dates": [
+        "2026-06-08",
+        "2026-06-09",
+        "2026-06-10",
+        "2026-06-11",
+        "2026-06-12",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "W2 (17-6)",
+            "H2 (17-6)"
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "H1 (7-17)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W2 (17-6)",
+            "H2 (17-6)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 25",
+      "dates": [
+        "2026-06-15",
+        "2026-06-16",
+        "2026-06-17",
+        "2026-06-18",
+        "2026-06-19",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "week": "Week 26",
+      "dates": [
+        "2026-06-22",
+        "2026-06-23",
+        "2026-06-24",
+        "2026-06-25",
+        "2026-06-26",
+        "",
+        ""
+      ],
+      "people": [
+        {
+          "name": "Jonas",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Thomas",
+          "shifts": [
+            "SO",
+            "SO",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Maylén",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Bernadett",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "W1 (7-17)",
+            "W1 (7-17)"
+          ],
+          "roles": [
+            "Phone Guru",
+            "Phone Guru",
+            "Phone Guru",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Benjamin",
+          "shifts": [
+            "SO",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Cecilie",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "Inbox Champion",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Tord",
+          "shifts": [
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H",
+            "H"
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Marie",
+          "shifts": [
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Andreas",
+          "shifts": [
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "W2 (17-6)",
+            "W2 (17-6)"
+          ],
+          "roles": [
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "SLA Sherpa",
+            "Inbox Champion",
+            "Inbox Champion",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Julie",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Vetle",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "Freelancer",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Kristian",
+          "shifts": [
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Markus",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Ulrik",
+          "shifts": [
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Stian",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "name": "Mathias",
+          "shifts": [
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "FLEX",
+            "",
+            ""
+          ],
+          "roles": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    }
+  ],
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -74,6 +3926,18 @@
       "pendingName": "",
       "reminder": "",
       "done": false
+    }
+  ],
+  "wtp_users": [
+    {
+      "name": "Mathias",
+      "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "isAdmin": true
+    },
+    {
+      "name": "Andreas",
+      "hash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "isAdmin": false
     }
   ]
 }
