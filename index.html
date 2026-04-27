@@ -1967,6 +1967,11 @@ function loadUserData() {
   renderAvailStrip();
   checkCarryForward();
   scheduleAllReminders();
+  // Auto-pull from GitHub on every login if token is set
+  if (localStorage.getItem('wtp_gh_token')) {
+    ghToken = localStorage.getItem('wtp_gh_token');
+    setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }), 500);
+  }
   requestNotificationPermission();
   // Update settings panel
   const sn = document.getElementById('settings-username');
