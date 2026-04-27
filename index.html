@@ -74,31 +74,79 @@
 
   /* ─── Mobile responsive ──────────────────────────── */
   @media (max-width: 768px) {
-    body { padding: 12px; }
-    .tabs { padding: 0 0 0 4px; gap: 2px; }
-    .tab-btn { font-size: 11px; padding: 8px 10px; }
-    .planner-wrap { flex-direction: column; }
-    .board { overflow-x: auto; flex-wrap: nowrap; gap: 8px; }
-    .col { flex: 0 0 220px; }
-    .notepad, .today-panel { flex: none; width: 100%; min-height: 200px; }
-    .week-drag-zone { display: none; }
-    .avail-strip { overflow-x: auto; flex-wrap: nowrap; }
-    .oto-layout { flex-direction: column; }
-    .oto-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; overflow-y: auto; }
-    .topbar { flex-wrap: wrap; gap: 8px; }
-    .topbar-right { flex-wrap: wrap; gap: 6px; }
-    #task-search { width: 130px; }
-    #task-search:focus { width: 160px; }
-    .sched-wrap { overflow-x: auto; }
-    .role-summary-card, .wingman-card { overflow-x: auto; }
-    .clock-wrap { font-size: 11px; }
+    body { padding: 10px 12px 70px; } /* bottom padding for nav bar */
+    /* Hide top tabs — replaced by bottom nav */
+    .tabs { display: none; }
+    /* Bottom nav bar */
+    .mobile-nav { display: flex !important; }
+    /* Topbar */
+    .topbar { flex-wrap: wrap; gap: 6px; margin-bottom: 10px; padding-bottom: 10px; }
+    .topbar-right { flex-wrap: wrap; gap: 6px; font-size: 11px; }
+    #task-search { width: 120px; }
+    #task-search:focus { width: 150px; }
     #live-date { display: none; }
+    #live-clock { font-size: 15px; }
+    .clock-wrap { gap: 8px; }
+    /* Planner */
+    .planner-wrap { flex-direction: column; gap: 10px; }
+    .board { overflow-x: auto; flex-wrap: nowrap; gap: 8px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; padding-bottom: 8px; }
+    .col { flex: 0 0 85vw; max-width: 340px; scroll-snap-align: start; }
+    .col.is-today { flex: 0 0 88vw; }
+    .notepad, .today-panel { flex: none; width: 100%; min-height: 160px; }
+    .week-drag-zone { display: none; }
+    .week-progress-wrap { padding: 0 2px 8px; }
+    .avail-strip { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .quote-strip { font-size: 11px; padding: 6px 10px; }
+    /* Schedule */
+    .sched-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .sched-table { font-size: 11px; }
+    .sched-table th, .sched-table td { padding: 6px 4px; }
+    .shift-pill { font-size: 10px; padding: 2px 5px; }
+    /* My Team */
+    .oto-layout { flex-direction: column; min-height: unset; }
+    .oto-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 160px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); padding: 6px; gap: 4px; }
+    .oto-sidebar-header { grid-column: 1/-1; }
+    .oto-person-btn { border-radius: var(--radius-md); border-bottom: none; padding: 6px 8px; }
+    .oto-person-meta { display: none; }
+    .oto-sessions { padding: 10px 12px; }
+    .oto-person-header { padding: 12px 14px; }
+    /* Feedback */
+    .fb-layout { flex-direction: column; }
+    .fb-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; gap: 4px; padding: 8px; }
+    .fb-user-btn { flex-direction: column; align-items: center; min-width: 70px; padding: 6px 8px; border-radius: var(--radius-md); }
+    .fb-user-count { display: none; }
+    /* ZD chart */
+    .zd-chart { height: 120px; gap: 4px; }
+    .zd-bar-val { font-size: 10px; }
+    .zd-bar-label { font-size: 9px; }
+    .zd-grid { grid-template-columns: 1fr; }
+    .zd-summary-bar { gap: 8px; }
+    .zd-summary-pill { min-width: 80px; padding: 8px 12px; }
+    .zd-summary-pill-val { font-size: 18px; }
+    /* Cards */
+    .card { font-size: 12px; }
+    .card-actions { opacity: 1 !important; } /* always show on mobile */
+    /* Team overview */
+    .team-overview-grid { grid-template-columns: 1fr; }
+    /* Settings */
+    .settings-card { padding: 12px 14px; }
+    /* Confirm modal */
+    .confirm-box { padding: 16px 18px; }
   }
   @media (max-width: 480px) {
-    .col { flex: 0 0 180px; }
-    .tab-btn { font-size: 10px; padding: 7px 8px; }
-    .quote-strip { display: none; }
+    body { padding: 8px 10px 70px; }
+    .col { flex: 0 0 92vw; }
+    .topbar-left { gap: 6px; }
+    #week-label, #sched-week-label { font-size: 12px; min-width: 120px; }
   }
+  /* Mobile bottom nav */
+  .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding: 6px 0 env(safe-area-inset-bottom, 6px); }
+  .mobile-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+  .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 8px; min-width: 50px; flex: 1; transition: color 0.15s; }
+  .mobile-nav-btn .mnav-icon { font-size: 18px; line-height: 1; }
+  .mobile-nav-btn .mnav-label { font-size: 9px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .mobile-nav-btn.active .mnav-label { color: var(--cal-text); }
+  .mobile-nav-btn.active .mnav-icon { filter: brightness(1.3); }
   /* Today column highlight */
   .col.is-today > .col-header { color: var(--cal-text); }
   .col.is-today > .col-body { background: rgba(122,173,255,0.08); border-color: var(--cal-border); border-width: 1.5px; }
@@ -513,6 +561,10 @@
 </style>
 </head>
 <body>
+
+<div class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner" id="mobile-nav-inner"></div>
+</div>
 
 <!-- Lock screen -->
 <div class="lock-screen" id="lock-screen">
@@ -958,6 +1010,7 @@ function switchTab(name, btn) {
   if (name === 'onetoone') { renderOtoTab(); }
   if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); }
   if (name === 'feedback') { renderFeedbackTab(); }
+  if (isMobile()) buildMobileNav();
 }
 
 // ─── Incomplete task history ──────────────────────────────────────
@@ -1952,6 +2005,18 @@ function renderOtoSidebar(data) {
     info.appendChild(nameRow); info.appendChild(meta);
     btn.appendChild(avatar); btn.appendChild(info);
     btn.onclick = () => { otoPerson = p.name; renderOtoTab(); };
+
+    // Edit name button (admin only)
+    if (isAdmin()) {
+      const editNameBtn = document.createElement('button');
+      editNameBtn.style.cssText = 'background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:2px 4px;flex-shrink:0;opacity:0;transition:opacity 0.15s;';
+      editNameBtn.textContent = '✎';
+      editNameBtn.title = 'Edit name';
+      editNameBtn.onclick = (e) => { e.stopPropagation(); showEditNameModal(p.name); };
+      btn.onmouseover = () => { btn.style.background='var(--surface2)'; editNameBtn.style.opacity='1'; };
+      btn.onmouseout = () => { btn.style.background=''; editNameBtn.style.opacity='0'; };
+      btn.appendChild(editNameBtn);
+    }
     sidebar.appendChild(btn);
   });
 
@@ -2210,6 +2275,70 @@ function formatOtoDate(dateStr) {
 function formatOtoDateFull(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function showEditNameModal(oldName) {
+  document.getElementById('edit-name-modal')?.remove();
+  const overlay = document.createElement('div'); overlay.id = 'edit-name-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:700;display:flex;align-items:center;justify-content:center;';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px 24px;width:90%;max-width:320px;display:flex;flex-direction:column;gap:14px;';
+
+  const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;';
+  const ht = document.createElement('div'); ht.style.cssText = 'font-size:14px;font-weight:700;color:var(--text);'; ht.textContent = 'Edit name';
+  const xb = document.createElement('button'); xb.style.cssText = 'background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;'; xb.textContent = '×'; xb.onclick = () => overlay.remove();
+  hdr.appendChild(ht); hdr.appendChild(xb); box.appendChild(hdr);
+
+  const inp = document.createElement('input'); inp.value = oldName;
+  inp.style.cssText = 'width:100%;font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;outline:none;';
+  inp.addEventListener('focus', () => inp.style.borderColor = 'var(--cal-text)');
+  inp.addEventListener('blur', () => inp.style.borderColor = '');
+  box.appendChild(inp);
+
+  const msg = document.createElement('div'); msg.style.cssText = 'font-size:11px;color:var(--text3);'; msg.textContent = 'This updates the name in My Team, sessions, profile and feedback.';
+  box.appendChild(msg);
+
+  const fa = document.createElement('div'); fa.style.cssText = 'display:flex;gap:8px;justify-content:flex-end;';
+  const cancel = document.createElement('button'); cancel.className = 'btn-cancel'; cancel.textContent = 'Cancel'; cancel.onclick = () => overlay.remove();
+  const save = document.createElement('button'); save.className = 'btn-save'; save.textContent = 'Save';
+  save.onclick = () => {
+    const newName = inp.value.trim();
+    if (!newName || newName === oldName) { overlay.remove(); return; }
+    // Update OTO data
+    const d = getOtoData();
+    const person = d.people.find(p => p.name === oldName);
+    if (person) person.name = newName;
+    d.sessions.forEach(s => { if (s.person === oldName) s.person = newName; });
+    saveOto(d);
+    // Update profile key
+    const profileData = loadProfile(oldName);
+    if (Object.keys(profileData).length) {
+      localStorage.setItem(profileKey(newName), JSON.stringify(profileData));
+      localStorage.removeItem(profileKey(oldName));
+    }
+    // Update feedback key
+    const fbData = loadFbPosts(oldName);
+    if (fbData.length) {
+      saveFbPosts(newName, fbData);
+      localStorage.removeItem(fbKey(oldName));
+    }
+    // Update wingman slots
+    wingmanSlots.forEach(s => { if (s.person === oldName) s.person = newName; });
+    saveWingman();
+    // Update MY_TEAM array in memory
+    const idx = MY_TEAM.indexOf(oldName);
+    if (idx !== -1) MY_TEAM[idx] = newName;
+    // If currently viewing this person, update
+    if (otoPerson === oldName) otoPerson = newName;
+    overlay.remove();
+    renderOtoTab();
+    showToast('✓ Name updated to ' + newName);
+  };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') save.click(); if (e.key === 'Escape') overlay.remove(); });
+  fa.appendChild(cancel); fa.appendChild(save); box.appendChild(fa);
+  overlay.appendChild(box); overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  setTimeout(() => { inp.focus(); inp.select(); }, 50);
 }
 
 function showAddPersonModal() {
@@ -2701,17 +2830,58 @@ function fbMakeCard(post, showAuthor, onDelete) {
 }
 
 
-// ─── Data migrations ──────────────────────────────────────────────
+// ─── Mobile nav ───────────────────────────────────────────────────
+function isMobile() { return window.innerWidth <= 768; }
+
+function buildMobileNav() {
+  const inner = document.getElementById('mobile-nav-inner');
+  if (!inner) return;
+  inner.innerHTML = '';
+
+  const tabs = [
+    { id: 'planner',  icon: '📅', label: 'Planner' },
+    { id: 'schedule', icon: '👥', label: 'Schedule' },
+    { id: 'onetoone', icon: '⭐', label: 'My Team', adminOnly: true },
+    { id: 'feedback', icon: '💡', label: 'Feedback' },
+    { id: 'zendesk',  icon: '🎫', label: 'Tickets', adminOnly: true },
+    { id: 'settings', icon: '⚙', label: 'Settings' },
+  ];
+
+  const currentTab = document.querySelector('.tab-content.active')?.id?.replace('tab-','') || 'planner';
+
+  tabs.forEach(t => {
+    if (t.adminOnly && !isAdmin()) return;
+    const btn = document.createElement('button'); btn.className = 'mobile-nav-btn' + (currentTab === t.id ? ' active' : '');
+    const icon = document.createElement('span'); icon.className = 'mnav-icon'; icon.textContent = t.icon;
+    const label = document.createElement('span'); label.className = 'mnav-label'; label.textContent = t.label;
+    btn.appendChild(icon); btn.appendChild(label);
+    btn.onclick = () => {
+      // Find and click the matching tab button
+      document.querySelectorAll('.tab-btn').forEach(tb => {
+        if (tb.getAttribute('onclick')?.includes("'" + t.id + "'")) tb.click();
+      });
+      buildMobileNav(); // re-render to update active state
+    };
+    inner.appendChild(btn);
+  });
+}
+
+// Rebuild mobile nav when tabs switch
+const _origSwitchTab = typeof switchTab !== 'undefined' ? switchTab : null;
 function runMigrations() {
-  // Fix any garbled Maylen name variants in stored data
-  ['wtp_schedule', 'wtp_wingman'].forEach(key => {
+  // Aggressively fix all garbled name variants in stored data
+  const fixName = (str) => str
+    .replace(/Mayl[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
+    .replace(/Mayl\\u[0-9a-fA-F]{4}n/g, 'Maylen')
+    .replace(/MaylÃ[^"]{1,10}?n/g, 'Maylen')
+    .replace(/Maylen+/g, 'Maylen'); // collapse doubles
+  ['wtp_schedule','wtp_wingman','wtp_oto_mathias','wtp_profile_maylen','wtp_fb_maylen'].forEach(key => {
     const val = localStorage.getItem(key);
-    if (!val || !val.includes('Mayl')) return;
-    // Replace any "Mayl" followed by garbage characters until "n" or "en"
-    const fixed = val.replace(/Mayl[^\u0000-\u007F"]{0,200}?(?:en|n)/g, 'Maylen')
-                     .replace(/Mayl\\u[0-9a-f]{4}n/g, 'Maylen');
+    if (!val) return;
+    const fixed = fixName(val);
     if (fixed !== val) localStorage.setItem(key, fixed);
   });
+  // Also fix MY_TEAM in memory (already correct in code, but OTO data might have old name)
 }
 
 const ZD_BASE_URL = 'zendesk.com/api/v2';
@@ -2756,8 +2926,9 @@ async function zdFetch(path) {
   const res = await fetch(ZD_PROXY + path, {
     headers: { 'Authorization': 'Basic ' + btoa(c.email + '/token:' + c.token), 'Content-Type': 'application/json' }
   });
-  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error((e.error || e.description || 'HTTP ' + res.status) + ' — ' + path); }
-  return res.json();
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((json.error || json.description || json.message || 'HTTP ' + res.status) + ' — ' + path.split('?')[0]);
+  return json;
 }
 
 async function zdGetGroupId() {
@@ -2784,13 +2955,12 @@ async function zdCount(query) {
 
 async function zdGetStats(agentId, fromDate, toDate) {
   const solvedBase = `type:ticket assignee_id:${agentId} status:solved solved>=${fromDate} solved<=${toDate}`;
-  const [total, open, pending, onhold] = await Promise.all([
-    zdCount(solvedBase),
-    zdCount(`type:ticket assignee_id:${agentId} status:open`),
-    zdCount(`type:ticket assignee_id:${agentId} status:pending`),
-    zdCount(`type:ticket assignee_id:${agentId} status:hold`),
-  ]);
-  return { solved: total, web: 0, email: 0, open, pending, onhold };
+  const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return 0; } };
+  const solved  = await safeCount(solvedBase);
+  const open    = await safeCount(`type:ticket assignee_id:${agentId} status:open`);
+  const pending = await safeCount(`type:ticket assignee_id:${agentId} status:pending`);
+  const onhold  = await safeCount(`type:ticket assignee_id:${agentId} status:hold`);
+  return { solved, web: 0, email: 0, open, pending, onhold };
 }
 
 async function zdRefresh() {
@@ -3036,9 +3206,14 @@ async function ghLoad() {
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { console.warn('Parse error:', e); }
     if (Object.keys(data).length > 0) {
       Object.entries(data).forEach(([k, v]) => {
-        localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+        // Sanitize value before storing — fix garbled names
+        let val = typeof v === 'string' ? v : JSON.stringify(v);
+        val = val.replace(/Mayl[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
+                 .replace(/MaylÃ[^"]{1,10}?n/g, 'Maylen')
+                 .replace(/Mayl\\u[0-9a-fA-F]{4}n/g, 'Maylen');
+        localStorage.setItem(k, val);
       });
-      runMigrations(); // fix any garbled names from old synced data
+      runMigrations();
       // Reload SCHEDULE array if it was updated
       const savedSched = localStorage.getItem('wtp_schedule');
       if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); initScheduleSelect(); renderSchedule(); } catch(e) {} }
@@ -3241,6 +3416,7 @@ function loadUserData() {
   const otoBtn = document.getElementById('tab-btn-onetoone');
   if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
   if (isAdmin()) initZendeskTab();
+  if (isMobile()) buildMobileNav();
   renderPlanner();
   renderAvailStrip();
   checkCarryForward();
@@ -3875,6 +4051,13 @@ function renderPlanner() {
   if (fill) fill.style.width = pct + '%';
   if (lbl) lbl.textContent = weekTasks.length === 0 ? '' : doneTasks.length + ' / ' + weekTasks.length + ' done';
   updateTabBadges();
+  // On mobile, snap to today's column
+  if (isMobile()) {
+    setTimeout(() => {
+      const todayCol = document.querySelector('.col.is-today');
+      if (todayCol) todayCol.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }, 100);
+  }
 }
 
 // ─── Meeting drag-drop dialog ─────────────────────────────────────
