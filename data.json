@@ -129,6 +129,44 @@
       "pendingName": "",
       "weekStamp": "2026-04-26",
       "done": false
+    },
+    {
+      "id": "1777317844804.5618",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "medium",
+      "due": "",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "recurringFrom": "1777282594906",
+      "weekStamp": "2026-05-24",
+      "colour": "amber",
+      "pendingName": "",
+      "reminder": "",
+      "done": false
+    },
+    {
+      "id": "1777317845173.8206",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "medium",
+      "due": "",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "recurringFrom": "1777282594906",
+      "weekStamp": "2026-05-31",
+      "colour": "amber",
+      "pendingName": "",
+      "reminder": "",
+      "done": false
     }
   ],
   "wtp_schedule": [
@@ -169,7 +207,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D2 (8-16)",
             "D2 (8-16)",
@@ -375,7 +413,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "SO",
             "D3 (9-17)",
@@ -581,7 +619,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -787,7 +825,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "SO",
             "SO",
@@ -993,7 +1031,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1199,7 +1237,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -1405,7 +1443,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "H",
             "D2 (8-16)",
@@ -1611,7 +1649,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D1 (7-15)",
             "D1 (7-15)",
@@ -1817,7 +1855,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "SO",
             "D2 (8-16)",
@@ -2023,7 +2061,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "E (17-6)",
             "E (17-6)",
@@ -2229,7 +2267,7 @@
           ]
         },
         {
-          "name": "Maylén",
+          "name": "MaylÃ©n",
           "shifts": [
             "D3 (9-17)",
             "D3 (9-17)",
@@ -2410,7 +2448,7 @@
         "addedAt": "2026-01-01"
       },
       {
-        "name": "MaylÃÂ©n",
+        "name": "MaylÃÂÃÂ©n",
         "addedAt": "2026-01-01"
       },
       {
