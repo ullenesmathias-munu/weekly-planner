@@ -33,11 +33,19 @@
   .light-mode .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
   .light-mode .btn-save { background: #1a1a1a !important; color: #fff !important; }
   .light-mode .card:hover { background: #f8f8f6 !important; }
-  .light-mode .s-d1 { background: #dbeafe; color: #1e3a8a; } .light-mode .s-d2 { background: #dcfce7; color: #14532d; } .light-mode .s-d3 { background: #fef9c3; color: #713f12; }
-  .light-mode .s-e { background: #fee2e2; color: #991b1b; } .light-mode .s-e2 { background: #fecaca; color: #991b1b; }
-  .light-mode .s-w1 { background: #fef08a; color: #713f12; } .light-mode .s-w2 { background: #fca5a5; color: #7f1d1d; } .light-mode .s-w3 { background: #fdba74; color: #7c2d12; }
-  .light-mode .s-h { background: #ef4444; color: #fff; } .light-mode .s-so { background: #e5e7eb; color: #6b7280; }
-  .light-mode .s-ol { background: #bbf7d0; color: #065f46; } .light-mode .s-abs { background: #e5e7eb; color: #6b7280; } .light-mode .s-flex { background: #d1fae5; color: #065f46; }
+  .light-mode .s-d1 { background: #b39ddb; color: #1a0040; }
+  .light-mode .s-d2 { background: #9ccc65; color: #1a3300; }
+  .light-mode .s-d3 { background: #7fb3d5; color: #002040; }
+  .light-mode .s-e  { background: #ffb74d; color: #3d2000; }
+  .light-mode .s-e2 { background: #ffc000; color: #3d2a00; }
+  .light-mode .s-w1 { background: #ffee58; color: #3d3800; }
+  .light-mode .s-w2 { background: #ffa07a; color: #3d1500; }
+  .light-mode .s-w3 { background: #61cbf3; color: #003050; }
+  .light-mode .s-h  { background: #ef5350; color: #fff; }
+  .light-mode .s-so { background: #ffcdd2; color: #4a0010; }
+  .light-mode .s-ol { background: #b2dfdb; color: #00352f; }
+  .light-mode .s-abs { background: #e0e0e0; color: #333; }
+  .light-mode .s-flex { background: #c8e6c9; color: #1b3a1e; }
   .light-mode #live-clock { color: var(--text); }
   html { color-scheme: dark; }
   .light-mode { color-scheme: light; }
@@ -118,16 +126,30 @@
   .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
   .badge-date { background: var(--surface3) !important; color: var(--text2) !important; border-color: var(--border2) !important; }
   .btn-save { background: var(--cal-text) !important; color: #0f0f11 !important; }
-  .tabs { display: flex; gap: 2px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; align-items: center; }
-  .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 12px; padding-bottom: 6px; }
-  #live-clock { font-size: 20px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
+  .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; align-items: center; }
+  .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; padding-bottom: 6px; }
+  #live-clock { font-size: 18px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
   #live-date { font-size: 11px; color: var(--text3); white-space: nowrap; }
-  .tab-btn { font-size: 13px; font-weight: 500; padding: 10px 16px; background: none; border: none; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.2s, border-color 0.2s; }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); }
+  .tab-btn { font-size: 13px; font-weight: 600; padding: 10px 18px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s, background 0.15s; border-radius: 6px 6px 0 0; letter-spacing: -0.01em; }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); font-weight: 700; }
+  .light-mode .tab-btn:hover { background: rgba(0,0,0,0.04); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  /* Card entrance animation */
+  @keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .card { animation: cardIn 0.18s ease both; }
+  /* Focus rings */
+  input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 2px rgba(122,173,255,0.2); }
+  .light-mode input:focus, .light-mode textarea:focus, .light-mode select:focus { box-shadow: 0 0 0 2px rgba(26,86,196,0.15); }
+  /* Col-body drop target glow */
+  .col-body { transition: border-color 0.18s, background 0.18s, box-shadow 0.18s; }
+  .col-body.drag-over { border-color: var(--cal-text) !important; box-shadow: inset 0 0 0 1px var(--cal-text); }
+  /* Add button polish */
+  .add-btn { width: 100%; background: none; border: 1.5px dashed var(--border2); border-radius: var(--radius-md); color: var(--text3); font-size: 12px; font-weight: 500; padding: 8px; cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .add-btn:hover { color: var(--cal-text); border-color: var(--cal-text); background: var(--cal); }
+  /* Topbar polish */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 0.5px solid var(--border); gap: 12px; flex-wrap: wrap; }
   .topbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .topbar-right { display: flex; align-items: center; gap: 8px; }
   #week-label, #sched-week-label { font-size: 14px; font-weight: 600; color: var(--text); min-width: 150px; text-align: center; }
@@ -244,8 +266,6 @@
   .cal-card-loc { font-size: 10px; color: var(--cal-text); opacity: 0.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cal-label { font-size: 10px; font-weight: 700; color: var(--cal-text); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 0; }
   .divider { height: 0.5px; background: var(--border); margin: 2px 0; }
-  .add-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; text-align: left; padding: 4px 2px; display: flex; align-items: center; gap: 4px; width: 100%; transition: color 0.15s; border-radius: var(--radius-md); }
-  .add-btn:hover { color: var(--cal-text); }
   .add-form { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
   .add-form label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 2px; }
   .add-form input, .add-form textarea, .add-form select { font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 8px; width: 100%; outline: none; resize: none; transition: border-color 0.15s; }
@@ -270,10 +290,20 @@
   .shift-dropdown { animation: fadeIn 0.1s ease; }
   @keyframes fadeIn { from { opacity:0; transform:translateX(-50%) translateY(-4px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
   .shift-pill { display: inline-block; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; white-space: nowrap; min-width: 66px; }
-  .s-d1 { background: #0d2d4a; color: #7ec8f0; } .s-d2 { background: #0d2e1a; color: #6ee7a0; } .s-d3 { background: #2d2500; color: #fde68a; }
-  .s-e { background: #3b0d0d; color: #fca5a5; } .s-e2 { background: #2d0f0f; color: #f87171; }
-  .s-w1 { background: #2d2000; color: #fcd34d; } .s-w2 { background: #3b0d0d; color: #ff8080; } .s-w3 { background: #2d1500; color: #fb923c; }
-  .s-h { background: #4a0d0d; color: #fca5a5; } .s-so { background: #2a2a2a; color: #9ca3af; }
+  .s-d1 { background: #3d2860; color: #cbb6f0; }
+  .s-d2 { background: #2a4a14; color: #b8e07a; }
+  .s-d3 { background: #163550; color: #90cce8; }
+  .s-e  { background: #5a3800; color: #ffcc80; }
+  .s-e2 { background: #4a3000; color: #ffdd60; }
+  .s-w1 { background: #4a4400; color: #fff176; }
+  .s-w2 { background: #5a2800; color: #ffb896; }
+  .s-w3 { background: #0a3a54; color: #80d8f5; }
+  .s-h  { background: #6a1010; color: #ff9090; }
+  .s-so { background: #4a1520; color: #ffb0b8; }
+  .s-ol { background: #0f3530; color: #80d8d0; }
+  .s-abs { background: var(--surface3); color: var(--text2); }
+  .s-flex { background: #142814; color: #80d890; }
+  .s-other { background: var(--surface2); color: var(--text); }
   .s-ol { background: #0a2515; color: #4ade80; } .s-abs { background: var(--surface3); color: var(--text2); } .s-flex { background: #0d2814; color: #6ee7a0; } .s-other { background: var(--surface2); color: var(--text); }
   .weekend-col { background: rgba(255,255,255,0.025); }
   .wingman-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; }
@@ -299,7 +329,115 @@
   .role-summary-names { font-size: 12px; color: var(--text2); line-height: 1.5; }
   .role-summary-names.empty { color: var(--text3); font-style: italic; }
   .week-select { font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; outline: none; cursor: pointer; }
-  /* ─── 1:1 Tab ─────────────────────────────────────── */
+  /* ─── Team Profile ───────────────────────────────── */
+  .profile-panel { border-bottom: 1px solid var(--border); background: var(--surface2); flex-shrink: 0; }
+  .profile-toggle { display: flex; align-items: center; gap: 8px; padding: 10px 20px; cursor: pointer; width: 100%; background: none; border: none; color: var(--text2); font-size: 12px; font-weight: 600; transition: background 0.15s; }
+  .profile-toggle:hover { background: var(--surface3); }
+  .profile-toggle-arrow { font-size: 11px; transition: transform 0.2s; display: inline-block; }
+  .profile-toggle.open .profile-toggle-arrow { transform: rotate(90deg); }
+  .profile-body { padding: 16px 20px; display: none; flex-direction: column; gap: 16px; }
+  .profile-body.open { display: flex; }
+  .profile-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); margin-bottom: 8px; }
+  /* RAG + focus */
+  .profile-top-row { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+  .profile-rag-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .rag-btns { display: flex; gap: 6px; }
+  .rag-btn { width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+  .rag-btn:hover { transform: scale(1.15); }
+  .rag-btn.selected { border-color: var(--text); transform: scale(1.2); }
+  .rag-red { background: #ef5350; } .rag-amber { background: #ffb74d; } .rag-green { background: #66bb6a; } .rag-none { background: var(--surface3); border: 1.5px solid var(--border2); }
+  .profile-focus-wrap { flex: 1; min-width: 180px; }
+  .profile-focus-input { width: 100%; font-family: inherit; font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 10px; outline: none; transition: border-color 0.15s; }
+  .profile-focus-input:focus { border-color: var(--cal-text); }
+  /* Log entries */
+  .log-entry { display: flex; gap: 10px; padding: 8px 10px; background: var(--surface); border-radius: var(--radius-md); border-left: 3px solid var(--border2); }
+  .log-entry.win { border-left-color: #66bb6a; } .log-entry.development { border-left-color: var(--cal-text); } .log-entry.concern { border-left-color: #ef5350; } .log-entry.observation { border-left-color: #ffb74d; }
+  .log-entry-content { flex: 1; min-width: 0; }
+  .log-entry-meta { font-size: 10px; color: var(--text3); margin-bottom: 2px; display: flex; gap: 6px; align-items: center; }
+  .log-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 1px 5px; border-radius: 4px; }
+  .log-tag.win { background: #1a3d1a; color: #66bb6a; } .log-tag.development { background: var(--cal); color: var(--cal-text); } .log-tag.concern { background: var(--high-bg); color: var(--high-text); } .log-tag.observation { background: var(--med-bg); color: var(--med-text); }
+  .log-entry-text { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .log-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; flex-shrink: 0; align-self: flex-start; }
+  .log-del:hover { color: var(--high-text); }
+  .log-add-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .log-tag-sel { font-family: inherit; font-size: 11px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 8px; outline: none; }
+  .log-text-inp { flex: 1; min-width: 140px; font-family: inherit; font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 8px; outline: none; }
+  /* Goals */
+  .goal-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--border); }
+  .goal-row:last-child { border-bottom: none; }
+  .goal-text { flex: 1; font-size: 12px; color: var(--text); }
+  .goal-status-sel { font-family: inherit; font-size: 11px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 3px 6px; outline: none; cursor: pointer; }
+  .goal-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; }
+  .goal-del:hover { color: var(--high-text); }
+  /* Team overview */
+  .team-overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 8px; }
+  .team-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; cursor: pointer; transition: border-color 0.15s, transform 0.12s; display: flex; flex-direction: column; gap: 8px; }
+  .team-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .team-card-top { display: flex; align-items: center; gap: 10px; }
+  .team-card-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .team-card-name { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+  .rag-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .rag-dot.red { background: #ef5350; } .rag-dot.amber { background: #ffb74d; } .rag-dot.green { background: #66bb6a; } .rag-dot.none { background: var(--surface3); border: 1px solid var(--border2); }
+  .team-card-focus { font-size: 11px; color: var(--text3); font-style: italic; line-height: 1.4; }
+  .team-card-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .team-card-chip { font-size: 10px; color: var(--text3); background: var(--surface2); border-radius: 6px; padding: 2px 7px; }
+  .fb-layout { display: flex; gap: 16px; align-items: flex-start; }
+  .fb-sidebar { width: 200px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; }
+  .fb-user-btn { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: var(--radius-md); border: none; background: none; width: 100%; text-align: left; cursor: pointer; transition: background 0.12s; }
+  .fb-user-btn:hover { background: var(--surface2); }
+  .fb-user-btn.active { background: var(--cal); }
+  .fb-user-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .fb-user-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .fb-user-count { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .fb-user-btn.active .fb-user-name { color: var(--cal-text); }
+  .fb-main { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+  .fb-compose { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .fb-compose-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+  .fb-textarea { width: 100%; font-family: inherit; font-size: 13px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; outline: none; resize: vertical; min-height: 90px; line-height: 1.6; transition: border-color 0.15s; }
+  .fb-textarea:focus { border-color: var(--cal-text); }
+  .fb-post-btn { align-self: flex-end; }
+  .fb-posts { display: flex; flex-direction: column; gap: 10px; }
+  .fb-post-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s; }
+  .fb-post-card:hover { border-color: var(--border2); }
+  .fb-post-header { display: flex; align-items: center; justify-content: space-between; }
+  .fb-post-meta { font-size: 11px; color: var(--text3); }
+  .fb-post-author { font-size: 11px; font-weight: 600; color: var(--cal-text); margin-right: 6px; }
+  .fb-post-body { font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+  .fb-post-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; }
+  .fb-post-del:hover { color: var(--high-text); }
+  .fb-empty { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
+  .fb-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); padding: 4px 2px 6px; }
+  /* ─── Zendesk chart ──────────────────────────────── */
+  .zd-chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px 12px; margin-bottom: 16px; }
+  .zd-chart-title { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 14px; }
+  .zd-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding: 0 4px; }
+  .zd-bar-col { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; min-width: 0; }
+  .zd-bar-val { font-size: 12px; font-weight: 700; color: var(--text); }
+  .zd-bar { width: 100%; border-radius: 6px 6px 0 0; transition: height 0.5s cubic-bezier(0.34,1.4,0.64,1); min-height: 3px; cursor: default; }
+  .zd-bar:hover { filter: brightness(1.2); }
+  .zd-bar-label { font-size: 10px; font-weight: 600; color: var(--text3); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .zd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .zd-agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s; }
+  .zd-agent-card:hover { border-color: var(--border2); }
+  .zd-agent-header { padding: 12px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid var(--border); }
+  .zd-agent-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+  .zd-agent-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .zd-agent-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .zd-agent-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .zd-stat-row { display: flex; align-items: center; justify-content: space-between; }
+  .zd-stat-label { font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+  .zd-stat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .zd-stat-val { font-size: 13px; font-weight: 700; color: var(--text); }
+  .zd-stat-val.highlight { color: var(--cal-text); }
+  .zd-divider { height: 0.5px; background: var(--border); margin: 2px 0; }
+  .zd-summary-bar { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+  .zd-summary-pill { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 10px 18px; display: flex; flex-direction: column; gap: 2px; min-width: 120px; }
+  .zd-summary-pill-val { font-size: 22px; font-weight: 700; color: var(--text); }
+  .zd-summary-pill-label { font-size: 11px; color: var(--text3); }
+  .zd-error { padding: 16px; background: var(--high-bg); border: 1px solid var(--high-text); border-radius: var(--radius-md); color: var(--high-text); font-size: 12px; }
+  .zd-loading { display: flex; flex-direction: column; gap: 12px; }
+  .zd-skel-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .zd-empty { text-align: center; padding: 48px; color: var(--text3); font-size: 13px; }
   .oto-layout { display: flex; gap: 0; min-height: 70vh; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); margin-top: 4px; }
   .oto-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
   .oto-sidebar-header { padding: 12px 14px 10px; border-bottom: 0.5px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); }
@@ -343,7 +481,16 @@
   .oto-action-del:hover { color: var(--high-text); }
   .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
   .oto-session-toggle { font-size: 12px; color: var(--text3); transition: transform 0.2s; display: inline-block; }
-  .oto-new-session-bar { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; flex-shrink: 0; background: var(--surface); }
+  .oto-feedback-section { border-top: 1px solid var(--border); padding: 14px 20px; flex-shrink: 0; background: var(--surface); }
+  .oto-feedback-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .oto-feedback-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+  .oto-feedback-link { font-size: 11px; color: var(--cal-text); cursor: pointer; background: none; border: none; }
+  .oto-feedback-link:hover { text-decoration: underline; }
+  .oto-feedback-post { background: var(--surface2); border-radius: var(--radius-md); padding: 8px 10px; margin-bottom: 6px; }
+  .oto-feedback-post-meta { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
+  .oto-feedback-post-text { font-size: 12px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
+  .oto-feedback-none { font-size: 12px; color: var(--text3); font-style: italic; }
+  .oto-new-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 9px; font-weight: 700; background: var(--low-text); color: #0f0f11; border-radius: 8px; padding: 0 4px; margin-left: 5px; }
   .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
   .oto-add-person-btn:hover { color: var(--cal-text); }
   .settings-card:hover { border-color: var(--border2); }
@@ -425,15 +572,38 @@ let currentUser = null;
   document.getElementById('lock-username').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('lock-input').focus(); });
 })();
 
-window.saveLockToken = function() {
+window.saveLockToken = async function() {
   const inp = document.getElementById('lock-token-input');
   const val = inp ? inp.value.trim() : '';
   if (!val) return;
   localStorage.setItem('wtp_gh_token', val);
   if (inp) inp.value = '••••••••••••••••';
   const wrap = document.getElementById('lock-sync-wrap');
-  if (wrap) {
-    wrap.innerHTML = '<div style="font-size:11px;color:var(--low-text);text-align:center;padding:4px 0;">✓ Sync token saved</div>';
+  if (wrap) wrap.innerHTML = '<div style="font-size:11px;color:var(--text3);text-align:center;padding:4px 0;">⟳ Fetching accounts…</div>';
+
+  // Pull data.json immediately so user accounts are available before login
+  try {
+    const res = await fetch('https://api.github.com/repos/ullenesmathias-munu/weekly-planner/contents/data.json', {
+      method: 'GET', mode: 'cors',
+      headers: { 'Authorization': 'Bearer ' + val, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
+    });
+    if (res.ok) {
+      const json = await res.json();
+      try {
+        const data = JSON.parse(atob(json.content.replace(/\n/g,'')));
+        // Store all synced keys including wtp_users
+        Object.entries(data).forEach(([k, v]) => {
+          localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+        });
+        if (wrap) wrap.innerHTML = '<div style="font-size:11px;color:var(--low-text);text-align:center;padding:4px 0;">✓ Ready — you can sign in</div>';
+      } catch(e) {
+        if (wrap) wrap.innerHTML = '<div style="font-size:11px;color:var(--low-text);text-align:center;padding:4px 0;">✓ Token saved</div>';
+      }
+    } else {
+      if (wrap) wrap.innerHTML = '<div style="font-size:11px;color:var(--med-text);text-align:center;padding:4px 0;">⚠ Could not fetch accounts ('+res.status+') — try signing in anyway</div>';
+    }
+  } catch(e) {
+    if (wrap) wrap.innerHTML = '<div style="font-size:11px;color:var(--low-text);text-align:center;padding:4px 0;">✓ Token saved</div>';
   }
 };
 
@@ -441,6 +611,7 @@ window.tryUnlock = async function() {
   const username = document.getElementById('lock-username').value.trim();
   const password = document.getElementById('lock-input').value;
   const hash = await sha256(password);
+  // Always re-read users from localStorage in case sync just populated them
   const users = getUsers();
   const u = users.find(u => u.name.toLowerCase() === username.toLowerCase() && u.hash === hash);
   if (u) {
@@ -463,11 +634,14 @@ window.tryUnlock = async function() {
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
-  <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">💬 1:1s</button>
+  <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">👥 My Team</button>
+  <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">🎫 Tickets</button>
+  <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">💡 Feedback</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">⚙ Settings</button>
   <div class="clock-wrap">
     <span id="user-display" style="font-size:12px;color:var(--text2);margin-right:4px;"></span>
     <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);font-size:12px;padding:3px 8px;cursor:pointer;transition:border-color 0.15s;" title="Toggle light/dark mode">🌙</button>
+    <button onclick="signOut()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;transition:color 0.15s,border-color 0.15s;" title="Sign out (Q)">Sign out</button>
     <span id="live-clock"></span>
     <span id="live-date"></span>
   </div>
@@ -550,7 +724,7 @@ window.tryUnlock = async function() {
 <div id="tab-onetoone" class="tab-content">
   <div class="topbar">
     <div class="topbar-left">
-      <span style="font-size:14px;font-weight:700;color:var(--text);">1:1 Conversations</span>
+      <span style="font-size:14px;font-weight:700;color:var(--text);">My Team</span>
     </div>
     <div class="topbar-right">
       <button class="btn-save" onclick="showAddPersonModal()" style="font-size:12px;">+ Add person</button>
@@ -562,6 +736,36 @@ window.tryUnlock = async function() {
       <div class="oto-empty-state" id="oto-empty"></div>
     </div>
   </div>
+</div>
+
+<!-- FEEDBACK TAB -->
+<div id="tab-feedback" class="tab-content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span id="feedback-tab-title" style="font-size:14px;font-weight:700;color:var(--text);">💡 Thoughts & Ideas</span>
+    </div>
+    <div class="topbar-right" id="feedback-topbar-right"></div>
+  </div>
+  <div id="feedback-body" style="margin-top:8px;"></div>
+</div>
+
+<!-- ZENDESK TAB -->
+<div id="tab-zendesk" class="tab-content">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span style="font-size:14px;font-weight:700;color:var(--text);">🎫 Ticket Overview</span>
+    </div>
+    <div class="topbar-right">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label style="font-size:11px;color:var(--text3);">From</label>
+        <input type="date" id="zd-from" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:4px 8px;outline:none;">
+        <label style="font-size:11px;color:var(--text3);">To</label>
+        <input type="date" id="zd-to" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:4px 8px;outline:none;">
+        <button class="btn-save" id="zd-refresh-btn" onclick="zdRefresh()" style="font-size:12px;">↻ Refresh</button>
+      </div>
+    </div>
+  </div>
+  <div id="zd-body" style="margin-top:16px;"></div>
 </div>
 
 <!-- SETTINGS TAB -->
@@ -606,7 +810,7 @@ window.tryUnlock = async function() {
     </div>
 
     <!-- GitHub Sync -->
-    <div class="settings-card">
+    <div class="settings-card" id="gh-sync-card">
       <div class="settings-card-title">☁ GitHub Sync</div>
       <div class="settings-card-desc">Sync your tasks, notes and schedule across devices via your GitHub repo. Paste your token once — it saves to this browser only and is never stored in the code.</div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
@@ -681,7 +885,7 @@ window.tryUnlock = async function() {
     </div> <!-- end advanced section -->
 
     <!-- Incomplete task history -->
-    <div class="settings-card">
+    <div class="settings-card" id="history-card">
       <div class="settings-card-title">📋 Incomplete tasks</div>
       <div class="settings-card-desc">Tasks from previous weeks that were not completed. Mark them done or reschedule to this week.</div>
       <div id="history-list" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
@@ -692,7 +896,7 @@ window.tryUnlock = async function() {
 
 <script>
 // ─── Schedule data ───────────────────────────────────────────────
-let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "", ""], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylén", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "", ""], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "", ""], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "", ""], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "", ""], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "D1 (7-15)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (11-21)"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "H", "FLEX", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "H", "FLEX", "", "H"], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "", ""], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "", ""], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["H", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["H", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "", ""], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "", ""], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "", ""], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["H", "H", "H", "H", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "", ""], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Kristian", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Markus", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Ulrik", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Stian", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Mathias", "shifts": ["FLEX", "FLEX", "FLEX", "FLEX", "FLEX", "", ""], "roles": ["", "", "", "", "", "", ""]}]}];
+let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylén", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26"], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17"], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "D1 (7-15)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24"], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31"], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylén", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylén", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylén", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}];
 
 const MY_TEAM = ['Jonas','Thomas','Maylén','Bernadett','Benjamin','Cecilie','Tord','Marie','Andreas'];
 const EXCLUDE = ['Kristian','Markus','Ulrik','Stian','Mathias'];
@@ -739,8 +943,20 @@ function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'settings') { renderHistory(); renderUserList(); const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name; const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = (currentUser && currentUser.isAdmin) ? '' : 'none'; }
+  if (name === 'settings') {
+    renderHistory();
+    renderUserList();
+    const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name;
+    const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = (currentUser && currentUser.isAdmin) ? '' : 'none';
+    // Hide advanced settings and history for non-admins
+    const adv = document.getElementById('adv-toggle'); if (adv) adv.style.display = isAdmin() ? '' : 'none';
+    const advBody = document.getElementById('adv-body'); if (advBody) advBody.style.display = isAdmin() ? '' : 'none';
+    const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = isAdmin() ? '' : 'none';
+    const ghCard = document.getElementById('gh-sync-card'); if (ghCard) ghCard.style.display = isAdmin() ? '' : 'none';
+  }
   if (name === 'onetoone') { renderOtoTab(); }
+  if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); }
+  if (name === 'feedback') { renderFeedbackTab(); }
 }
 
 // ─── Incomplete task history ──────────────────────────────────────
@@ -1073,19 +1289,28 @@ function renderSchedule() {
 }
 
 // ─── Project Wingman ──────────────────────────────────────────────
-let wingmanSlots = JSON.parse(localStorage.getItem('wtp_wingman') || 'null') || [
-  { dates: '13/4 – 14/4', days: 'Mon–Tue', person: 'Andreas',  from: '2026-04-13', to: '2026-04-14' },
-  { dates: '15/4 – 16/4', days: 'Wed–Thu', person: 'Marie',     from: '2026-04-15', to: '2026-04-16' },
-  { dates: '20/4 – 21/4', days: 'Mon–Tue', person: 'Bernadett', from: '2026-04-20', to: '2026-04-21' },
-  { dates: '22/4 – 23/4', days: 'Wed–Thu', person: 'Cecilie',   from: '2026-04-22', to: '2026-04-23' },
-  { dates: '27/4 – 28/4', days: 'Mon–Tue', person: 'Maylén',    from: '2026-04-27', to: '2026-04-28' },
-  { dates: '29/4 – 30/4', days: 'Wed–Thu', person: 'Benjamin',  from: '2026-04-29', to: '2026-04-30' },
-  { dates: '11/5 – 12/5', days: 'Mon–Tue', person: 'Vetle',     from: '2026-05-11', to: '2026-05-12' },
-  { dates: '18/5 – 19/5', days: 'Mon–Tue', person: 'Thomas',    from: '2026-05-18', to: '2026-05-19' },
-  { dates: '1/6 – 2/6',   days: 'Mon–Tue', person: 'Julie',     from: '2026-06-01', to: '2026-06-02' },
-  { dates: '15/6 – 16/6', days: 'Mon–Tue', person: 'Jonas',     from: '2026-06-15', to: '2026-06-16' },
-];
-function saveWingman() { localStorage.setItem('wtp_wingman', JSON.stringify(wingmanSlots)); scheduleSyncSave(); }
+let wingmanSlots = (() => {
+  const saved = localStorage.getItem('wtp_wingman');
+  const v = localStorage.getItem('wtp_wingman_v');
+  if (saved && v === '2') return JSON.parse(saved);
+  // New default slots — reset cache
+  const defaults = [
+    { dates: '27/4 – 28/4', days: 'Mon–Tue', person: 'Maylén',    from: '2026-04-27', to: '2026-04-28' },
+    { dates: '29/4 – 30/4', days: 'Wed–Thu', person: 'Bernadett', from: '2026-04-29', to: '2026-04-30' },
+    { dates: '4/5 – 5/5',   days: 'Mon–Tue', person: 'Cecilie',   from: '2026-05-04', to: '2026-05-05' },
+    { dates: '6/5 – 7/5',   days: 'Wed–Thu', person: 'Marie',     from: '2026-05-06', to: '2026-05-07' },
+    { dates: '18/5 – 19/5', days: 'Mon–Tue', person: 'Thomas',    from: '2026-05-18', to: '2026-05-19' },
+    { dates: '20/5 – 21/5', days: 'Wed–Thu', person: 'Julie',     from: '2026-05-20', to: '2026-05-21' },
+    { dates: '26/5',         days: 'Tue',     person: 'Vetle',     from: '2026-05-26', to: '2026-05-26' },
+    { dates: '1/6 – 2/6',   days: 'Mon–Tue', person: 'Jonas',     from: '2026-06-01', to: '2026-06-02' },
+    { dates: '3/6 – 4/6',   days: 'Wed–Thu', person: 'Benjamin',  from: '2026-06-03', to: '2026-06-04' },
+    { dates: '8/6 – 9/6',   days: 'Mon–Tue', person: 'Andreas',   from: '2026-06-08', to: '2026-06-09' },
+  ];
+  localStorage.setItem('wtp_wingman', JSON.stringify(defaults));
+  localStorage.setItem('wtp_wingman_v', '2');
+  return defaults;
+})();
+function saveWingman() { localStorage.setItem('wtp_wingman', JSON.stringify(wingmanSlots)); localStorage.setItem('wtp_wingman_v', '2'); scheduleSyncSave(); }
 
 function renderWingman() {
   const container = document.getElementById('wingman-section');
@@ -1280,6 +1505,7 @@ function renderRoleSummary(w) {
         peopleNames.forEach(name => {
           const chip = document.createElement('span');
           chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:2px 8px;margin:1px 3px 1px 0;' + (isAdmin() ? 'cursor:pointer;transition:background 0.15s;' : 'cursor:default;');
+          chip.textContent = name;
           if (isAdmin()) {
             chip.title = 'Click to change role';
             chip.onmouseover = () => chip.style.background = 'var(--surface3)';
@@ -1373,6 +1599,14 @@ function fmtTime(iso) { if (!iso) return 'All day'; return new Date(iso).toLocal
 function setStatus(msg) { document.getElementById('status-msg').textContent = msg; }
 function changeWeek(dir) { weekOffset += dir; renderPlanner(); }
 function toggleDone(id) { const t = tasks.find(x => x.id === id); if (t) { t.done = !t.done; save(); renderPlanner(); } }
+function copyTask(t) {
+  const copy = { ...t, id: Date.now()+'', done: false, weekStamp: getMonday(weekOffset).toISOString().slice(0,10) };
+  tasks.push(copy);
+  save();
+  renderPlanner();
+  showToast('Task copied');
+}
+
 function delTask(id) { tasks = tasks.filter(x => x.id !== id); save(); renderPlanner(); }
 function addTask(day, title, priority, due, note, people, isMeeting, timeStart, timeEnd, recurring, reminder, colour, pendingName) {
   const weekStamp = getMonday(weekOffset).toISOString().slice(0,10);
@@ -1648,6 +1882,19 @@ function getOtoData() {
 
 let otoPerson = null; // currently selected person name
 
+function fbLastSeenKey(name) { return 'wtp_fb_seen_' + name.toLowerCase(); }
+function fbGetLastSeen(name) { return parseInt(localStorage.getItem(fbLastSeenKey(name)) || '0'); }
+function fbMarkSeen(name) { 
+  const posts = loadFbPosts(name);
+  if (posts.length) localStorage.setItem(fbLastSeenKey(name), posts[posts.length-1].ts ? new Date(posts[posts.length-1].ts).getTime() : Date.now());
+}
+function fbHasNew(name) {
+  const posts = loadFbPosts(name);
+  if (!posts.length) return false;
+  const lastSeen = fbGetLastSeen(name);
+  return posts.some(p => new Date(p.ts).getTime() > lastSeen);
+}
+
 function renderOtoTab() {
   if (!isAdmin()) return;
   const emptyEl = document.getElementById('oto-empty');
@@ -1656,7 +1903,8 @@ function renderOtoTab() {
   }
   const data = getOtoData();
   renderOtoSidebar(data);
-  if (otoPerson) renderOtoMain(otoPerson, data);
+  if (otoPerson === '__overview__') renderTeamOverview(data);
+  else if (otoPerson) renderOtoMain(otoPerson, data);
 }
 
 function renderOtoSidebar(data) {
@@ -1667,6 +1915,20 @@ function renderOtoSidebar(data) {
   const hdr = document.createElement('div'); hdr.className = 'oto-sidebar-header'; hdr.textContent = 'Team';
   sidebar.appendChild(hdr);
 
+  // Team overview button
+  if (isAdmin()) {
+    const overviewBtn = document.createElement('button');
+    overviewBtn.className = 'oto-person-btn' + (otoPerson === '__overview__' ? ' active' : '');
+    const ovAv = document.createElement('div'); ovAv.className = 'oto-person-avatar'; ovAv.style.cssText = 'background:var(--surface3);font-size:14px;'; ovAv.textContent = '👥';
+    const ovInfo = document.createElement('div'); ovInfo.className = 'oto-person-info';
+    const ovNm = document.createElement('div'); ovNm.className = 'oto-person-name'; ovNm.textContent = 'Team Overview';
+    const ovMeta = document.createElement('div'); ovMeta.className = 'oto-person-meta'; ovMeta.textContent = 'All ' + data.people.length + ' members';
+    ovInfo.appendChild(ovNm); ovInfo.appendChild(ovMeta);
+    overviewBtn.appendChild(ovAv); overviewBtn.appendChild(ovInfo);
+    overviewBtn.onclick = () => { otoPerson = '__overview__'; renderOtoTab(); };
+    sidebar.appendChild(overviewBtn);
+  }
+
   data.people.forEach(p => {
     const sessions = data.sessions.filter(s => s.person === p.name);
     const upcoming = sessions.filter(s => s.date >= localToday()).sort((a,b) => a.date < b.date ? -1 : 1);
@@ -1676,10 +1938,17 @@ function renderOtoSidebar(data) {
     const avatar = document.createElement('div'); avatar.className = 'oto-person-avatar';
     avatar.textContent = p.name.slice(0,2).toUpperCase();
     const info = document.createElement('div'); info.className = 'oto-person-info';
+    const nameRow = document.createElement('div'); nameRow.style.cssText = 'display:flex;align-items:center;gap:4px;';
     const name = document.createElement('div'); name.className = 'oto-person-name'; name.textContent = p.name;
+    nameRow.appendChild(name);
+    // Show new feedback badge
+    if (fbHasNew(p.name)) {
+      const badge = document.createElement('span'); badge.className = 'oto-new-badge'; badge.textContent = 'NEW';
+      nameRow.appendChild(badge);
+    }
     const meta = document.createElement('div'); meta.className = 'oto-person-meta';
     meta.textContent = next ? 'Next: ' + formatOtoDate(next.date) : sessions.length ? sessions.length + ' session' + (sessions.length>1?'s':'') : 'No sessions yet';
-    info.appendChild(name); info.appendChild(meta);
+    info.appendChild(nameRow); info.appendChild(meta);
     btn.appendChild(avatar); btn.appendChild(info);
     btn.onclick = () => { otoPerson = p.name; renderOtoTab(); };
     sidebar.appendChild(btn);
@@ -1724,6 +1993,9 @@ function renderOtoMain(personName, data) {
   };
   hRight.appendChild(removeBtn);
   hdr.appendChild(hLeft); hdr.appendChild(hRight); main.appendChild(hdr);
+
+  // Profile panel (admin only)
+  if (isAdmin()) renderProfilePanel(personName, main);
 
   // Upcoming sessions summary strip
   const upcoming7 = sessions.filter(s => s.date >= today && s.date <= (() => { const d=new Date(); d.setDate(d.getDate()+7); return d.toISOString().slice(0,10); })());
@@ -1858,6 +2130,44 @@ function renderOtoMain(personName, data) {
   main.appendChild(sessionsDiv);
 
   // New session bar at bottom
+  // Feedback preview section
+  const fbPosts = loadFbPosts(personName);
+  const fbSection = document.createElement('div'); fbSection.className = 'oto-feedback-section';
+  const fbHdr = document.createElement('div'); fbHdr.className = 'oto-feedback-header';
+  const fbTitle = document.createElement('div'); fbTitle.className = 'oto-feedback-title';
+  fbTitle.textContent = '💡 Latest feedback' + (fbHasNew(personName) ? ' ✦ new' : '');
+  if (fbHasNew(personName)) fbTitle.style.color = 'var(--low-text)';
+  const fbLink = document.createElement('button'); fbLink.className = 'oto-feedback-link';
+  fbLink.textContent = fbPosts.length ? 'See all (' + fbPosts.length + ')' : '';
+  fbLink.onclick = () => {
+    fbMarkSeen(personName);
+    fbSelectedUser = personName;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => { if (b.textContent.includes('Feedback')) b.classList.add('active'); });
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-feedback').classList.add('active');
+    renderFeedbackTab();
+  };
+  fbHdr.appendChild(fbTitle); fbHdr.appendChild(fbLink); fbSection.appendChild(fbHdr);
+
+  const recentPosts = [...fbPosts].reverse().slice(0, 3);
+  if (!recentPosts.length) {
+    const none = document.createElement('div'); none.className = 'oto-feedback-none'; none.textContent = 'No feedback yet';
+    fbSection.appendChild(none);
+  } else {
+    recentPosts.forEach(p => {
+      const card = document.createElement('div'); card.className = 'oto-feedback-post';
+      const meta = document.createElement('div'); meta.className = 'oto-feedback-post-meta';
+      meta.textContent = new Date(p.ts).toLocaleDateString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      const txt = document.createElement('div'); txt.className = 'oto-feedback-post-text';
+      txt.textContent = p.text.length > 120 ? p.text.slice(0, 120) + '…' : p.text;
+      card.appendChild(meta); card.appendChild(txt); fbSection.appendChild(card);
+    });
+  }
+  // Mark as seen when viewing
+  fbMarkSeen(personName);
+  main.appendChild(fbSection);
+
   const newBar = document.createElement('div'); newBar.className = 'oto-new-session-bar';
   const dateInp = document.createElement('input'); dateInp.type = 'date'; dateInp.style.cssText = 'font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex-shrink:0;';
   dateInp.value = localToday();
@@ -1947,6 +2257,683 @@ function showAddPersonModal() {
   overlay.appendChild(box); overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
   document.body.appendChild(overlay); inp2.focus();
 }
+// ─── Team Profile System ──────────────────────────────────────────
+function profileKey(name) { return 'wtp_profile_' + name.toLowerCase(); }
+function loadProfile(name) {
+  try { return JSON.parse(localStorage.getItem(profileKey(name)) || '{}'); } catch { return {}; }
+}
+function saveProfile(name, data) {
+  localStorage.setItem(profileKey(name), JSON.stringify(data));
+  scheduleSyncSave();
+}
+
+function renderProfilePanel(personName, container) {
+  const profile = loadProfile(personName);
+  if (!profile.log) profile.log = [];
+  if (!profile.goals) profile.goals = [];
+  if (!profile.rag) profile.rag = 'none';
+  if (!profile.focus) profile.focus = '';
+
+  const panel = document.createElement('div'); panel.className = 'profile-panel';
+
+  // Toggle button
+  const toggle = document.createElement('button'); toggle.className = 'profile-toggle' + (profile._open ? ' open' : '');
+  toggle.innerHTML = '<span class="profile-toggle-arrow">›</span> 👤 Team member profile <span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px;">' + (profile.rag !== 'none' ? (profile.rag === 'green' ? '🟢' : profile.rag === 'amber' ? '🟡' : '🔴') : '') + (profile.focus ? ' · ' + profile.focus.slice(0,40) : '') + '</span>';
+
+  const body = document.createElement('div'); body.className = 'profile-body' + (profile._open ? ' open' : '');
+
+  toggle.onclick = () => {
+    toggle.classList.toggle('open');
+    body.classList.toggle('open');
+    profile._open = body.classList.contains('open');
+    saveProfile(personName, profile);
+  };
+
+  // ── RAG + Focus row ──
+  const topRow = document.createElement('div'); topRow.className = 'profile-top-row';
+
+  // RAG
+  const ragWrap = document.createElement('div'); ragWrap.className = 'profile-rag-wrap';
+  const ragTitle = document.createElement('div'); ragTitle.className = 'profile-section-title'; ragTitle.textContent = 'Status';
+  const ragBtns = document.createElement('div'); ragBtns.className = 'rag-btns';
+  ['none','green','amber','red'].forEach(r => {
+    const btn = document.createElement('button'); btn.className = 'rag-btn rag-' + r + (profile.rag === r ? ' selected' : '');
+    btn.title = r === 'none' ? 'No status' : r.charAt(0).toUpperCase() + r.slice(1);
+    btn.onclick = () => {
+      profile.rag = r; saveProfile(personName, profile);
+      ragBtns.querySelectorAll('.rag-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      // Update toggle summary
+      toggle.innerHTML = '<span class="profile-toggle-arrow" style="' + (body.classList.contains('open') ? 'transform:rotate(90deg)' : '') + '">›</span> 👤 Team member profile <span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px;">' + (profile.rag !== 'none' ? (profile.rag === 'green' ? '🟢' : profile.rag === 'amber' ? '🟡' : '🔴') : '') + (profile.focus ? ' · ' + profile.focus.slice(0,40) : '') + '</span>';
+    };
+    ragBtns.appendChild(btn);
+  });
+  ragWrap.appendChild(ragTitle); ragWrap.appendChild(ragBtns); topRow.appendChild(ragWrap);
+
+  // Focus
+  const focusWrap = document.createElement('div'); focusWrap.className = 'profile-focus-wrap';
+  const focusTitle = document.createElement('div'); focusTitle.className = 'profile-section-title'; focusTitle.textContent = 'Current focus';
+  const focusInp = document.createElement('input'); focusInp.className = 'profile-focus-input'; focusInp.placeholder = 'e.g. Improving CSAT, handling escalations…'; focusInp.value = profile.focus || '';
+  let focusTimer;
+  focusInp.addEventListener('input', () => { clearTimeout(focusTimer); focusTimer = setTimeout(() => { profile.focus = focusInp.value; saveProfile(personName, profile); }, 600); });
+  focusWrap.appendChild(focusTitle); focusWrap.appendChild(focusInp); topRow.appendChild(focusWrap);
+  body.appendChild(topRow);
+
+  // ── Log ──
+  const logSection = document.createElement('div');
+  const logTitle = document.createElement('div'); logTitle.className = 'profile-section-title'; logTitle.textContent = '📝 Running log';
+  logSection.appendChild(logTitle);
+
+  function renderLog() {
+    const existing = logSection.querySelectorAll('.log-entry, .log-empty');
+    existing.forEach(el => el.remove());
+    if (!profile.log.length) {
+      const empty = document.createElement('div'); empty.className = 'log-empty';
+      empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;'; empty.textContent = 'No entries yet';
+      logSection.insertBefore(empty, addLogRow);
+    } else {
+      [...profile.log].reverse().forEach((entry, ri) => {
+        const i = profile.log.length - 1 - ri;
+        const el = document.createElement('div'); el.className = 'log-entry ' + entry.tag;
+        const content = document.createElement('div'); content.className = 'log-entry-content';
+        const meta = document.createElement('div'); meta.className = 'log-entry-meta';
+        const tag = document.createElement('span'); tag.className = 'log-tag ' + entry.tag; tag.textContent = entry.tag;
+        const ts = document.createElement('span'); ts.textContent = new Date(entry.ts).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+        meta.appendChild(tag); meta.appendChild(ts);
+        const txt = document.createElement('div'); txt.className = 'log-entry-text'; txt.textContent = entry.text;
+        content.appendChild(meta); content.appendChild(txt);
+        const del = document.createElement('button'); del.className = 'log-del'; del.textContent = '✕';
+        del.onclick = () => { profile.log.splice(i, 1); saveProfile(personName, profile); renderLog(); };
+        el.appendChild(content); el.appendChild(del);
+        logSection.insertBefore(el, addLogRow);
+      });
+    }
+  }
+
+  // Add log row
+  const addLogRow = document.createElement('div'); addLogRow.className = 'log-add-row'; addLogRow.style.marginTop = '8px';
+  const tagSel = document.createElement('select'); tagSel.className = 'log-tag-sel';
+  [['win','🏆 Win'],['development','📈 Development'],['concern','⚠ Concern'],['observation','💬 Observation']].forEach(([v,l]) => {
+    const o = document.createElement('option'); o.value=v; o.textContent=l; tagSel.appendChild(o);
+  });
+  const logInp = document.createElement('input'); logInp.className = 'log-text-inp'; logInp.placeholder = 'Add a note…';
+  const logBtn = document.createElement('button'); logBtn.className = 'btn-save'; logBtn.style.cssText = 'font-size:11px;white-space:nowrap;'; logBtn.textContent = 'Add';
+  logBtn.onclick = () => {
+    const text = logInp.value.trim(); if (!text) return;
+    profile.log.push({ tag: tagSel.value, text, ts: new Date().toISOString() });
+    saveProfile(personName, profile); logInp.value = ''; renderLog();
+  };
+  logInp.addEventListener('keydown', e => { if (e.key === 'Enter') logBtn.click(); });
+  addLogRow.appendChild(tagSel); addLogRow.appendChild(logInp); addLogRow.appendChild(logBtn);
+  logSection.appendChild(addLogRow);
+  renderLog();
+  body.appendChild(logSection);
+
+  // ── Goals ──
+  const goalSection = document.createElement('div');
+  const goalTitle = document.createElement('div'); goalTitle.className = 'profile-section-title'; goalTitle.textContent = '🎯 Development goals';
+  goalSection.appendChild(goalTitle);
+
+  function renderGoals() {
+    goalSection.querySelectorAll('.goal-row, .goal-empty').forEach(el => el.remove());
+    if (!profile.goals.length) {
+      const empty = document.createElement('div'); empty.className = 'goal-empty';
+      empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;margin-bottom:8px;'; empty.textContent = 'No goals set yet';
+      goalSection.insertBefore(empty, addGoalRow);
+    } else {
+      profile.goals.forEach((goal, i) => {
+        const row = document.createElement('div'); row.className = 'goal-row';
+        const statusColors = { 'not-started': 'var(--text3)', 'in-progress': 'var(--cal-text)', 'done': 'var(--low-text)' };
+        const txt = document.createElement('div'); txt.className = 'goal-text'; txt.style.color = goal.status === 'done' ? 'var(--text3)' : 'var(--text)';
+        if (goal.status === 'done') txt.style.textDecoration = 'line-through';
+        txt.textContent = goal.text;
+        const sel = document.createElement('select'); sel.className = 'goal-status-sel'; sel.style.color = statusColors[goal.status] || 'var(--text3)';
+        [['not-started','Not started'],['in-progress','In progress'],['done','Done ✓']].forEach(([v,l]) => {
+          const o = document.createElement('option'); o.value=v; o.textContent=l; if(v===goal.status) o.selected=true; sel.appendChild(o);
+        });
+        sel.onchange = () => { profile.goals[i].status = sel.value; saveProfile(personName, profile); renderGoals(); };
+        const del = document.createElement('button'); del.className = 'goal-del'; del.textContent = '✕';
+        del.onclick = () => { profile.goals.splice(i,1); saveProfile(personName, profile); renderGoals(); };
+        row.appendChild(txt); row.appendChild(sel); row.appendChild(del);
+        goalSection.insertBefore(row, addGoalRow);
+      });
+    }
+  }
+
+  const addGoalRow = document.createElement('div'); addGoalRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;';
+  const goalInp = document.createElement('input'); goalInp.style.cssText = 'flex:1;font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;'; goalInp.placeholder = 'Add a development goal…';
+  const goalBtn = document.createElement('button'); goalBtn.className = 'btn-save'; goalBtn.style.cssText = 'font-size:11px;white-space:nowrap;'; goalBtn.textContent = 'Add';
+  goalBtn.onclick = () => {
+    const text = goalInp.value.trim(); if (!text || profile.goals.length >= 7) return;
+    profile.goals.push({ text, status: 'not-started' });
+    saveProfile(personName, profile); goalInp.value = ''; renderGoals();
+  };
+  goalInp.addEventListener('keydown', e => { if (e.key === 'Enter') goalBtn.click(); });
+  addGoalRow.appendChild(goalInp); addGoalRow.appendChild(goalBtn);
+  goalSection.appendChild(addGoalRow);
+  renderGoals();
+  body.appendChild(goalSection);
+
+  panel.appendChild(toggle); panel.appendChild(body);
+  container.appendChild(panel);
+}
+
+// ── Team overview ─────────────────────────────────────────────────
+async function renderTeamOverview(data) {
+  const main = document.getElementById('oto-main');
+  if (!main) return;
+  main.innerHTML = '';
+
+  const hdr = document.createElement('div'); hdr.className = 'oto-person-header';
+  const title = document.createElement('div'); title.className = 'oto-person-title'; title.textContent = 'Team Overview';
+  const sub = document.createElement('div'); sub.className = 'oto-person-sub'; sub.textContent = data.people.length + ' people';
+  const left = document.createElement('div'); left.appendChild(title); left.appendChild(sub);
+  hdr.appendChild(left); main.appendChild(hdr);
+
+  const grid = document.createElement('div'); grid.className = 'team-overview-grid';
+  grid.style.padding = '16px 20px';
+  main.appendChild(grid);
+
+  const avatarColors = ['#3b5bdb','#0ca678','#e67700','#c92a2a','#5f3dc4','#0b7285','#2b8a3e','#862e9c'];
+
+  // Render cards first without ZD data
+  const cardMap = {}; // personName -> card element
+  data.people.forEach(p => {
+    const profile = loadProfile(p.name);
+    const sessions = data.sessions.filter(s => s.person === p.name);
+    const upcoming = sessions.filter(s => s.date >= localToday()).sort((a,b) => a.date<b.date?-1:1);
+    const lastSession = sessions.filter(s => s.date < localToday()).sort((a,b) => b.date<a.date?-1:1)[0];
+    const openGoals = (profile.goals||[]).filter(g => g.status !== 'done').length;
+    const hasNew = fbHasNew(p.name);
+
+    const card = document.createElement('div'); card.className = 'team-card';
+    card.onclick = () => { otoPerson = p.name; renderOtoTab(); };
+
+    const top = document.createElement('div'); top.className = 'team-card-top';
+    const av = document.createElement('div'); av.className = 'team-card-avatar';
+    let hash = 0; for (let c of p.name) hash = c.charCodeAt(0) + ((hash<<5)-hash);
+    av.style.background = avatarColors[Math.abs(hash) % avatarColors.length];
+    av.textContent = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const nm = document.createElement('div'); nm.className = 'team-card-name';
+    nm.innerHTML = p.name + (hasNew ? ' <span style="font-size:10px;background:var(--low-text);color:#0f0f11;border-radius:6px;padding:1px 5px;font-weight:700;vertical-align:middle;">NEW</span>' : '');
+    const rag = document.createElement('div'); rag.className = 'rag-dot ' + (profile.rag || 'none'); rag.title = profile.rag || 'No status';
+    top.appendChild(av); top.appendChild(nm); top.appendChild(rag); card.appendChild(top);
+
+    if (profile.focus) {
+      const focus = document.createElement('div'); focus.className = 'team-card-focus'; focus.textContent = profile.focus;
+      card.appendChild(focus);
+    }
+
+    const metaRow = document.createElement('div'); metaRow.className = 'team-card-meta'; metaRow.dataset.meta = p.name;
+    if (upcoming[0]) { const c = document.createElement('div'); c.className = 'team-card-chip'; c.textContent = '📅 Next: ' + formatOtoDate(upcoming[0].date); metaRow.appendChild(c); }
+    else if (lastSession) { const c = document.createElement('div'); c.className = 'team-card-chip'; c.textContent = 'Last: ' + formatOtoDate(lastSession.date); metaRow.appendChild(c); }
+    if (openGoals) { const c = document.createElement('div'); c.className = 'team-card-chip'; c.textContent = openGoals + ' active goal' + (openGoals>1?'s':''); metaRow.appendChild(c); }
+
+    // ZD placeholder chip
+    if (zdReady()) {
+      const zdChip = document.createElement('div'); zdChip.className = 'team-card-chip'; zdChip.dataset.zdchip = p.name;
+      zdChip.textContent = '🎫 Loading…'; zdChip.style.color = 'var(--text3)';
+      metaRow.appendChild(zdChip);
+    }
+
+    card.appendChild(metaRow); grid.appendChild(card);
+    cardMap[p.name] = card;
+  });
+
+  // Fetch ZD data in background if credentials set
+  if (!zdReady()) return;
+  try {
+    const groupId = await zdGetGroupId();
+    const agents = await zdGetAgents(groupId);
+    const mon = getMonday(0);
+    const fri = new Date(mon); fri.setDate(mon.getDate()+6);
+    const fmt = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    const fromDate = fmt(mon); const toDate = fmt(fri);
+
+    for (const agent of agents) {
+      // Match agent to team person by first name or full name
+      const person = data.people.find(p =>
+        p.name.toLowerCase() === agent.name.toLowerCase() ||
+        agent.name.toLowerCase().startsWith(p.name.split(' ')[0].toLowerCase())
+      );
+      if (!person) continue;
+      const chip = document.querySelector(`[data-zdchip="${person.name}"]`);
+      if (!chip) continue;
+      try {
+        const solved = await zdCount(`assignee_id:${agent.id} status:solved solved>=${fromDate} solved<=${toDate}`);
+        chip.textContent = '🎫 ' + solved + ' solved this week';
+        chip.style.color = solved > 0 ? 'var(--low-text)' : 'var(--text3)';
+        chip.style.background = solved > 0 ? 'var(--low-bg)' : '';
+      } catch { chip.remove(); }
+    }
+  } catch(e) {
+    // Silently fail — ZD stats are supplementary
+    document.querySelectorAll('[data-zdchip]').forEach(c => c.remove());
+  }
+}
+
+
+function fbKey(username) { return 'wtp_fb_' + username.toLowerCase(); }
+
+function loadFbPosts(username) {
+  try { return JSON.parse(localStorage.getItem(fbKey(username)) || '[]'); } catch { return []; }
+}
+function saveFbPosts(username, posts) {
+  localStorage.setItem(fbKey(username), JSON.stringify(posts));
+  scheduleSyncSave();
+}
+
+let fbSelectedUser = null; // for admin view
+
+function renderFeedbackTab() {
+  const body = document.getElementById('feedback-body');
+  const topRight = document.getElementById('feedback-topbar-right');
+  if (!body || !currentUser) return;
+
+  if (isAdmin()) {
+    renderFeedbackAdmin(body, topRight);
+  } else {
+    renderFeedbackUser(body, topRight, currentUser.name);
+  }
+}
+
+function renderFeedbackAdmin(body, topRight) {
+  // Admin sees sidebar with all users + their posts
+  topRight.innerHTML = '';
+  body.innerHTML = '';
+
+  const users = getUsers().filter(u => !u.isAdmin); // show non-admins
+  if (!fbSelectedUser && users.length) fbSelectedUser = users[0].name;
+
+  const layout = document.createElement('div'); layout.className = 'fb-layout';
+
+  // Sidebar
+  const sidebar = document.createElement('div'); sidebar.className = 'fb-sidebar';
+  const sideLabel = document.createElement('div'); sideLabel.className = 'fb-section-label'; sideLabel.textContent = 'Team';
+  sidebar.appendChild(sideLabel);
+
+  users.forEach(u => {
+    const posts = loadFbPosts(u.name);
+    const btn = document.createElement('button'); btn.className = 'fb-user-btn' + (fbSelectedUser === u.name ? ' active' : '');
+    const av = document.createElement('div'); av.className = 'fb-user-avatar';
+    const colors = ['#3b5bdb','#0ca678','#e67700','#c92a2a','#5f3dc4','#0b7285','#2b8a3e','#862e9c'];
+    let hash = 0; for (let c of u.name) hash = c.charCodeAt(0) + ((hash<<5)-hash);
+    av.style.background = colors[Math.abs(hash) % colors.length];
+    av.textContent = u.name.slice(0,2).toUpperCase();
+    const info = document.createElement('div');
+    const nm = document.createElement('div'); nm.className = 'fb-user-name'; nm.textContent = u.name;
+    const cnt = document.createElement('div'); cnt.className = 'fb-user-count'; cnt.textContent = posts.length + ' post' + (posts.length !== 1 ? 's' : '');
+    info.appendChild(nm); info.appendChild(cnt);
+    btn.appendChild(av); btn.appendChild(info);
+    btn.onclick = () => { fbSelectedUser = u.name; renderFeedbackTab(); };
+    sidebar.appendChild(btn);
+  });
+
+  layout.appendChild(sidebar);
+
+  // Main — show selected user's posts
+  const main = document.createElement('div'); main.className = 'fb-main';
+  if (fbSelectedUser) {
+    const posts = loadFbPosts(fbSelectedUser).reverse();
+    const hdr = document.createElement('div'); hdr.style.cssText = 'font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;';
+    hdr.textContent = fbSelectedUser + "'s feedback";
+    main.appendChild(hdr);
+    if (!posts.length) {
+      main.appendChild(makeEmptyState('💭', 'No posts yet', fbSelectedUser + " hasn't shared anything yet"));
+    } else {
+      const postsDiv = document.createElement('div'); postsDiv.className = 'fb-posts';
+      posts.forEach((p, i) => {
+        const card = fbMakeCard(p, true, () => {
+          confirmDialog('Delete this post?', () => {
+            const all = loadFbPosts(fbSelectedUser);
+            const realIdx = all.length - 1 - i;
+            all.splice(realIdx, 1);
+            saveFbPosts(fbSelectedUser, all);
+            renderFeedbackTab();
+          }, 'Delete');
+        });
+        postsDiv.appendChild(card);
+      });
+      main.appendChild(postsDiv);
+    }
+  }
+  layout.appendChild(main);
+  body.appendChild(layout);
+}
+
+function renderFeedbackUser(body, topRight, username) {
+  body.innerHTML = '';
+  topRight.innerHTML = '';
+
+  const posts = loadFbPosts(username);
+
+  // Compose box
+  const compose = document.createElement('div'); compose.className = 'fb-compose';
+  const compLabel = document.createElement('div'); compLabel.className = 'fb-compose-label'; compLabel.textContent = 'Share a thought, idea or feedback';
+  const ta = document.createElement('textarea'); ta.className = 'fb-textarea'; ta.placeholder = 'What\'s on your mind? Share ideas, suggestions, feedback — this goes directly to your manager.';
+  const submitBtn = document.createElement('button'); submitBtn.className = 'btn-save fb-post-btn'; submitBtn.textContent = 'Post';
+  submitBtn.onclick = () => {
+    const text = ta.value.trim();
+    if (!text) return;
+    const all = loadFbPosts(username);
+    all.push({ id: Date.now()+'', text, ts: new Date().toISOString() });
+    saveFbPosts(username, all);
+    ta.value = '';
+    renderFeedbackTab();
+    showToast('✓ Posted!');
+  };
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) submitBtn.click(); });
+  compose.appendChild(compLabel); compose.appendChild(ta); compose.appendChild(submitBtn);
+  body.appendChild(compose);
+
+  // Posts
+  const reversed = [...posts].reverse();
+  if (!reversed.length) {
+    body.appendChild(makeEmptyState('💭', 'Nothing shared yet', 'Your thoughts go directly to your manager. Ctrl+Enter to post quickly.'));
+  } else {
+    const postsDiv = document.createElement('div'); postsDiv.className = 'fb-posts';
+    reversed.forEach((p, i) => {
+      const card = fbMakeCard(p, false, () => {
+        confirmDialog('Delete this post?', () => {
+          const all = loadFbPosts(username);
+          const realIdx = all.length - 1 - i;
+          all.splice(realIdx, 1);
+          saveFbPosts(username, all);
+          renderFeedbackTab();
+        }, 'Delete');
+      });
+      postsDiv.appendChild(card);
+    });
+    body.appendChild(postsDiv);
+  }
+}
+
+function fbMakeCard(post, showAuthor, onDelete) {
+  const card = document.createElement('div'); card.className = 'fb-post-card';
+  const hdr = document.createElement('div'); hdr.className = 'fb-post-header';
+  const meta = document.createElement('div'); meta.className = 'fb-post-meta';
+  const ts = new Date(post.ts);
+  meta.textContent = ts.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' }) + ' · ' + ts.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  const del = document.createElement('button'); del.className = 'fb-post-del'; del.textContent = '✕'; del.onclick = onDelete;
+  hdr.appendChild(meta); hdr.appendChild(del);
+  const txt = document.createElement('div'); txt.className = 'fb-post-body'; txt.textContent = post.text;
+  card.appendChild(hdr); card.appendChild(txt);
+  return card;
+}
+
+
+const ZD_BASE_URL = 'zendesk.com/api/v2';
+
+function getZdCreds() {
+  return {
+    subdomain: localStorage.getItem('wtp_zd_subdomain') || '',
+    email:     localStorage.getItem('wtp_zd_email') || '',
+    token:     localStorage.getItem('wtp_zd_token') || '',
+  };
+}
+function zdAuth() {
+  const c = getZdCreds();
+  return 'Basic ' + btoa(c.email + '/token:' + c.token);
+}
+function zdBase() {
+  const c = getZdCreds();
+  return 'https://' + c.subdomain + '.zendesk.com/api/v2';
+}
+function zdReady() {
+  const c = getZdCreds();
+  return !!(c.subdomain && c.email && c.token);
+}
+
+let zdGroupId = null;
+let zdAgents  = [];
+let zdData    = {};
+
+function zdInitDates() {
+  const mon = getMonday(0);
+  const fri = new Date(mon); fri.setDate(mon.getDate() + 6);
+  const fmt = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  const f = document.getElementById('zd-from'); const t = document.getElementById('zd-to');
+  if (f) f.value = fmt(mon);
+  if (t) t.value = fmt(fri);
+}
+
+async function zdFetch(path) {
+  const res = await fetch(zdBase() + path, { headers: { 'Authorization': zdAuth(), 'Content-Type': 'application/json' } });
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error((e.error || e.description || 'HTTP ' + res.status) + ' — ' + path); }
+  return res.json();
+}
+
+async function zdGetGroupId() {
+  if (zdGroupId) return zdGroupId;
+  const data = await zdFetch('/groups.json?per_page=100');
+  const group = (data.groups || []).find(g => g.name.toLowerCase().includes('l1'));
+  if (!group) throw new Error('L1 group not found. Available: ' + (data.groups||[]).map(g=>g.name).join(', '));
+  zdGroupId = group.id;
+  return zdGroupId;
+}
+
+async function zdGetAgents(groupId) {
+  const data = await zdFetch('/groups/' + groupId + '/memberships.json?per_page=100');
+  const ids = (data.group_memberships || []).map(m => m.user_id);
+  if (!ids.length) throw new Error('No members in L1 group');
+  const ud = await zdFetch('/users/show_many.json?ids=' + ids.join(','));
+  return (ud.users || []).filter(u => u.role === 'agent' || u.role === 'admin').map(u => ({ id: u.id, name: u.name, email: u.email }));
+}
+
+async function zdCount(query) {
+  const data = await zdFetch('/search.json?query=' + encodeURIComponent(query) + '&per_page=1');
+  return data.count || 0;
+}
+
+async function zdGetStats(agentId, fromDate, toDate) {
+  const base = `assignee_id:${agentId}`;
+  const solved = `${base} status:solved solved>=${fromDate} solved<=${toDate}`;
+  const [total, web, email, open, pending, onhold] = await Promise.all([
+    zdCount(solved),
+    zdCount(solved + ' via:web'),
+    zdCount(solved + ' via:email'),
+    zdCount(`${base} status:open`),
+    zdCount(`${base} status:pending`),
+    zdCount(`${base} status:hold`),
+  ]);
+  return { solved: total, web, email, open, pending, onhold };
+}
+
+async function zdRefresh() {
+  if (!isAdmin()) return;
+  if (!zdReady()) { zdShowSetup(); return; }
+  const body = document.getElementById('zd-body');
+  const fromDate = document.getElementById('zd-from')?.value;
+  const toDate   = document.getElementById('zd-to')?.value;
+  if (!fromDate || !toDate) { body.innerHTML = '<div class="zd-error">Please select a date range</div>'; return; }
+
+  body.innerHTML = '';
+  const loadMsg = document.createElement('div'); loadMsg.style.cssText = 'font-size:12px;color:var(--text3);padding:8px 0;';
+  loadMsg.textContent = '⟳ Connecting to Zendesk…';
+  const skelRow = document.createElement('div'); skelRow.className = 'zd-skel-row';
+  for (let i = 0; i < 6; i++) { const s = document.createElement('div'); s.className = 'skeleton'; s.style.cssText = 'height:170px;border-radius:12px;'; skelRow.appendChild(s); }
+  body.appendChild(loadMsg); body.appendChild(skelRow);
+
+  try {
+    const groupId = await zdGetGroupId();
+    const agents  = await zdGetAgents(groupId);
+    zdAgents = agents;
+    loadMsg.textContent = `⟳ Found ${agents.length} agents — fetching ticket stats…`;
+    zdData = {};
+    for (let i = 0; i < agents.length; i++) {
+      loadMsg.textContent = `⟳ ${agents[i].name} (${i+1}/${agents.length})…`;
+      zdData[agents[i].id] = await zdGetStats(agents[i].id, fromDate, toDate);
+    }
+    zdRender(agents, fromDate, toDate);
+  } catch(e) {
+    body.innerHTML = '<div class="zd-error">✗ ' + e.message + '</div>';
+    console.error('Zendesk error:', e);
+  }
+}
+
+function zdRender(agents, fromDate, toDate) {
+  const body = document.getElementById('zd-body'); body.innerHTML = '';
+  const totals = keys => Object.values(zdData).reduce((s, d) => s + (d[keys]||0), 0);
+  const fromFmt = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const toFmt   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+
+  // ── Bar chart ──────────────────────────────────────────────────
+  const sortedAgents = [...agents].sort((a,b) => (zdData[b.id]?.solved||0) - (zdData[a.id]?.solved||0));
+  const maxSolved = Math.max(...sortedAgents.map(a => zdData[a.id]?.solved||0), 1);
+
+  // Per-agent colours
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+
+  const chartWrap = document.createElement('div'); chartWrap.className = 'zd-chart-wrap';
+  const chartTitle = document.createElement('div'); chartTitle.className = 'zd-chart-title';
+  chartTitle.textContent = 'Tickets solved per agent — ' + fromFmt + ' to ' + toFmt;
+  chartWrap.appendChild(chartTitle);
+
+  const chart = document.createElement('div'); chart.className = 'zd-chart';
+
+  sortedAgents.forEach((agent, idx) => {
+    const solved = zdData[agent.id]?.solved || 0;
+    const pct = solved / maxSolved;
+    const color = barColors[idx % barColors.length];
+    const firstName = agent.name.split(' ')[0];
+
+    const col = document.createElement('div'); col.className = 'zd-bar-col';
+    const val = document.createElement('div'); val.className = 'zd-bar-val'; val.textContent = solved;
+    const bar = document.createElement('div'); bar.className = 'zd-bar';
+    bar.style.cssText = 'background:' + color + ';height:0;';
+    bar.title = agent.name + ': ' + solved + ' solved';
+    const lbl = document.createElement('div'); lbl.className = 'zd-bar-label'; lbl.textContent = firstName;
+
+    col.appendChild(val); col.appendChild(bar); col.appendChild(lbl);
+    chart.appendChild(col);
+
+    // Animate bar height after paint
+    setTimeout(() => { bar.style.height = Math.max(pct * 120, solved > 0 ? 6 : 3) + 'px'; }, 50 + idx * 30);
+  });
+
+  chartWrap.appendChild(chart); body.appendChild(chartWrap);
+
+  // ── Summary totals ─────────────────────────────────────────────
+  const bar = document.createElement('div'); bar.className = 'zd-summary-bar';
+  [
+    { val: totals('solved'), label: 'Solved ' + fromFmt + '–' + toFmt, color: 'var(--low-text)' },
+    { val: totals('web'),    label: 'Via phone (web)',   color: 'var(--cal-text)' },
+    { val: totals('email'),  label: 'Via email',         color: 'var(--med-text)' },
+    { val: totals('open'),   label: 'Open now',          color: 'var(--high-text)' },
+    { val: totals('pending'),label: 'Pending now',       color: 'var(--med-text)' },
+    { val: totals('onhold'), label: 'On hold now',       color: 'var(--text2)' },
+  ].forEach(({ val, label, color }) => {
+    const pill = document.createElement('div'); pill.className = 'zd-summary-pill';
+    const v2 = document.createElement('div'); v2.className = 'zd-summary-pill-val'; v2.style.color = color; v2.textContent = val;
+    const l2 = document.createElement('div'); l2.className = 'zd-summary-pill-label'; l2.textContent = label;
+    pill.appendChild(v2); pill.appendChild(l2); bar.appendChild(pill);
+  });
+  body.appendChild(bar);
+
+  // Agent cards sorted by solved desc — use same order/colours as chart
+  const grid = document.createElement('div'); grid.className = 'zd-grid';
+  sortedAgents.forEach((agent, idx) => {
+    const d = zdData[agent.id] || {};
+    const agentColor = barColors[idx % barColors.length];
+    const card = document.createElement('div'); card.className = 'zd-agent-card';
+    card.style.borderTop = '3px solid ' + agentColor;
+
+    // Header
+    const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
+    const av = document.createElement('div'); av.className = 'zd-agent-avatar';
+    av.style.background = agentColor; av.style.color = '#0f0f11';
+    av.textContent = agent.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const info = document.createElement('div');
+    const nm = document.createElement('div'); nm.className = 'zd-agent-name'; nm.textContent = agent.name;
+    const sb = document.createElement('div'); sb.className = 'zd-agent-sub'; sb.textContent = (d.solved||0) + ' solved this period';
+    info.appendChild(nm); info.appendChild(sb); hdr.appendChild(av); hdr.appendChild(info); card.appendChild(hdr);
+
+    // Stats
+    const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
+    const rows = [
+      { dot: 'var(--low-text)',  label: 'Solved',         val: d.solved||0, bold: true },
+      { dot: 'var(--cal-text)',  label: '↳ Phone (web)',  val: d.web||0 },
+      { dot: 'var(--med-text)',  label: '↳ Email',        val: d.email||0 },
+      null, // divider
+      { dot: 'var(--high-text)', label: 'Open',           val: d.open||0 },
+      { dot: 'var(--med-text)',  label: 'Pending',        val: d.pending||0 },
+      { dot: 'var(--text3)',     label: 'On hold',        val: d.onhold||0 },
+    ];
+    rows.forEach(r => {
+      if (!r) { const div2 = document.createElement('div'); div2.className = 'zd-divider'; bdy.appendChild(div2); return; }
+      const row = document.createElement('div'); row.className = 'zd-stat-row';
+      const lbl = document.createElement('div'); lbl.className = 'zd-stat-label';
+      const dot = document.createElement('div'); dot.className = 'zd-stat-dot'; dot.style.background = r.dot;
+      lbl.appendChild(dot); lbl.appendChild(document.createTextNode(r.label));
+      const val = document.createElement('div'); val.className = 'zd-stat-val' + (r.bold ? ' highlight' : ''); val.textContent = r.val;
+      row.appendChild(lbl); row.appendChild(val); bdy.appendChild(row);
+    });
+    card.appendChild(bdy); grid.appendChild(card);
+  });
+  body.appendChild(grid);
+}
+
+function zdShowSetup() {
+  const body = document.getElementById('zd-body');
+  if (!body) return;
+  body.innerHTML = '';
+  const c = getZdCreds();
+
+  const box = document.createElement('div');
+  box.style.cssText = 'max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;display:flex;flex-direction:column;gap:14px;';
+
+  const title = document.createElement('div'); title.style.cssText = 'font-size:14px;font-weight:700;color:var(--text);'; title.textContent = '🔑 Connect Zendesk';
+  const sub = document.createElement('div'); sub.style.cssText = 'font-size:12px;color:var(--text3);line-height:1.5;'; sub.textContent = 'Your credentials are stored in this browser only — never in the code or synced to GitHub.';
+  box.appendChild(title); box.appendChild(sub);
+
+  function cField(label, id, placeholder, val, type='text') {
+    const w = document.createElement('div');
+    const l = document.createElement('label'); l.style.cssText = 'font-size:11px;color:var(--text2);display:block;margin-bottom:3px;'; l.textContent = label;
+    const i = document.createElement('input'); i.id = id; i.type = type; i.value = val||''; i.placeholder = placeholder;
+    i.style.cssText = 'width:100%;font-family:inherit;font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;';
+    w.appendChild(l); w.appendChild(i); box.appendChild(w); return i;
+  }
+
+  const sdInp = cField('Subdomain (e.g. munu3272)', 'zd-setup-subdomain', 'yourcompany', c.subdomain.replace('.zendesk.com',''));
+  const emInp = cField('Admin email', 'zd-setup-email', 'you@company.com', c.email);
+  const tkInp = cField('API token', 'zd-setup-token', 'Paste token here…', '', 'password');
+
+  const msg = document.createElement('div'); msg.style.cssText = 'font-size:12px;color:var(--text3);min-height:16px;';
+  box.appendChild(msg);
+
+  const fa = document.createElement('div'); fa.style.cssText = 'display:flex;gap:8px;';
+  const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.textContent = 'Save & connect';
+  saveBtn.onclick = async () => {
+    const sd = sdInp.value.trim().replace('.zendesk.com','').replace('https://','').replace('/','');
+    const em = emInp.value.trim();
+    const tk = tkInp.value.trim();
+    if (!sd || !em || !tk) { msg.style.color='var(--high-text)'; msg.textContent='Please fill in all fields'; return; }
+    localStorage.setItem('wtp_zd_subdomain', sd);
+    localStorage.setItem('wtp_zd_email', em);
+    localStorage.setItem('wtp_zd_token', tk);
+    msg.style.color='var(--text3)'; msg.textContent='⟳ Testing connection…';
+    try {
+      await zdFetch('/account.json');
+      msg.style.color='var(--low-text)'; msg.textContent='✓ Connected! Loading tickets…';
+      setTimeout(() => zdRefresh(), 500);
+    } catch(e) {
+      msg.style.color='var(--high-text)'; msg.textContent='✗ ' + e.message;
+    }
+  };
+  const clearBtn = document.createElement('button'); clearBtn.className = 'btn-cancel'; clearBtn.textContent = 'Clear saved credentials';
+  clearBtn.style.cssText += 'font-size:11px;';
+  clearBtn.onclick = () => { ['wtp_zd_subdomain','wtp_zd_email','wtp_zd_token'].forEach(k=>localStorage.removeItem(k)); zdGroupId=null; zdAgents=[]; zdShowSetup(); };
+  fa.appendChild(saveBtn); fa.appendChild(clearBtn); box.appendChild(fa);
+  body.appendChild(box);
+}
+
+function initZendeskTab() {
+  zdInitDates();
+  const btn = document.getElementById('tab-btn-zendesk');
+  if (btn && isAdmin()) btn.style.display = '';
+}
+
+// ─── GitHub Sync ──────────────────────────────────────────────────
 const GH_REPO  = 'ullenesmathias-munu/weekly-planner';
 const GH_FILE  = 'data.json';
 const GH_API   = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
@@ -1997,6 +2984,12 @@ async function ghLoad() {
       Object.entries(data).forEach(([k, v]) => {
         localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
       });
+      // Reload SCHEDULE array if it was updated
+      const savedSched = localStorage.getItem('wtp_schedule');
+      if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); initScheduleSelect(); renderSchedule(); } catch(e) {} }
+      // Reload wingman slots
+      const savedWingman = localStorage.getItem('wtp_wingman');
+      if (savedWingman) { try { const wm = JSON.parse(savedWingman); wingmanSlots.length = 0; wm.forEach(s => wingmanSlots.push(s)); } catch(e) {} }
       if (currentUser) {
         tasks = JSON.parse(localStorage.getItem(userTaskKey(currentUser.name)) || '[]');
         calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
@@ -2020,7 +3013,7 @@ async function ghSave() {
     const data = {};
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k === 'wtp_schedule' || k === 'wtp_users' || k === 'wtp_wingman')) {
+      if (k && (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_profile_') || k === 'wtp_schedule' || k === 'wtp_users' || k === 'wtp_wingman')) {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -2063,12 +3056,17 @@ async function ghReadOnlyLoad() {
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { return; }
     // For non-admins: only pull shared keys (schedule, users, wingman) — NOT other users' tasks
     const sharedKeys = ['wtp_schedule', 'wtp_users', 'wtp_wingman'];
+    // Also pull this user's own feedback key
+    if (currentUser) sharedKeys.push(fbKey(currentUser.name));
     sharedKeys.forEach(k => {
       if (data[k] !== undefined) localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]));
     });
-    // Reload schedule data
+    // Reload SCHEDULE array and re-render
     const savedSched = localStorage.getItem('wtp_schedule');
-    if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); } catch(e) {} }
+    if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); initScheduleSelect(); } catch(e) {} }
+    // Reload wingman slots
+    const savedWingman = localStorage.getItem('wtp_wingman');
+    if (savedWingman) { try { const wm = JSON.parse(savedWingman); wingmanSlots.length = 0; wm.forEach(s => wingmanSlots.push(s)); } catch(e) {} }
     renderSchedule();
     setSyncStatus('✓ Up to date', 'var(--low-text)');
     setTimeout(() => setSyncStatus('', ''), 3000);
@@ -2187,10 +3185,13 @@ function loadUserData() {
   // Show 1:1 tab for admins only
   const otoBtn = document.getElementById('tab-btn-onetoone');
   if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
+  if (isAdmin()) initZendeskTab();
   renderPlanner();
   renderAvailStrip();
   checkCarryForward();
   scheduleAllReminders();
+  // Re-render schedule now that currentUser is set (isAdmin() needs this)
+  renderSchedule();
   // Auto-pull from GitHub on every login if token is set
   if (localStorage.getItem('wtp_gh_token')) {
     ghToken = localStorage.getItem('wtp_gh_token');
@@ -2488,6 +3489,10 @@ function renderCard(t) {
   editBtn.style.cssText = 'font-size:11px;color:var(--cal-text);';
   editBtn.onclick = (e) => { e.stopPropagation(); showEditModal(t); };
   actions.appendChild(editBtn);
+  const copyBtn2 = document.createElement('button'); copyBtn2.className = 'card-del'; copyBtn2.textContent = 'copy';
+  copyBtn2.style.cssText = 'font-size:11px;color:var(--text2);';
+  copyBtn2.onclick = (e) => { e.stopPropagation(); copyTask(t); };
+  actions.appendChild(copyBtn2);
   if (isMeeting) {
     const copyBtn = document.createElement('button'); copyBtn.className = 'card-del'; copyBtn.textContent = 'copy invite';
     copyBtn.style.cssText = 'font-size:10px;color:var(--cal-text);padding:2px 6px;';
@@ -2763,7 +3768,7 @@ function renderPlanner() {
   const board = document.getElementById('board'); board.innerHTML = '';
   DAYS.forEach((day, i) => {
     const colDate = new Date(mon); colDate.setDate(mon.getDate()+i);
-    const colDateStr = colDate.toISOString().slice(0,10);
+    const colDateStr = colDate.getFullYear() + '-' + String(colDate.getMonth()+1).padStart(2,'0') + '-' + String(colDate.getDate()).padStart(2,'0');
     const dayTasks = tasks.filter(t => t.day === day && t.weekStamp === currentWeekStamp);
     const dayEvents = calEvents.filter(e => e.date === colDateStr).sort((a,b) => { if (a.allDay && !b.allDay) return -1; if (!a.allDay && b.allDay) return 1; return (a.start||'') < (b.start||'') ? -1 : 1; });
     const col = document.createElement('div');
@@ -2934,7 +3939,10 @@ function renderAvailStrip() {
     const up = shift.toUpperCase();
     const isOff = up === 'SO' || up === 'H' || up === 'ABS' || up.startsWith('E') || up.startsWith('W');
     const pill = document.createElement('span');
-    pill.className = 'avail-pill ' + (isOff ? 'avail-off' : 'avail-in');
+    // Use shift colour class if working, grey if off
+    const cls = shift ? shiftClass(shift) : '';
+    pill.className = 'avail-pill ' + (isOff ? 'avail-off' : (cls ? 'shift-pill ' + cls : 'avail-in'));
+    pill.style.cssText = 'font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;white-space:nowrap;';
     pill.textContent = p.name + (shift ? ' · ' + shift : '');
     strip.appendChild(pill);
   });
