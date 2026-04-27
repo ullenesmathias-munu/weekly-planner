@@ -3999,21 +3999,6 @@
         "addedAt": "2026-01-01"
       }
     ],
-    "sessions": [
-      {
-        "id": "1777314142339",
-        "person": "Thomas",
-        "date": "2026-04-27",
-        "notes": "",
-        "actions": []
-      },
-      {
-        "id": "1777316960538",
-        "person": "Thomas",
-        "date": "2026-04-27",
-        "notes": "",
-        "actions": []
-      }
-    ]
+    "sessions": []
   }
 }
