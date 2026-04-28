@@ -1036,7 +1036,7 @@ function renderHistory() {
 
   // Tasks from past weeks that are not done
   // "Past" = task day is in a week before current weekOffset week
-  const currentMonStr = mon.toISOString().slice(0,10);
+  const currentMonStr = mondayStamp(weekOffset);
   const pastIncomplete = tasks.filter(t => {
     if (t.done) return false;
     if (!t.weekStamp) return false;
@@ -1661,13 +1661,17 @@ function getMonday(offset) {
   const diff = d.getDate() - day + (day === 0 ? -6 : 1) + offset * 7;
   const m = new Date(d); m.setDate(diff); m.setHours(0,0,0,0); return m;
 }
+function mondayStamp(offset) {
+  const m = getMonday(offset);
+  return m.getFullYear() + '-' + String(m.getMonth()+1).padStart(2,'0') + '-' + String(m.getDate()).padStart(2,'0');
+}
 function fmtDate(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
 function fmtTime(iso) { if (!iso) return 'All day'; return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 function setStatus(msg) { document.getElementById('status-msg').textContent = msg; }
 function changeWeek(dir) { weekOffset += dir; renderPlanner(); }
 function toggleDone(id) { const t = tasks.find(x => x.id === id); if (t) { t.done = !t.done; save(); renderPlanner(); } }
 function copyTask(t) {
-  const copy = { ...t, id: Date.now()+'', done: false, weekStamp: getMonday(weekOffset).toISOString().slice(0,10) };
+  const copy = { ...t, id: Date.now()+'', done: false, weekStamp: mondayStamp(weekOffset) };
   tasks.push(copy);
   save();
   renderPlanner();
@@ -1676,7 +1680,7 @@ function copyTask(t) {
 
 function delTask(id) { tasks = tasks.filter(x => x.id !== id); save(); renderPlanner(); }
 function addTask(day, title, priority, due, note, people, isMeeting, timeStart, timeEnd, recurring, reminder, colour, pendingName) {
-  const weekStamp = getMonday(weekOffset).toISOString().slice(0,10);
+  const weekStamp = mondayStamp(weekOffset);
   tasks.push({ id: Date.now()+'', day, title, priority, due, note, people: people||[], isMeeting: !!isMeeting, timeStart: timeStart||'', timeEnd: timeEnd||'', recurring: !!recurring, reminder: reminder||'', colour: colour||'', pendingName: pendingName||'', weekStamp, done: false });
   save(); scheduleReminder(tasks[tasks.length-1]); renderPlanner();
 }
@@ -1789,14 +1793,13 @@ function processXlsx(buffer, fileName, st, preview) {
       if (people.length) weeks.push({ week: weekName, dates, people });
     }
     if (!weeks.length) { st.textContent = '✗ No schedule data found - check file format'; return; }
-    // Save to localStorage
+    // Save to localStorage and sync to GitHub
     localStorage.setItem('wtp_schedule', JSON.stringify(weeks));
-    // Update live SCHEDULE array
     SCHEDULE.length = 0; weeks.forEach(w => SCHEDULE.push(w));
-    st.textContent = '✓ ' + weeks.length + ' weeks imported from ' + fileName;
+    scheduleSyncSave(); // push to GitHub so it persists across devices
+    st.textContent = '✓ ' + weeks.length + ' weeks imported from ' + fileName + ' — syncing…';
     preview.style.display = '';
     preview.textContent = 'Weeks loaded: ' + weeks.map(w => w.week).join(', ');
-    // Re-init schedule tab
     const sel = document.getElementById('sched-week-select'); sel.innerHTML = '';
     initScheduleSelect(); renderSchedule();
   } catch(err) { st.textContent = '✗ Parse error: ' + err.message; }
@@ -1872,7 +1875,7 @@ function updateTabBadges() {
     }
   }
   // Planner tab - count today's tasks
-  const thisWeekStamp = getMonday(0).toISOString().slice(0,10);
+  const thisWeekStamp = mondayStamp(0);
   const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
   const todayTasks = tasks.filter(t => t.day === todayDay && t.weekStamp === thisWeekStamp && !t.done && !t.isMeeting);
   const plannerBtn = document.querySelector('.tab-btn.active') || document.querySelector('.tab-btn');
@@ -2883,8 +2886,8 @@ function buildMobileNav() {
 const _origSwitchTab = typeof switchTab !== 'undefined' ? switchTab : null;
 function runMigrations() {
   const fixStr = (str) => str
-    .replace(/Mayl[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
-    .replace(/MaylÃ[^"]{1,10}?n/g, 'Maylen')
+    .replace(/Maylen[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
+    .replace(/Maylen[^"]{1,10}?n/g, 'Maylen')
     .replace(/Mayl\\u[0-9a-fA-F]{4}n/g, 'Maylen')
     // Fix garbled en-dash (â€") and similar
     .replace(/[^\x00-\x7F]{1,6}(?=\d)/g, ' - ')   // garbage before a digit = dash
@@ -3302,8 +3305,8 @@ async function ghLoad() {
       Object.entries(data).forEach(([k, v]) => {
         // Sanitize value before storing - fix garbled names
         let val = typeof v === 'string' ? v : JSON.stringify(v);
-        val = val.replace(/Mayl[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
-                 .replace(/MaylÃ[^"]{1,10}?n/g, 'Maylen')
+        val = val.replace(/Maylen[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
+                 .replace(/Maylen[^"]{1,10}?n/g, 'Maylen')
                  .replace(/Mayl\\u[0-9a-fA-F]{4}n/g, 'Maylen');
         localStorage.setItem(k, val);
       });
@@ -4074,7 +4077,7 @@ function renderAddForm(day, colBody, addBtn) {
 
 function renderPlanner() {
   const mon = getMonday(weekOffset);
-  const currentWeekStamp = mon.toISOString().slice(0,10);
+  const currentWeekStamp = mondayStamp(weekOffset);
 
   // Ensure every non-recurring-copy task has a weekStamp (stamp it to the week it was created in)
   tasks.forEach(t => {
@@ -4293,8 +4296,8 @@ function checkCarryForward() {
   if (today.getDay() !== 1) return;
   const dismissKey = 'wtp_carry_' + today.toISOString().slice(0,10);
   if (localStorage.getItem(dismissKey)) return;
-  const thisWeekStamp = getMonday(0).toISOString().slice(0,10);
-  const lastWeekStamp = getMonday(-1).toISOString().slice(0,10);
+  const thisWeekStamp = mondayStamp(0);
+  const lastWeekStamp = mondayStamp(-1);
   const leftover = tasks.filter(t => !t.done && t.weekStamp === lastWeekStamp);
   if (!leftover.length) return;
   const banner = document.createElement('div'); banner.className = 'carry-banner';
@@ -4333,7 +4336,7 @@ function renderTodayPanel() {
   const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
   dateEl.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   body.innerHTML = '';
-  const thisWeekStamp = getMonday(0).toISOString().slice(0,10);
+  const thisWeekStamp = mondayStamp(0);
   const todayMeetings = tasks.filter(t => t.day===todayDay && t.isMeeting && t.weekStamp===thisWeekStamp).sort((a,b)=>(a.timeStart||'')<(b.timeStart||'')?-1:1);
   const todayTasks   = tasks.filter(t => t.day===todayDay && !t.isMeeting && t.weekStamp===thisWeekStamp);
 
