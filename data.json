@@ -105,10 +105,10 @@
     {
       "id": "1777317034827",
       "day": "Tuesday",
-      "title": "Powerpoint",
+      "title": "Weekly customer support - Powerpoint",
       "priority": "medium",
       "due": "27 Apr",
-      "note": "Need to create the Powerpoint for the Customer support weekly meeting.",
+      "note": "Need to create the Powerpoint for the Customer support weekly meeting.\n\nUsing the Zendesk Support Stian Dashboard in Zendesk.",
       "people": [],
       "isMeeting": false,
       "timeStart": "09:00",
