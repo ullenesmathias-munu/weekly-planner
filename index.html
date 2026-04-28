@@ -2998,11 +2998,14 @@ async function zdRefresh() {
   body.appendChild(loadMsg); body.appendChild(skelRow);
 
   try {
-    const groupId = await zdGetGroupId();
-    const agents  = await zdGetAgents(groupId);
-    zdAgents = agents;
-    loadMsg.textContent = `⟳ Found ${agents.length} agents - fetching ticket stats…`;
-    zdData = {};
+    loadMsg.textContent = '⟳ Step 1: Getting L1 group…';
+    let groupId;
+    try { groupId = await zdGetGroupId(); } catch(e) { throw new Error('Group lookup failed: ' + e.message); }
+    loadMsg.textContent = '⟳ Step 2: Got group ' + groupId + ' — fetching agents…';
+    let agents;
+    try { agents = await zdGetAgents(groupId); } catch(e) { throw new Error('Agent lookup failed: ' + e.message); }
+    loadMsg.textContent = '⟳ Step 3: Found ' + agents.length + ' agents — fetching stats…';
+    zdAgents = agents; zdData = {};
     for (let i = 0; i < agents.length; i++) {
       loadMsg.textContent = `⟳ ${agents[i].name} (${i+1}/${agents.length})…`;
       zdData[agents[i].id] = await zdGetStats(agents[i].id, fromDate, toDate);
