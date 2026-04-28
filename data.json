@@ -146,26 +146,6 @@
       "done": false
     },
     {
-      "id": "1777354615330",
-      "day": "Tuesday",
-      "title": "1:1 with Jonas",
-      "priority": "",
-      "due": "",
-      "note": "",
-      "people": [
-        "Jonas"
-      ],
-      "isMeeting": true,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "",
-      "colour": "blue",
-      "pendingName": "",
-      "weekStamp": "2026-04-27",
-      "done": false
-    },
-    {
       "id": "1777398977848.3103",
       "day": "Monday",
       "title": "Approve Hours POGO",
