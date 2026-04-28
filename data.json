@@ -296,15 +296,7 @@
         "addedAt": "2026-01-01"
       }
     ],
-    "sessions": [
-      {
-        "id": "1777354615324",
-        "person": "Jonas",
-        "date": "2026-04-28",
-        "notes": "",
-        "actions": []
-      }
-    ]
+    "sessions": []
   },
   "wtp_wingman": [
     {
