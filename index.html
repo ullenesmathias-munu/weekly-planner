@@ -2962,24 +2962,14 @@ async function zdCount(query) {
 
 async function zdGetStats(agentId, fromDate, toDate) {
   const solvedBase = `type:ticket assignee_id:${agentId} status:solved solved>=${fromDate} solved<=${toDate}`;
-  const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return null; } };
-
-  const [total, phone, email, open, pending, onhold] = await Promise.all([
+  const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return 0; } };
+  const [total, open, pending, onhold] = await Promise.all([
     safeCount(solvedBase),
-    safeCount(solvedBase + ' via:voice'),     // phone channel
-    safeCount(solvedBase + ' via:email'),      // email channel
     safeCount(`type:ticket assignee_id:${agentId} status:open`),
     safeCount(`type:ticket assignee_id:${agentId} status:pending`),
     safeCount(`type:ticket assignee_id:${agentId} status:hold`),
   ]);
-  return {
-    solved:  total   ?? 0,
-    web:     phone   ?? 0,   // "web" = phone/voice tickets in your terminology
-    email:   email   ?? 0,
-    open:    open    ?? 0,
-    pending: pending ?? 0,
-    onhold:  onhold  ?? 0,
-  };
+  return { solved: total, web: null, email: null, open, pending, onhold };
 }
 
 async function zdRefresh() {
@@ -3062,14 +3052,18 @@ function zdRender(agents, fromDate, toDate) {
 
   // ── Summary totals ─────────────────────────────────────────────
   const bar = document.createElement('div'); bar.className = 'zd-summary-bar';
-  [
-    { val: totals('solved'), label: 'Solved ' + fromFmt + '–' + toFmt, color: 'var(--low-text)' },
-    { val: totals('web'),    label: 'Via phone (web)',   color: 'var(--cal-text)' },
-    { val: totals('email'),  label: 'Via email',         color: 'var(--med-text)' },
-    { val: totals('open'),   label: 'Open now',          color: 'var(--high-text)' },
-    { val: totals('pending'),label: 'Pending now',       color: 'var(--med-text)' },
-    { val: totals('onhold'), label: 'On hold now',       color: 'var(--text2)' },
-  ].forEach(({ val, label, color }) => {
+  const summaryItems = [
+    { val: totals('solved'), label: 'Solved ' + fromFmt + '–' + toFmt, color: 'var(--low-text)', always: true },
+    { val: totals('web'),    label: 'Via phone (web)',   color: 'var(--cal-text)', always: false },
+    { val: totals('email'),  label: 'Via email',         color: 'var(--med-text)', always: false },
+    { val: totals('open'),   label: 'Open now',          color: 'var(--high-text)', always: true },
+    { val: totals('pending'),label: 'Pending now',       color: 'var(--med-text)', always: true },
+    { val: totals('onhold'), label: 'On hold now',       color: 'var(--text2)', always: true },
+  ];
+  // Only show phone/email rows if any agent has non-null data
+  const hasChannelData = sortedAgents.some(a => zdData[a.id]?.web !== null);
+  summaryItems.forEach(({ val, label, color, always }) => {
+    if (!always && !hasChannelData) return;
     const pill = document.createElement('div'); pill.className = 'zd-summary-pill';
     const v2 = document.createElement('div'); v2.className = 'zd-summary-pill-val'; v2.style.color = color; v2.textContent = val;
     const l2 = document.createElement('div'); l2.className = 'zd-summary-pill-label'; l2.textContent = label;
@@ -3098,13 +3092,13 @@ function zdRender(agents, fromDate, toDate) {
     // Stats
     const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
     const rows = [
-      { dot: 'var(--low-text)',  label: 'Solved',        val: d.solved||0,  bold: true },
-      { dot: 'var(--cal-text)',  label: '↳ Phone (web)', val: d.web  !== null && d.web  !== undefined ? d.web  : '—' },
-      { dot: 'var(--med-text)',  label: '↳ Email',       val: d.email!== null && d.email!== undefined ? d.email: '—' },
+      { dot: 'var(--low-text)',  label: 'Solved',   val: d.solved||0, bold: true },
+      ...(d.web   !== null ? [{ dot: 'var(--cal-text)', label: '↳ Phone (web)', val: d.web||0 }] : []),
+      ...(d.email !== null ? [{ dot: 'var(--med-text)', label: '↳ Email',       val: d.email||0 }] : []),
       null,
-      { dot: 'var(--high-text)', label: 'Open',          val: d.open||0 },
-      { dot: 'var(--med-text)',  label: 'Pending',       val: d.pending||0 },
-      { dot: 'var(--text3)',     label: 'On hold',       val: d.onhold||0 },
+      { dot: 'var(--high-text)', label: 'Open',     val: d.open||0 },
+      { dot: 'var(--med-text)',  label: 'Pending',  val: d.pending||0 },
+      { dot: 'var(--text3)',     label: 'On hold',  val: d.onhold||0 },
     ];
     rows.forEach(r => {
       if (!r) { const div2 = document.createElement('div'); div2.className = 'zd-divider'; bdy.appendChild(div2); return; }
