@@ -2955,7 +2955,8 @@ async function zdGetAgents(groupId) {
 }
 
 async function zdCount(query) {
-  const data = await zdFetch('/search.json?query=' + encodeURIComponent(query));
+  // /search/count returns {count: N} without 1000-result pagination limit
+  const data = await zdFetch('/search/count.json?query=' + encodeURIComponent(query));
   return data.count || 0;
 }
 
@@ -3267,7 +3268,11 @@ async function ghSave() {
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
     }
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    // Use JSON with ASCII-safe encoding — escape all non-ASCII to \uXXXX
+    // This permanently prevents encoding corruption on GitHub
+    const jsonStr = JSON.stringify(data, null, 2);
+    const asciiSafe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
+    const content = btoa(asciiSafe);
     const body = { message: 'planner sync ' + new Date().toISOString().slice(0,16), content };
     if (ghFileSha) body.sha = ghFileSha;
     const res = await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: ghHeaders(), body: JSON.stringify(body) });
