@@ -2963,13 +2963,28 @@ async function zdCount(query) {
 async function zdGetStats(agentId, fromDate, toDate) {
   const solvedBase = `type:ticket assignee_id:${agentId} status:solved solved>=${fromDate} solved<=${toDate}`;
   const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return 0; } };
-  const [total, open, pending, onhold] = await Promise.all([
+
+  const [total, open, pending, onhold,
+         byEmail, byWebForm, byApi, byPhone] = await Promise.all([
     safeCount(solvedBase),
     safeCount(`type:ticket assignee_id:${agentId} status:open`),
     safeCount(`type:ticket assignee_id:${agentId} status:pending`),
     safeCount(`type:ticket assignee_id:${agentId} status:hold`),
+    safeCount(solvedBase + ' via:email'),
+    safeCount(solvedBase + ' via:web_form'),
+    safeCount(solvedBase + ' via:api'),
+    safeCount(solvedBase + ' via:phone_call_inbound'),
   ]);
-  return { solved: total, web: null, email: null, open, pending, onhold };
+
+  // "web" in your terminology = tickets created by agent (web_form or api)
+  // "email" = customer sent email
+  return {
+    solved: total,
+    web:   (byWebForm + byApi + byPhone) || null,  // null = hide if all zero
+    email: byEmail || null,
+    open, pending, onhold,
+    _debug: { byEmail, byWebForm, byApi, byPhone }
+  };
 }
 
 async function zdRefresh() {
@@ -3092,13 +3107,14 @@ function zdRender(agents, fromDate, toDate) {
     // Stats
     const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
     const rows = [
-      { dot: 'var(--low-text)',  label: 'Solved',   val: d.solved||0, bold: true },
-      ...(d.web   !== null ? [{ dot: 'var(--cal-text)', label: '↳ Phone (web)', val: d.web||0 }] : []),
-      ...(d.email !== null ? [{ dot: 'var(--med-text)', label: '↳ Email',       val: d.email||0 }] : []),
+      { dot: 'var(--low-text)',  label: 'Solved',        val: d.solved||0, bold: true },
+      ...(d.web   !== null && d.web   > 0 ? [{ dot: 'var(--cal-text)', label: '↳ Phone/web', val: d.web }] : []),
+      ...(d.email !== null && d.email > 0 ? [{ dot: 'var(--med-text)', label: '↳ Email',     val: d.email }] : []),
+      ...(d._debug ? [{ dot:'var(--text3)', label: 'dbg: em/wf/api/ph', val: [d._debug.byEmail,d._debug.byWebForm,d._debug.byApi,d._debug.byPhone].join('/') }] : []),
       null,
-      { dot: 'var(--high-text)', label: 'Open',     val: d.open||0 },
-      { dot: 'var(--med-text)',  label: 'Pending',  val: d.pending||0 },
-      { dot: 'var(--text3)',     label: 'On hold',  val: d.onhold||0 },
+      { dot: 'var(--high-text)', label: 'Open',    val: d.open||0 },
+      { dot: 'var(--med-text)',  label: 'Pending', val: d.pending||0 },
+      { dot: 'var(--text3)',     label: 'On hold', val: d.onhold||0 },
     ];
     rows.forEach(r => {
       if (!r) { const div2 = document.createElement('div'); div2.className = 'zd-divider'; bdy.appendChild(div2); return; }
