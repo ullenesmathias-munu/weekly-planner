@@ -654,10 +654,10 @@ window.saveLockToken = async function() {
     if (res.ok) {
       const json = await res.json();
       try {
-        const data = JSON.parse(atob(json.content.replace(/\n/g,'')));
-        // Store all synced keys including wtp_users
+        const rawJson = sanitizeStoredData(atob(json.content.replace(/\n/g,'')));
+        const data = JSON.parse(rawJson);
         Object.entries(data).forEach(([k, v]) => {
-          localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+          localStorage.setItem(k, sanitizeStoredData(typeof v === 'string' ? v : JSON.stringify(v)));
         });
         if (wrap) wrap.innerHTML = '<div style="font-size:11px;color:var(--low-text);text-align:center;padding:4px 0;">✓ Ready - you can sign in</div>';
       } catch(e) {
@@ -2884,18 +2884,28 @@ function buildMobileNav() {
 
 // Rebuild mobile nav when tabs switch
 const _origSwitchTab = typeof switchTab !== 'undefined' ? switchTab : null;
+function sanitizeStoredData(str) {
+  if (!str) return str;
+  // Fix all garbled Maylen variants — simple string replacements, no complex regex
+  let s = str;
+  // Unicode escape variant
+  s = s.split('Mayl\\u00e9n').join('Maylen');
+  s = s.split('Mayl\\u00c3\\u00a9n').join('Maylen');
+  // Any Mayl followed by non-ASCII chars then n
+  s = s.replace(/Mayl[^\x00-\x7E"',\[\]\s]{1,30}n/g, 'Maylen');
+  // Double-encoded variants
+  s = s.replace(/MaylÃ[^"]{1,15}n/g, 'Maylen');
+  return s;
+}
+
 function runMigrations() {
-  const fixStr = (str) => str
-    .replace(/Maylen[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
-    .replace(/Maylen[^"]{1,10}?n/g, 'Maylen')
-    .replace(/Mayl\\u[0-9a-fA-F]{4}n/g, 'Maylen')
-    // Fix garbled en-dash (â€") and similar
-    .replace(/[^\x00-\x7F]{1,6}(?=\d)/g, ' - ')   // garbage before a digit = dash
+  const fixStr = (str) => sanitizeStoredData(str)
+    .replace(/[^\x00-\x7F]{1,6}(?=\d)/g, ' - ')
     .replace(/Mon[^\x00-\x7F]{1,6}Tue/g, 'Mon-Tue')
     .replace(/Wed[^\x00-\x7F]{1,6}Thu/g, 'Wed-Thu')
     .replace(/Mon[^\x00-\x7F]{1,6}Wed/g, 'Mon-Wed')
     .replace(/Thu[^\x00-\x7F]{1,6}Fri/g, 'Thu-Fri')
-    .replace(/\u2013|\u2014/g, '-');               // en/em dash to hyphen
+    .replace(/\u2013|\u2014/g, '-');
   ['wtp_schedule','wtp_wingman','wtp_oto_mathias'].forEach(key => {
     const val = localStorage.getItem(key);
     if (!val) return;
@@ -3300,14 +3310,14 @@ async function ghLoad() {
     const json = await res.json();
     ghFileSha = json.sha;
     let data = {};
-    try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { console.warn('Parse error:', e); }
+    try {
+      // Sanitize the raw base64 content before parsing — fixes corruption at source
+      const rawJson = sanitizeStoredData(atob(json.content.replace(/\n/g,'')));
+      data = JSON.parse(rawJson);
+    } catch(e) { console.warn('Parse error:', e); }
     if (Object.keys(data).length > 0) {
       Object.entries(data).forEach(([k, v]) => {
-        // Sanitize value before storing - fix garbled names
-        let val = typeof v === 'string' ? v : JSON.stringify(v);
-        val = val.replace(/Maylen[^\x00-\x7F"\\]{0,400}?(?=["\\,\s}])/g, 'Maylen')
-                 .replace(/Maylen[^"]{1,10}?n/g, 'Maylen')
-                 .replace(/Mayl\\u[0-9a-fA-F]{4}n/g, 'Maylen');
+        const val = sanitizeStoredData(typeof v === 'string' ? v : JSON.stringify(v));
         localStorage.setItem(k, val);
       });
       runMigrations();
