@@ -484,7 +484,18 @@
   .zd-summary-pill-val { font-size: 22px; font-weight: 700; color: var(--text); }
   .zd-summary-pill-label { font-size: 11px; color: var(--text3); }
   .zd-error { padding: 16px; background: var(--high-bg); border: 1px solid var(--high-text); border-radius: var(--radius-md); color: var(--high-text); font-size: 12px; }
-  .zd-loading { display: flex; flex-direction: column; gap: 12px; }
+  .zd-inbox-wrap { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .zd-inbox-card { flex: 1; min-width: 160px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 18px; display: flex; flex-direction: column; gap: 4px; position: relative; overflow: hidden; }
+  .zd-inbox-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .zd-inbox-card.neutral::before { background: var(--border2); }
+  .zd-inbox-card.warning::before { background: #ffb74d; }
+  .zd-inbox-card.danger::before  { background: #ef5350; }
+  .zd-inbox-val { font-size: 28px; font-weight: 700; line-height: 1; }
+  .zd-inbox-card.neutral .zd-inbox-val { color: var(--text); }
+  .zd-inbox-card.warning .zd-inbox-val { color: #ffb74d; }
+  .zd-inbox-card.danger  .zd-inbox-val { color: #ef5350; }
+  .zd-inbox-label { font-size: 12px; font-weight: 600; color: var(--text2); }
+  .zd-inbox-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
   .zd-skel-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
   .zd-empty { text-align: center; padding: 48px; color: var(--text3); font-size: 13px; }
   .oto-layout { display: flex; gap: 0; min-height: 70vh; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); margin-top: 4px; }
@@ -818,7 +829,9 @@ window.tryUnlock = async function() {
       </div>
     </div>
   </div>
-  <div id="zd-body" style="margin-top:16px;"></div>
+  <div id="zd-body" style="margin-top:16px;">
+    <div id="zd-inbox-stats"></div>
+  </div>
 </div>
 
 <!-- SETTINGS TAB -->
@@ -3007,6 +3020,8 @@ async function zdRefresh() {
     let groupId;
     try { groupId = await zdGetGroupId(); } catch(e) { throw new Error('Group lookup failed: ' + e.message); }
     loadMsg.textContent = '⟳ Step 2: Got group ' + groupId + ' — fetching agents…';
+    // Load inbox stats in background (don't block agent stats)
+    renderInboxStats(groupId);
     let agents;
     try { agents = await zdGetAgents(groupId); } catch(e) { throw new Error('Agent lookup failed: ' + e.message); }
     loadMsg.textContent = '⟳ Step 3: Found ' + agents.length + ' agents — fetching stats…';
@@ -3022,8 +3037,54 @@ async function zdRefresh() {
   }
 }
 
+async function zdGetInboxStats(groupId) {
+  const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return '—'; } };
+  // Calculate "now + 5 hours" in ISO format for breach window
+  const now = new Date();
+  const plus5h = new Date(now.getTime() + 5 * 60 * 60 * 1000);
+  const fmtIso = d => d.toISOString().replace(/\.\d{3}Z$/, 'Z');
+
+  const [unassigned, breached, soonBreaching] = await Promise.all([
+    safeCount(`type:ticket group:${groupId} no:assignee status<solved`),
+    safeCount(`type:ticket group:${groupId} status<solved sla_breach:true`),
+    safeCount(`type:ticket group:${groupId} status<solved sla_next_breach_at<${fmtIso(plus5h)} sla_breach:false`),
+  ]);
+  return { unassigned, breached, soonBreaching };
+}
+
+async function renderInboxStats(groupId) {
+  const container = document.getElementById('zd-inbox-stats');
+  if (!container) return;
+  container.innerHTML = '<div style="font-size:11px;color:var(--text3);">⟳ Loading inbox stats…</div>';
+
+  try {
+    const stats = await zdGetInboxStats(groupId);
+    container.innerHTML = '';
+
+    const cards = [
+      { val: stats.unassigned,    label: 'Unassigned',         sub: 'In L1 queue — no agent', cls: 'neutral' },
+      { val: stats.soonBreaching, label: 'Breaching soon',     sub: 'SLA breach within 5 hrs', cls: stats.soonBreaching > 0 ? 'warning' : 'neutral' },
+      { val: stats.breached,      label: 'SLA Breached',       sub: 'Active breached tickets',  cls: stats.breached > 0 ? 'danger' : 'neutral' },
+    ];
+
+    const wrap = document.createElement('div'); wrap.className = 'zd-inbox-wrap';
+    cards.forEach(c => {
+      const card = document.createElement('div'); card.className = 'zd-inbox-card ' + c.cls;
+      const val = document.createElement('div'); val.className = 'zd-inbox-val'; val.textContent = c.val;
+      const lbl = document.createElement('div'); lbl.className = 'zd-inbox-label'; lbl.textContent = c.label;
+      const sub = document.createElement('div'); sub.className = 'zd-inbox-sub'; sub.textContent = c.sub;
+      card.appendChild(val); card.appendChild(lbl); card.appendChild(sub); wrap.appendChild(card);
+    });
+    container.appendChild(wrap);
+  } catch(e) {
+    container.innerHTML = '<div class="zd-error" style="padding:8px 12px;font-size:11px;">Could not load inbox stats: ' + e.message + '</div>';
+  }
+}
+
 function zdRender(agents, fromDate, toDate) {
-  const body = document.getElementById('zd-body'); body.innerHTML = '';
+  const body = document.getElementById('zd-body');
+  // Clear everything except inbox stats container
+  Array.from(body.children).forEach(c => { if (c.id !== 'zd-inbox-stats') c.remove(); });
   const totals = keys => Object.values(zdData).reduce((s, d) => s + (d[keys]||0), 0);
   const fromFmt = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
   const toFmt   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
