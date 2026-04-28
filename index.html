@@ -300,14 +300,43 @@
   .today-team-row { display: flex; flex-wrap: wrap; gap: 6px; }
   .today-person-pill { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 10px; }
   .conflict-card { border-left: 2.5px solid var(--med-text) !important; }
-  .role-pill { display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 6px; white-space: nowrap; cursor: pointer; transition: opacity 0.15s; }
-  .role-pill:hover { opacity: 0.75; }
-  .role-phone-guru  { background: #1a1a55; color: #a5b4fc; }
-  .role-inbox-champ { background: #0d2e1a; color: #6ee7a0; }
-  .role-sla-sherpa  { background: #2a1a00; color: #fbbf24; }
-  .role-freelancer  { background: #1a1a22; color: #6b7280; }
+  /* ─── Role pills ─────────────────────────────────── */
+  .role-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; text-transform: uppercase; }
+  .role-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.7; flex-shrink: 0; }
+  .role-pill:hover { filter: brightness(1.2); transform: translateY(-1px); }
+  .role-phone-guru  { background: rgba(99,102,241,0.18); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+  .role-inbox-champ { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .role-sla-sherpa  { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .role-freelancer  { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
   .role-none        { color: var(--text3); font-size: 11px; cursor: pointer; }
-  .sched-table td.role-cell { background: rgba(255,255,255,0.018); border-left: 0.5px solid var(--border); }
+  .light-mode .role-phone-guru  { background: rgba(99,102,241,0.12); color: #4338ca; border-color: rgba(99,102,241,0.25); }
+  .light-mode .role-inbox-champ { background: rgba(22,163,74,0.1); color: #15803d; border-color: rgba(22,163,74,0.25); }
+  .light-mode .role-sla-sherpa  { background: rgba(217,119,6,0.1); color: #b45309; border-color: rgba(217,119,6,0.25); }
+  .light-mode .role-freelancer  { background: rgba(100,116,139,0.1); color: #475569; border-color: rgba(100,116,139,0.2); }
+  .sched-table td.role-cell { background: rgba(255,255,255,0.02); border-left: 1px solid var(--border2); min-width: 100px; }
+  .light-mode .sched-table td.role-cell { background: rgba(0,0,0,0.02); }
+
+  /* ─── Role summary card ──────────────────────────── */
+  .role-summary-card-new { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
+  .role-summary-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .role-summary-header-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+  .role-summary-cols { display: grid; grid-template-columns: 1fr 1fr; }
+  .role-summary-col { padding: 16px 20px; }
+  .role-summary-col:first-child { border-right: 1px solid var(--border); }
+  .role-summary-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .role-summary-col-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+  .role-summary-role-row { display: flex; align-items: center; gap: 0; margin-bottom: 10px; }
+  .role-summary-role-row:last-child { margin-bottom: 0; }
+  .role-summary-role-label { width: 120px; flex-shrink: 0; }
+  .role-summary-people { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; }
+  .role-person-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--text); background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 3px 10px; transition: all 0.15s; }
+  .role-person-chip:hover { background: var(--surface3); border-color: var(--border3); cursor: pointer; }
+  .role-person-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .role-person-chip.chip-phone-guru .role-person-chip-dot  { background: #a5b4fc; }
+  .role-person-chip.chip-inbox-champ .role-person-chip-dot { background: #4ade80; }
+  .role-person-chip.chip-sla-sherpa .role-person-chip-dot  { background: #fbbf24; }
+  .role-person-chip.chip-freelancer .role-person-chip-dot  { background: #94a3b8; }
+  .role-summary-empty { font-size: 12px; color: var(--text3); font-style: italic; }
   .cal-card { background: var(--cal); border: 0.5px solid var(--cal-border); border-radius: var(--radius-md); padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; cursor: default; transition: border-color 0.15s; }
   .cal-card:hover { border-color: var(--cal-text); }
   .cal-card-title { font-size: 12px; font-weight: 500; color: var(--cal-text); line-height: 1.4; word-break: break-word; }
@@ -1195,11 +1224,15 @@ function renderSchedule() {
   function makeRoleCell(person, dayIdx) {
     const td = document.createElement('td');
     td.className = 'role-cell';
+    td.style.cssText = 'padding:4px 6px;text-align:center;vertical-align:middle;';
     function renderRole() {
       td.innerHTML = '';
       const role = (person.roles && person.roles[dayIdx]) || '';
       if (role) {
-        const pill = document.createElement('span'); pill.className = 'role-pill ' + roleClass(role); pill.textContent = role; td.appendChild(pill);
+        const pill = document.createElement('span');
+        pill.className = 'role-pill ' + roleClass(role);
+        pill.style.cssText = 'font-size:9px;padding:2px 6px;';
+        pill.textContent = role; td.appendChild(pill);
       } else {
         const dash = document.createElement('span'); dash.className = 'role-none'; dash.textContent = '—'; td.appendChild(dash);
       }
@@ -1359,25 +1392,24 @@ function renderSchedule() {
 let wingmanSlots = (() => {
   const saved = localStorage.getItem('wtp_wingman');
   const v = localStorage.getItem('wtp_wingman_v');
-  if (saved && v === '3') return JSON.parse(saved);
+  if (saved && v === '4') return JSON.parse(saved);
   // New default slots - reset cache
   const defaults = [
-    { dates: '27/4 - 28/4', days: 'Mon-Tue', person: 'Maylen',    from: '2026-04-27', to: '2026-04-28' },
-    { dates: '29/4 - 30/4', days: 'Wed-Thu', person: 'Bernadett', from: '2026-04-29', to: '2026-04-30' },
-    { dates: '4/5 - 5/5',   days: 'Mon-Tue', person: 'Cecilie',   from: '2026-05-04', to: '2026-05-05' },
-    { dates: '6/5 - 7/5',   days: 'Wed-Thu', person: 'Marie',     from: '2026-05-06', to: '2026-05-07' },
-    { dates: '18/5 - 19/5', days: 'Mon-Tue', person: 'Thomas',    from: '2026-05-18', to: '2026-05-19' },
-    { dates: '20/5 - 21/5', days: 'Wed-Thu', person: 'Julie',     from: '2026-05-20', to: '2026-05-21' },
-    { dates: '26/5',         days: 'Tue',     person: 'Vetle',     from: '2026-05-26', to: '2026-05-26' },
-    { dates: '1/6 - 2/6',   days: 'Mon-Tue', person: 'Jonas',     from: '2026-06-01', to: '2026-06-02' },
-    { dates: '3/6 - 4/6',   days: 'Wed-Thu', person: 'Benjamin',  from: '2026-06-03', to: '2026-06-04' },
-    { dates: '8/6 - 9/6',   days: 'Mon-Tue', person: 'Andreas',   from: '2026-06-08', to: '2026-06-09' },
+    { dates: '27/4 - 28/4', days: 'Mon-Tue', person: 'Maylen',   from: '2026-04-27', to: '2026-04-28' },
+    { dates: '29/4 - 30/4', days: 'Wed-Thu', person: 'Benjamin', from: '2026-04-29', to: '2026-04-30' },
+    { dates: '4/5 - 5/5',   days: 'Mon-Tue', person: 'Cecilie',  from: '2026-05-04', to: '2026-05-05' },
+    { dates: '6/5 - 7/5',   days: 'Wed-Thu', person: 'Marie',    from: '2026-05-06', to: '2026-05-07' },
+    { dates: '11/5 - 12/5', days: 'Mon-Tue', person: 'Andreas',  from: '2026-05-11', to: '2026-05-12' },
+    { dates: '18/5 - 19/5', days: 'Mon-Tue', person: 'Thomas',   from: '2026-05-18', to: '2026-05-19' },
+    { dates: '1/6 - 2/6',   days: 'Mon-Tue', person: 'Jonas',    from: '2026-06-01', to: '2026-06-02' },
+    { dates: '15/6 - 16/6', days: 'Mon-Tue', person: 'Vetle',    from: '2026-06-15', to: '2026-06-16' },
+    { dates: '22/6 - 23/6', days: 'Mon-Tue', person: 'Julie',    from: '2026-06-22', to: '2026-06-23' },
   ];
   localStorage.setItem('wtp_wingman', JSON.stringify(defaults));
   localStorage.setItem('wtp_wingman_v', '2');
   return defaults;
 })();
-function saveWingman() { localStorage.setItem('wtp_wingman', JSON.stringify(wingmanSlots)); localStorage.setItem('wtp_wingman_v', '3'); scheduleSyncSave(); }
+function saveWingman() { localStorage.setItem('wtp_wingman', JSON.stringify(wingmanSlots)); localStorage.setItem('wtp_wingman_v', '4'); scheduleSyncSave(); }
 
 function renderWingman() {
   const container = document.getElementById('wingman-section');
@@ -1524,77 +1556,70 @@ function renderRoleSummary(w) {
 
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
   const ROLES = ['Phone Guru', 'Inbox Champion', 'SLA Sherpa', 'Freelancer'];
+  const ROLE_ICONS = { 'Phone Guru': '📞', 'Inbox Champion': '📬', 'SLA Sherpa': '⏱', 'Freelancer': '🔄' };
+  const ROLE_CHIP_CLASS = { 'Phone Guru': 'chip-phone-guru', 'Inbox Champion': 'chip-inbox-champ', 'SLA Sherpa': 'chip-sla-sherpa', 'Freelancer': 'chip-freelancer' };
   const blocks = [
-    { label: 'Mon - Wed', days: [0, 1, 2] },
-    { label: 'Thu - Fri', days: [3, 4] },
+    { label: 'Mon – Wed', days: [0, 1, 2] },
+    { label: 'Thu – Fri', days: [3, 4] },
   ];
 
-  const card = document.createElement('div');
-  card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
+  const card = document.createElement('div'); card.className = 'role-summary-card-new';
 
   // Header
-  const cardHdr = document.createElement('div');
-  cardHdr.style.cssText = 'padding:12px 18px 10px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;';
-  const cardTitle = document.createElement('div');
-  cardTitle.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);';
-  cardTitle.textContent = 'Roles this week';
-  cardHdr.appendChild(cardTitle); card.appendChild(cardHdr);
+  const hdr = document.createElement('div'); hdr.className = 'role-summary-header';
+  const title = document.createElement('div'); title.className = 'role-summary-header-title'; title.textContent = '🎯 Roles this week';
+  hdr.appendChild(title); card.appendChild(hdr);
 
-  // Two-column grid
-  const grid = document.createElement('div');
-  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;';
+  // Two columns
+  const cols = document.createElement('div'); cols.className = 'role-summary-cols';
 
   blocks.forEach((block, bIdx) => {
-    const col = document.createElement('div');
-    col.style.cssText = 'padding:14px 18px;' + (bIdx === 0 ? 'border-right:0.5px solid var(--border);' : '');
+    const col = document.createElement('div'); col.className = 'role-summary-col';
 
-    const blkLabel = document.createElement('div');
-    blkLabel.style.cssText = 'font-size:11px;font-weight:700;color:var(--text2);margin-bottom:12px;letter-spacing:0.04em;';
-    blkLabel.textContent = block.label;
-    col.appendChild(blkLabel);
+    const colLabel = document.createElement('div'); colLabel.className = 'role-summary-col-label';
+    colLabel.textContent = block.label; col.appendChild(colLabel);
 
     ROLES.forEach(role => {
       const people = myTeam.filter(p => block.days.some(di => (p.roles && p.roles[di]) === role));
       const peopleNames = people.map(p => p.name);
 
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;';
+      const row = document.createElement('div'); row.className = 'role-summary-role-row';
 
+      // Role pill on left
       const pill = document.createElement('span');
-      pill.className = 'role-pill ' + roleClass(role);
-      pill.style.cssText = 'flex-shrink:0;font-size:10px;';
-      pill.textContent = role;
+      pill.className = 'role-pill ' + roleClass(role); pill.className += ' role-summary-role-label';
+      pill.style.cssText = 'flex-shrink:0;width:130px;justify-content:center;';
+      pill.textContent = (ROLE_ICONS[role] || '') + ' ' + role;
 
-      const nameWrap = document.createElement('div');
-      nameWrap.style.cssText = 'flex:1;min-width:0;';
-
+      // People chips on right
+      const peopleWrap = document.createElement('div'); peopleWrap.className = 'role-summary-people';
       if (peopleNames.length) {
         peopleNames.forEach(name => {
           const chip = document.createElement('span');
-          chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--text);background:var(--surface2);border:0.5px solid var(--border2);border-radius:6px;padding:2px 8px;margin:1px 3px 1px 0;' + (isAdmin() ? 'cursor:pointer;transition:background 0.15s;' : 'cursor:default;');
-          chip.textContent = name;
+          chip.className = 'role-person-chip ' + (ROLE_CHIP_CLASS[role] || '');
+          const dot = document.createElement('span'); dot.className = 'role-person-chip-dot';
+          chip.appendChild(dot);
+          chip.appendChild(document.createTextNode(name));
           if (isAdmin()) {
             chip.title = 'Click to change role';
-            chip.onmouseover = () => chip.style.background = 'var(--surface3)';
-            chip.onmouseout = () => chip.style.background = 'var(--surface2)';
             chip.onclick = () => showRoleEditPopup(chip, name, block.days, w, role);
+          } else {
+            chip.style.cursor = 'default';
           }
-          nameWrap.appendChild(chip);
+          peopleWrap.appendChild(chip);
         });
       } else {
-        const empty = document.createElement('span');
-        empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
-        empty.textContent = 'none';
-        nameWrap.appendChild(empty);
+        const empty = document.createElement('span'); empty.className = 'role-summary-empty'; empty.textContent = 'none';
+        peopleWrap.appendChild(empty);
       }
 
-      row.appendChild(pill); row.appendChild(nameWrap); col.appendChild(row);
+      row.appendChild(pill); row.appendChild(peopleWrap); col.appendChild(row);
     });
 
-    grid.appendChild(col);
+    cols.appendChild(col);
   });
 
-  card.appendChild(grid);
+  card.appendChild(cols);
   container.appendChild(card);
 }
 
