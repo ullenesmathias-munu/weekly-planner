@@ -214,6 +214,26 @@
       "pendingName": "",
       "weekStamp": "2026-04-27",
       "done": false
+    },
+    {
+      "id": "1777540500447",
+      "day": "Thursday",
+      "title": "Maylen CSM every thursday",
+      "priority": "",
+      "due": "29 Apr",
+      "note": "Maylen is not working L1-jobs as CSM every thursday.",
+      "people": [
+        "Maylen"
+      ],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "purple",
+      "pendingName": "",
+      "weekStamp": "2026-04-27",
+      "done": false
     }
   ],
   "wtp_profile_thomas": {
