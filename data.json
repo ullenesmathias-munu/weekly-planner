@@ -233,6 +233,24 @@
       "pendingName": "",
       "reminder": "",
       "done": false
+    },
+    {
+      "id": "1777557055870",
+      "day": "Friday",
+      "title": "Cases Onboarding",
+      "priority": "",
+      "due": "30 Apr",
+      "note": "Cases where support had to do Onboarding cases.",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "",
+      "pendingName": "",
+      "weekStamp": "2026-04-27",
+      "done": false
     }
   ],
   "wtp_profile_thomas": {
