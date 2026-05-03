@@ -74,73 +74,23 @@
 
   /* ─── Mobile responsive ──────────────────────────── */
   @media (max-width: 768px) {
-    body { padding: 10px 12px 70px; } /* bottom padding for nav bar */
-    /* Hide top tabs - replaced by bottom nav */
+    body { padding: 0 0 60px 0; background: var(--bg); }
+    /* Hide top tabs nav — replaced by bottom nav */
     .tabs { display: none; }
-    /* Bottom nav bar */
+    /* Hide everything below the tab bar — notes panel sits on top */
+    #tab-planner > *, #tab-schedule, #tab-onetoone,
+    #tab-zendesk, #tab-feedback, #tab-settings { display: none !important; }
+    #tab-planner { min-height: 0 !important; padding: 0 !important; }
+    /* Bottom nav */
     .mobile-nav { display: flex !important; }
-    /* Topbar */
-    .topbar { flex-wrap: wrap; gap: 6px; margin-bottom: 10px; padding-bottom: 10px; }
-    .topbar-right { flex-wrap: wrap; gap: 6px; font-size: 11px; }
-    #task-search { width: 120px; }
-    #task-search:focus { width: 150px; }
-    #live-date { display: none; }
-    #live-clock { font-size: 15px; }
-    .clock-wrap { gap: 8px; }
-    /* Planner */
-    .planner-wrap { flex-direction: column; gap: 10px; }
-    .board { overflow-x: auto; flex-wrap: nowrap; gap: 8px; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; padding-bottom: 8px; }
-    .col { flex: 0 0 85vw; max-width: 340px; scroll-snap-align: start; }
-    .col.is-today { flex: 0 0 88vw; }
-    .notepad, .today-panel { flex: none; width: 100%; min-height: 160px; }
-    .week-drag-zone { display: none; }
-    .week-progress-wrap { padding: 0 2px 8px; }
-    .avail-strip { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
-    .quote-strip { font-size: 11px; padding: 6px 10px; }
-    /* Schedule */
-    .sched-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .sched-table { font-size: 11px; }
-    .sched-table th, .sched-table td { padding: 6px 4px; }
-    .shift-pill { font-size: 10px; padding: 2px 5px; }
-    /* My Team */
-    .oto-layout { flex-direction: column; min-height: unset; }
-    .oto-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); max-height: 160px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); padding: 6px; gap: 4px; }
-    .oto-sidebar-header { grid-column: 1/-1; }
-    .oto-person-btn { border-radius: var(--radius-md); border-bottom: none; padding: 6px 8px; }
-    .oto-person-meta { display: none; }
-    .oto-sessions { padding: 10px 12px; }
-    .oto-person-header { padding: 12px 14px; }
-    /* Feedback */
-    .fb-layout { flex-direction: column; }
-    .fb-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; gap: 4px; padding: 8px; }
-    .fb-user-btn { flex-direction: column; align-items: center; min-width: 70px; padding: 6px 8px; border-radius: var(--radius-md); }
-    .fb-user-count { display: none; }
-    /* ZD chart */
-    .zd-chart { height: 120px; gap: 4px; }
-    .zd-bar-val { font-size: 10px; }
-    .zd-bar-label { font-size: 9px; }
-    .zd-grid { grid-template-columns: 1fr; }
-    .zd-summary-bar { gap: 8px; }
-    .zd-summary-pill { min-width: 80px; padding: 8px 12px; }
-    .zd-summary-pill-val { font-size: 18px; }
-    /* Cards */
-    .card { font-size: 12px; }
-    .card-actions { opacity: 1 !important; } /* always show on mobile */
-    /* Team overview */
-    .team-overview-grid { grid-template-columns: 1fr; }
-    /* Settings */
-    .settings-card { padding: 12px 14px; }
-    /* Confirm modal */
-    .confirm-box { padding: 16px 18px; }
+    /* Shortcut hint — hide on mobile */
+    body > div[style*="position:fixed"][style*="bottom:12px"] { display: none !important; }
   }
   @media (max-width: 480px) {
-    body { padding: 8px 10px 70px; }
-    .col { flex: 0 0 92vw; }
-    .topbar-left { gap: 6px; }
-    #week-label, #sched-week-label { font-size: 12px; min-width: 120px; }
+    body { padding: 0 0 60px 0; }
   }
   /* Mobile bottom nav */
-  .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding: 6px 0 env(safe-area-inset-bottom, 6px); }
+  .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1f; border-top: 1px solid #2a2a32; z-index: 200; padding: 6px 0 env(safe-area-inset-bottom, 6px); }
   .mobile-nav-inner { display: flex; justify-content: space-around; align-items: center; }
   .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 8px; min-width: 50px; flex: 1; transition: color 0.15s; }
   .mobile-nav-btn .mnav-icon { font-size: 18px; line-height: 1; }
@@ -199,7 +149,7 @@
   .card.overdue .card-title { color: var(--text); }
   .badge-overdue { background: var(--high-bg) !important; color: var(--high-text) !important; font-weight: 700 !important; }
   /* Filter bar */
-  .planner-filter-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 0 2px 10px; }
+  .planner-filter-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 0 2px 8px; min-height: 0; }
   .filter-btn { font-family: inherit; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border2); background: none; color: var(--text3); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .filter-btn:hover { color: var(--text); border-color: var(--border3); }
   .filter-btn.active { background: var(--cal); color: var(--cal-text); border-color: var(--cal-border); }
@@ -750,6 +700,13 @@
   .settings-upload-btn { font-size: 12px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border-radius: var(--radius-md); padding: 6px 14px; cursor: pointer; display: inline-block; transition: opacity 0.15s; }
   .lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
   .lock-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 36px 40px; width: 90%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  @media (max-width: 768px) {
+    .lock-screen { background: #0f0f11; }
+    .lock-box { background: #1a1a1f; border-color: #2a2a32; }
+    .lock-box input { background: #222228 !important; color: #f0f0f2 !important; border-color: #2a2a32 !important; }
+    .lock-box .lock-title { color: #f0f0f2 !important; }
+    .lock-box .lock-sub { color: #9090a0 !important; }
+  }
   .lock-logo { font-size: 28px; margin-bottom: 4px; }
   .lock-title { font-size: 18px; font-weight: 700; color: var(--text); }
   .lock-sub { font-size: 12px; color: var(--text3); margin-top: -8px; }
@@ -797,8 +754,8 @@ async function sha256(str) {
 }
 
 // Default users: [{name, hash, isAdmin}]
-// Default: Mathias / 123
-const DEFAULT_USERS = [{name:'Mathias', hash:'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', isAdmin:true}];
+// Default: Mathias / Vin12310wkk!
+const DEFAULT_USERS = [{name:'Mathias', hash:'c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414', isAdmin:true}];
 
 function getUsers() {
   try { return JSON.parse(localStorage.getItem('wtp_users')) || DEFAULT_USERS; }
@@ -937,9 +894,9 @@ window.tryUnlock = async function() {
   <div class="avail-strip" id="avail-strip"></div>
   <!-- Carry forward banner -->
   <div id="carry-banner-wrap"></div>
+  <div class="planner-filter-bar" id="planner-filter-bar"></div>
   <div class="planner-wrap">
     <div class="week-drag-zone" id="drag-prev-week" ondragover="event.preventDefault();this.classList.add('active')" ondragleave="this.classList.remove('active')" ondrop="weekDragDrop(-1,event)">‹</div>
-    <div class="planner-filter-bar" id="planner-filter-bar"></div>
     <div class="board" id="board"></div>
     <div class="week-drag-zone" id="drag-next-week" ondragover="event.preventDefault();this.classList.add('active')" ondragleave="this.classList.remove('active')" ondrop="weekDragDrop(1,event)">›</div>
     <!-- Right panel: today or notepad -->
@@ -2319,7 +2276,11 @@ function processXlsx(buffer, fileName, st, preview) {
   const ta = document.getElementById('notepad-text');
   const savedEl = document.getElementById('notepad-saved');
   if (!ta) return;
-  ta.value = currentUser ? (localStorage.getItem(userNoteKey(currentUser.name)) || '') : '';
+  // Sanitize notepad content — fix garbled dashes from old sync data
+  const rawNote = currentUser ? (localStorage.getItem(userNoteKey(currentUser.name)) || '') : '';
+  ta.value = rawNote
+    .replace(/[^\x00-\x7F]{1,6}(?=\d)/g, '–')
+    .replace(/\d+[^\x00-\x7F]{1,6}\d+/g, m => m.replace(/[^\x00-\x7F]+/g, '–'));
   let saveTimer;
   ta.addEventListener('input', () => {
     savedEl.style.opacity = '0';
@@ -3677,33 +3638,155 @@ function buildMobileNav() {
   if (!inner) return;
   inner.innerHTML = '';
 
+  const notesOpen = !document.getElementById('mobile-notes-panel') ||
+                     document.getElementById('mobile-notes-panel')?.style.display !== 'none';
+
   const tabs = [
-    { id: 'planner',  icon: '📅', label: 'Planner' },
-    { id: 'schedule', icon: '👥', label: 'Schedule' },
-    { id: 'onetoone', icon: '⭐', label: 'My Team', adminOnly: true },
-    { id: 'feedback', icon: '💡', label: 'Feedback' },
-    { id: 'zendesk',  icon: '🎫', label: 'Tickets', adminOnly: true },
-    { id: 'settings', icon: '⚙', label: 'Settings' },
+    { id: 'notes',    icon: '📝', label: 'Notes',    special: true,    active: notesOpen },
+    { id: 'settings', icon: '⚙',  label: 'Settings', special: false,   active: !notesOpen },
   ];
 
-  const currentTab = document.querySelector('.tab-content.active')?.id?.replace('tab-','') || 'planner';
-
   tabs.forEach(t => {
-    if (t.adminOnly && !isAdmin()) return;
-    const btn = document.createElement('button'); btn.className = 'mobile-nav-btn' + (currentTab === t.id ? ' active' : '');
+    const btn = document.createElement('button');
+    btn.className = 'mobile-nav-btn' + (t.active ? ' active' : '');
     const icon = document.createElement('span'); icon.className = 'mnav-icon'; icon.textContent = t.icon;
     const label = document.createElement('span'); label.className = 'mnav-label'; label.textContent = t.label;
     btn.appendChild(icon); btn.appendChild(label);
     btn.onclick = () => {
-      // Find and click the matching tab button
-      document.querySelectorAll('.tab-btn').forEach(tb => {
-        if (tb.getAttribute('onclick')?.includes("'" + t.id + "'")) tb.click();
-      });
-      buildMobileNav(); // re-render to update active state
+      if (t.special) {
+        openMobileNotes();
+      } else {
+        closeMobileNotes();
+        // Show settings tab content inline
+        showMobileSettings();
+      }
     };
     inner.appendChild(btn);
   });
 }
+
+function openMobileNotes() {
+  hideMobileSettings();
+  let panel = document.getElementById('mobile-notes-panel');
+  if (!panel) createMobileNotesPanel();
+  else { panel.style.display = 'flex'; }
+  buildMobileNav();
+}
+
+function closeMobileNotes() {
+  const panel = document.getElementById('mobile-notes-panel');
+  if (panel) panel.style.display = 'none';
+  buildMobileNav();
+}
+
+function showMobileSettings() {
+  let s = document.getElementById('mobile-settings-panel');
+  if (!s) {
+    s = document.createElement('div');
+    s.id = 'mobile-settings-panel';
+    s.style.cssText = 'position:fixed;inset:0 0 60px 0;background:var(--bg);z-index:150;overflow-y:auto;padding:16px;';
+    const title = document.createElement('div'); title.style.cssText='font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;'; title.textContent='Settings';
+    const syncCard = document.createElement('div'); syncCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px;';
+    const syncTitle = document.createElement('div'); syncTitle.style.cssText='font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;'; syncTitle.textContent='☁ Sync';
+    const pullBtn = document.createElement('button'); pullBtn.className='btn-save'; pullBtn.style.cssText='width:100%;margin-bottom:8px;'; pullBtn.textContent='↓ Pull from GitHub';
+    pullBtn.onclick = () => { ghLoad(); pullBtn.textContent='Pulling…'; setTimeout(()=>pullBtn.textContent='↓ Pull from GitHub',3000); };
+    const pushBtn = document.createElement('button'); pushBtn.className='btn-save'; pushBtn.style.cssText='width:100%;'; pushBtn.textContent='↑ Push to GitHub';
+    pushBtn.onclick = () => { ghSave(); pushBtn.textContent='Pushing…'; setTimeout(()=>pushBtn.textContent='↑ Push to GitHub',3000); };
+    syncCard.appendChild(syncTitle); syncCard.appendChild(pullBtn); syncCard.appendChild(pushBtn);
+    const signOutBtn = document.createElement('button'); signOutBtn.className='btn-cancel'; signOutBtn.style.cssText='width:100%;margin-top:8px;'; signOutBtn.textContent='Sign out';
+    signOutBtn.onclick = signOut;
+    s.appendChild(title); s.appendChild(syncCard); s.appendChild(signOutBtn);
+    document.body.appendChild(s);
+  } else { s.style.display = 'block'; }
+  buildMobileNav();
+}
+
+function hideMobileSettings() {
+  const s = document.getElementById('mobile-settings-panel');
+  if (s) s.style.display = 'none';
+}
+
+function createMobileNotesPanel() {
+  const panel = document.createElement('div');
+  panel.id = 'mobile-notes-panel';
+  panel.style.cssText = 'position:fixed;inset:0 0 60px 0;background:#0f0f11;z-index:150;display:flex;flex-direction:column;padding:14px 14px 10px;';
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-shrink:0;';
+
+  const title = document.createElement('div'); title.style.cssText='font-size:16px;font-weight:700;color:var(--text);flex:1;'; title.textContent='📝 Notes';
+
+  const modeBtn = document.createElement('button');
+  modeBtn.style.cssText='font-family:inherit;font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--cal-text);cursor:pointer;flex-shrink:0;';
+  modeBtn.textContent='📅 Weekly';
+  let noteMode = 'weekly';
+
+  const syncBadge = document.createElement('span');
+  syncBadge.style.cssText='font-size:11px;color:var(--text3);flex-shrink:0;min-width:50px;text-align:right;';
+
+  hdr.appendChild(title); hdr.appendChild(modeBtn); hdr.appendChild(syncBadge);
+  panel.appendChild(hdr);
+
+  // Textarea — big, full height, clean
+  const ta = document.createElement('textarea');
+  ta.id = 'mobile-notes-ta';
+  ta.style.cssText = [
+    'flex:1',
+    'background:var(--surface)',
+    'border:1px solid var(--border)',
+    'border-radius:12px',
+    'padding:16px',
+    'font-family:inherit',
+    'font-size:15px',
+    'line-height:1.7',
+    'color:var(--text)',
+    'resize:none',
+    'outline:none',
+    '-webkit-appearance:none',
+    'width:100%',
+    'box-sizing:border-box',
+  ].join(';');
+  ta.placeholder = 'Start typing…\n\nSyncs to your computer automatically.';
+  panel.appendChild(ta);
+
+  const getKey = () => noteMode === 'weekly' ? userNoteKey(currentUser?.name||'') : 'wtp_notepad_persistent';
+
+  const loadContent = () => {
+    ta.value = localStorage.getItem(getKey()) || '';
+    modeBtn.textContent = noteMode === 'weekly' ? '📅 Weekly' : '📌 Sticky';
+    modeBtn.style.color = noteMode === 'weekly' ? 'var(--cal-text)' : 'var(--med-text)';
+  };
+
+  modeBtn.onclick = () => {
+    noteMode = noteMode === 'weekly' ? 'persistent' : 'weekly';
+    loadContent();
+    ta.focus();
+  };
+
+  let saveTimer;
+  ta.addEventListener('input', () => {
+    clearTimeout(saveTimer);
+    syncBadge.textContent = '';
+    saveTimer = setTimeout(() => {
+      localStorage.setItem(getKey(), ta.value);
+      // Mirror to desktop notepad textarea
+      const desktopTa = document.getElementById(noteMode === 'weekly' ? 'notepad-text' : 'notepad-persistent');
+      if (desktopTa) desktopTa.value = ta.value;
+      scheduleSyncSave();
+      syncBadge.textContent = '✓ saved';
+      syncBadge.style.color = 'var(--low-text)';
+      setTimeout(() => { syncBadge.textContent = ''; }, 2000);
+    }, 800);
+  });
+
+  loadContent();
+  document.body.appendChild(panel);
+  setTimeout(() => ta.focus(), 150);
+}
+
+
+
 
 // Rebuild mobile nav when tabs switch
 const _origSwitchTab = typeof switchTab !== 'undefined' ? switchTab : null;
@@ -4584,13 +4667,8 @@ function loadUserData() {
   const otoBtn = document.getElementById('tab-btn-onetoone');
   if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
   if (isAdmin()) initZendeskTab();
-  if (isMobile()) buildMobileNav();
-  renderPlanner();
-  renderAvailStrip();
-  checkCarryForward();
-  scheduleAllReminders();
-  // Re-render schedule now that currentUser is set (isAdmin() needs this)
-  renderSchedule();
+  if (isMobile()) { buildMobileNav(); openMobileNotes(); }
+  else { renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule(); }
   // Auto-pull from GitHub on every login if token is set
   if (localStorage.getItem('wtp_gh_token')) {
     ghToken = localStorage.getItem('wtp_gh_token');
@@ -5807,6 +5885,17 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 1000);
+
+// Handle viewport resize (e.g. DevTools mobile simulation)
+let _lastMobile = isMobile();
+window.addEventListener('resize', () => {
+  const nowMobile = isMobile();
+  if (nowMobile !== _lastMobile) {
+    _lastMobile = nowMobile;
+    if (nowMobile && currentUser) { buildMobileNav(); openMobileNotes(); }
+    else if (!nowMobile) { const p = document.getElementById('mobile-notes-panel'); if(p) p.style.display='none'; }
+  }
+});
 </script>
 </body>
 </html>
