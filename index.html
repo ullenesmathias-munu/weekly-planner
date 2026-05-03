@@ -326,6 +326,25 @@
   .cal-gist-input-wrap { display: flex; gap: 8px; margin-top: 4px; }
   .cal-gist-input { flex: 1; font-family: inherit; font-size: 13px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; outline: none; }
   .cal-gist-input:focus { border-color: var(--cal-text); }
+  /* ─── Month view ──────────────────────────────────── */
+  .cal-month-grid { display: flex; flex-direction: column; flex: 1; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  .cal-month-header { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border); background: var(--surface); }
+  .cal-month-dow { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); text-align: center; padding: 8px 4px; }
+  .cal-month-body { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; flex: 1; overflow-y: auto; }
+  .cal-month-cell { border-right: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); padding: 4px 5px; min-height: 90px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; transition: background 0.12s; }
+  .cal-month-cell:hover { background: var(--surface2); }
+  .cal-month-cell.other-month { opacity: 0.35; }
+  .cal-month-cell.today { background: var(--today-tint); }
+  .cal-month-cell:nth-child(7n) { border-right: none; }
+  .cal-month-day-num { font-size: 12px; font-weight: 600; color: var(--text2); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; align-self: flex-start; }
+  .cal-month-cell.today .cal-month-day-num { background: var(--cal-text); color: #0f0f11; font-weight: 700; }
+  .cal-month-event { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: filter 0.12s; }
+  .cal-month-event:hover { filter: brightness(1.2); }
+  .cal-month-event.outlook { background: rgba(0,120,212,0.22); color: #60b4ff; border-left: 2px solid #0078d4; }
+  .cal-month-event.planner { background: rgba(122,173,255,0.18); color: var(--cal-text); border-left: 2px solid var(--cal-text); }
+  .cal-month-more { font-size: 10px; color: var(--text3); padding: 1px 4px; cursor: pointer; }
+  .cal-month-more:hover { color: var(--cal-text); }
+  .light-mode .cal-month-event.outlook { background: rgba(0,120,212,0.12); color: #1a56c4; }
   .decision-log-wrap { padding: 16px 20px; }
   .decision-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--surface2); border-radius: var(--radius-md); margin-bottom: 8px; border-left: 3px solid var(--border2); transition: border-color 0.15s; }
   .decision-row:hover { border-left-color: var(--cal-text); }
@@ -1103,6 +1122,7 @@ window.tryUnlock = async function() {
       <div class="cal-view-toggle">
         <button class="cal-view-btn active" id="cal-view-week" onclick="setCalView('week')">Week</button>
         <button class="cal-view-btn" id="cal-view-day" onclick="setCalView('day')">Day</button>
+        <button class="cal-view-btn" id="cal-view-month" onclick="setCalView('month')">Month</button>
       </div>
       <button class="cal-sync-btn" onclick="refreshOutlookCal()">↻ Sync Outlook</button>
       <button class="cal-sync-btn" onclick="showCalSetup()" id="cal-setup-btn" style="color:var(--text3);">⚙ Setup</button>
@@ -2052,15 +2072,15 @@ async function refreshOutlookCal() {
   const btn = document.querySelector('.cal-sync-btn');
   if (btn) btn.textContent = '⟳ Syncing…';
 
-  // ── Route through Cloudflare Worker to avoid CORS ──────────────────
-  // Worker fetches outlook-calendar.json from OneDrive server-side.
-  // Falls back to custom Gist URL if worker fails.
+  // ── Fetch from Gist via Cloudflare Worker (handles CORS + caching) ──
   const CAL_WORKER = 'https://zendesk-proxy.ullenesmathias.workers.dev/calendar';
+  // Direct Gist fallback (public, no auth needed)
+  const CAL_GIST_RAW = 'https://gist.githubusercontent.com/ullenesmathias-munu/c53742ebe88f2a61f4986ae1de9a33c4/raw/outlook-calendar.json';
 
   let events = null;
   let lastError = '';
 
-  // 1. Try Cloudflare Worker proxy (primary path)
+  // 1. Try Cloudflare Worker (primary — adds CORS headers)
   try {
     const res = await fetch(CAL_WORKER, { headers: { 'Accept': 'application/json' } });
     if (res.ok) {
@@ -2072,10 +2092,10 @@ async function refreshOutlookCal() {
     }
   } catch(e) { lastError = e.message; }
 
-  // 2. Fallback: custom Gist URL (if user has one saved)
-  if (!events && getCalGistUrl()) {
+  // 2. Direct Gist fallback
+  if (!events) {
     try {
-      const res = await fetch(getCalGistUrl(), { headers: { 'Accept': 'application/json' } });
+      const res = await fetch(CAL_GIST_RAW + '?t=' + Date.now(), { headers: { 'Accept': 'application/json' } });
       if (res.ok) {
         const data = await res.json();
         events = Array.isArray(data) ? data : (data.value || data.events || []);
@@ -2124,6 +2144,7 @@ function setCalView(view) {
   calView = view;
   document.getElementById('cal-view-week')?.classList.toggle('active', view === 'week');
   document.getElementById('cal-view-day')?.classList.toggle('active', view === 'day');
+  document.getElementById('cal-view-month')?.classList.toggle('active', view === 'month');
   renderCalTab();
 }
 
@@ -2142,6 +2163,8 @@ function renderCalTab() {
     renderCalSetupPrompt(body);
     return;
   }
+
+  if (calView === 'month') { renderCalMonthView(body); return; }
 
   body.innerHTML = '';
   const todayStr = localToday();
@@ -2313,6 +2336,97 @@ function renderCalTab() {
     const d = new Date(syncedAt); info.textContent = 'Outlook synced: ' + d.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     body.appendChild(info);
   }
+}
+
+function renderCalMonthView(body) {
+  body.innerHTML = '';
+  const todayStr = localToday();
+  const now = new Date();
+  // Use calOffset to navigate months
+  const viewDate = new Date(now.getFullYear(), now.getMonth() + calOffset, 1);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  // Update range label
+  const lbl = document.getElementById('cal-range-label');
+  if (lbl) lbl.textContent = MONTH_NAMES[month] + ' ' + year;
+
+  const fmtDate = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+
+  // Get all events for a date
+  const getEventsForDate = (dateStr) => {
+    const all = [];
+    outlookEvents.forEach(e => {
+      const rawStart = e.startWithTimeZone || e.start || '';
+      const startDt = rawStart ? new Date(rawStart) : null;
+      const start = startDt ? fmtDate(startDt) : rawStart.slice(0,10);
+      if (start === dateStr) all.push({...e, source:'outlook'});
+    });
+    const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date(dateStr+'T12:00:00').getDay()];
+    const wStamp = mondayStamp(calOffset);
+    tasks.filter(t => t.isMeeting && t.day === dayName).forEach(t => {
+      all.push({ subject: t.title, start: dateStr + 'T' + (t.timeStart||'09:00') + ':00', source: 'planner' });
+    });
+    return all.sort((a,b) => new Date(a.startWithTimeZone||a.start) - new Date(b.startWithTimeZone||b.start));
+  };
+
+  // Build grid: find first Monday on or before 1st of month
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  // Start from Monday of the week containing 1st
+  const startDow = (firstDay.getDay() + 6) % 7; // 0=Mon
+  const gridStart = new Date(firstDay); gridStart.setDate(1 - startDow);
+  // End on Sunday of week containing last day
+  const endDow = (lastDay.getDay() + 6) % 7;
+  const gridEnd = new Date(lastDay); gridEnd.setDate(lastDay.getDate() + (6 - endDow));
+
+  const grid = document.createElement('div'); grid.className = 'cal-month-grid';
+
+  // Day-of-week header
+  const hdr = document.createElement('div'); hdr.className = 'cal-month-header';
+  DOW.forEach(d => { const h = document.createElement('div'); h.className = 'cal-month-dow'; h.textContent = d; hdr.appendChild(h); });
+  grid.appendChild(hdr);
+
+  // Cells
+  const gridBody = document.createElement('div'); gridBody.className = 'cal-month-body';
+  const cursor = new Date(gridStart);
+  while (cursor <= gridEnd) {
+    const ds = fmtDate(cursor);
+    const isThisMonth = cursor.getMonth() === month;
+    const isToday = ds === todayStr;
+    const cell = document.createElement('div');
+    cell.className = 'cal-month-cell' + (isToday ? ' today' : '') + (!isThisMonth ? ' other-month' : '');
+
+    const dayNum = document.createElement('div'); dayNum.className = 'cal-month-day-num'; dayNum.textContent = cursor.getDate();
+    cell.appendChild(dayNum);
+
+    const evs = getEventsForDate(ds);
+    const maxShow = 3;
+    evs.slice(0, maxShow).forEach(e => {
+      const ev = document.createElement('div');
+      ev.className = 'cal-month-event ' + (e.source||'outlook');
+      const startDt = new Date(e.startWithTimeZone || e.start || ds);
+      const timeStr = startDt ? startDt.toLocaleTimeString('nb-NO',{hour:'2-digit',minute:'2-digit',hour12:false}) + ' ' : '';
+      ev.textContent = timeStr + (e.subject || e.title || '');
+      ev.title = e.subject || e.title || '';
+      if (e.webLink) ev.onclick = (evt) => { evt.stopPropagation(); window.open(e.webLink, '_blank'); };
+      cell.appendChild(ev);
+    });
+    if (evs.length > maxShow) {
+      const more = document.createElement('div'); more.className = 'cal-month-more';
+      more.textContent = '+' + (evs.length - maxShow) + ' more';
+      cell.appendChild(more);
+    }
+
+    // Click day to switch to day view
+    cell.onclick = () => { calDayOffset = Math.round((new Date(ds+'T12:00:00') - new Date()) / 86400000); setCalView('day'); };
+    gridBody.appendChild(cell);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  grid.appendChild(gridBody);
+  body.appendChild(grid);
 }
 
 function renderCalSetupPrompt(body) {
