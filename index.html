@@ -2052,42 +2052,59 @@ async function refreshOutlookCal() {
   const btn = document.querySelector('.cal-sync-btn');
   if (btn) btn.textContent = '⟳ Syncing…';
 
-  const graphFetch = async (url) => {
-    const res = await fetch(url, { credentials: 'include', headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    return JSON.parse(text);
-  };
-
-  const urls = [
-    // Direct path on user's drive
-    'https://graph.microsoft.com/v1.0/me/drive/root:/outlook-calendar.json:/content',
-    // Via user UPN
-    'https://graph.microsoft.com/v1.0/users/mathias_ullenes@munu.cloud/drive/root:/outlook-calendar.json:/content',
-    // Via shares API using the SharePoint link
-    'https://graph.microsoft.com/v1.0/shares/u!aHR0cHM6Ly9tdW51Y2xvdWQtbXkuc2hhcmVwb2ludC5jb20vOnU6L2cvcGVyc29uYWwvbWF0aGlhc191bGxlbmVzX211bnVfY2xvdWQvSVFEN0RrU3h2MW1VVDRsMlNEcG5ONjFJQWZaLXRRazhJSkZqdmFSV1lYTDREdzA/driveItem/content',
-    // Custom URL saved by user
-    ...(getCalGistUrl() ? [getCalGistUrl()] : []),
-  ];
+  // ── Route through Cloudflare Worker to avoid CORS ──────────────────
+  // Worker fetches outlook-calendar.json from OneDrive server-side.
+  // Falls back to custom Gist URL if worker fails.
+  const CAL_WORKER = 'https://zendesk-proxy.ullenesmathias.workers.dev/calendar';
 
   let events = null;
   let lastError = '';
-  for (const url of urls) {
-    try {
-      const data = await graphFetch(url);
+
+  // 1. Try Cloudflare Worker proxy (primary path)
+  try {
+    const res = await fetch(CAL_WORKER, { headers: { 'Accept': 'application/json' } });
+    if (res.ok) {
+      const data = await res.json();
       events = Array.isArray(data) ? data : (data.value || data.events || []);
-      if (events.length >= 0) break;
-    } catch(e) { lastError = e.message; continue; }
+    } else {
+      const err = await res.json().catch(() => ({}));
+      lastError = err.error || 'Worker HTTP ' + res.status;
+    }
+  } catch(e) { lastError = e.message; }
+
+  // 2. Fallback: custom Gist URL (if user has one saved)
+  if (!events && getCalGistUrl()) {
+    try {
+      const res = await fetch(getCalGistUrl(), { headers: { 'Accept': 'application/json' } });
+      if (res.ok) {
+        const data = await res.json();
+        events = Array.isArray(data) ? data : (data.value || data.events || []);
+      }
+    } catch(e) { lastError = e.message; }
   }
 
   if (btn) btn.textContent = '↻ Sync Outlook';
 
   if (!events) {
-    showToast('⚠ Could not fetch calendar. Open Outlook Web in this browser first, then try again. (' + lastError + ')');
+    showToast('⚠ Could not fetch calendar. Make sure your Power Automate flow has run recently. (' + lastError + ')');
     return;
   }
 
-  outlookEvents = events;
+  // Filter cancelled events and normalize fields
+  outlookEvents = events
+    .filter(e => {
+      const subj = e.subject || e.title || '';
+      return !subj.startsWith('Canceled:') && !subj.startsWith('Avlyst:');
+    })
+    .map(e => {
+      // Normalize: support both 'subject' (Graph) and 'title' (ICS)
+      if (e.subject && !e.title) e.title = e.subject;
+      // Use timezone-aware fields if available, else fall back
+      if (e.startWithTimeZone && !e.start.includes('T')) e.start = e.startWithTimeZone;
+      if (e.endWithTimeZone && !e.end.includes('T')) e.end = e.endWithTimeZone;
+      return e;
+    });
+
   localStorage.setItem('wtp_outlook_events', JSON.stringify(outlookEvents));
   localStorage.setItem('wtp_outlook_synced', new Date().toISOString());
   showToast('✓ Calendar synced — ' + outlookEvents.length + ' events loaded');
@@ -2156,10 +2173,14 @@ function renderCalTab() {
   // Get all events for these dates
   const getEventsForDate = (dateStr) => {
     const all = [];
-    // Outlook events
+    // Outlook events — parse with timezone awareness so Norwegian events map to correct local dates
     outlookEvents.forEach(e => {
-      const start = (e.start||'').slice(0,10);
-      const end = (e.end||'').slice(0,10);
+      const rawStart = e.startWithTimeZone || e.start || '';
+      const rawEnd   = e.endWithTimeZone   || e.end   || '';
+      const startDt  = rawStart ? new Date(rawStart) : null;
+      const endDt    = rawEnd   ? new Date(rawEnd)   : null;
+      const start    = startDt  ? fmtDate(startDt)  : rawStart.slice(0,10);
+      const end      = endDt    ? fmtDate(endDt)    : rawEnd.slice(0,10);
       if (start === dateStr || (e.isAllDay && dateStr >= start && dateStr <= end)) all.push({...e, source:'outlook'});
     });
     // Planner meetings for this date
@@ -2232,7 +2253,7 @@ function renderCalTab() {
     const ds = fmtDate(d);
     const timedEvents = getEventsForDate(ds).filter(e => !e.isAllDay && e.start);
     timedEvents.forEach(e => {
-      const startDt = new Date(e.start); const endDt = new Date(e.end || e.start);
+      const startDt = new Date(e.startWithTimeZone || e.start); const endDt = new Date(e.endWithTimeZone || e.end || e.startWithTimeZone || e.start);
       const startHour = startDt.getHours() + startDt.getMinutes()/60;
       const endHour = endDt.getHours() + endDt.getMinutes()/60;
       const duration = Math.max(endHour - startHour, 0.5);
@@ -2248,10 +2269,11 @@ function renderCalTab() {
       if (!hourCell) return;
 
       ev.style.cssText = `position:absolute;top:${(startDt.getMinutes()/60)*48}px;left:2px;right:2px;height:${heightPx}px;z-index:2;`;
-      ev.title = e.title + '\n' + startDt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) + ' – ' + endDt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-      const titleEl = document.createElement('div'); titleEl.className = 'cal-event-title'; titleEl.textContent = e.title;
+      const evTitle = e.title || e.subject || '';
+      ev.title = evTitle + '\n' + startDt.toLocaleTimeString('nb-NO',{hour:'2-digit',minute:'2-digit',hour12:false}) + ' – ' + endDt.toLocaleTimeString('nb-NO',{hour:'2-digit',minute:'2-digit',hour12:false});
+      const titleEl = document.createElement('div'); titleEl.className = 'cal-event-title'; titleEl.textContent = e.title || e.subject || '';
       const timeEl = document.createElement('div'); timeEl.className = 'cal-event-time';
-      timeEl.textContent = startDt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      timeEl.textContent = startDt.toLocaleTimeString('nb-NO',{hour:'2-digit',minute:'2-digit',hour12:false});
       ev.appendChild(titleEl); if (heightPx > 30) ev.appendChild(timeEl);
       hourCell.style.position = 'relative';
       hourCell.appendChild(ev);
