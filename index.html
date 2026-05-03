@@ -1056,12 +1056,14 @@ window.tryUnlock = async function() {
         <span class="notepad-title">📝 Notes</span>
         <div style="display:flex;gap:6px;align-items:center;">
           <button onclick="toggleNotepadMode()" id="notepad-mode-btn" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--cal-text);cursor:pointer;" title="Toggle persistent notes">📌 Sticky</button>
+          <button onclick="togglePhoneNotes()" id="notepad-phone-btn" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--med-text);cursor:pointer;" title="Phone notes">📱 Phone</button>
           <button class="notepad-clear" onclick="clearNotepad()" title="Clear notes">✕ clear</button>
         </div>
       </div>
       <div class="notepad-body">
         <textarea class="notepad-textarea" id="notepad-text" placeholder="Jot anything down…&#10;Phone numbers, quick thoughts,&#10;things mentioned in passing…"></textarea>
         <textarea class="notepad-textarea" id="notepad-persistent" style="display:none;" placeholder="Persistent notes — stays across all weeks…&#10;Phone numbers, ongoing reminders, key info…"></textarea>
+        <textarea class="notepad-textarea" id="notepad-phone" style="display:none;" placeholder="Notes from your phone appear here…&#10;Pull from GitHub to refresh."></textarea>
         <div class="notepad-saved" id="notepad-saved"></div>
       </div>
     </div>
@@ -3118,8 +3120,32 @@ function clearNotepad() {
   }, 'Clear');
 }
 
-let notepadMode = 'weekly'; // 'weekly' or 'persistent'
+let notepadMode = 'weekly'; // 'weekly' | 'persistent' | 'phone'
+
+function togglePhoneNotes() {
+  const isPhone = notepadMode === 'phone';
+  notepadMode = isPhone ? 'weekly' : 'phone';
+  const weekly = document.getElementById('notepad-text');
+  const persistent = document.getElementById('notepad-persistent');
+  const phone = document.getElementById('notepad-phone');
+  const modeBtn = document.getElementById('notepad-mode-btn');
+  const phoneBtn = document.getElementById('notepad-phone-btn');
+  weekly.style.display = 'none';
+  persistent.style.display = 'none';
+  phone.style.display = 'none';
+  if (notepadMode === 'phone') {
+    phone.style.display = '';
+    phone.value = localStorage.getItem('wtp_notepad_phone') || '';
+    if (phoneBtn) { phoneBtn.style.background = 'var(--med-bg)'; phoneBtn.style.borderColor = 'var(--med-text)'; }
+    if (modeBtn) { modeBtn.style.background = ''; modeBtn.style.borderColor = ''; }
+  } else {
+    weekly.style.display = '';
+    if (phoneBtn) { phoneBtn.style.background = ''; phoneBtn.style.borderColor = ''; }
+  }
+}
+
 function toggleNotepadMode() {
+  if (notepadMode === 'phone') { togglePhoneNotes(); return; }
   notepadMode = notepadMode === 'weekly' ? 'persistent' : 'weekly';
   const weekly = document.getElementById('notepad-text');
   const persistent = document.getElementById('notepad-persistent');
@@ -4556,8 +4582,8 @@ function createMobileNotesPanel() {
 
   const modeBtn = document.createElement('button');
   modeBtn.style.cssText='font-family:inherit;font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--cal-text);cursor:pointer;flex-shrink:0;';
-  modeBtn.textContent='📅 Weekly';
-  let noteMode = 'weekly';
+  modeBtn.textContent='📱 Phone';
+  let noteMode = 'phone';
 
   const syncBadge = document.createElement('span');
   syncBadge.style.cssText='font-size:11px;color:var(--text3);flex-shrink:0;min-width:50px;text-align:right;';
@@ -4587,16 +4613,33 @@ function createMobileNotesPanel() {
   ta.placeholder = 'Start typing…\n\nSyncs to your computer automatically.';
   panel.appendChild(ta);
 
-  const getKey = () => noteMode === 'weekly' ? userNoteKey(currentUser?.name||'') : 'wtp_notepad_persistent';
+  const getKey = () => {
+    if (noteMode === 'weekly') return userNoteKey(currentUser?.name||'');
+    if (noteMode === 'persistent') return 'wtp_notepad_persistent';
+    return 'wtp_notepad_phone';
+  };
 
   const loadContent = () => {
     ta.value = localStorage.getItem(getKey()) || '';
-    modeBtn.textContent = noteMode === 'weekly' ? '📅 Weekly' : '📌 Sticky';
-    modeBtn.style.color = noteMode === 'weekly' ? 'var(--cal-text)' : 'var(--med-text)';
+    if (noteMode === 'weekly') {
+      modeBtn.textContent = '📅 Weekly';
+      modeBtn.style.color = 'var(--cal-text)';
+      ta.placeholder = 'Weekly notes — clears each week…';
+    } else if (noteMode === 'persistent') {
+      modeBtn.textContent = '📌 Sticky';
+      modeBtn.style.color = 'var(--med-text)';
+      ta.placeholder = 'Sticky notes — stays across all weeks…';
+    } else {
+      modeBtn.textContent = '📱 Phone';
+      modeBtn.style.color = '#f472b6';
+      ta.placeholder = 'Quick notes from your phone…\nShows up on your computer too.';
+    }
   };
 
   modeBtn.onclick = () => {
-    noteMode = noteMode === 'weekly' ? 'persistent' : 'weekly';
+    if (noteMode === 'weekly') noteMode = 'persistent';
+    else if (noteMode === 'persistent') noteMode = 'phone';
+    else noteMode = 'weekly';
     loadContent();
     ta.focus();
   };
@@ -4608,7 +4651,10 @@ function createMobileNotesPanel() {
     saveTimer = setTimeout(() => {
       localStorage.setItem(getKey(), ta.value);
       // Mirror to desktop notepad textarea
-      const desktopTa = document.getElementById(noteMode === 'weekly' ? 'notepad-text' : 'notepad-persistent');
+      let desktopId = 'notepad-text';
+      if (noteMode === 'persistent') desktopId = 'notepad-persistent';
+      if (noteMode === 'phone') desktopId = 'notepad-phone';
+      const desktopTa = document.getElementById(desktopId);
       if (desktopTa) desktopTa.value = ta.value;
       scheduleSyncSave();
       syncBadge.textContent = '✓ saved';
