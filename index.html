@@ -996,8 +996,8 @@ window.tryUnlock = async function() {
       <button class="btn-save" onclick="showAddPersonModal()" style="font-size:12px;">+ Add person</button>
     </div>
   </div>
-  <div class="oto-layout">
-    <div id="team-health-bar" class="team-health-bar" style="display:none;grid-column:1/-1;"></div>
+  <div id="team-health-bar" class="team-health-bar" style="display:none;margin-top:4px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;"></div>
+  <div class="oto-layout" style="border-radius:0 0 var(--radius-lg) var(--radius-lg);">
     <div class="oto-sidebar" id="oto-sidebar"></div>
     <div class="oto-main" id="oto-main">
       <div class="oto-empty-state" id="oto-empty"></div>
@@ -3892,40 +3892,72 @@ async function refreshSlaPanel() {
   const btn = document.getElementById('sla-refresh-btn');
   if (btn) { btn.textContent = '⟳ Loading…'; btn.disabled = true; }
 
+  const showErr = (msg) => {
+    const countsEl = document.getElementById('sla-counts');
+    if (countsEl) { countsEl.innerHTML = ''; const e = document.createElement('span'); e.style.cssText='font-size:11px;color:var(--high-text);'; e.textContent='⚠ '+msg; countsEl.appendChild(e); }
+  };
+
   try {
     const now = new Date();
     const plus5h = new Date(now.getTime() + 5 * 60 * 60 * 1000);
     const fmtIso = d => d.toISOString().replace(/\.\d{3}Z$/, 'Z');
-    const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return 0; } };
 
-    // Fetch counts and tickets in parallel
-    const breachedQuery   = `type:ticket group:${slaGroupId} status<solved sla_breach:true`;
-    const soonQuery       = `type:ticket group:${slaGroupId} status<solved sla_next_breach_at<${fmtIso(plus5h)} sla_breach:false`;
-    const unassignedQuery = `type:ticket group:${slaGroupId} no:assignee status<solved`;
+    // Try both breach syntaxes — Zendesk uses different values in different plans
+    // Also try without group filter first to confirm SLA queries work at all
+    const debugQuery = `type:ticket sla_breach:true status:open`;
+    let debugCount = 0;
+    try { debugCount = await zdCount(debugQuery); } catch(e) {}
+
+    // Build queries — try with group ID, fall back to no group filter if needed
+    const groupFilter = slaGroupId ? ` group:${slaGroupId}` : '';
+    const statusFilter = `(status:open OR status:pending OR status:hold)`;
+
+    const breachedQuery   = `type:ticket${groupFilter} sla_breach:true ${statusFilter}`;
+    const soonQuery       = `type:ticket${groupFilter} sla_next_breach_at<${fmtIso(plus5h)} sla_breach:false ${statusFilter}`;
+    const unassignedQuery = `type:ticket${groupFilter} no:assignee ${statusFilter}`;
+
+    // Test if breach query works, if not try without group
+    let useGroupFilter = true;
+    try {
+      await zdCount(breachedQuery);
+    } catch(e) {
+      useGroupFilter = false;
+    }
+
+    const finalGroup = useGroupFilter ? groupFilter : '';
+    const finalBreached   = `type:ticket${finalGroup} sla_breach:true ${statusFilter}`;
+    const finalSoon       = `type:ticket${finalGroup} sla_next_breach_at<${fmtIso(plus5h)} sla_breach:false ${statusFilter}`;
+    const finalUnassigned = `type:ticket${finalGroup} no:assignee ${statusFilter}`;
+
+    const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return '?'; } };
 
     const [breachedCount, soonCount, unassignedCount, breachedTickets, soonTickets] = await Promise.all([
-      safeCount(breachedQuery),
-      safeCount(soonQuery),
-      safeCount(unassignedQuery),
-      zdFetch('/search.json?query=' + encodeURIComponent(breachedQuery) + '&per_page=25&sort_by=created_at&sort_order=asc')
+      safeCount(finalBreached),
+      safeCount(finalSoon),
+      safeCount(finalUnassigned),
+      zdFetch('/search.json?query=' + encodeURIComponent(finalBreached) + '&per_page=25&sort_by=created_at&sort_order=asc')
         .then(r => r.results || []).catch(() => []),
-      zdFetch('/search.json?query=' + encodeURIComponent(soonQuery) + '&per_page=25&sort_by=sla_next_breach_at&sort_order=asc')
+      zdFetch('/search.json?query=' + encodeURIComponent(finalSoon) + '&per_page=25&sort_by=sla_next_breach_at&sort_order=asc')
         .then(r => r.results || []).catch(() => []),
     ]);
 
-    // Update counts bar
     const countsEl = document.getElementById('sla-counts');
     if (countsEl) {
       countsEl.innerHTML = '';
       const pills = [
         { val: breachedCount,   label: breachedCount === 1 ? '1 breached' : breachedCount + ' breached',      cls: breachedCount > 0 ? 'breached' : 'ok' },
         { val: soonCount,       label: soonCount === 1 ? '1 breaching soon' : soonCount + ' breaching soon',  cls: soonCount > 0 ? 'soon' : 'ok' },
-        { val: unassignedCount, label: unassignedCount + ' unassigned',                                        cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
+        { val: unassignedCount, label: unassignedCount + ' unassigned',                                       cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
       ];
       pills.forEach(p => {
         const pill = document.createElement('span'); pill.className = 'sla-count-pill ' + p.cls;
         pill.textContent = p.label; countsEl.appendChild(pill);
       });
+      // Debug: show which group filter was used
+      const dbg = document.createElement('span'); dbg.style.cssText = 'font-size:10px;color:var(--text3);';
+      dbg.textContent = useGroupFilter ? `group:${slaGroupId}` : 'all groups';
+      dbg.title = 'Query: ' + finalBreached;
+      countsEl.appendChild(dbg);
     }
 
     // Render breached tickets
@@ -4869,6 +4901,10 @@ function taskMatchesFilter(t) {
 
 function renderCard(t) {
   const isMeeting = t.isMeeting;
+  const conflicts = getMeetingConflicts(t);
+  const hasConflict = conflicts.length > 0;
+  const overdue = isOverdue(t);
+  const div = document.createElement('div');
   div.className = 'card' + (t.done ? ' done-line' : '') + (isMeeting ? ' meeting-card' : '') + (hasConflict ? ' conflict-card' : '') + (t.colour ? ' card-label-' + t.colour : '') + (overdue ? ' overdue' : '');
   div.draggable = true; div.dataset.id = t.id;
 
