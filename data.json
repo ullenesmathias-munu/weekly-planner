@@ -373,7 +373,7 @@
   "wtp_profile_cecilie": {
     "log": [],
     "goals": [],
-    "rag": "red",
+    "rag": "amber",
     "focus": "",
     "_open": true
   }
