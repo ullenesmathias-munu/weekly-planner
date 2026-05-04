@@ -1,69 +1,4 @@
 {
-  "wtp_wingman": [
-    {
-      "dates": "27/4 - 28/4",
-      "days": "Mon-Tue",
-      "person": "Maylen",
-      "from": "2026-04-27",
-      "to": "2026-04-28"
-    },
-    {
-      "dates": "29/4 - 30/4",
-      "days": "Wed-Thu",
-      "person": "Benjamin",
-      "from": "2026-04-29",
-      "to": "2026-04-30"
-    },
-    {
-      "dates": "4/5 - 5/5",
-      "days": "Mon-Tue",
-      "person": "Cecilie",
-      "from": "2026-05-04",
-      "to": "2026-05-05"
-    },
-    {
-      "dates": "6/5 - 7/5",
-      "days": "Wed-Thu",
-      "person": "Marie",
-      "from": "2026-05-06",
-      "to": "2026-05-07"
-    },
-    {
-      "dates": "11/5 - 12/5",
-      "days": "Mon-Tue",
-      "person": "Andreas",
-      "from": "2026-05-11",
-      "to": "2026-05-12"
-    },
-    {
-      "dates": "18/5 - 19/5",
-      "days": "Mon-Tue",
-      "person": "Thomas",
-      "from": "2026-05-18",
-      "to": "2026-05-19"
-    },
-    {
-      "dates": "1/6 - 2/6",
-      "days": "Mon-Tue",
-      "person": "Jonas",
-      "from": "2026-06-01",
-      "to": "2026-06-02"
-    },
-    {
-      "dates": "15/6 - 16/6",
-      "days": "Mon-Tue",
-      "person": "Vetle",
-      "from": "2026-06-15",
-      "to": "2026-06-16"
-    },
-    {
-      "dates": "22/6 - 23/6",
-      "days": "Mon-Tue",
-      "person": "Julie",
-      "from": "2026-06-22",
-      "to": "2026-06-23"
-    }
-  ],
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -254,7 +189,8 @@
       "done": false
     }
   ],
-  "wtp_profile_jonas": {
+  "wtp_notepad_persistent": "Test",
+  "wtp_profile_thomas": {
     "log": [],
     "goals": [],
     "rag": "none",
@@ -278,6 +214,49 @@
       "isAdmin": false
     }
   ],
+  "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\n\n\n",
+  "wtp_profile_andreas": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_profile_maylen": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json",
+  "wtp_tasks_michael": [
+    {
+      "id": "1777319031387",
+      "day": "Monday",
+      "title": "testing",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "test",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "09:45",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    }
+  ],
+  "wtp_profile_bernadett": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
   "wtp_oto_mathias": {
     "people": [
       {
@@ -319,47 +298,76 @@
     ],
     "sessions": []
   },
-  "wtp_tasks_michael": [
+  "wtp_wingman": [
     {
-      "id": "1777319031387",
-      "day": "Monday",
-      "title": "testing",
-      "priority": "medium",
-      "due": "27 Apr",
-      "note": "test",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "09:45",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-04-26",
-      "done": false
+      "dates": "27/4 - 28/4",
+      "days": "Mon-Tue",
+      "person": "Maylen",
+      "from": "2026-04-27",
+      "to": "2026-04-28"
+    },
+    {
+      "dates": "29/4 - 30/4",
+      "days": "Wed-Thu",
+      "person": "Benjamin",
+      "from": "2026-04-29",
+      "to": "2026-04-30"
+    },
+    {
+      "dates": "4/5 - 5/5",
+      "days": "Mon-Tue",
+      "person": "Cecilie",
+      "from": "2026-05-04",
+      "to": "2026-05-05"
+    },
+    {
+      "dates": "6/5 - 7/5",
+      "days": "Wed-Thu",
+      "person": "Marie",
+      "from": "2026-05-06",
+      "to": "2026-05-07"
+    },
+    {
+      "dates": "11/5 - 12/5",
+      "days": "Mon-Tue",
+      "person": "Andreas",
+      "from": "2026-05-11",
+      "to": "2026-05-12"
+    },
+    {
+      "dates": "18/5 - 19/5",
+      "days": "Mon-Tue",
+      "person": "Thomas",
+      "from": "2026-05-18",
+      "to": "2026-05-19"
+    },
+    {
+      "dates": "1/6 - 2/6",
+      "days": "Mon-Tue",
+      "person": "Jonas",
+      "from": "2026-06-01",
+      "to": "2026-06-02"
+    },
+    {
+      "dates": "15/6 - 16/6",
+      "days": "Mon-Tue",
+      "person": "Vetle",
+      "from": "2026-06-15",
+      "to": "2026-06-16"
+    },
+    {
+      "dates": "22/6 - 23/6",
+      "days": "Mon-Tue",
+      "person": "Julie",
+      "from": "2026-06-22",
+      "to": "2026-06-23"
     }
   ],
-  "wtp_profile_maylen": {
+  "wtp_profile_jonas": {
     "log": [],
     "goals": [],
     "rag": "none",
     "focus": "",
     "_open": true
-  },
-  "wtp_profile_thomas": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\n\n\n",
-  "wtp_profile_andreas": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_notepad_persistent": "Test"
+  }
 }
