@@ -369,5 +369,12 @@
     "rag": "none",
     "focus": "",
     "_open": true
+  },
+  "wtp_profile_cecilie": {
+    "log": [],
+    "goals": [],
+    "rag": "red",
+    "focus": "",
+    "_open": true
   }
 }
