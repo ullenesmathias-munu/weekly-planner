@@ -782,7 +782,21 @@
   .fb-post-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; }
   .fb-post-del:hover { color: var(--high-text); }
   .fb-empty { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
-  .fb-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); padding: 4px 2px 6px; }
+  .light-mode #tab-wordmark { color: var(--munu-dark) !important; }
+  .light-mode #tab-wordmark span { color: var(--munu-dark) !important; opacity: 0.7; }
+  .fb-comment-section { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .fb-comment { background: var(--surface2); border-radius: var(--radius-md); padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; }
+  .fb-comment-meta { font-size: 10px; color: var(--text3); display: flex; align-items: center; justify-content: space-between; }
+  .fb-comment-text { font-size: 12px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
+  .fb-comment-actions { display: flex; gap: 6px; }
+  .fb-comment-btn { font-size: 10px; font-weight: 600; color: var(--text3); background: none; border: none; cursor: pointer; padding: 0; }
+  .fb-comment-btn:hover { color: var(--cal-text); }
+  .fb-comment-btn.del:hover { color: var(--high-text); }
+  .fb-add-comment { display: flex; gap: 6px; margin-top: 2px; }
+  .fb-comment-input { flex: 1; font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 10px; outline: none; transition: border-color 0.15s; }
+  .fb-comment-input:focus { border-color: var(--cal-text); }
+  .fb-comment-submit { font-family: inherit; font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 6px 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: opacity 0.15s; }
+  .fb-comment-submit:hover { opacity: 0.85; }
   /* ─── Zendesk chart ──────────────────────────────── */
   .zd-chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px 12px; margin-bottom: 16px; }
   .zd-chart-title { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 14px; }
@@ -1058,7 +1072,7 @@ window.tryUnlock = async function() {
 
 <div class="tabs">
   <div style="display:flex;align-items:center;padding:0 18px 6px 2px;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;">
-    <span style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
+    <span id="tab-wordmark" style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
   </div>
   <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
@@ -1248,9 +1262,9 @@ window.tryUnlock = async function() {
         <div class="sla-section-title breached">🔴 Currently breached</div>
         <div class="sla-ticket-list" id="sla-breached-list"><div class="sla-loading">Loading…</div></div>
       </div>
-      <div class="sla-section" id="sla-soon-section">
-        <div class="sla-section-title soon">⚠ Breaching within 5 hours</div>
-        <div class="sla-ticket-list" id="sla-soon-list"><div class="sla-loading">Loading…</div></div>
+      <div class="sla-section" id="sla-oldest-section">
+        <div class="sla-section-title" style="color:var(--text2);">&#128336; Oldest open tickets</div>
+        <div class="sla-ticket-list" id="sla-oldest-list"><div class="sla-loading">Loading…</div></div>
       </div>
     </div>
   </div>
@@ -1368,13 +1382,21 @@ window.tryUnlock = async function() {
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">All users</div>
         <div id="user-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">Add user</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <input type="text" id="new-username" placeholder="Username" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+          <input type="text" id="new-username" placeholder="Username or email" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
+          <input type="text" id="new-displayname" placeholder="Display name (e.g. Kate)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
           <input type="password" id="new-password" placeholder="Password" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-          <input type="checkbox" id="new-isadmin" style="accent-color:var(--cal-text);"> <label for="new-isadmin" style="font-size:12px;color:var(--text2);margin-right:4px;">Admin</label>
-          <button class="btn-save" onclick="addUser()" style="font-size:12px;">Add</button>
         </div>
-        <span id="user-add-msg" style="font-size:11px;color:var(--text3);display:block;margin-top:6px;"></span>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
+            <input type="checkbox" id="new-isadmin" style="accent-color:var(--cal-text);"> Admin
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
+            <input type="checkbox" id="new-priv-zendesk" style="accent-color:var(--cal-text);"> Tickets (Zendesk)
+          </label>
+          <button class="btn-save" onclick="addUser()" style="font-size:12px;margin-left:auto;">Add user</button>
+        </div>
+        <span id="user-add-msg" style="font-size:11px;color:var(--text3);display:block;margin-top:4px;"></span>
       </div>
 
       <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;align-items:center;gap:10px;">
@@ -3320,7 +3342,7 @@ function renderMorningBriefing() {
   // Greeting + date
   const left = document.createElement('div'); left.style.cssText = 'flex:1;min-width:200px;';
   const greetEl = document.createElement('div'); greetEl.className = 'briefing-greeting';
-  greetEl.textContent = greeting + ', ' + currentUser.name + ' 👋';
+  greetEl.textContent = greeting + ', ' + getUserDisplayName() + ' 👋';
   const dateEl = document.createElement('div'); dateEl.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:8px;';
   dateEl.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   left.appendChild(greetEl); left.appendChild(dateEl);
@@ -3875,10 +3897,10 @@ function renderOtoMain(personName, data) {
         toggle.style.transform = open ? '' : 'rotate(90deg)';
       };
 
-      // Notes field
-      const notesLabel = document.createElement('div'); notesLabel.className = 'oto-field-label'; notesLabel.textContent = '📝 Notes';
+      // Notes field (private)
+      const notesLabel = document.createElement('div'); notesLabel.className = 'oto-field-label'; notesLabel.textContent = '📝 Private notes';
       const notesArea = document.createElement('textarea'); notesArea.className = 'oto-notes-area';
-      notesArea.placeholder = 'Notes, talking points, observations…';
+      notesArea.placeholder = 'Notes, talking points, observations… (only you see this)';
       notesArea.value = session.notes || '';
       let notesTimer;
       notesArea.addEventListener('input', () => {
@@ -3890,6 +3912,25 @@ function renderOtoMain(personName, data) {
         }, 600);
       });
       body.appendChild(notesLabel); body.appendChild(notesArea);
+
+      // Shared notes field (visible to agent)
+      const sharedLabel = document.createElement('div'); sharedLabel.className = 'oto-field-label';
+      sharedLabel.style.cssText = 'color:var(--cal-text);';
+      sharedLabel.textContent = '🔗 Shared notes — visible to ' + personName;
+      const sharedArea = document.createElement('textarea'); sharedArea.className = 'oto-notes-area';
+      sharedArea.style.cssText = 'border-color:rgba(122,173,255,0.3);';
+      sharedArea.placeholder = 'Agreed actions, decisions, things for ' + personName + ' to remember…';
+      sharedArea.value = session.sharedNotes || '';
+      let sharedTimer;
+      sharedArea.addEventListener('input', () => {
+        clearTimeout(sharedTimer);
+        sharedTimer = setTimeout(() => {
+          const d = getOtoData();
+          const s = d.sessions.find(x => x.id === session.id);
+          if (s) { s.sharedNotes = sharedArea.value; saveOto(d); }
+        }, 600);
+      });
+      body.appendChild(sharedLabel); body.appendChild(sharedArea);
 
       // Action items
       const actLabel = document.createElement('div'); actLabel.className = 'oto-field-label'; actLabel.textContent = '✓ Action items';
@@ -3955,6 +3996,41 @@ function renderOtoMain(personName, data) {
     });
   }
   main.appendChild(sessionsDiv);
+
+  // ── Agenda from agent ─────────────────────────────────────────
+  const agendaItems = loadAgenda(personName);
+  const agendaSection = document.createElement('div');
+  agendaSection.style.cssText = 'background:var(--surface);border:1px solid var(--cal-border);border-radius:var(--radius-lg);padding:14px 18px;margin-top:4px;';
+  const agendaHdr = document.createElement('div'); agendaHdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
+  const agendaTitle = document.createElement('div'); agendaTitle.className = 'oto-field-label';
+  agendaTitle.style.cssText = 'color:var(--cal-text);margin-bottom:0;';
+  agendaTitle.textContent = '📋 ' + personName + "'s agenda for next 1:1";
+  const agendaClear = document.createElement('button');
+  agendaClear.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;';
+  agendaClear.textContent = agendaItems.length ? 'Clear all' : '';
+  agendaClear.onclick = () => { saveAgenda(personName, []); renderOtoMain(personName, getOtoData()); };
+  agendaHdr.appendChild(agendaTitle); agendaHdr.appendChild(agendaClear);
+  agendaSection.appendChild(agendaHdr);
+  if (!agendaItems.length) {
+    const none = document.createElement('div'); none.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
+    none.textContent = personName + ' hasn\'t added any topics yet';
+    agendaSection.appendChild(none);
+  } else {
+    const list = document.createElement('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:5px;';
+    agendaItems.forEach((item, i) => {
+      const row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--surface2);border-radius:var(--radius-md);';
+      const dot = document.createElement('div'); dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;';
+      const txt = document.createElement('span'); txt.style.cssText = 'font-size:12px;color:var(--text);flex:1;'; txt.textContent = item.text;
+      const ts = document.createElement('span'); ts.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;';
+      ts.textContent = new Date(item.ts).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+      const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;flex-shrink:0;'; del.textContent = '✕';
+      del.onclick = () => { const all = loadAgenda(personName); all.splice(i, 1); saveAgenda(personName, all); renderOtoMain(personName, getOtoData()); };
+      row.appendChild(dot); row.appendChild(txt); row.appendChild(ts); row.appendChild(del);
+      list.appendChild(row);
+    });
+    agendaSection.appendChild(list);
+  }
+  main.appendChild(agendaSection);
 
   // New session bar at bottom
   // Feedback preview section
@@ -4156,6 +4232,9 @@ function normalizeKey(name) {
 function profileKey(name) { return 'wtp_profile_' + normalizeKey(name); }
 function fbKey(username) { return 'wtp_fb_' + normalizeKey(username); }
 function fbLastSeenKey(name) { return 'wtp_fb_seen_' + normalizeKey(name); }
+function agendaKey(username) { return 'wtp_agenda_' + normalizeKey(username); }
+function loadAgenda(username) { try { return JSON.parse(localStorage.getItem(agendaKey(username)) || '[]'); } catch { return []; } }
+function saveAgenda(username, items) { localStorage.setItem(agendaKey(username), JSON.stringify(items)); scheduleSyncSave(); }
 function loadProfile(name) {
   try { return JSON.parse(localStorage.getItem(profileKey(name)) || '{}'); } catch { return {}; }
 }
@@ -4467,6 +4546,23 @@ function saveFbPosts(username, posts) {
   }
 }
 
+async function pushAgendaAsNonAdmin(username) {
+  const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
+  if (!token) return;
+  try {
+    const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers });
+    if (!res.ok) return;
+    const json = await res.json();
+    let data = {};
+    try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
+    data[agendaKey(username)] = loadAgenda(username);
+    const jsonStr = JSON.stringify(data, null, 2);
+    const asciiSafe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
+    await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'agenda from ' + username, content: btoa(asciiSafe), sha: json.sha }) });
+  } catch(e) { console.warn('Agenda push failed:', e); }
+}
+
 async function pushFeedbackAsNonAdmin(username, posts) {
   // Use the feedback write token if set, otherwise fall back to readonly token
   const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
@@ -4479,8 +4575,9 @@ async function pushFeedbackAsNonAdmin(username, posts) {
     const json = await res.json();
     let data = {};
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
-    // Inject this user's feedback
+    // Inject this user's feedback and agenda
     data[fbKey(username)] = posts;
+    data[agendaKey(username)] = loadAgenda(username);
     const jsonStr = JSON.stringify(data, null, 2);
     const asciiSafe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
     const body = { message: 'feedback from ' + username, content: btoa(asciiSafe), sha: json.sha };
@@ -4560,7 +4657,7 @@ function renderFeedbackAdmin(body, topRight) {
             saveFbPosts(fbSelectedUser, all);
             renderFeedbackTab();
           }, 'Delete');
-        });
+        }, fbSelectedUser);
         postsDiv.appendChild(card);
       });
       main.appendChild(postsDiv);
@@ -4574,9 +4671,93 @@ function renderFeedbackUser(body, topRight, username) {
   body.innerHTML = '';
   topRight.innerHTML = '';
 
-  const posts = loadFbPosts(username);
+  // ── Shared notes from manager (read from admin's OTO data) ────
+  // Admin stores OTO under their own key — we need to find the admin user
+  const adminUser = getUsers().find(u => u.isAdmin);
+  const adminOtoKey = adminUser ? 'wtp_oto_' + adminUser.name.toLowerCase() : null;
+  let sharedSessions = [];
+  if (adminOtoKey) {
+    try {
+      const otoRaw = localStorage.getItem(adminOtoKey);
+      if (otoRaw) {
+        const otoData = JSON.parse(otoRaw);
+        sharedSessions = (otoData.sessions || [])
+          .filter(s => s.person === username && s.sharedNotes && s.sharedNotes.trim())
+          .sort((a, b) => b.date.localeCompare(a.date))
+          .slice(0, 5);
+      }
+    } catch(e) {}
+  }
 
-  // Compose box
+  if (sharedSessions.length) {
+    const notesSection = document.createElement('div');
+    notesSection.style.cssText = 'background:var(--surface);border:1px solid var(--cal-border);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;';
+    const notesHdr = document.createElement('div'); notesHdr.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--cal-text);margin-bottom:12px;';
+    notesHdr.textContent = '🔗 Notes from your 1:1s';
+    notesSection.appendChild(notesHdr);
+    sharedSessions.forEach(s => {
+      const item = document.createElement('div'); item.style.cssText = 'margin-bottom:12px;padding-bottom:12px;border-bottom:0.5px solid var(--border);';
+      const dateLbl = document.createElement('div'); dateLbl.style.cssText = 'font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;';
+      dateLbl.textContent = new Date(s.date + 'T00:00:00').toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
+      const noteTxt = document.createElement('div'); noteTxt.style.cssText = 'font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;';
+      noteTxt.textContent = s.sharedNotes;
+      item.appendChild(dateLbl); item.appendChild(noteTxt);
+      notesSection.appendChild(item);
+    });
+    body.appendChild(notesSection);
+  }
+
+  // ── Agenda for next 1:1 ───────────────────────────────────────
+  const agendaSection = document.createElement('div');
+  agendaSection.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;';
+  const agendaTitle = document.createElement('div'); agendaTitle.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);margin-bottom:10px;';
+  agendaTitle.textContent = '📋 Your agenda for next 1:1';
+  agendaSection.appendChild(agendaTitle);
+
+  const agendaItems = loadAgenda(username);
+  const agendaList = document.createElement('div'); agendaList.style.cssText = 'display:flex;flex-direction:column;gap:5px;margin-bottom:10px;';
+  const renderAgendaList = () => {
+    agendaList.innerHTML = '';
+    const items = loadAgenda(username);
+    if (!items.length) {
+      const empty = document.createElement('div'); empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;padding:4px 0;';
+      empty.textContent = 'Add topics you want to discuss in your next 1:1';
+      agendaList.appendChild(empty);
+    } else {
+      items.forEach((item, i) => {
+        const row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--surface2);border-radius:var(--radius-md);';
+        const dot = document.createElement('div'); dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;';
+        const txt = document.createElement('span'); txt.style.cssText = 'font-size:12px;color:var(--text);flex:1;'; txt.textContent = item.text;
+        const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;flex-shrink:0;'; del.textContent = '✕';
+        del.onclick = () => { const all = loadAgenda(username); all.splice(i,1); saveAgenda(username, all); pushAgendaAsNonAdmin(username); renderAgendaList(); };
+        row.appendChild(dot); row.appendChild(txt); row.appendChild(del);
+        agendaList.appendChild(row);
+      });
+    }
+  };
+  renderAgendaList();
+  agendaSection.appendChild(agendaList);
+
+  const addRow = document.createElement('div'); addRow.style.cssText = 'display:flex;gap:6px;';
+  const addInp = document.createElement('input'); addInp.className = 'fb-comment-input'; addInp.type = 'text';
+  addInp.placeholder = 'Add a topic for your next 1:1…';
+  const addBtn = document.createElement('button'); addBtn.className = 'fb-comment-submit'; addBtn.textContent = 'Add';
+  const doAdd = () => {
+    const val = addInp.value.trim(); if (!val) return;
+    const all = loadAgenda(username);
+    all.push({ id: Date.now()+'', text: val, ts: new Date().toISOString() });
+    saveAgenda(username, all);
+    pushAgendaAsNonAdmin(username);
+    addInp.value = ''; renderAgendaList();
+  };
+  addInp.addEventListener('keydown', e => { if (e.key === 'Enter') doAdd(); });
+  addBtn.onclick = doAdd;
+  addRow.appendChild(addInp); addRow.appendChild(addBtn);
+  agendaSection.appendChild(addRow);
+  body.appendChild(agendaSection);
+
+  // ── Feedback posts ────────────────────────────────────────────
+  const posts = loadFbPosts(username);
   const compose = document.createElement('div'); compose.className = 'fb-compose';
   const compLabel = document.createElement('div'); compLabel.className = 'fb-compose-label'; compLabel.textContent = 'Share a thought, idea or feedback';
   const ta = document.createElement('textarea'); ta.className = 'fb-textarea'; ta.placeholder = 'What\'s on your mind? Share ideas, suggestions, feedback - this goes directly to your manager.';
@@ -4595,7 +4776,6 @@ function renderFeedbackUser(body, topRight, username) {
   compose.appendChild(compLabel); compose.appendChild(ta); compose.appendChild(submitBtn);
   body.appendChild(compose);
 
-  // Posts
   const reversed = [...posts].reverse();
   if (!reversed.length) {
     body.appendChild(makeEmptyState('💭', 'Nothing shared yet', 'Your thoughts go directly to your manager. Ctrl+Enter to post quickly.'));
@@ -4617,17 +4797,107 @@ function renderFeedbackUser(body, topRight, username) {
   }
 }
 
-function fbMakeCard(post, showAuthor, onDelete) {
+function fbMakeCard(post, isAdminView, onDelete, ownerName) {
   const card = document.createElement('div'); card.className = 'fb-post-card';
+
+  // ── Header ────────────────────────────────────────────────────
   const hdr = document.createElement('div'); hdr.className = 'fb-post-header';
   const meta = document.createElement('div'); meta.className = 'fb-post-meta';
   const ts = new Date(post.ts);
   meta.textContent = ts.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' }) + ' · ' + ts.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-  const del = document.createElement('button'); del.className = 'fb-post-del'; del.textContent = '✕'; del.onclick = onDelete;
+  const del = document.createElement('button'); del.className = 'fb-post-del'; del.textContent = '✕'; del.title = 'Delete post'; del.onclick = onDelete;
   hdr.appendChild(meta); hdr.appendChild(del);
+
+  // ── Post body ─────────────────────────────────────────────────
   const txt = document.createElement('div'); txt.className = 'fb-post-body'; txt.textContent = post.text;
   card.appendChild(hdr); card.appendChild(txt);
+
+  // ── Comments section (admin only) ─────────────────────────────
+  if (isAdminView) {
+    const comments = post.comments || [];
+    const commSection = document.createElement('div'); commSection.className = 'fb-comment-section';
+
+    const renderComments = () => {
+      commSection.innerHTML = '';
+      const currentComments = post.comments || [];
+
+      currentComments.forEach((c, ci) => {
+        const commEl = document.createElement('div'); commEl.className = 'fb-comment';
+
+        const commMeta = document.createElement('div'); commMeta.className = 'fb-comment-meta';
+        const commTs = document.createElement('span');
+        commTs.textContent = new Date(c.ts).toLocaleDateString('en-GB', { day:'numeric', month:'short' }) + ' · ' + new Date(c.ts).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) + ' · You';
+        const commActs = document.createElement('div'); commActs.className = 'fb-comment-actions';
+
+        const editBtn = document.createElement('button'); editBtn.className = 'fb-comment-btn'; editBtn.textContent = 'Edit';
+        editBtn.onclick = () => {
+          const inp = commSection.querySelector('.fb-comment-input');
+          if (inp) { inp.value = c.text; inp.focus(); inp.dataset.editIdx = ci; }
+        };
+        const delBtn = document.createElement('button'); delBtn.className = 'fb-comment-btn del'; delBtn.textContent = 'Delete';
+        delBtn.onclick = () => {
+          post.comments.splice(ci, 1);
+          persistFbComment(ownerName, post);
+          renderComments();
+        };
+        commActs.appendChild(editBtn); commActs.appendChild(delBtn);
+        commMeta.appendChild(commTs); commMeta.appendChild(commActs);
+
+        const commBody = document.createElement('div'); commBody.className = 'fb-comment-text'; commBody.textContent = c.text;
+        commEl.appendChild(commMeta); commEl.appendChild(commBody);
+        commSection.appendChild(commEl);
+      });
+
+      // ── Add comment input ──────────────────────────────────────
+      const addRow = document.createElement('div'); addRow.className = 'fb-add-comment';
+      const inp = document.createElement('input'); inp.className = 'fb-comment-input'; inp.type = 'text';
+      inp.placeholder = 'Add a comment…';
+      const submitBtn = document.createElement('button'); submitBtn.className = 'fb-comment-submit';
+      submitBtn.textContent = 'Comment';
+
+      const doSubmit = () => {
+        const val = inp.value.trim(); if (!val) return;
+        if (!post.comments) post.comments = [];
+        const editIdx = inp.dataset.editIdx !== undefined && inp.dataset.editIdx !== '' ? parseInt(inp.dataset.editIdx) : -1;
+        if (editIdx >= 0 && post.comments[editIdx]) {
+          post.comments[editIdx].text = val;
+          post.comments[editIdx].edited = new Date().toISOString();
+          delete inp.dataset.editIdx;
+          submitBtn.textContent = 'Comment';
+        } else {
+          post.comments.push({ id: Date.now()+'', text: val, ts: new Date().toISOString() });
+        }
+        inp.value = '';
+        persistFbComment(ownerName, post);
+        renderComments();
+      };
+
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); doSubmit(); }
+        if (e.key === 'Escape') { inp.value = ''; delete inp.dataset.editIdx; submitBtn.textContent = 'Comment'; }
+      });
+      inp.addEventListener('input', () => {
+        submitBtn.textContent = inp.dataset.editIdx !== undefined && inp.dataset.editIdx !== '' ? 'Save' : 'Comment';
+      });
+      submitBtn.onclick = doSubmit;
+
+      addRow.appendChild(inp); addRow.appendChild(submitBtn);
+      commSection.appendChild(addRow);
+    };
+
+    renderComments();
+    card.appendChild(commSection);
+  }
+
   return card;
+}
+
+// Persist a single post's comments back into the stored fb array
+function persistFbComment(ownerName, post) {
+  if (!ownerName) return;
+  const all = loadFbPosts(ownerName);
+  const idx = all.findIndex(p => p.id === post.id);
+  if (idx >= 0) { all[idx] = post; saveFbPosts(ownerName, all); }
 }
 
 
@@ -4997,7 +5267,7 @@ function zdGetAbsentNames(fromDate, toDate) {
 }
 
 async function zdRefresh() {
-  if (!isAdmin()) return;
+  if (!hasPrivilege('zendesk')) return;
   if (!zdReady()) { zdShowSetup(); return; }
   const body = document.getElementById('zd-body');
   const fromDate = document.getElementById('zd-from')?.value;
@@ -5054,58 +5324,42 @@ async function refreshSlaPanel() {
   };
 
   try {
-    const now = new Date();
-    // Zendesk ISO format: no milliseconds, just Z
-    const fmtIso = d => d.toISOString().slice(0, 19) + 'Z';
-    const plus4h = new Date(now.getTime() + 4 * 60 * 60 * 1000);
-
-    // Status filter — open tickets only (pending and hold can still breach)
     const statusFilter = `(status:open OR status:pending OR status:hold)`;
     const groupFilter  = ` group:${slaGroupId}`;
 
-    // Breached = SLA already exceeded and ticket still open
     const breachedQuery   = `type:ticket${groupFilter} sla_breach:true ${statusFilter}`;
-    // Soon = breach time within next 4 hours (don't use sla_breach:false — unreliable on all plans)
-    const soonQuery       = `type:ticket${groupFilter} sla_next_breach_at<${fmtIso(plus4h)} sla_breach:false ${statusFilter}`;
     const unassignedQuery = `type:ticket${groupFilter} no:assignee ${statusFilter}`;
+    const oldestQuery     = `type:ticket${groupFilter} ${statusFilter}`;
 
     // Test breached query — fall back to no group filter if it errors
     let finalGroup = groupFilter;
-    try {
-      await zdCount(breachedQuery);
-    } catch(e) {
-      finalGroup = '';
-    }
+    try { await zdCount(breachedQuery); } catch(e) { finalGroup = ''; }
 
     const finalBreached   = `type:ticket${finalGroup} sla_breach:true ${statusFilter}`;
-    const finalSoon       = `type:ticket${finalGroup} sla_next_breach_at<${fmtIso(plus4h)} sla_breach:false ${statusFilter}`;
     const finalUnassigned = `type:ticket${finalGroup} no:assignee ${statusFilter}`;
+    const finalOldest     = `type:ticket${finalGroup} ${statusFilter}`;
 
     const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return '?'; } };
-    const safeFetch = async (q, sort) => {
+    const safeFetch = async (q, sort, order) => {
       try {
-        const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=25&sort_by=' + sort + '&sort_order=asc');
+        const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=25&sort_by=' + sort + '&sort_order=' + (order||'asc'));
         return r.results || [];
       } catch(e) { return []; }
     };
 
-    const [breachedCount, unassignedCount, breachedTickets, soonTickets] = await Promise.all([
+    const [breachedCount, unassignedCount, breachedTickets, oldestTickets] = await Promise.all([
       safeCount(finalBreached),
       safeCount(finalUnassigned),
-      safeFetch(finalBreached, 'created_at'),
-      safeFetch(finalSoon, 'sla_next_breach_at'),
+      safeFetch(finalBreached, 'created_at', 'asc'),
+      safeFetch(finalOldest, 'created_at', 'asc'),
     ]);
-
-    // soonCount derived from tickets length (avoids unreliable count for soon query)
-    const soonCount = soonTickets.length;
 
     const countsEl = document.getElementById('sla-counts');
     if (countsEl) {
       countsEl.innerHTML = '';
       const pills = [
-        { label: breachedCount + ' breached',        cls: breachedCount > 0 ? 'breached' : 'ok' },
-        { label: soonCount + ' breaching within 4h', cls: soonCount > 0 ? 'soon' : 'ok' },
-        { label: unassignedCount + ' unassigned',    cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
+        { label: breachedCount + ' breached',    cls: breachedCount > 0 ? 'breached' : 'ok' },
+        { label: unassignedCount + ' unassigned', cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
       ];
       pills.forEach(p => {
         const pill = document.createElement('span'); pill.className = 'sla-count-pill ' + p.cls;
@@ -5118,7 +5372,7 @@ async function refreshSlaPanel() {
     }
 
     renderSlaTicketList('sla-breached-list', breachedTickets, 'breached');
-    renderSlaTicketList('sla-soon-list', soonTickets, 'soon');
+    renderSlaTicketList('sla-oldest-list', oldestTickets, 'oldest');
 
   } catch(e) {
     showErr(e.message);
@@ -5135,23 +5389,45 @@ function renderSlaTicketList(containerId, tickets, type) {
 
   if (!tickets.length) {
     const empty = document.createElement('div'); empty.className = 'sla-empty';
-    empty.textContent = type === 'breached' ? '✓ No active SLA breaches' : '✓ No tickets breaching soon';
+    empty.textContent = type === 'breached' ? '✓ No active SLA breaches' : '✓ No open tickets';
     el.appendChild(empty); return;
+  }
+
+  // Helper: format ticket age from created_at
+  function ticketAge(createdAt) {
+    if (!createdAt) return '';
+    const ms = Date.now() - new Date(createdAt).getTime();
+    const mins = Math.floor(ms / 60000);
+    const hrs  = Math.floor(mins / 60);
+    const days = Math.floor(hrs / 24);
+    if (days > 0)  return days + 'd';
+    if (hrs > 0)   return hrs + 'h';
+    return mins + 'm';
   }
 
   tickets.slice(0, 20).forEach(t => {
     const row = document.createElement('a');
-    row.className = 'sla-ticket-row ' + type + '-row';
+    row.className = 'sla-ticket-row ' + (type !== 'oldest' ? type + '-row' : '');
     row.href = `https://munu3272.zendesk.com/agent/tickets/${t.id}`;
     row.target = '_blank';
     row.rel = 'noopener';
 
     const idEl = document.createElement('span'); idEl.className = 'sla-ticket-id'; idEl.textContent = '#' + t.id;
     const subjectEl = document.createElement('span'); subjectEl.className = 'sla-ticket-subject'; subjectEl.textContent = t.subject || '(no subject)';
-    const statusEl = document.createElement('span'); statusEl.className = 'sla-ticket-status ' + type;
-    statusEl.textContent = type === 'breached' ? '🔴 BREACHED' : '⚠ SOON';
+    const badgeEl = document.createElement('span'); badgeEl.className = 'sla-ticket-status';
 
-    row.appendChild(idEl); row.appendChild(subjectEl); row.appendChild(statusEl);
+    if (type === 'breached') {
+      badgeEl.classList.add('breached');
+      badgeEl.textContent = 'BREACHED';
+    } else {
+      // oldest — show age + assignee first name
+      const age = ticketAge(t.created_at);
+      const assignee = zdAgents?.find(a => a.id === t.assignee_id)?.name?.split(' ')[0] || '—';
+      badgeEl.style.cssText = 'background:var(--surface3);color:var(--text2);font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;flex-shrink:0;white-space:nowrap;';
+      badgeEl.textContent = age + ' · ' + assignee;
+    }
+
+    row.appendChild(idEl); row.appendChild(subjectEl); row.appendChild(badgeEl);
     el.appendChild(row);
   });
 
@@ -5457,7 +5733,7 @@ function zdShowSetup() {
 function initZendeskTab() {
   zdInitDates();
   const btn = document.getElementById('tab-btn-zendesk');
-  if (btn && isAdmin()) btn.style.display = '';
+  if (btn && hasPrivilege('zendesk')) btn.style.display = '';
 }
 
 // ─── GitHub Sync ──────────────────────────────────────────────────
@@ -5604,7 +5880,7 @@ async function ghSave() {
       if (!k) continue;
       // Skip keys with non-ASCII characters — these are corrupted duplicates
       if (/[^\x00-\x7F]/.test(k)) { localStorage.removeItem(k); continue; }
-      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token') {
+      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token') {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -5668,8 +5944,11 @@ async function ghReadOnlyLoad() {
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { return; }
     // For non-admins: only pull shared keys (schedule, users, wingman) - NOT other users' tasks
     const sharedKeys = ['wtp_users', 'wtp_wingman', 'wtp_encrypted_token']; // wtp_schedule always uses hardcoded version
-    // Also pull this user's own feedback key
-    if (currentUser) sharedKeys.push(fbKey(currentUser.name));
+    // Also pull this user's own feedback and agenda keys
+    if (currentUser) {
+      sharedKeys.push(fbKey(currentUser.name));
+      sharedKeys.push(agendaKey(currentUser.name));
+    }
     sharedKeys.forEach(k => {
       if (data[k] !== undefined) localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]));
     });
@@ -5917,13 +6196,13 @@ function loadUserData() {
   const ta = document.getElementById('notepad-text');
   if (ta) ta.value = localStorage.getItem(userNoteKey(u)) || '';
   const ud = document.getElementById('user-display');
-  if (ud) ud.textContent = u;
+  if (ud) ud.textContent = getUserDisplayName();
   // Show admin-only tabs
   const otoBtn = document.getElementById('tab-btn-onetoone');
   if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
   const calBtn = document.getElementById('tab-btn-calendar');
   if (calBtn) calBtn.style.display = currentUser?.isAdmin ? '' : 'none';
-  if (isAdmin()) initZendeskTab();
+  if (hasPrivilege('zendesk')) initZendeskTab();
   // Show non-admin sync card
   const nonAdminCard = document.getElementById('nonadmin-sync-card');
   if (nonAdminCard) nonAdminCard.style.display = (!currentUser?.isAdmin) ? '' : 'none';
@@ -5956,15 +6235,47 @@ function renderUserList() {
   list.innerHTML = '';
   users.forEach((u, idx) => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface2);border-radius:var(--radius-md);';
-    const name = document.createElement('span'); name.style.cssText = 'flex:1;font-size:12px;font-weight:500;color:var(--text);'; name.textContent = u.name;
-    const badge = document.createElement('span'); badge.style.cssText = 'font-size:10px;padding:1px 6px;border-radius:8px;' + (u.isAdmin ? 'background:var(--cal);color:var(--cal-text);' : 'background:var(--surface3);color:var(--text3);'); badge.textContent = u.isAdmin ? 'admin' : 'user';
-    row.appendChild(name); row.appendChild(badge);
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:var(--radius-md);flex-wrap:wrap;';
+
+    const nameWrap = document.createElement('div'); nameWrap.style.cssText = 'flex:1;min-width:0;';
+    const nameEl = document.createElement('div'); nameEl.style.cssText = 'font-size:12px;font-weight:600;color:var(--text);'; nameEl.textContent = getUserDisplayName(u);
+    const subEl = document.createElement('div'); subEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:1px;';
+    if (u.displayName && u.name !== u.displayName) subEl.textContent = u.name;
+    nameWrap.appendChild(nameEl); if (subEl.textContent) nameWrap.appendChild(subEl);
+
+    const badges = document.createElement('div'); badges.style.cssText = 'display:flex;align-items:center;gap:5px;';
+    const roleBadge = document.createElement('span');
+    roleBadge.style.cssText = 'font-size:10px;padding:1px 6px;border-radius:8px;' + (u.isAdmin ? 'background:var(--cal);color:var(--cal-text);' : 'background:var(--surface3);color:var(--text3);');
+    roleBadge.textContent = u.isAdmin ? 'admin' : 'user';
+    badges.appendChild(roleBadge);
+
+    // Privilege toggle chips (non-admin users only)
+    if (!u.isAdmin && u.name !== currentUser.name) {
+      const zdPriv = (u.privileges || []).includes('zendesk');
+      const zdChip = document.createElement('button');
+      zdChip.style.cssText = 'font-size:10px;padding:1px 7px;border-radius:8px;border:1px solid;cursor:pointer;transition:all 0.15s;' +
+        (zdPriv ? 'background:var(--low-bg);color:var(--low-text);border-color:rgba(76,175,80,0.3);' : 'background:var(--surface3);color:var(--text3);border-color:var(--border);');
+      zdChip.textContent = zdPriv ? '✓ Tickets' : '+ Tickets';
+      zdChip.title = zdPriv ? 'Click to remove Tickets access' : 'Click to grant Tickets access';
+      zdChip.onclick = () => {
+        const allUsers = getUsers();
+        const target = allUsers.find(x => x.name === u.name);
+        if (!target) return;
+        if (!target.privileges) target.privileges = [];
+        if (zdPriv) target.privileges = target.privileges.filter(p => p !== 'zendesk');
+        else target.privileges.push('zendesk');
+        localStorage.setItem('wtp_users', JSON.stringify(allUsers));
+        renderUserList();
+      };
+      badges.appendChild(zdChip);
+    }
+
+    row.appendChild(nameWrap); row.appendChild(badges);
     if (u.name !== currentUser.name) {
-      const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;'; del.textContent = 'remove';
+      const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;flex-shrink:0;'; del.textContent = 'remove';
       del.onmouseover = () => { del.style.color = 'var(--high-text)'; del.style.background = 'var(--high-bg)'; };
       del.onmouseout = () => { del.style.color = 'var(--text3)'; del.style.background = 'none'; };
-      del.onclick = () => confirmDialog('Remove user ' + u.name + '?', () => { const users = getUsers(); users.splice(idx,1); localStorage.setItem('wtp_users', JSON.stringify(users)); renderUserList(); }, 'Remove');
+      del.onclick = () => confirmDialog('Remove user ' + getUserDisplayName(u) + '?', () => { const users2 = getUsers(); users2.splice(idx,1); localStorage.setItem('wtp_users', JSON.stringify(users2)); renderUserList(); }, 'Remove');
       row.appendChild(del);
     }
     list.appendChild(row);
@@ -5973,20 +6284,30 @@ function renderUserList() {
 
 async function addUser() {
   const nameEl = document.getElementById('new-username');
+  const displayEl = document.getElementById('new-displayname');
   const pwEl = document.getElementById('new-password');
-  const isAdmin = document.getElementById('new-isadmin').checked;
+  const isAdminChk = document.getElementById('new-isadmin').checked;
+  const privZendesk = document.getElementById('new-priv-zendesk').checked;
   const msg = document.getElementById('user-add-msg');
   const name = nameEl.value.trim();
+  const displayName = displayEl ? displayEl.value.trim() : '';
   const pw = pwEl.value;
   if (!name) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a username'; return; }
   if (!pw) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a password'; return; }
   const users = getUsers();
   if (users.find(u => u.name.toLowerCase() === name.toLowerCase())) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Username already exists'; return; }
   const hash = await sha256(pw);
-  users.push({ name, hash, isAdmin });
+  const privileges = [];
+  if (privZendesk) privileges.push('zendesk');
+  const newUser = { name, hash, isAdmin: isAdminChk };
+  if (displayName) newUser.displayName = displayName;
+  if (privileges.length) newUser.privileges = privileges;
+  users.push(newUser);
   localStorage.setItem('wtp_users', JSON.stringify(users));
-  nameEl.value = ''; pwEl.value = ''; document.getElementById('new-isadmin').checked = false;
-  msg.style.color = 'var(--low-text)'; msg.textContent = '✓ User ' + name + ' added';
+  nameEl.value = ''; pwEl.value = ''; if (displayEl) displayEl.value = '';
+  document.getElementById('new-isadmin').checked = false;
+  document.getElementById('new-priv-zendesk').checked = false;
+  msg.style.color = 'var(--low-text)'; msg.textContent = '✓ User ' + (displayName || name) + ' added';
   setTimeout(() => msg.textContent = '', 2000);
   renderUserList();
 }
@@ -6329,6 +6650,15 @@ function renderCalCard(e) {
 }
 
 function isAdmin() { return !!(currentUser && currentUser.isAdmin); }
+function hasPrivilege(priv) { return isAdmin() || !!(currentUser && currentUser.privileges && currentUser.privileges.includes(priv)); }
+function getUserDisplayName(user) {
+  const u = user || currentUser;
+  if (!u) return '';
+  if (u.displayName) return u.displayName;
+  // If name looks like an email, extract first name from local part
+  if (u.name && u.name.includes('@')) return u.name.split('@')[0].split('.')[0].replace(/^./, c => c.toUpperCase());
+  return u.name || '';
+}
 
 // ─── Time slots (global) ──────────────────────────────────────────
 const TIME_SLOTS = [];
