@@ -4,35 +4,69 @@
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Weekly Planner</title>
+<title>munu. Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>if(localStorage.getItem('wtp_theme')==='light')document.documentElement.classList.add('light-mode');</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0f0f11; --surface: #1a1a1f; --surface2: #222228; --surface3: #2a2a32;
-    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.14); --border3: rgba(255,255,255,0.22);
-    --text: #f0f0f2; --text2: #9090a0; --text3: #55555f;
-    --cal: #141e35; --cal-text: #7aadff; --cal-border: #1e3260;
-    --accent: #7aadff; --radius-md: 8px; --radius-lg: 12px;
-    --high-bg: #2d1515; --high-text: #ff8080; --med-bg: #2a1f08; --med-text: #ffb347; --low-bg: #0e2215; --low-text: #5fcc7a;
+    /* Munu brand reference colours */
+    --munu-dark:   #000743;
+    --munu-light:  #D6F3FF;
+    --munu-white:  #F9FBFF;
+    --munu-pink:   #F1B7F2;
+    /* Dark mode — original dark theme */
+    --bg:      #0f0f11;
+    --surface: #1a1a1f;
+    --surface2: #222228;
+    --surface3: #2a2a32;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --border3: rgba(255,255,255,0.22);
+    --text:    #f0f0f2;
+    --text2:   #9090a0;
+    --text3:   #55555f;
+    --cal:     #141e35;
+    --cal-text: #7aadff;
+    --cal-border: #1e3260;
+    --accent:  #7aadff;
+    --radius-md: 8px; --radius-lg: 12px;
+    --high-bg: #2d1515; --high-text: #ff8080;
+    --med-bg:  #2a1f08; --med-text:  #ffb347;
+    --low-bg:  #0e2215; --low-text:  #5fcc7a;
     --today-tint: rgba(122,173,255,0.05);
+    --font-heading: 'Fira Sans', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --ease-snappy: cubic-bezier(1,0,0,1);
+    --ease-smooth: cubic-bezier(0.5,0,0,1);
   }
   .light-mode {
-    --bg: #f5f5f3; --surface: #ffffff; --surface2: #f0efed; --surface3: #e8e7e5;
-    --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.16); --border3: rgba(0,0,0,0.26);
-    --text: #1a1a1a; --text2: #666; --text3: #999;
-    --cal: #e8f0fe; --cal-text: #1a56c4; --cal-border: #b3c8f5;
-    --accent: #1a56c4;
-    --high-bg: #fce8e8; --high-text: #b91c1c; --med-bg: #fef3e2; --med-text: #92400e; --low-bg: #ecfdf5; --low-text: #065f46;
+    --bg:      #f5f5f3;
+    --surface: #ffffff;
+    --surface2: #f0efed;
+    --surface3: #e8e7e5;
+    --border:  rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.16);
+    --border3: rgba(0,0,0,0.26);
+    --text:    #1a1a1a;
+    --text2:   #666;
+    --text3:   #999;
+    --cal:     #e8f0fe;
+    --cal-text: #1a56c4;
+    --cal-border: #b3c8f5;
+    --accent:  #1a56c4;
+    --high-bg: #fce8e8; --high-text: #b91c1c;
+    --med-bg:  #fef3e2; --med-text:  #92400e;
+    --low-bg:  #ecfdf5; --low-text:  #065f46;
     --today-tint: rgba(26,86,196,0.05);
   }
   .light-mode .badge-high { background: var(--high-bg) !important; color: var(--high-text) !important; }
   .light-mode .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
   .light-mode .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
   .light-mode .btn-save { background: #1a1a1a !important; color: #fff !important; }
+  .light-mode .btn-save:hover { background: #333 !important; color: #fff !important; }
   .light-mode .card:hover { background: #f8f8f6 !important; }
   .light-mode .s-d1 { background: #b39ddb; color: #1a0040; }
   .light-mode .s-d2 { background: #9ccc65; color: #1a3300; }
@@ -50,7 +84,19 @@
   .light-mode #live-clock { color: var(--text); }
   html { color-scheme: dark; }
   .light-mode { color-scheme: light; }
-  body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 500; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
+
+  /* Munu typography hierarchy */
+  h1, h2, h3, .munu-heading, .lock-title, .oto-person-title { font-family: 'Fira Sans', sans-serif; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
+  .munu-subheading, .tab-btn, .topbar-left span, .sched-week-label { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+
+  /* Munu button styles — original dark theme */
+  .btn-save { background: var(--surface3); color: var(--text); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  .btn-save:hover { background: var(--cal); color: var(--cal-text); border-color: var(--cal-border); }
+  .btn-cancel { background: transparent; color: var(--text2); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s; }
+  .btn-cancel:hover { border-color: var(--border3); color: var(--text); }
+  .btn-nav { background: transparent; color: var(--text2); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 5px 12px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s; }
+  .btn-nav:hover { background: var(--surface2); color: var(--cal-text); border-color: var(--cal-border); }
 
   /* ─── Confirm modal ──────────────────────────────── */
   .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 900; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.15s ease; }
@@ -90,7 +136,7 @@
     body { padding: 0 0 60px 0; }
   }
   /* Mobile bottom nav */
-  .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1f; border-top: 1px solid #2a2a32; z-index: 200; padding: 6px 0 env(safe-area-inset-bottom, 6px); }
+  .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding: 6px 0 env(safe-area-inset-bottom, 6px); }
   .mobile-nav-inner { display: flex; justify-content: space-around; align-items: center; }
   .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 4px 8px; min-width: 50px; flex: 1; transition: color 0.15s; }
   .mobile-nav-btn .mnav-icon { font-size: 18px; line-height: 1; }
@@ -127,17 +173,18 @@
   .btn-save { background: var(--cal-text) !important; color: #0f0f11 !important; }
   .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; align-items: center; }
   .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; padding-bottom: 6px; }
-  #live-clock { font-size: 18px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
-  #live-date { font-size: 11px; color: var(--text3); white-space: nowrap; }
-  .tab-btn { font-size: 13px; font-weight: 600; padding: 10px 18px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s, background 0.15s; border-radius: 6px 6px 0 0; letter-spacing: -0.01em; }
+  #live-clock { font-family: 'Fira Sans', sans-serif; font-size: 18px; font-weight: 900; color: var(--cal-text); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+  #live-date { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text3); white-space: nowrap; font-weight: 500; }
+  .tab-btn { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 10px 18px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1px; transition: color 0.2s var(--ease-smooth), border-color 0.2s, background 0.2s; border-radius: 6px 6px 0 0; letter-spacing: -0.02em; }
   .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
   .tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); font-weight: 700; }
   .light-mode .tab-btn:hover { background: rgba(0,0,0,0.04); }
+  .light-mode .tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  /* Card entrance animation */
-  @keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .card { animation: cardIn 0.18s ease both; }
+  /* Card entrance animation — Munu smooth easing */
+  @keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .card { animation: cardIn 0.3s cubic-bezier(0.5,0,0,1) both; }
   /* Focus rings */
   input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 2px rgba(122,173,255,0.2); }
   .light-mode input:focus, .light-mode textarea:focus, .light-mode select:focus { box-shadow: 0 0 0 2px rgba(26,86,196,0.15); }
@@ -184,7 +231,7 @@
   .notepad-textarea { flex: 1; background: transparent; border: none; outline: none; resize: none; font-family: inherit; font-size: 12px; color: var(--text); line-height: 1.6; width: 100%; min-height: 200px; }
   .notepad-textarea::placeholder { color: var(--text3); }
   .notepad-saved { font-size: 10px; color: var(--text3); text-align: right; transition: opacity 0.3s; }
-  .col-header { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.09em; padding: 4px 2px 6px; }
+  .col-header { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.09em; padding: 4px 2px 6px; }
   .col-body { flex: 1; display: flex; flex-direction: column; gap: 7px; background: var(--surface2); border-radius: var(--radius-lg); padding: 8px; border: 1px solid var(--border); min-height: 80px; transition: border-color 0.2s; }
   .col-body.drag-over { border: 1.5px dashed var(--border3); background: var(--surface3); }
   .card-drop-indicator { height: 2px; background: var(--cal-text); border-radius: 2px; margin: -2px 0; opacity: 0; transition: opacity 0.15s; pointer-events: none; }
@@ -402,17 +449,17 @@
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   @keyframes spin-dot { 0%{transform:scale(1)} 50%{transform:scale(0.5)} 100%{transform:scale(1)} }
   .briefing-panel { background: linear-gradient(135deg, var(--cal) 0%, var(--surface) 100%); border: 1px solid var(--cal-border); border-radius: var(--radius-lg); padding: 14px 18px; margin-bottom: 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
-  .briefing-greeting { font-size: 15px; font-weight: 700; color: var(--cal-text); margin-bottom: 4px; }
+  .briefing-greeting { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 15px; color: var(--cal-text); margin-bottom: 4px; letter-spacing: -0.01em; }
   .briefing-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
   .briefing-stat { display: flex; flex-direction: column; background: rgba(0,0,0,0.25); border-radius: var(--radius-md); padding: 7px 12px; min-width: 75px; cursor: pointer; transition: background 0.15s; border: 1px solid rgba(255,255,255,0.06); }
   .briefing-stat:hover { background: rgba(0,0,0,0.35); }
-  .briefing-stat-val { font-size: 20px; font-weight: 800; line-height: 1; }
+  .briefing-stat-val { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 20px; line-height: 1; }
   .briefing-stat-val.warn   { color: #fbbf24; }
   .briefing-stat-val.danger { color: #f87171; }
   .briefing-stat-val.ok     { color: #4ade80; }
   .briefing-stat-val.neutral { color: var(--text); }
-  .briefing-stat-label { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-  .briefing-who-strip { font-size: 12px; color: var(--text2); margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .briefing-stat-label { font-family: 'Inter', sans-serif; font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .briefing-who-strip { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text2); margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   /* ─── RAG dot ─────────────────────────────────────── */
   .rag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
   .rag-dot.red   { background: #ef5350; box-shadow: 0 0 4px rgba(239,83,80,0.5); }
@@ -845,16 +892,33 @@
     .lock-box .lock-title { color: #f0f0f2 !important; }
     .lock-box .lock-sub { color: #9090a0 !important; }
   }
-  .lock-logo { font-size: 28px; margin-bottom: 4px; }
-  .lock-title { font-size: 18px; font-weight: 700; color: var(--text); }
-  .lock-sub { font-size: 12px; color: var(--text3); margin-top: -8px; }
-  .lock-input { width: 100%; font-family: inherit; font-size: 14px; background: var(--surface2); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-md); padding: 10px 14px; outline: none; text-align: center; letter-spacing: 0.1em; transition: border-color 0.15s; }
-  .lock-input:focus { border-color: var(--cal-text); }
-  .lock-input.shake { animation: shake 0.35s ease; border-color: var(--high-text) !important; }
-  .lock-btn { width: 100%; font-family: inherit; font-size: 13px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 10px; cursor: pointer; transition: opacity 0.15s; }
-  .lock-btn:hover { opacity: 0.85; }
-  .lock-error { font-size: 12px; color: var(--high-text); min-height: 16px; }
+  /* ─── Munu Lock Screen ───────────────────────────── */
+  .lock-screen { position: fixed; inset: 0; background: #000743; z-index: 9999; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .lock-screen::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, rgba(214,243,255,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(241,183,242,0.04) 0%, transparent 50%); pointer-events: none; }
+  .lock-box { position: relative; z-index: 1; background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(214,243,255,0.12); border-radius: 16px; padding: 40px 44px; width: 90%; max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 18px; animation: lockIn 0.5s var(--ease-smooth, cubic-bezier(0.5,0,0,1)); }
+  @keyframes lockIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .lock-wordmark { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 36px; color: #D6F3FF; letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px; }
+  .lock-wordmark span { color: #D6F3FF; }
+  .lock-wordmark-dot { color: #F1B7F2; }
+  .lock-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: rgba(214,243,255,0.6); letter-spacing: 0.08em; text-transform: uppercase; margin-top: -8px; }
+  .lock-sub { font-size: 12px; color: rgba(214,243,255,0.45); margin-top: -10px; }
+  .lock-input { width: 100%; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; background: rgba(214,243,255,0.07); color: #F9FBFF; border: 1px solid rgba(214,243,255,0.15); border-radius: 10px; padding: 11px 16px; outline: none; text-align: center; letter-spacing: 0.05em; transition: border-color 0.2s, background 0.2s; }
+  .lock-input:focus { border-color: rgba(214,243,255,0.4); background: rgba(214,243,255,0.1); }
+  .lock-input::placeholder { color: rgba(214,243,255,0.3); letter-spacing: 0.05em; }
+  .lock-input.shake { animation: shake 0.35s ease; border-color: #ff8080 !important; }
+  .lock-btn { width: 100%; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; background: #D6F3FF; color: #000743; border: none; border-radius: 10px; padding: 11px; cursor: pointer; transition: background 0.2s, color 0.2s; letter-spacing: -0.01em; }
+  .lock-btn:hover { background: #F1B7F2; color: #000743; }
+  .lock-error { font-size: 12px; color: #ff8080; min-height: 16px; text-align: center; }
+  .lock-tagline { font-size: 11px; color: rgba(214,243,255,0.25); margin-top: -4px; letter-spacing: 0.04em; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+  /* Mobile lock screen */
+  @media (max-width: 768px) {
+    .lock-screen { background: #000743; }
+    .lock-box { background: rgba(255,255,255,0.05); border-color: rgba(214,243,255,0.12); padding: 36px 28px; }
+    .lock-input { color: #F9FBFF !important; background: rgba(214,243,255,0.07) !important; border-color: rgba(214,243,255,0.15) !important; }
+    .lock-title { color: rgba(214,243,255,0.6) !important; }
+    .lock-sub { color: rgba(214,243,255,0.4) !important; }
+  }
 </style>
 </head>
 <body>
@@ -866,22 +930,22 @@
 <!-- Lock screen -->
 <div class="lock-screen" id="lock-screen">
   <div class="lock-box">
-    <div class="lock-logo">🗓</div>
-    <div class="lock-title">Weekly Planner</div>
+    <div class="lock-wordmark">munu<span class="lock-wordmark-dot">.</span></div>
+    <div class="lock-title">Team Planner</div>
     <div class="lock-sub" id="lock-sub">Sign in to continue</div>
     <input class="lock-input" id="lock-username" type="text" placeholder="Username" autocomplete="username" style="margin-bottom:0;">
-    <input class="lock-input" id="lock-input" type="password" placeholder="••••••••" autocomplete="current-password">
+    <input class="lock-input" id="lock-input" type="password" placeholder="Password" autocomplete="current-password">
     <button class="lock-btn" onclick="tryUnlock()">Sign in</button>
     <div class="lock-error" id="lock-error"></div>
-    <!-- Sync token - shown only if not yet saved -->
-    <div id="lock-sync-wrap" style="width:100%;margin-top:8px;display:none;border-top:0.5px solid var(--border);padding-top:12px;">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-align:center;">☁ First time on this device? Add your sync token</div>
+    <div id="lock-sync-wrap" style="width:100%;margin-top:4px;display:none;border-top:1px solid rgba(214,243,255,0.1);padding-top:14px;">
+      <div style="font-size:11px;color:rgba(214,243,255,0.4);margin-bottom:8px;text-align:center;">First time on this device — add your sync token</div>
       <div style="display:flex;gap:6px;">
         <input type="password" id="lock-token-input" placeholder="Paste GitHub token…" autocomplete="off"
-          style="flex:1;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;">
-        <button onclick="saveLockToken()" style="font-family:inherit;font-size:12px;font-weight:600;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:6px 10px;cursor:pointer;white-space:nowrap;">Save</button>
+          style="flex:1;font-family:'Inter',sans-serif;font-size:12px;background:rgba(214,243,255,0.07);color:#F9FBFF;border:1px solid rgba(214,243,255,0.15);border-radius:8px;padding:7px 10px;outline:none;">
+        <button onclick="saveLockToken()" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;background:rgba(214,243,255,0.12);color:#D6F3FF;border:1px solid rgba(214,243,255,0.2);border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Save</button>
       </div>
     </div>
+    <div class="lock-tagline">We work the shift with you.</div>
   </div>
 </div>
 
@@ -983,10 +1047,13 @@ window.tryUnlock = async function() {
 </script>
 
 <div class="tabs">
+  <div style="display:flex;align-items:center;padding:0 16px 6px 4px;border-right:1px solid var(--border);margin-right:6px;flex-shrink:0;">
+    <span style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:18px;color:var(--cal-text);letter-spacing:-0.02em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
+  </div>
   <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">👥 My Team</button>
-  <button class="tab-btn" id="tab-btn-calendar" onclick="switchTab('calendar', this)">📆 Calendar</button>
+  <button class="tab-btn" id="tab-btn-calendar" style="display:none" onclick="switchTab('calendar', this)">📆 Calendar</button>
   <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">🎫 Tickets</button>
   <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">💡 Feedback</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">⚙ Settings</button>
@@ -1033,8 +1100,6 @@ window.tryUnlock = async function() {
     <div class="week-progress-bar"><div class="week-progress-fill" id="week-progress-fill" style="width:0%"></div></div>
     <span class="week-progress-label" id="week-progress-label"></span>
   </div>
-  <!-- Availability strip -->
-  <div class="avail-strip" id="avail-strip"></div>
   <!-- Carry forward banner -->
   <div id="weekly-review-container"></div>
   <div id="carry-banner-wrap"></div>
@@ -1186,6 +1251,18 @@ window.tryUnlock = async function() {
 <div id="tab-settings" class="tab-content">
   <div style="max-width:520px; display:flex; flex-direction:column; gap:24px; padding-top:4px;">
 
+    <!-- Non-admin sync card — shown to non-admins only -->
+    <div class="settings-card" id="nonadmin-sync-card" style="display:none;">
+      <div class="settings-card-title">☁ Sync</div>
+      <div class="settings-card-desc">Enter the sync passphrase to keep your notes and feedback in sync across devices.</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+        <input type="password" id="user-passphrase-input" placeholder="Enter sync passphrase…"
+          style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+        <button class="btn-save" onclick="unlockWithPassphrase()" style="font-size:12px;white-space:nowrap;">Unlock sync</button>
+      </div>
+      <div id="user-passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+    </div>
+
     <!-- Advanced settings toggle -->
     <div>
       <div class="settings-advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">Advanced settings</div>
@@ -1236,6 +1313,25 @@ window.tryUnlock = async function() {
         <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
         <button onclick="ghLoad()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Pull now</button>
         <button onclick="ghSave()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Push now</button>
+      </div>
+      <!-- Read-only token for non-admin users -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">Read-only token <span style="font-weight:400;color:var(--text3);">— allows other users to pull data without write access</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input type="password" id="gh-readonly-input" placeholder="Paste read-only GitHub token…"
+            style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+          <button class="btn-save" onclick="saveReadonlyToken()" style="font-size:12px;white-space:nowrap;">Save</button>
+        </div>
+      <!-- Passphrase-protected sync for non-admin users -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;">Shared sync passphrase <span style="font-weight:400;color:var(--text3);">— lets non-admin users sync using your token, without seeing it</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Set a passphrase (e.g. <code style="background:var(--surface2);padding:1px 5px;border-radius:4px;">munu2026</code>). Non-admin users enter this in their Settings to unlock sync. Your real token stays hidden.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input type="text" id="sync-passphrase-input" placeholder="Set passphrase (e.g. munu2026)"
+            style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+          <button class="btn-save" onclick="saveSyncPassphrase()" style="font-size:12px;white-space:nowrap;">Encrypt & Save</button>
+        </div>
+        <div id="passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
       </div>
     </div>
 
@@ -1374,6 +1470,7 @@ function switchTab(name, btn) {
   if (name === 'calendar') { initCalTab(); }
   if (name === 'onetoone') { renderOtoTab(); }
   if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); }
+  if (name === 'settings') { initReadonlyTokenField(); }
   if (name === 'feedback') { renderFeedbackTab(); }
   if (isMobile()) buildMobileNav();
 }
@@ -3113,7 +3210,7 @@ function clearNotepad() {
 
 function clearNotepad() {
   const isPersistent = document.getElementById('notepad-persistent')?.style.display !== 'none';
-  const key = isPersistent ? 'wtp_notepad_persistent' : userNoteKey(currentUser?.name||'');
+  const key = isPersistent ? 'wtp_notepad_persistent_' + (currentUser?.name||'shared').toLowerCase() + '' : userNoteKey(currentUser?.name||'');
   confirmDialog('Clear notes?', () => {
     const ta = document.getElementById(isPersistent ? 'notepad-persistent' : 'notepad-text');
     if (ta) { ta.value = ''; localStorage.removeItem(key); }
@@ -3154,9 +3251,9 @@ function toggleNotepadMode() {
     if (weekly) weekly.style.display = 'none';
     if (persistent) {
       persistent.style.display = '';
-      persistent.value = localStorage.getItem('wtp_notepad_persistent') || '';
+      persistent.value = localStorage.getItem('wtp_notepad_persistent_' + (currentUser?.name||'shared').toLowerCase() + '') || '';
       persistent.oninput = () => {
-        localStorage.setItem('wtp_notepad_persistent', persistent.value);
+        localStorage.setItem('wtp_notepad_persistent_' + (currentUser?.name||'shared').toLowerCase() + '', persistent.value);
         const s = document.getElementById('notepad-saved'); if (s) { s.textContent = 'saved'; setTimeout(() => s.textContent='',1200); }
       };
       persistent.focus();
@@ -4351,7 +4448,36 @@ function loadFbPosts(username) {
 }
 function saveFbPosts(username, posts) {
   localStorage.setItem(fbKey(username), JSON.stringify(posts));
-  scheduleSyncSave();
+  if (isAdmin()) {
+    scheduleSyncSave(); // admin — uses write token via normal sync
+  } else {
+    pushFeedbackAsNonAdmin(username, posts); // non-admin — push just feedback
+  }
+}
+
+async function pushFeedbackAsNonAdmin(username, posts) {
+  // Use the feedback write token if set, otherwise fall back to readonly token
+  const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
+  if (!token) return;
+  try {
+    // Fetch current data.json
+    const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers });
+    if (!res.ok) return;
+    const json = await res.json();
+    let data = {};
+    try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
+    // Inject this user's feedback
+    data[fbKey(username)] = posts;
+    const jsonStr = JSON.stringify(data, null, 2);
+    const asciiSafe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
+    const body = { message: 'feedback from ' + username, content: btoa(asciiSafe), sha: json.sha };
+    await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    showToast('✓ Feedback submitted');
+  } catch(e) {
+    // Silently fail — feedback saved locally at minimum
+    console.warn('Feedback push failed:', e);
+  }
 }
 
 let fbSelectedUser = null; // for admin view
@@ -4615,7 +4741,7 @@ function createMobileNotesPanel() {
 
   const getKey = () => {
     if (noteMode === 'weekly') return userNoteKey(currentUser?.name||'');
-    if (noteMode === 'persistent') return 'wtp_notepad_persistent';
+    if (noteMode === 'persistent') return 'wtp_notepad_persistent_' + (currentUser?.name||'shared').toLowerCase() + '';
     return 'wtp_notepad_phone';
   };
 
@@ -5262,7 +5388,7 @@ function initZendeskTab() {
 const GH_REPO  = 'ullenesmathias-munu/weekly-planner';
 const GH_FILE  = 'data.json';
 const GH_API   = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE;
-const GH_READONLY_TOKEN = 'READONLY_TOKEN_HERE';
+function getReadonlyToken() { return localStorage.getItem('wtp_gh_readonly_token') || ''; }
 let ghToken    = null;
 let ghFileSha  = null;
 let syncTimer  = null;
@@ -5402,7 +5528,7 @@ async function ghSave() {
       if (!k) continue;
       // Skip keys with non-ASCII characters — these are corrupted duplicates
       if (/[^\x00-\x7F]/.test(k)) { localStorage.removeItem(k); continue; }
-      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman') {
+      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token') {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -5451,8 +5577,8 @@ function scheduleSyncSave() {
 
 async function ghReadOnlyLoad() {
   // Used by non-admin users to pull shared data (schedule, roles, wingman)
-  const token = GH_READONLY_TOKEN;
-  if (!token || token === 'READONLY_TOKEN_HERE') return;
+  const token = getReadonlyToken();
+  if (!token) { setSyncStatus('No read-only token set', 'var(--text3)'); return; }
   setSyncStatus('⟳ Fetching updates…', 'var(--text3)');
   try {
     const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers: {
@@ -5465,7 +5591,7 @@ async function ghReadOnlyLoad() {
     let data = {};
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { return; }
     // For non-admins: only pull shared keys (schedule, users, wingman) - NOT other users' tasks
-    const sharedKeys = ['wtp_users', 'wtp_wingman']; // wtp_schedule always uses hardcoded version
+    const sharedKeys = ['wtp_users', 'wtp_wingman', 'wtp_encrypted_token']; // wtp_schedule always uses hardcoded version
     // Also pull this user's own feedback key
     if (currentUser) sharedKeys.push(fbKey(currentUser.name));
     sharedKeys.forEach(k => {
@@ -5483,6 +5609,127 @@ async function ghReadOnlyLoad() {
   } catch(e) {
     setSyncStatus('', '');
     console.warn('ghReadOnlyLoad error:', e);
+  }
+}
+
+function saveReadonlyToken() {
+  const inp = document.getElementById('gh-readonly-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val || val.includes('•')) { showToast('Paste your read-only token first'); return; }
+  localStorage.setItem('wtp_gh_readonly_token', val);
+  inp.value = '••••••••••••••••';
+  const status = document.getElementById('readonly-token-status');
+  if (status) { status.textContent = '✓ Read-only token saved — non-admin users can now pull data'; status.style.color = 'var(--low-text)'; }
+  showToast('✓ Read-only token saved');
+}
+
+// ─── Passphrase-based token encryption ────────────────────────────
+async function deriveKey(passphrase, salt) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: enc.encode(salt), iterations: 100000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptToken(token, passphrase) {
+  const salt = 'munu-planner-salt-v1';
+  const key = await deriveKey(passphrase, salt);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(token));
+  // Return iv + encrypted as base64
+  const combined = new Uint8Array(iv.length + encrypted.byteLength);
+  combined.set(iv); combined.set(new Uint8Array(encrypted), iv.length);
+  return btoa(String.fromCharCode(...combined));
+}
+
+async function decryptToken(encrypted, passphrase) {
+  const salt = 'munu-planner-salt-v1';
+  const key = await deriveKey(passphrase, salt);
+  const combined = Uint8Array.from(atob(encrypted), c => c.charCodeAt(0));
+  const iv = combined.slice(0, 12);
+  const data = combined.slice(12);
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+  return new TextDecoder().decode(decrypted);
+}
+
+async function saveSyncPassphrase() {
+  const inp = document.getElementById('sync-passphrase-input');
+  const status = document.getElementById('passphrase-status');
+  if (!inp || !inp.value.trim()) { showToast('Enter a passphrase first'); return; }
+  const passphrase = inp.value.trim();
+  const token = localStorage.getItem('wtp_gh_token');
+  if (!token) { if (status) { status.textContent = '⚠ Connect your GitHub token first'; status.style.color = 'var(--high-text)'; } return; }
+  try {
+    const encrypted = await encryptToken(token, passphrase);
+    localStorage.setItem('wtp_encrypted_token', encrypted);
+    inp.value = '';
+    if (status) { status.textContent = '✓ Passphrase set — share "' + passphrase + '" with users who need sync access'; status.style.color = 'var(--low-text)'; }
+    showToast('✓ Sync passphrase saved');
+  } catch(e) { if (status) { status.textContent = 'Encryption failed: ' + e.message; status.style.color = 'var(--high-text)'; } }
+}
+
+async function unlockWithPassphrase() {
+  const inp = document.getElementById('user-passphrase-input');
+  const status = document.getElementById('user-passphrase-status');
+  if (!inp || !inp.value.trim()) { showToast('Enter the passphrase first'); return; }
+  const passphrase = inp.value.trim();
+  const encrypted = localStorage.getItem('wtp_encrypted_token');
+  if (!encrypted) { if (status) { status.textContent = '⚠ No encrypted token found — ask your admin to set up the passphrase first'; status.style.color = 'var(--high-text)'; } return; }
+  try {
+    const token = await decryptToken(encrypted, passphrase);
+    // Verify it looks like a GitHub token
+    if (!token.startsWith('ghp_') && !token.startsWith('github_pat_') && token.length < 20) throw new Error('Invalid token');
+    localStorage.setItem('wtp_gh_token', token);
+    ghToken = token;
+    inp.value = '';
+    if (status) { status.textContent = '✓ Sync unlocked — your notes and feedback will now sync'; status.style.color = 'var(--low-text)'; }
+    showToast('✓ Sync unlocked');
+    initGitHubSync();
+  } catch(e) {
+    if (status) { status.textContent = '✗ Wrong passphrase — try again'; status.style.color = 'var(--high-text)'; }
+  }
+}
+
+function saveFeedbackToken() {
+  const inp = document.getElementById('gh-feedback-token-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val || val.includes('•')) { showToast('Paste your feedback token first'); return; }
+  localStorage.setItem('wtp_gh_feedback_token', val);
+  inp.value = '••••••••••••••••';
+  const status = document.getElementById('feedback-token-status');
+  if (status) { status.textContent = '✓ Feedback token saved'; status.style.color = 'var(--low-text)'; }
+  showToast('✓ Feedback token saved');
+}
+
+function initReadonlyTokenField() {
+  const inp = document.getElementById('gh-readonly-input');
+  const status = document.getElementById('readonly-token-status');
+  if (!inp) return;
+  const existing = localStorage.getItem('wtp_gh_readonly_token');
+  if (existing) {
+    inp.value = '••••••••••••••••';
+    if (status) { status.textContent = '✓ Read-only token is set'; status.style.color = 'var(--low-text)'; }
+  } else {
+    if (status) { status.textContent = 'Not set — non-admin users will see an empty planner'; status.style.color = 'var(--med-text)'; }
+  }
+  // Passphrase status
+  const ppStatus = document.getElementById('passphrase-status');
+  if (ppStatus) {
+    const hasEncrypted = !!localStorage.getItem('wtp_encrypted_token');
+    ppStatus.textContent = hasEncrypted ? '✓ Passphrase is set — users can unlock sync' : 'Not set — enter a passphrase above to enable non-admin sync';
+    ppStatus.style.color = hasEncrypted ? 'var(--low-text)' : 'var(--text3)';
+  }
+  // Non-admin passphrase status
+  const userPpStatus = document.getElementById('user-passphrase-status');
+  if (userPpStatus && !isAdmin()) {
+    const hasSyncToken = !!localStorage.getItem('wtp_gh_token');
+    userPpStatus.textContent = hasSyncToken ? '✓ Sync is active' : 'Enter passphrase to enable sync';
+    userPpStatus.style.color = hasSyncToken ? 'var(--low-text)' : 'var(--text3)';
   }
 }
 
@@ -5595,10 +5842,15 @@ function loadUserData() {
   if (ta) ta.value = localStorage.getItem(userNoteKey(u)) || '';
   const ud = document.getElementById('user-display');
   if (ud) ud.textContent = u;
-  // Show 1:1 tab for admins only
+  // Show admin-only tabs
   const otoBtn = document.getElementById('tab-btn-onetoone');
   if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
+  const calBtn = document.getElementById('tab-btn-calendar');
+  if (calBtn) calBtn.style.display = currentUser?.isAdmin ? '' : 'none';
   if (isAdmin()) initZendeskTab();
+  // Show non-admin sync card
+  const nonAdminCard = document.getElementById('nonadmin-sync-card');
+  if (nonAdminCard) nonAdminCard.style.display = (!currentUser?.isAdmin) ? '' : 'none';
   if (isMobile()) { buildMobileNav(); openMobileNotes(); }
   else { renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule(); }
   // Auto-pull from GitHub on every login if token is set
