@@ -235,6 +235,7 @@
     "focus": "",
     "_open": true
   },
+  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json",
   "wtp_tasks_michael": [
     {
@@ -377,13 +378,7 @@
       "to": "2026-06-23"
     }
   ],
-  "wtp_fb_kate.rooke@munu.cloud": [
-    {
-      "id": "1777968840950",
-      "text": "Test",
-      "ts": "2026-05-05T08:14:00.950Z"
-    }
-  ],
+  "wtp_fb_kate.rooke@munu.cloud": [],
   "wtp_profile_jonas": {
     "log": [],
     "goals": [],
