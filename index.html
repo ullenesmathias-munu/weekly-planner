@@ -67,7 +67,6 @@
   .light-mode .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
   .light-mode .btn-save { background: #1a1a1a !important; color: #fff !important; }
   .light-mode .btn-save:hover { background: #333 !important; color: #fff !important; }
-  .light-mode .card:hover { background: #f8f8f6 !important; }
   .light-mode .s-d1 { background: #b39ddb; color: #1a0040; }
   .light-mode .s-d2 { background: #9ccc65; color: #1a3300; }
   .light-mode .s-d3 { background: #7fb3d5; color: #002040; }
@@ -171,15 +170,15 @@
   .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
   .badge-date { background: var(--surface3) !important; color: var(--text2) !important; border-color: var(--border2) !important; }
   .btn-save { background: var(--cal-text) !important; color: #0f0f11 !important; }
-  .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; align-items: center; }
-  .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; padding-bottom: 6px; }
+  .tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; align-items: center; }
+  .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; padding-bottom: 6px; }
   #live-clock { font-family: 'Fira Sans', sans-serif; font-size: 18px; font-weight: 900; color: var(--cal-text); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
   #live-date { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text3); white-space: nowrap; font-weight: 500; }
-  .tab-btn { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 10px 18px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1px; transition: color 0.2s var(--ease-smooth), border-color 0.2s, background 0.2s; border-radius: 6px 6px 0 0; letter-spacing: -0.02em; }
-  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-  .tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); font-weight: 700; }
-  .light-mode .tab-btn:hover { background: rgba(0,0,0,0.04); }
-  .light-mode .tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); }
+  .tab-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 10px 16px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.18s, border-color 0.18s, background 0.18s; border-radius: 6px 6px 0 0; letter-spacing: -0.01em; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text2); background: rgba(255,255,255,0.03); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--cal-text); font-weight: 700; }
+  .light-mode .tab-btn:hover { background: rgba(0,0,0,0.03); }
+  .light-mode .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   /* Card entrance animation — Munu smooth easing */
@@ -231,8 +230,9 @@
   .notepad-textarea { flex: 1; background: transparent; border: none; outline: none; resize: none; font-family: inherit; font-size: 12px; color: var(--text); line-height: 1.6; width: 100%; min-height: 200px; }
   .notepad-textarea::placeholder { color: var(--text3); }
   .notepad-saved { font-size: 10px; color: var(--text3); text-align: right; transition: opacity 0.3s; }
-  .col-header { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.09em; padding: 4px 2px 6px; }
-  .col-body { flex: 1; display: flex; flex-direction: column; gap: 7px; background: var(--surface2); border-radius: var(--radius-lg); padding: 8px; border: 1px solid var(--border); min-height: 80px; transition: border-color 0.2s; }
+  .col-header { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.10em; padding: 4px 2px 8px; display: flex; align-items: center; gap: 6px; }
+  .col-body { flex: 1; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.018); border-radius: var(--radius-lg); padding: 8px; border: 1px solid var(--border); min-height: 80px; transition: border-color 0.2s, background 0.2s; }
+  .light-mode .col-body { background: rgba(0,0,0,0.02); }
   .col-body.drag-over { border: 1.5px dashed var(--border3); background: var(--surface3); }
   .card-drop-indicator { height: 2px; background: var(--cal-text); border-radius: 2px; margin: -2px 0; opacity: 0; transition: opacity 0.15s; pointer-events: none; }
   .card-drop-indicator.visible { opacity: 1; }
@@ -255,29 +255,30 @@
   .carry-banner-text { font-size: 12px; color: var(--cal-text); flex: 1; }
   .carry-banner-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 4px 10px; cursor: pointer; white-space: nowrap; }
   .carry-banner-dismiss { font-size: 11px; color: var(--cal-text); background: none; border: none; cursor: pointer; opacity: 0.7; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; cursor: grab; display: flex; flex-direction: column; gap: 6px; transition: border-color 0.18s, background 0.18s, transform 0.15s; }
-  .card:hover { border-color: var(--border2); background: #1e1e25; transform: translateY(-1px); }
-  .card:active { cursor: grabbing; transform: translateY(0); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px 9px; cursor: grab; display: flex; flex-direction: column; gap: 7px; transition: border-color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s; }
+  .card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .card:active { cursor: grabbing; transform: translateY(0); box-shadow: none; }
+  .light-mode .card:hover { background: #f8f8f6 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .card-label-red    { border-left: 3px solid #ff5555 !important; }
   .card-label-green  { border-left: 3px solid #5fcc7a !important; }
   .card-label-blue   { border-left: 3px solid #7aadff !important; }
   .card-label-amber  { border-left: 3px solid #ffb347 !important; }
   .card-label-purple { border-left: 3px solid #c4b5fd !important; }
   .card.dragging { opacity: 0.3; transform: scale(0.97); }
-  .card-top { display: flex; align-items: flex-start; gap: 6px; }
-  .done-check { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; cursor: pointer; accent-color: var(--cal-text); }
-  .card-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; word-break: break-word; }
-  .card.done-line .card-title { text-decoration: line-through; opacity: 0.35; }
-  .card-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-  .badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .card-top { display: flex; align-items: flex-start; gap: 8px; }
+  .done-check { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; cursor: pointer; accent-color: var(--cal-text); }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.45; word-break: break-word; }
+  .card.done-line .card-title { text-decoration: line-through; opacity: 0.3; }
+  .card-meta { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; white-space: nowrap; letter-spacing: 0.01em; }
   .badge-high { background: var(--high-bg); color: var(--high-text); }
   .badge-medium { background: var(--med-bg); color: var(--med-text); }
   .badge-low { background: var(--low-bg); color: var(--low-text); }
   .badge-date { background: var(--surface3); color: var(--text2); border: 0.5px solid var(--border2); }
-  .card-note { font-size: 11px; color: var(--text2); line-height: 1.5; border-top: 0.5px solid var(--border); padding-top: 6px; word-break: break-word; }
-  .card-actions { display: flex; justify-content: flex-end; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+  .card-note { font-size: 11px; color: var(--text3); line-height: 1.5; border-top: 1px solid var(--border); padding-top: 7px; word-break: break-word; }
+  .card-actions { display: flex; justify-content: flex-end; gap: 4px; opacity: 0; transition: opacity 0.12s; }
   .card:hover .card-actions { opacity: 1; }
-  .card-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 5px; border-radius: 4px; transition: color 0.15s, background 0.15s; }
+  .card-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color 0.15s, background 0.15s; }
   .card-del:hover { color: var(--high-text); background: var(--high-bg); }
   .btn-today-view { font-size: 12px; font-weight: 600; background: var(--surface2); color: var(--cal-text); border: 1px solid var(--cal-border); border-radius: var(--radius-md); padding: 5px 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
   .btn-today-view:hover { background: var(--cal); }
@@ -508,10 +509,10 @@
   /* ─── Shift pill size ────────────────────────────── */
   .sched-table .shift-pill { font-size: 11px !important; font-weight: 700 !important; padding: 4px 8px !important; min-width: 72px; text-align: center; display: inline-block; }
   /* ─── Tab active state ───────────────────────────── */
-  .tabs { border-bottom: 2px solid var(--border); }
+  .tabs { border-bottom: 1px solid var(--border); }
   .tab-btn { position: relative; }
-  .tab-btn.active { color: var(--cal-text) !important; font-weight: 700 !important; }
-  .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--cal-text); border-radius: 2px 2px 0 0; }
+  .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
+  .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 12px; right: 12px; height: 2px; background: var(--cal-text); border-radius: 2px 2px 0 0; }
   /* ─── SLA panel ──────────────────────────────────── */
   .sla-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
   .sla-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
@@ -894,30 +895,32 @@
   }
   /* ─── Munu Lock Screen ───────────────────────────── */
   .lock-screen { position: fixed; inset: 0; background: #000743; z-index: 9999; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-  .lock-screen::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, rgba(214,243,255,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(241,183,242,0.04) 0%, transparent 50%); pointer-events: none; }
-  .lock-box { position: relative; z-index: 1; background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(214,243,255,0.12); border-radius: 16px; padding: 40px 44px; width: 90%; max-width: 360px; display: flex; flex-direction: column; align-items: center; gap: 18px; animation: lockIn 0.5s var(--ease-smooth, cubic-bezier(0.5,0,0,1)); }
-  @keyframes lockIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-  .lock-wordmark { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 36px; color: #D6F3FF; letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px; }
+  .lock-screen::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 25% 15%, rgba(214,243,255,0.07) 0%, transparent 55%), radial-gradient(ellipse at 75% 85%, rgba(241,183,242,0.05) 0%, transparent 50%); pointer-events: none; }
+  .lock-box { position: relative; z-index: 1; background: rgba(255,255,255,0.035); backdrop-filter: blur(24px); border: 1px solid rgba(214,243,255,0.10); border-radius: 20px; padding: 48px 44px 40px; width: 90%; max-width: 380px; display: flex; flex-direction: column; align-items: center; gap: 0; animation: lockIn 0.45s var(--ease-smooth, cubic-bezier(0.5,0,0,1)); }
+  @keyframes lockIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .lock-wordmark { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 44px; color: #D6F3FF; letter-spacing: -0.03em; line-height: 1; margin-bottom: 10px; }
   .lock-wordmark span { color: #D6F3FF; }
   .lock-wordmark-dot { color: #F1B7F2; }
-  .lock-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: rgba(214,243,255,0.6); letter-spacing: 0.08em; text-transform: uppercase; margin-top: -8px; }
-  .lock-sub { font-size: 12px; color: rgba(214,243,255,0.45); margin-top: -10px; }
-  .lock-input { width: 100%; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; background: rgba(214,243,255,0.07); color: #F9FBFF; border: 1px solid rgba(214,243,255,0.15); border-radius: 10px; padding: 11px 16px; outline: none; text-align: center; letter-spacing: 0.05em; transition: border-color 0.2s, background 0.2s; }
-  .lock-input:focus { border-color: rgba(214,243,255,0.4); background: rgba(214,243,255,0.1); }
-  .lock-input::placeholder { color: rgba(214,243,255,0.3); letter-spacing: 0.05em; }
+  .lock-title { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11px; color: rgba(214,243,255,0.45); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 28px; }
+  .lock-sub { font-size: 12px; color: rgba(214,243,255,0.45); margin-bottom: 20px; }
+  .lock-field-group { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .lock-field-label { font-size: 10px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: rgba(214,243,255,0.35); margin-bottom: 4px; padding-left: 2px; }
+  .lock-input { width: 100%; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; background: rgba(214,243,255,0.06); color: #F9FBFF; border: 1px solid rgba(214,243,255,0.12); border-radius: 10px; padding: 12px 16px; outline: none; letter-spacing: 0.02em; transition: border-color 0.2s, background 0.2s; }
+  .lock-input:focus { border-color: rgba(214,243,255,0.35); background: rgba(214,243,255,0.09); }
+  .lock-input::placeholder { color: rgba(214,243,255,0.25); }
   .lock-input.shake { animation: shake 0.35s ease; border-color: #ff8080 !important; }
-  .lock-btn { width: 100%; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; background: #D6F3FF; color: #000743; border: none; border-radius: 10px; padding: 11px; cursor: pointer; transition: background 0.2s, color 0.2s; letter-spacing: -0.01em; }
-  .lock-btn:hover { background: #F1B7F2; color: #000743; }
-  .lock-error { font-size: 12px; color: #ff8080; min-height: 16px; text-align: center; }
-  .lock-tagline { font-size: 11px; color: rgba(214,243,255,0.25); margin-top: -4px; letter-spacing: 0.04em; }
+  .lock-btn { width: 100%; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; background: #D6F3FF; color: #000743; border: none; border-radius: 10px; padding: 13px; cursor: pointer; transition: background 0.2s, transform 0.1s; letter-spacing: -0.01em; margin-top: 4px; }
+  .lock-btn:hover { background: #eaf9ff; }
+  .lock-btn:active { transform: scale(0.985); }
+  .lock-error { font-size: 12px; color: #ff8080; min-height: 18px; text-align: center; margin-top: 8px; }
+  .lock-tagline { font-size: 11px; color: rgba(214,243,255,0.22); margin-top: 28px; letter-spacing: 0.05em; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
   /* Mobile lock screen */
   @media (max-width: 768px) {
     .lock-screen { background: #000743; }
-    .lock-box { background: rgba(255,255,255,0.05); border-color: rgba(214,243,255,0.12); padding: 36px 28px; }
-    .lock-input { color: #F9FBFF !important; background: rgba(214,243,255,0.07) !important; border-color: rgba(214,243,255,0.15) !important; }
-    .lock-title { color: rgba(214,243,255,0.6) !important; }
-    .lock-sub { color: rgba(214,243,255,0.4) !important; }
+    .lock-box { background: rgba(255,255,255,0.04); border-color: rgba(214,243,255,0.10); padding: 40px 28px 36px; }
+    .lock-input { color: #F9FBFF !important; background: rgba(214,243,255,0.06) !important; border-color: rgba(214,243,255,0.12) !important; }
+    .lock-field-label { color: rgba(214,243,255,0.3) !important; }
   }
 </style>
 </head>
@@ -932,17 +935,24 @@
   <div class="lock-box">
     <div class="lock-wordmark">munu<span class="lock-wordmark-dot">.</span></div>
     <div class="lock-title">Team Planner</div>
-    <div class="lock-sub" id="lock-sub">Sign in to continue</div>
-    <input class="lock-input" id="lock-username" type="text" placeholder="Username" autocomplete="username" style="margin-bottom:0;">
-    <input class="lock-input" id="lock-input" type="password" placeholder="Password" autocomplete="current-password">
+    <div class="lock-field-group">
+      <div>
+        <div class="lock-field-label">Username</div>
+        <input class="lock-input" id="lock-username" type="text" placeholder="Your username" autocomplete="username">
+      </div>
+      <div>
+        <div class="lock-field-label">Password</div>
+        <input class="lock-input" id="lock-input" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+    </div>
     <button class="lock-btn" onclick="tryUnlock()">Sign in</button>
     <div class="lock-error" id="lock-error"></div>
-    <div id="lock-sync-wrap" style="width:100%;margin-top:4px;display:none;border-top:1px solid rgba(214,243,255,0.1);padding-top:14px;">
-      <div style="font-size:11px;color:rgba(214,243,255,0.4);margin-bottom:8px;text-align:center;">First time on this device — add your sync token</div>
+    <div id="lock-sync-wrap" style="width:100%;margin-top:20px;display:none;border-top:1px solid rgba(214,243,255,0.08);padding-top:18px;">
+      <div style="font-size:11px;color:rgba(214,243,255,0.35);margin-bottom:10px;letter-spacing:0.02em;">First time on this device — add your sync token</div>
       <div style="display:flex;gap:6px;">
         <input type="password" id="lock-token-input" placeholder="Paste GitHub token…" autocomplete="off"
-          style="flex:1;font-family:'Inter',sans-serif;font-size:12px;background:rgba(214,243,255,0.07);color:#F9FBFF;border:1px solid rgba(214,243,255,0.15);border-radius:8px;padding:7px 10px;outline:none;">
-        <button onclick="saveLockToken()" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;background:rgba(214,243,255,0.12);color:#D6F3FF;border:1px solid rgba(214,243,255,0.2);border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Save</button>
+          style="flex:1;font-family:'Inter',sans-serif;font-size:12px;background:rgba(214,243,255,0.06);color:#F9FBFF;border:1px solid rgba(214,243,255,0.12);border-radius:8px;padding:9px 12px;outline:none;">
+        <button onclick="saveLockToken()" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;background:rgba(214,243,255,0.10);color:#D6F3FF;border:1px solid rgba(214,243,255,0.18);border-radius:8px;padding:9px 14px;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Save</button>
       </div>
     </div>
     <div class="lock-tagline">We work the shift with you.</div>
@@ -1047,20 +1057,20 @@ window.tryUnlock = async function() {
 </script>
 
 <div class="tabs">
-  <div style="display:flex;align-items:center;padding:0 16px 6px 4px;border-right:1px solid var(--border);margin-right:6px;flex-shrink:0;">
-    <span style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:18px;color:var(--cal-text);letter-spacing:-0.02em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
+  <div style="display:flex;align-items:center;padding:0 18px 6px 2px;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;">
+    <span style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
   </div>
   <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
-  <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">👥 My Team</button>
-  <button class="tab-btn" id="tab-btn-calendar" style="display:none" onclick="switchTab('calendar', this)">📆 Calendar</button>
-  <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">🎫 Tickets</button>
-  <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">💡 Feedback</button>
-  <button class="tab-btn" onclick="switchTab('settings', this)">⚙ Settings</button>
+  <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
+  <button class="tab-btn" id="tab-btn-calendar" style="display:none" onclick="switchTab('calendar', this)">Calendar</button>
+  <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">Tickets</button>
+  <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">Feedback</button>
+  <button class="tab-btn" onclick="switchTab('settings', this)">Settings</button>
   <div class="clock-wrap">
-    <span id="user-display" style="font-size:12px;color:var(--text2);margin-right:4px;"></span>
-    <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);font-size:12px;padding:3px 8px;cursor:pointer;transition:border-color 0.15s;" title="Toggle light/dark mode">🌙</button>
-    <button onclick="signOut()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;transition:color 0.15s,border-color 0.15s;" title="Sign out (Q)">Sign out</button>
+    <span id="user-display" style="font-size:12px;color:var(--text2);margin-right:2px;"></span>
+    <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;transition:border-color 0.15s,color 0.15s;" title="Toggle light/dark mode">🌙</button>
+    <button onclick="signOut()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 10px;cursor:pointer;transition:color 0.15s,border-color 0.15s;" title="Sign out (Q)">Sign out</button>
     <button onclick="showKeyboardShortcuts()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;" title="Keyboard shortcuts">?</button>
     <span id="live-clock"></span>
     <span id="live-date"></span>
@@ -1217,6 +1227,8 @@ window.tryUnlock = async function() {
     </div>
     <div class="topbar-right">
       <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn-nav" onclick="zdSetThisWeek()" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);">This week</button>
+        <button class="btn-nav" onclick="zdSetLastWeek()" style="font-size:11px;">Last week</button>
         <label style="font-size:11px;color:var(--text3);">From</label>
         <input type="date" id="zd-from" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:4px 8px;outline:none;">
         <label style="font-size:11px;color:var(--text3);">To</label>
@@ -4864,6 +4876,22 @@ function zdInitDates() {
   if (t) t.value = fmt(fri);
 }
 
+function zdSetThisWeek() {
+  zdInitDates();
+  // Highlight the button briefly
+  const btn = document.querySelector('[onclick="zdSetThisWeek()"]');
+  if (btn) { btn.style.background = 'var(--cal)'; setTimeout(() => btn.style.background = '', 600); }
+}
+
+function zdSetLastWeek() {
+  const fmt = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  const mon = getMonday(-1); // offset -1 = last week
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const f = document.getElementById('zd-from'); const t = document.getElementById('zd-to');
+  if (f) f.value = fmt(mon);
+  if (t) t.value = fmt(sun);
+}
+
 const ZD_PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev';
 
 async function zdFetch(path) {
@@ -4902,7 +4930,8 @@ async function zdCount(query) {
 }
 
 async function zdGetStats(agentId, fromDate, toDate) {
-  const solvedBase = `type:ticket assignee_id:${agentId} status:solved solved>=${fromDate} solved<=${toDate}`;
+  // status>=solved includes both "solved" and "closed" — matches Zendesk UI query: status>=SOLVED
+  const solvedBase = `type:ticket assignee_id:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`;
   const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return 0; } };
 
   const [total, open, pending, onhold] = await Promise.all([
@@ -4930,6 +4959,41 @@ async function zdGetStats(agentId, fromDate, toDate) {
   }
 
   return { solved: total, web, email, open, pending, onhold };
+}
+
+// Returns set of agent first-names who are absent for ALL working days in [fromDate, toDate]
+function zdGetAbsentNames(fromDate, toDate) {
+  const absent = new Set();
+  if (!fromDate || !toDate || !SCHEDULE || !MY_TEAM) return absent;
+  const OFF_SHIFTS = new Set(['so', 'h', 'abs', '']);
+
+  // Collect all working days in the range
+  const rangeDays = [];
+  const cur = new Date(fromDate + 'T00:00:00');
+  const end = new Date(toDate   + 'T00:00:00');
+  while (cur <= end) {
+    const dow = cur.getDay();
+    if (dow >= 1 && dow <= 5) rangeDays.push(cur.toISOString().slice(0, 10)); // Mon–Fri only
+    cur.setDate(cur.getDate() + 1);
+  }
+  if (!rangeDays.length) return absent;
+
+  // For each MY_TEAM member, check if they are off on every working day in the range
+  MY_TEAM.forEach(name => {
+    const absentOnAllDays = rangeDays.every(dayStr => {
+      // Find which schedule week contains this day
+      const week = SCHEDULE.find(w => w.dates && w.dates.includes(dayStr));
+      if (!week) return false; // day not in schedule = assume present
+      const person = week.people.find(p => p.name === name);
+      if (!person) return false;
+      const dayIdx = week.dates.indexOf(dayStr);
+      if (dayIdx < 0) return false;
+      const shift = (person.shifts[dayIdx] || '').toLowerCase();
+      return OFF_SHIFTS.has(shift);
+    });
+    if (absentOnAllDays) absent.add(name.toLowerCase());
+  });
+  return absent;
 }
 
 async function zdRefresh() {
@@ -4991,74 +5055,73 @@ async function refreshSlaPanel() {
 
   try {
     const now = new Date();
-    const plus5h = new Date(now.getTime() + 5 * 60 * 60 * 1000);
-    const fmtIso = d => d.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    // Zendesk ISO format: no milliseconds, just Z
+    const fmtIso = d => d.toISOString().slice(0, 19) + 'Z';
+    const plus4h = new Date(now.getTime() + 4 * 60 * 60 * 1000);
 
-    // Try both breach syntaxes — Zendesk uses different values in different plans
-    // Also try without group filter first to confirm SLA queries work at all
-    const debugQuery = `type:ticket sla_breach:true status:open`;
-    let debugCount = 0;
-    try { debugCount = await zdCount(debugQuery); } catch(e) {}
-
-    // Build queries — try with group ID, fall back to no group filter if needed
-    const groupFilter = slaGroupId ? ` group:${slaGroupId}` : '';
+    // Status filter — open tickets only (pending and hold can still breach)
     const statusFilter = `(status:open OR status:pending OR status:hold)`;
+    const groupFilter  = ` group:${slaGroupId}`;
 
+    // Breached = SLA already exceeded and ticket still open
     const breachedQuery   = `type:ticket${groupFilter} sla_breach:true ${statusFilter}`;
-    const soonQuery       = `type:ticket${groupFilter} sla_next_breach_at<${fmtIso(plus5h)} sla_breach:false ${statusFilter}`;
+    // Soon = breach time within next 4 hours (don't use sla_breach:false — unreliable on all plans)
+    const soonQuery       = `type:ticket${groupFilter} sla_next_breach_at<${fmtIso(plus4h)} sla_breach:false ${statusFilter}`;
     const unassignedQuery = `type:ticket${groupFilter} no:assignee ${statusFilter}`;
 
-    // Test if breach query works, if not try without group
-    let useGroupFilter = true;
+    // Test breached query — fall back to no group filter if it errors
+    let finalGroup = groupFilter;
     try {
       await zdCount(breachedQuery);
     } catch(e) {
-      useGroupFilter = false;
+      finalGroup = '';
     }
 
-    const finalGroup = useGroupFilter ? groupFilter : '';
     const finalBreached   = `type:ticket${finalGroup} sla_breach:true ${statusFilter}`;
-    const finalSoon       = `type:ticket${finalGroup} sla_next_breach_at<${fmtIso(plus5h)} sla_breach:false ${statusFilter}`;
+    const finalSoon       = `type:ticket${finalGroup} sla_next_breach_at<${fmtIso(plus4h)} sla_breach:false ${statusFilter}`;
     const finalUnassigned = `type:ticket${finalGroup} no:assignee ${statusFilter}`;
 
     const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return '?'; } };
+    const safeFetch = async (q, sort) => {
+      try {
+        const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=25&sort_by=' + sort + '&sort_order=asc');
+        return r.results || [];
+      } catch(e) { return []; }
+    };
 
-    const [breachedCount, soonCount, unassignedCount, breachedTickets, soonTickets] = await Promise.all([
+    const [breachedCount, unassignedCount, breachedTickets, soonTickets] = await Promise.all([
       safeCount(finalBreached),
-      safeCount(finalSoon),
       safeCount(finalUnassigned),
-      zdFetch('/search.json?query=' + encodeURIComponent(finalBreached) + '&per_page=25&sort_by=created_at&sort_order=asc')
-        .then(r => r.results || []).catch(() => []),
-      zdFetch('/search.json?query=' + encodeURIComponent(finalSoon) + '&per_page=25&sort_by=sla_next_breach_at&sort_order=asc')
-        .then(r => r.results || []).catch(() => []),
+      safeFetch(finalBreached, 'created_at'),
+      safeFetch(finalSoon, 'sla_next_breach_at'),
     ]);
+
+    // soonCount derived from tickets length (avoids unreliable count for soon query)
+    const soonCount = soonTickets.length;
 
     const countsEl = document.getElementById('sla-counts');
     if (countsEl) {
       countsEl.innerHTML = '';
       const pills = [
-        { val: breachedCount,   label: breachedCount === 1 ? '1 breached' : breachedCount + ' breached',      cls: breachedCount > 0 ? 'breached' : 'ok' },
-        { val: soonCount,       label: soonCount === 1 ? '1 breaching soon' : soonCount + ' breaching soon',  cls: soonCount > 0 ? 'soon' : 'ok' },
-        { val: unassignedCount, label: unassignedCount + ' unassigned',                                       cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
+        { label: breachedCount + ' breached',        cls: breachedCount > 0 ? 'breached' : 'ok' },
+        { label: soonCount + ' breaching within 4h', cls: soonCount > 0 ? 'soon' : 'ok' },
+        { label: unassignedCount + ' unassigned',    cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
       ];
       pills.forEach(p => {
         const pill = document.createElement('span'); pill.className = 'sla-count-pill ' + p.cls;
         pill.textContent = p.label; countsEl.appendChild(pill);
       });
-      // Debug: show which group filter was used
-      const dbg = document.createElement('span'); dbg.style.cssText = 'font-size:10px;color:var(--text3);';
-      dbg.textContent = useGroupFilter ? `group:${slaGroupId}` : 'all groups';
-      dbg.title = 'Query: ' + finalBreached;
+      const dbg = document.createElement('span'); dbg.style.cssText = 'font-size:10px;color:var(--text3);cursor:help;';
+      dbg.textContent = finalGroup ? 'group filter active' : 'no group filter';
+      dbg.title = 'Breached query: ' + finalBreached;
       countsEl.appendChild(dbg);
     }
 
-    // Render breached tickets
     renderSlaTicketList('sla-breached-list', breachedTickets, 'breached');
-
-    // Render soon-breaching tickets
     renderSlaTicketList('sla-soon-list', soonTickets, 'soon');
 
   } catch(e) {
+    showErr(e.message);
     console.error('SLA panel error:', e);
   } finally {
     if (btn) { btn.textContent = '↻ Refresh SLA'; btn.disabled = false; }
@@ -5203,6 +5266,19 @@ function zdRender(agents, fromDate, toDate) {
   const body = document.getElementById('zd-body');
   // Clear everything except inbox stats container
   Array.from(body.children).forEach(c => { if (c.id !== 'zd-inbox-stats') c.remove(); });
+
+  // Filter out agents fully absent during the period
+  const absentNames = zdGetAbsentNames(fromDate, toDate);
+  const presentAgents = agents.filter(a => !absentNames.has(a.name.split(' ')[0].toLowerCase()) && !absentNames.has(a.name.toLowerCase()));
+  if (agents.length !== presentAgents.length) {
+    const info = document.createElement('div');
+    info.style.cssText = 'font-size:11px;color:var(--text3);padding:4px 0 10px;';
+    const hidden = agents.length - presentAgents.length;
+    info.textContent = `${hidden} agent${hidden>1?'s':''} hidden — absent for entire period`;
+    body.appendChild(info);
+  }
+  agents = presentAgents;
+
   const totals = keys => Object.values(zdData).reduce((s, d) => s + (d[keys]||0), 0);
   const fromFmt = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
   const toFmt   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
@@ -5291,7 +5367,7 @@ function zdRender(agents, fromDate, toDate) {
         const prevTo = new Date(fromDate); prevTo.setDate(prevTo.getDate() - 1);
         const prevFrom = new Date(prevTo); prevFrom.setDate(prevFrom.getDate() - days + 1);
         const fmt = d2 => d2.toISOString().slice(0,10);
-        const prev = await zdCount(`type:ticket assignee_id:${agent.id} status:solved solved>=${fmt(prevFrom)} solved<=${fmt(prevTo)}`);
+        const prev = await zdCount(`type:ticket assignee_id:${agent.id} status>=solved solved>=${fmt(prevFrom)} solved<=${fmt(prevTo)}`);
         const curr = d.solved||0; const diff = curr - prev;
         trendEl.textContent = diff > 0 ? '+'+diff : diff < 0 ? ''+diff : '±0';
         trendEl.className = 'zd-trend ' + (diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat');
