@@ -389,8 +389,8 @@
   "wtp_profile_cecilie": {
     "log": [],
     "goals": [],
-    "rag": "amber",
+    "rag": "none",
     "focus": "",
-    "_open": true
+    "_open": false
   }
 }
