@@ -382,9 +382,9 @@
   "wtp_profile_jonas": {
     "log": [],
     "goals": [],
-    "rag": "none",
+    "rag": "red",
     "focus": "",
-    "_open": false
+    "_open": true
   },
   "wtp_profile_cecilie": {
     "log": [],
