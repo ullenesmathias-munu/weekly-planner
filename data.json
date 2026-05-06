@@ -206,7 +206,10 @@
     {
       "name": "kate.rooke@munu.cloud",
       "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false
+      "isAdmin": false,
+      "privileges": [
+        "zendesk"
+      ]
     },
     {
       "name": "vetle.bengtson@munu.cloud",
