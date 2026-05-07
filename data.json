@@ -265,7 +265,13 @@
   ],
   "wtp_notepad_persistent": "Test",
   "wtp_profile_thomas": {
-    "log": [],
+    "log": [
+      {
+        "tag": "win",
+        "text": "Really good at being honest and clear with customer to not give any expectations we cant meet.",
+        "ts": "2026-05-07T13:49:12.414Z"
+      }
+    ],
     "goals": [],
     "rag": "green",
     "focus": "",
