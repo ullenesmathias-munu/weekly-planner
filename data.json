@@ -225,6 +225,24 @@
       "pendingName": "",
       "reminder": "",
       "done": false
+    },
+    {
+      "id": "1778138184432",
+      "day": "Thursday",
+      "title": "Check Missing EOB",
+      "priority": "",
+      "due": "6 May",
+      "note": "Has to be done before May 17th.",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "11:00",
+      "colour": "red",
+      "pendingName": "",
+      "weekStamp": "2026-05-04",
+      "done": false
     }
   ],
   "wtp_notepad_persistent": "Test",
