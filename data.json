@@ -243,6 +243,24 @@
       "pendingName": "",
       "weekStamp": "2026-05-04",
       "done": true
+    },
+    {
+      "id": "1778146251291",
+      "day": "Wednesday",
+      "title": "Andreas - 6 month",
+      "priority": "",
+      "due": "12 May",
+      "note": "Need to follow up so Andreas get this 6 month specialization approved.",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "blue",
+      "pendingName": "Kate",
+      "weekStamp": "2026-05-11",
+      "done": false
     }
   ],
   "wtp_notepad_persistent": "Test",
