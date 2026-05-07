@@ -242,7 +242,7 @@
       "colour": "red",
       "pendingName": "",
       "weekStamp": "2026-05-04",
-      "done": false
+      "done": true
     }
   ],
   "wtp_notepad_persistent": "Test",
