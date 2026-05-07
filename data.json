@@ -267,9 +267,9 @@
   "wtp_profile_thomas": {
     "log": [],
     "goals": [],
-    "rag": "none",
+    "rag": "green",
     "focus": "",
-    "_open": false
+    "_open": true
   },
   "wtp_users": [
     {
