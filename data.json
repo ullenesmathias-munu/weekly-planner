@@ -280,7 +280,7 @@
   "wtp_profile_marie": {
     "log": [],
     "goals": [],
-    "rag": "none",
+    "rag": "green",
     "focus": "",
     "_open": true
   },
