@@ -475,7 +475,7 @@
   "wtp_profile_vetle": {
     "log": [],
     "goals": [],
-    "rag": "none",
+    "rag": "green",
     "focus": "",
     "_open": true
   }
