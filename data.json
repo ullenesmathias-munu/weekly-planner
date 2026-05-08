@@ -278,7 +278,13 @@
     "_open": true
   },
   "wtp_profile_marie": {
-    "log": [],
+    "log": [
+      {
+        "tag": "win",
+        "text": "Has an amazing ability to be calm and make the customers feel calm.",
+        "ts": "2026-05-08T10:51:00.547Z"
+      }
+    ],
     "goals": [],
     "rag": "green",
     "focus": "",
