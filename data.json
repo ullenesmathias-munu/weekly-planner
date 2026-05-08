@@ -473,7 +473,13 @@
     "_open": false
   },
   "wtp_profile_vetle": {
-    "log": [],
+    "log": [
+      {
+        "tag": "win",
+        "text": "Calm in situation that can be stressful when you dont know how to solve what the customer wants.",
+        "ts": "2026-05-08T10:50:29.042Z"
+      }
+    ],
     "goals": [],
     "rag": "green",
     "focus": "",
