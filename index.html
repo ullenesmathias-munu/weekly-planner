@@ -83,7 +83,9 @@
   .light-mode #live-clock { color: var(--text); }
   html { color-scheme: dark; }
   .light-mode { color-scheme: light; }
-  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 500; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 500; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 24px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  #tab-dashboard { padding: 0; margin: -20px -24px 0; min-height: calc(100vh - 52px); display: none; }
+  #tab-dashboard.active { display: flex; flex-direction: column; }
 
   /* Munu typography hierarchy */
   h1, h2, h3, .munu-heading, .lock-title, .oto-person-title { font-family: 'Fira Sans', sans-serif; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
@@ -508,11 +510,560 @@
   .kbd-key { font-size: 11px; font-weight: 600; background: var(--surface2); border: 1px solid var(--border2); border-bottom: 2px solid var(--border3); border-radius: 4px; padding: 2px 7px; color: var(--text); font-family: monospace; }
   /* ─── Shift pill size ────────────────────────────── */
   .sched-table .shift-pill { font-size: 11px !important; font-weight: 700 !important; padding: 4px 8px !important; min-width: 72px; text-align: center; display: inline-block; }
-  /* ─── Tab active state ───────────────────────────── */
+  /* ─── Dashboard ─────────────────────────────────────────────── */
+  #tab-dashboard { padding: 0; }
+  #dashboard-root {
+    max-width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    animation: dbFadeIn 0.4s var(--ease-smooth) both;
+  }
+  @keyframes dbFadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* Hero — Munu dark blue foundation */
+  .db-hero {
+    background: #000743;
+    padding: 28px 36px 26px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .db-hero::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(214,243,255,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .db-hero-left { position: relative; z-index: 1; }
+  .db-hero-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(214,243,255,0.45);
+    margin-bottom: 6px;
+  }
+  .db-hero-greeting {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: #D6F3FF;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .db-hero-date {
+    font-size: 12px;
+    color: rgba(214,243,255,0.4);
+    margin-top: 5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .db-hero-right {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* KPI tiles — on dark blue hero */
+  .db-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    padding: 10px 14px;
+    background: rgba(214,243,255,0.07);
+    border: 1px solid rgba(214,243,255,0.14);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.18s var(--ease-smooth), border-color 0.18s, transform 0.15s;
+    gap: 3px;
+  }
+  .db-kpi:hover {
+    background: rgba(214,243,255,0.13);
+    border-color: rgba(214,243,255,0.28);
+    transform: translateY(-2px);
+  }
+  .db-kpi-val {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #D6F3FF;
+  }
+  .db-kpi-val.ok      { color: #6ee7b7; }
+  .db-kpi-val.warn    { color: #fcd34d; }
+  .db-kpi-val.danger  { color: #fca5a5; }
+  .db-kpi-val.neutral { color: #D6F3FF; }
+  .db-kpi-val.white   { color: #F9FBFF; }
+  .db-kpi-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(214,243,255,0.45);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Notification bar — subtle, not dominant */
+  .db-notif-bar {
+    padding: 8px 36px;
+    background: rgba(241,183,242,0.06);
+    border-bottom: 1px solid rgba(241,183,242,0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .db-notif-bar-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(241,183,242,0.55);
+    flex-shrink: 0;
+  }
+  .db-notif-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(241,183,242,0.08);
+    border: 1px solid rgba(241,183,242,0.18);
+    border-radius: 20px;
+    padding: 3px 11px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .db-notif-pill:hover {
+    background: rgba(241,183,242,0.14);
+    border-color: rgba(241,183,242,0.3);
+  }
+  .db-notif-dot { width: 5px; height: 5px; border-radius: 50%; background: #F1B7F2; flex-shrink: 0; }
+
+  /* Column grid body */
+  .db-body {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    flex: 1;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+    min-height: 500px;
+  }
+  .db-col {
+    border-right: 1px solid var(--border);
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+    min-height: 400px;
+  }
+  .db-col:last-child { border-right: none; }
+
+  /* Section headers */
+  .db-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .db-section-action {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--cal-text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+  .db-section-action:hover { opacity: 1; text-decoration: underline; }
+
+  /* Rows */
+  .db-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .db-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .db-row-label { flex: 1; color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .db-row-meta { color: var(--text3); font-size: 11px; flex-shrink: 0; }
+  .db-row-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; white-space: nowrap; }
+  .db-empty { font-size: 12px; color: var(--text3); font-style: italic; padding: 6px 0; line-height: 1.5; }
+
+  /* Notification items */
+  .db-notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-radius: var(--radius-md);
+    border-left: 2px solid #D6F3FF;
+    cursor: pointer;
+    transition: background 0.12s;
+    margin-bottom: 6px;
+  }
+  .db-notif-item:hover { background: var(--surface3); }
+  .db-notif-item.pink-border { border-left-color: #F1B7F2; }
+  .db-notif-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #D6F3FF; flex-shrink: 0; margin-top: 4px; }
+  .db-notif-item-dot.pink { background: #F1B7F2; }
+  .db-notif-body { flex: 1; min-width: 0; }
+  .db-notif-title { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .db-notif-sub { font-size: 11px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .db-notif-time { font-size: 10px; color: var(--text3); flex-shrink: 0; margin-top: 3px; }
+
+  /* Shift strip — week view */
+  .db-shift-strip { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
+  .db-shift-strip::-webkit-scrollbar { height: 2px; }
+  .db-shift-strip::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  .db-shift-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 52px;
+    background: var(--surface2);
+    border-radius: var(--radius-md);
+    padding: 8px 4px 7px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .db-shift-day.today {
+    background: #000743;
+    border-color: #D6F3FF;
+  }
+  .db-shift-day.today .db-shift-dow { color: #D6F3FF; font-weight: 800; }
+  .db-shift-day.today .db-shift-val { color: #D6F3FF; }
+  .db-shift-day.today .db-shift-date { color: rgba(214,243,255,0.5); }
+  .db-shift-dow { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); }
+  .db-shift-date { font-size: 8px; color: var(--text3); font-variant-numeric: tabular-nums; }
+  .db-shift-val { font-size: 10px; font-weight: 700; color: var(--text); text-align: center; line-height: 1.2; margin-top: 1px; letter-spacing: -0.01em; }
+  .db-shift-role { font-size: 8px; color: var(--text3); text-align: center; margin-top: 1px; line-height: 1.2; }
+  .db-shift-off { color: var(--text3); font-style: italic; font-weight: 400; font-size: 9px; }
+
+  /* Today's shift — hero card */
+  .db-today-shift {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 18px;
+    background: #000743;
+    border: 1px solid rgba(214,243,255,0.2);
+    border-radius: var(--radius-lg);
+  }
+  .db-today-shift-main {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: #D6F3FF;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .db-today-shift-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(214,243,255,0.4);
+    margin-bottom: 3px;
+  }
+  .db-divider { width: 1px; height: 38px; background: rgba(214,243,255,0.15); flex-shrink: 0; }
+
+  /* Team chips */
+  .db-team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .db-team-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 9px;
+    background: var(--surface2);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    transition: background 0.12s;
+  }
+  .db-team-chip:hover { background: var(--surface3); }
+  .db-team-chip-shift { font-size: 10px; color: var(--cal-text); font-weight: 700; margin-left: auto; flex-shrink: 0; letter-spacing: -0.01em; }
+  .db-team-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* RAG + SLA */
+  .db-rag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .db-sla-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .db-sla-badge.breached { background: var(--high-bg); color: var(--high-text); }
+  .db-sla-badge.warn     { background: var(--med-bg); color: var(--med-text); }
+  .db-sla-badge.ok       { background: var(--low-bg); color: var(--low-text); }
+
+  /* Feedback feed */
+  .db-feedback-from { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--cal-text); flex-shrink: 0; min-width: 58px; }
+
+  /* Tickets */
+  .db-ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: var(--surface2);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    text-decoration: none;
+    transition: background 0.12s, border-color 0.12s;
+    margin-bottom: 4px;
+    border: 1px solid var(--border);
+  }
+  .db-ticket-row:hover { background: var(--surface3); border-color: var(--border2); }
+  .db-ticket-id { color: var(--text3); font-size: 10px; flex-shrink: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .db-ticket-subject { flex: 1; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+  .db-ticket-age { font-size: 10px; color: var(--text3); flex-shrink: 0; }
+
+  /* Mood widget */
+  .mood-picker { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 2px; }
+  .mood-emoji {
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 5px 7px;
+    border: 1.5px solid transparent;
+    transition: transform 0.15s var(--ease-smooth), border-color 0.12s, background 0.12s;
+    user-select: none;
+    line-height: 1;
+  }
+  .mood-emoji:hover { transform: scale(1.2); background: var(--surface3); }
+  .mood-emoji.selected { border-color: #D6F3FF; background: rgba(214,243,255,0.08); transform: scale(1.1); }
+  .mood-submitted { font-size: 13px; color: var(--text2); padding: 2px 0; font-weight: 500; }
+  .mood-history-bar { display: flex; gap: 5px; align-items: flex-end; margin-top: 10px; flex-wrap: wrap; }
+  .mood-week-dot { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .mood-week-emoji { font-size: 15px; line-height: 1; }
+  .mood-week-lbl { font-size: 8px; color: var(--text3); font-weight: 600; text-align: center; }
+
+  /* Handover */
+  .handover-area {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 9px 11px;
+    outline: none;
+    resize: none;
+    transition: border-color 0.15s;
+    min-height: 72px;
+    box-sizing: border-box;
+    line-height: 1.55;
+  }
+  .handover-area:focus { border-color: rgba(214,243,255,0.35); }
+  .handover-note {
+    background: rgba(0,7,67,0.4);
+    border-left: 2px solid #D6F3FF;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 10px 13px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .handover-meta { font-size: 10px; color: var(--text3); margin-top: 5px; letter-spacing: 0.01em; }
+
+  /* Quick links */
+  .ql-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .ql-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 500;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    line-height: 1.2;
+  }
+  .ql-link:hover { background: #000743; border-color: rgba(214,243,255,0.25); color: #D6F3FF; }
+  .ql-icon { font-size: 14px; flex-shrink: 0; line-height: 1; }
+  .ql-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ql-del { font-size: 10px; color: transparent; background: none; border: none; cursor: pointer; padding: 0 2px; flex-shrink: 0; transition: color 0.1s; }
+  .ql-link:hover .ql-del { color: rgba(214,243,255,0.4); }
+  .ql-del:hover { color: #F1B7F2 !important; }
+  .ql-add-row { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+  .ql-input {
+    flex: 1;
+    min-width: 70px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ql-input:focus { border-color: rgba(214,243,255,0.3); }
+  .ql-add-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    background: #D6F3FF;
+    color: #000743;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 5px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+    letter-spacing: -0.01em;
+  }
+  .ql-add-btn:hover { opacity: 0.88; }
+
+  /* Light mode overrides for dashboard */
+  .light-mode .db-hero { background: #000743; }
+  .light-mode .db-kpi { background: rgba(214,243,255,0.07); border-color: rgba(214,243,255,0.14); }
+  .light-mode .db-kpi:hover { background: rgba(214,243,255,0.14); }
+  .light-mode .db-kpi-val { color: #D6F3FF; }
+  .light-mode .db-kpi-val.ok { color: #6ee7b7; }
+  .light-mode .db-kpi-val.warn { color: #fcd34d; }
+  .light-mode .db-kpi-val.danger { color: #fca5a5; }
+  .light-mode .db-kpi-label { color: rgba(214,243,255,0.45); }
+  .light-mode .db-today-shift { background: #000743; border-color: rgba(214,243,255,0.25); }
+  .light-mode .db-shift-day.today { background: #000743; border-color: #D6F3FF; }
+  .light-mode .db-notif-item { background: #f5f7ff; border-left-color: #000743; }
+  .light-mode .db-notif-item:hover { background: #eef1fb; }
+  .light-mode .db-notif-item.pink-border { border-left-color: #c9559e; }
+  .light-mode .db-notif-item-dot { background: #000743; }
+  .light-mode .db-notif-item-dot.pink { background: #c9559e; }
+  .light-mode .db-team-chip { background: #f0f4ff; border-color: rgba(0,7,67,0.1); }
+  .light-mode .db-team-chip:hover { background: #e4eaff; }
+  .light-mode .db-handover-note { background: rgba(0,7,67,0.05); border-left-color: #000743; }
+  .light-mode .ql-link:hover { background: #000743; border-color: #000743; color: #D6F3FF; }
+  .light-mode .mood-emoji.selected { border-color: #000743; background: rgba(0,7,67,0.06); }
+
+  /* Responsive */
+  @media (max-width: 1100px) { .db-body { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px)  { .db-body { grid-template-columns: 1fr; } .db-hero { padding: 20px 20px 18px; } .db-col { padding: 18px 20px; } }
+
   .tabs { border-bottom: 1px solid var(--border); }
   .tab-btn { position: relative; }
   .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
   .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 12px; right: 12px; height: 2px; background: var(--cal-text); border-radius: 2px 2px 0 0; }
+  /* ─── TV View ────────────────────────────────────── */
+  #tv-overlay { font-family: 'Inter', sans-serif; }
+  .tv-header { background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(214,243,255,0.1); padding: 14px 36px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .tv-wordmark { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 22px; color: #D6F3FF; letter-spacing: -0.03em; }
+  .tv-wordmark-dot { color: #F1B7F2; }
+  .tv-title { font-size: 13px; font-weight: 700; color: rgba(214,243,255,0.5); letter-spacing: 0.10em; text-transform: uppercase; }
+  .tv-meta { display: flex; align-items: center; gap: 16px; }
+  .tv-clock { font-family: 'Fira Sans', sans-serif; font-size: 20px; font-weight: 900; color: #D6F3FF; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .tv-countdown { font-size: 11px; color: rgba(214,243,255,0.4); font-weight: 600; }
+  .tv-exit { font-size: 11px; font-weight: 600; color: rgba(214,243,255,0.4); background: rgba(214,243,255,0.08); border: 1px solid rgba(214,243,255,0.15); border-radius: 6px; padding: 4px 12px; cursor: pointer; transition: background 0.15s; }
+  .tv-exit:hover { background: rgba(214,243,255,0.15); color: #D6F3FF; }
+  .tv-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0; min-height: 0; overflow: hidden; }
+  .tv-col { border-right: 1px solid rgba(214,243,255,0.08); padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+  .tv-col::-webkit-scrollbar { width: 3px; }
+  .tv-col::-webkit-scrollbar-thumb { background: rgba(214,243,255,0.15); border-radius: 2px; }
+  .tv-col:last-child { border-right: none; }
+  .tv-col-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(214,243,255,0.35); padding-bottom: 8px; border-bottom: 1px solid rgba(214,243,255,0.08); }
+  .tv-kpi-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tv-kpi { flex: 1; min-width: 80px; background: rgba(214,243,255,0.05); border: 1px solid rgba(214,243,255,0.1); border-radius: 10px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .tv-kpi-val { font-family: 'Fira Sans', sans-serif; font-size: 36px; font-weight: 900; line-height: 1; letter-spacing: -0.03em; color: #D6F3FF; }
+  .tv-kpi-val.danger { color: #fca5a5; }
+  .tv-kpi-val.warn   { color: #fcd34d; }
+  .tv-kpi-val.ok     { color: #6ee7b7; }
+  .tv-kpi-val.neutral{ color: #D6F3FF; }
+  .tv-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(214,243,255,0.4); text-align: center; }
+  .tv-agent-card { background: rgba(214,243,255,0.04); border: 1px solid rgba(214,243,255,0.08); border-radius: 10px; padding: 12px 14px; }
+  .tv-agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .tv-agent-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #000743; flex-shrink: 0; }
+  .tv-agent-name { font-size: 13px; font-weight: 700; color: #D6F3FF; letter-spacing: -0.01em; }
+  .tv-agent-solved { font-size: 11px; color: rgba(214,243,255,0.45); }
+  .tv-agent-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tv-stat-chip { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+  .tv-stat-chip.solved  { background: rgba(110,231,183,0.15); color: #6ee7b7; }
+  .tv-stat-chip.open    { background: rgba(252,165,165,0.15); color: #fca5a5; }
+  .tv-stat-chip.pending { background: rgba(252,211,77,0.15);  color: #fcd34d; }
+  .tv-ticket-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: rgba(214,243,255,0.04); border-radius: 8px; border: 1px solid rgba(214,243,255,0.07); margin-bottom: 4px; }
+  .tv-ticket-id { font-size: 10px; color: rgba(214,243,255,0.35); font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .tv-ticket-subject { flex: 1; font-size: 11px; color: rgba(214,243,255,0.8); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+  .tv-ticket-age { font-size: 10px; color: rgba(214,243,255,0.4); flex-shrink: 0; font-weight: 600; }
+  .tv-empty { font-size: 12px; color: rgba(214,243,255,0.3); font-style: italic; padding: 8px 0; }
+  .tv-last-updated { font-size: 10px; color: rgba(214,243,255,0.2); padding-top: 8px; text-align: center; }
+  .zd-unassigned-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 18px; }
+  .zd-unassigned-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .zd-unassigned-count { font-size: 11px; font-weight: 700; color: var(--med-text); background: var(--med-bg); padding: 1px 8px; border-radius: 10px; }
+  .zd-unassigned-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--surface2); border-radius: var(--radius-md); font-size: 12px; text-decoration: none; color: var(--text); border: 1px solid var(--border); transition: border-color 0.12s; margin-bottom: 4px; }
+  .zd-unassigned-row:hover { border-color: var(--med-text); }
+  @media (max-width: 1200px) { .tv-body { grid-template-columns: 1fr 1fr; } }
+    /* ─── Mood / Pulse ──────────────────────────────────────────── */
+  .mood-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .mood-emoji { font-size: 22px; cursor: pointer; border-radius: 10px; padding: 5px 8px; border: 2px solid transparent; transition: transform 0.12s, border-color 0.12s, background 0.12s; user-select: none; line-height: 1; }
+  .mood-emoji:hover { transform: scale(1.2); background: var(--surface3); }
+  .mood-emoji.selected { border-color: var(--cal-text); background: var(--cal); transform: scale(1.15); }
+  .mood-submitted { font-size: 12px; color: var(--text3); font-style: italic; padding: 4px 0; }
+  .mood-history-bar { display: flex; gap: 6px; align-items: flex-end; margin-top: 10px; flex-wrap: wrap; }
+  .mood-week-dot { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .mood-week-emoji { font-size: 16px; line-height: 1; }
+  .mood-week-lbl { font-size: 8px; color: var(--text3); font-weight: 600; text-align: center; }
+  /* ─── Handover ───────────────────────────────────────────────── */
+  .handover-area { width: 100%; font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; outline: none; resize: none; transition: border-color 0.15s; min-height: 64px; box-sizing: border-box; }
+  .handover-area:focus { border-color: var(--cal-text); }
+  .handover-note { background: var(--surface2); border-left: 3px solid var(--cal-text); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 9px 12px; font-size: 12px; color: var(--text); line-height: 1.55; white-space: pre-wrap; }
+  .handover-meta { font-size: 10px; color: var(--text3); margin-top: 5px; }
+  /* ─── Quick links ────────────────────────────────────────────── */
+  .ql-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .ql-link { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); text-decoration: none; color: var(--text); font-size: 12px; font-weight: 500; transition: border-color 0.12s, background 0.12s, color 0.12s; }
+  .ql-link:hover { border-color: var(--cal-text); background: var(--cal); color: var(--cal-text); }
+  .ql-icon { font-size: 14px; flex-shrink: 0; line-height: 1; }
+  .ql-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ql-del { font-size: 11px; color: transparent; background: none; border: none; cursor: pointer; padding: 0 2px; flex-shrink: 0; transition: color 0.1s; }
+  .ql-link:hover .ql-del { color: var(--text3); }
+  .ql-del:hover { color: var(--high-text) !important; }
+  .ql-add-row { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .ql-input { flex: 1; min-width: 80px; font-family: inherit; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 8px; outline: none; transition: border-color 0.15s; }
+  .ql-input:focus { border-color: var(--cal-text); }
+  .ql-add-btn { font-family: inherit; font-size: 11px; font-weight: 700; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 5px 12px; cursor: pointer; white-space: nowrap; transition: opacity 0.12s; flex-shrink: 0; }
+  .ql-add-btn:hover { opacity: 0.85; }
   /* ─── SLA panel ──────────────────────────────────── */
   .sla-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
   .sla-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
@@ -981,7 +1532,10 @@ async function sha256(str) {
 
 // Default users: [{name, hash, isAdmin}]
 // Default: Mathias / Vin12310wkk!
-const DEFAULT_USERS = [{name:'Mathias', hash:'c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414', isAdmin:true}];
+const DEFAULT_USERS = [
+  {name:'Mathias', hash:'c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414', isAdmin:true},
+  {name:'Dashboard', displayName:'TV Dashboard', hash:'27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099', isAdmin:false, privileges:['zendesk'], tvOnly:true}
+];
 
 function getUsers() {
   try { return JSON.parse(localStorage.getItem('wtp_users')) || DEFAULT_USERS; }
@@ -1074,7 +1628,8 @@ window.tryUnlock = async function() {
   <div style="display:flex;align-items:center;padding:0 18px 6px 2px;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;">
     <span id="tab-wordmark" style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
   </div>
-  <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
+  <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
   <button class="tab-btn" id="tab-btn-calendar" style="display:none" onclick="switchTab('calendar', this)">Calendar</button>
@@ -1092,8 +1647,11 @@ window.tryUnlock = async function() {
 </div>
 
 <!-- PLANNER TAB -->
-<div id="tab-planner" class="tab-content active">
-  <div id="morning-briefing" class="briefing-panel" style="display:none;"></div>
+<div id="tab-dashboard" class="tab-content active">
+  <div id="dashboard-root"></div>
+</div>
+
+<div id="tab-planner" class="tab-content">  <div id="morning-briefing" class="briefing-panel" style="display:none;"></div>
   <div class="topbar">
     <div class="topbar-left">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -1241,6 +1799,7 @@ window.tryUnlock = async function() {
     </div>
     <div class="topbar-right">
       <div style="display:flex;align-items:center;gap:8px;">
+        <span id="zd-refresh-countdown" style="font-size:11px;color:var(--text3);display:none;"></span>
         <button class="btn-nav" onclick="zdSetThisWeek()" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);">This week</button>
         <button class="btn-nav" onclick="zdSetLastWeek()" style="font-size:11px;">Last week</button>
         <label style="font-size:11px;color:var(--text3);">From</label>
@@ -1248,29 +1807,19 @@ window.tryUnlock = async function() {
         <label style="font-size:11px;color:var(--text3);">To</label>
         <input type="date" id="zd-to" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--cal-text);border:1px solid var(--cal-border);border-radius:var(--radius-md);padding:4px 8px;outline:none;">
         <button class="btn-save" id="zd-refresh-btn" onclick="zdRefresh()" style="font-size:12px;">↻ Refresh</button>
+        <button class="btn-nav" onclick="enterTvMode()" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);" title="TV View">📺 TV</button>
       </div>
     </div>
   </div>
-  <div id="zd-sla-panel" class="sla-panel" style="display:none;">
-    <div class="sla-panel-header">
-      <div class="sla-panel-title">🚨 SLA Monitor</div>
-      <div class="sla-counts" id="sla-counts"></div>
-      <button class="sla-refresh-btn" id="sla-refresh-btn" onclick="refreshSlaPanel()">↻ Refresh SLA</button>
-    </div>
-    <div class="sla-sections">
-      <div class="sla-section" id="sla-breached-section">
-        <div class="sla-section-title breached">🔴 Currently breached</div>
-        <div class="sla-ticket-list" id="sla-breached-list"><div class="sla-loading">Loading…</div></div>
-      </div>
-      <div class="sla-section" id="sla-oldest-section">
-        <div class="sla-section-title" style="color:var(--text2);">&#128336; Oldest open tickets</div>
-        <div class="sla-ticket-list" id="sla-oldest-list"><div class="sla-loading">Loading…</div></div>
-      </div>
-    </div>
-  </div>
+  <div id="zd-unassigned-panel" style="display:none;margin-bottom:16px;"></div>
   <div id="zd-body" style="margin-top:16px;">
     <div id="zd-inbox-stats"></div>
   </div>
+</div>
+
+<!-- TV View overlay -->
+<div id="tv-overlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#000743;overflow:hidden;flex-direction:column;">
+  <div id="tv-root" style="flex:1;display:flex;flex-direction:column;min-height:0;"></div>
 </div>
 
 <!-- SETTINGS TAB -->
@@ -1386,6 +1935,8 @@ window.tryUnlock = async function() {
           <input type="text" id="new-username" placeholder="Username or email" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
           <input type="text" id="new-displayname" placeholder="Display name (e.g. Kate)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
           <input type="password" id="new-password" placeholder="Password" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+          <input type="text" id="new-schedulename" placeholder="Schedule name (e.g. Vetle)" list="schedule-names-list" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;width:140px;">
+          <datalist id="schedule-names-list"></datalist>
         </div>
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
           <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
@@ -1403,6 +1954,13 @@ window.tryUnlock = async function() {
         <button class="btn-cancel" onclick="signOut()">Sign out</button>
         <span style="font-size:11px;color:var(--text3);">Locks the planner and requires sign in again</span>
       </div>
+    </div>
+
+    <!-- Quick Links (admin only) -->
+    <div class="settings-card" id="ql-settings-card" style="display:none;">
+      <div class="settings-card-title">🔗 Quick links</div>
+      <div class="settings-card-desc">Manage shared links visible to all users, and your personal links. These appear on everyone's dashboard.</div>
+      <div id="ql-settings-body" style="margin-top:12px;"></div>
     </div>
 
     <!-- Backup & Restore -->
@@ -1499,11 +2057,22 @@ function switchTab(name, btn) {
     const advBody = document.getElementById('adv-body'); if (advBody) advBody.style.display = isAdmin() ? '' : 'none';
     const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = isAdmin() ? '' : 'none';
     const ghCard = document.getElementById('gh-sync-card'); if (ghCard) ghCard.style.display = isAdmin() ? '' : 'none';
+    // Quick links settings (admin only)
+    const qlCard = document.getElementById('ql-settings-card');
+    if (qlCard) {
+      qlCard.style.display = isAdmin() ? '' : 'none';
+      if (isAdmin()) {
+        const body = document.getElementById('ql-settings-body');
+        if (body) { body.innerHTML = ''; renderQuickLinks(body, currentUser.name, true); }
+      }
+    }
   }
   if (name === 'schedule') { renderSchedule(); }
+  if (name === 'dashboard') { renderDashboard(); }
   if (name === 'calendar') { initCalTab(); }
   if (name === 'onetoone') { renderOtoTab(); }
   if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); }
+  else { zdStopAutoRefresh(); }
   if (name === 'settings') { initReadonlyTokenField(); }
   if (name === 'feedback') { renderFeedbackTab(); }
   if (isMobile()) buildMobileNav();
@@ -3300,10 +3869,815 @@ function toggleNotepadMode() {
   }
 }
 
+// ─── Mood widget ──────────────────────────────────────────────────
+const MOODS = ['😊','😄','😐','😔','😤','😴','🤒'];
+const MOOD_LABELS = {'😊':'Good','😄':'Great','😐':'Meh','😔':'Low','😤':'Stressed','😴':'Tired','🤒':'Unwell'};
+
+function renderMoodWidget(container, username) {
+  const wrap = document.createElement('div');
+  const current = getCurrentMood(username);
+  const thisWeek = getISOWeek();
+
+  if (current) {
+    const done = document.createElement('div'); done.className = 'mood-submitted';
+    done.textContent = 'This week: ' + current.emoji + ' ' + (MOOD_LABELS[current.emoji]||'');
+    wrap.appendChild(done);
+  } else {
+    const prompt = document.createElement('div'); prompt.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:6px;';
+    prompt.textContent = 'How are you feeling this week?';
+    wrap.appendChild(prompt);
+    const picker = document.createElement('div'); picker.className = 'mood-picker';
+    MOODS.forEach(emoji => {
+      const btn = document.createElement('span'); btn.className = 'mood-emoji'; btn.textContent = emoji; btn.title = MOOD_LABELS[emoji]||'';
+      btn.onclick = () => {
+        saveMoodEntry(username, emoji);
+        // Push sync for non-admin
+        if (!isAdmin()) {
+          const u = currentUser;
+          pushMoodAsNonAdmin(u.name);
+        }
+        renderDashboard(); // re-render to show submitted state
+      };
+      picker.appendChild(btn);
+    });
+    wrap.appendChild(picker);
+  }
+
+  // History sparkline (last 6 weeks)
+  const history = loadMoodHistory(username).slice(-6);
+  if (history.length > 1) {
+    const bar = document.createElement('div'); bar.className = 'mood-history-bar';
+    history.forEach(e => {
+      const dot = document.createElement('div'); dot.className = 'mood-week-dot';
+      const em = document.createElement('div'); em.className = 'mood-week-emoji'; em.textContent = e.emoji;
+      const lbl = document.createElement('div'); lbl.className = 'mood-week-lbl';
+      lbl.textContent = e.week.replace(/^\d{4}-W/, 'W');
+      dot.appendChild(em); dot.appendChild(lbl); bar.appendChild(dot);
+    });
+    wrap.appendChild(bar);
+  }
+  container.appendChild(wrap);
+}
+
+// Admin mood overview — aggregate current week across all team members
+function renderAdminMoodOverview(container) {
+  const allUsers = getUsers().filter(u => !u.isAdmin && !u.tvOnly);
+  if (!allUsers.length) {
+    const e = document.createElement('div'); e.className = 'db-empty'; e.textContent = 'No team members yet';
+    container.appendChild(e); return;
+  }
+
+  const submitted = [], pending = [];
+  allUsers.forEach(u => {
+    const entry = getCurrentMood(u.name);
+    const display = u.scheduleName || getScheduleName(u) || getUserDisplayName(u);
+    if (entry) submitted.push({ name: display, emoji: entry.emoji });
+    else pending.push(display);
+  });
+
+  if (submitted.length) {
+    const row = document.createElement('div'); row.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;';
+    submitted.forEach(s => {
+      const chip = document.createElement('div'); chip.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;background:var(--surface2);border-radius:8px;padding:4px 9px;border:1px solid var(--border);';
+      chip.innerHTML = '<span style="font-size:15px;line-height:1">' + s.emoji + '</span><span style="color:var(--text);font-weight:600">' + s.name + '</span>';
+      row.appendChild(chip);
+    });
+    container.appendChild(row);
+  }
+
+  if (pending.length) {
+    const p = document.createElement('div'); p.style.cssText = 'font-size:11px;color:var(--text3);line-height:1.5;';
+    p.textContent = 'Pending: ' + pending.join(', ');
+    container.appendChild(p);
+  }
+
+  if (!submitted.length && !pending.length) {
+    const e = document.createElement('div'); e.className = 'db-empty'; e.textContent = 'No responses this week yet';
+    container.appendChild(e);
+  }
+}
+
+async function pushMoodAsNonAdmin(username) {
+  const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
+  if (!token) return;
+  try {
+    const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers });
+    if (!res.ok) return;
+    const json = await res.json();
+    let data = {}; try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
+    data[moodKey(username)] = loadMoodHistory(username);
+    try { data['wtp_users'] = JSON.parse(localStorage.getItem('wtp_users')||'null') || data['wtp_users']; } catch {}
+    const jsonStr = JSON.stringify(data, null, 2);
+    const safe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
+    await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'mood from ' + username, content: btoa(safe), sha: json.sha }) });
+  } catch(e) { console.warn('Mood push failed:', e); }
+}
+
+// ─── Handover widget ─────────────────────────────────────────────
+function renderHandoverWidget(container, username, canWrite) {
+  const todayStr = localToday();
+  const existing = loadHandover(todayStr);
+  const activeNotes = getActiveHandovers();
+
+  // Show existing notes from today/yesterday
+  activeNotes.forEach(note => {
+    const isToday = note.ts.slice(0,10) === todayStr;
+    const noteEl = document.createElement('div'); noteEl.className = 'handover-note';
+    noteEl.textContent = note.text;
+    const meta = document.createElement('div'); meta.className = 'handover-meta';
+    meta.textContent = (isToday ? 'Today' : 'Yesterday') + ' · ' + note.author + ' · ' + new Date(note.ts).toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+    container.appendChild(noteEl); container.appendChild(meta);
+  });
+
+  if (canWrite) {
+    const ta = document.createElement('textarea'); ta.className = 'handover-area';
+    ta.placeholder = 'Leave a handover note for the next shift… (auto-clears after 48h)';
+    ta.value = existing ? existing.text : '';
+    ta.style.marginTop = activeNotes.length ? '10px' : '0';
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        saveHandover(todayStr, ta.value, getUserDisplayName());
+        if (!isAdmin()) pushHandoverAsNonAdmin(username, todayStr);
+      }, 800);
+    });
+    container.appendChild(ta);
+  } else if (!activeNotes.length) {
+    const e = document.createElement('div'); e.className = 'db-empty'; e.textContent = 'No handover notes';
+    container.appendChild(e);
+  }
+}
+
+async function pushHandoverAsNonAdmin(username, dateStr) {
+  const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
+  if (!token) return;
+  try {
+    const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers });
+    if (!res.ok) return;
+    const json = await res.json();
+    let data = {}; try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
+    data[handoverKey(dateStr)] = loadHandover(dateStr);
+    const jsonStr = JSON.stringify(data, null, 2);
+    const safe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
+    await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'handover from ' + username, content: btoa(safe), sha: json.sha }) });
+  } catch(e) { console.warn('Handover push failed:', e); }
+}
+
+// ─── Quick links widget ───────────────────────────────────────────
+function renderQuickLinks(container, username, editable) {
+  const links = getAllQuickLinks(username);
+
+  if (!links.length && !editable) {
+    const e = document.createElement('div'); e.className = 'db-empty'; e.textContent = 'No links yet';
+    container.appendChild(e); return;
+  }
+
+  if (links.length) {
+    const grid = document.createElement('div'); grid.className = 'ql-grid';
+    links.forEach(link => {
+      const a = document.createElement('a'); a.className = 'ql-link';
+      a.href = link.url; a.target = '_blank'; a.rel = 'noopener';
+      const icon = document.createElement('span'); icon.className = 'ql-icon'; icon.textContent = link.icon || '🔗';
+      const lbl = document.createElement('span'); lbl.className = 'ql-label'; lbl.textContent = link.label;
+      a.appendChild(icon); a.appendChild(lbl);
+      if (editable) {
+        const del = document.createElement('button'); del.className = 'ql-del'; del.textContent = '✕'; del.title = 'Remove';
+        del.onclick = (e) => {
+          e.preventDefault(); e.stopPropagation();
+          if (link.shared) {
+            const updated = loadSharedQuickLinks().filter(l => l.id !== link.id);
+            saveSharedQuickLinks(updated);
+          } else {
+            const updated = loadQuickLinks(username).filter(l => l.id !== link.id);
+            saveQuickLinks(username, updated);
+          }
+          renderDashboard();
+        };
+        a.appendChild(del);
+      }
+      grid.appendChild(a);
+    });
+    container.appendChild(grid);
+  }
+
+  if (editable) {
+    const addRow = document.createElement('div'); addRow.className = 'ql-add-row';
+    const iconIn = document.createElement('input'); iconIn.className = 'ql-input'; iconIn.placeholder = '🔗'; iconIn.style.width = '42px'; iconIn.style.flex = 'none'; iconIn.maxLength = 2;
+    const labelIn = document.createElement('input'); labelIn.className = 'ql-input'; labelIn.placeholder = 'Label';
+    const urlIn = document.createElement('input'); urlIn.className = 'ql-input'; urlIn.placeholder = 'https://…'; urlIn.type = 'url';
+    const addBtn = document.createElement('button'); addBtn.className = 'ql-add-btn'; addBtn.textContent = 'Add';
+
+    const doAdd = (shared) => {
+      const label = labelIn.value.trim(); const url = urlIn.value.trim();
+      if (!label || !url) return;
+      const newLink = { id: Date.now()+'', label, url, icon: iconIn.value.trim() || '🔗' };
+      if (shared) {
+        const updated = [...loadSharedQuickLinks(), newLink]; saveSharedQuickLinks(updated);
+      } else {
+        const updated = [...loadQuickLinks(username), newLink]; saveQuickLinks(username, updated);
+      }
+      iconIn.value = ''; labelIn.value = ''; urlIn.value = '';
+      renderDashboard();
+    };
+
+    addBtn.onclick = () => doAdd(isAdmin()); // admin adds shared links by default
+    urlIn.addEventListener('keydown', e => { if (e.key === 'Enter') doAdd(isAdmin()); });
+    addRow.appendChild(iconIn); addRow.appendChild(labelIn); addRow.appendChild(urlIn); addRow.appendChild(addBtn);
+    container.appendChild(addRow);
+
+    // Admin can also add personal links
+    if (isAdmin()) {
+      const personalBtn = document.createElement('button'); personalBtn.style.cssText = 'font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 0;margin-top:2px;';
+      personalBtn.textContent = '+ Add as personal (not shared)';
+      personalBtn.onclick = () => doAdd(false);
+      container.appendChild(personalBtn);
+    }
+  }
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────
+function renderDashboard() {
+  const root = document.getElementById('dashboard-root');
+  if (!root || !currentUser) return;
+  root.innerHTML = '';
+  if (isAdmin()) renderAdminDashboard(root);
+  else if (getScheduleName()) renderTeamMemberDashboard(root);
+  else {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'padding:40px 32px;color:var(--text3);font-size:14px;';
+    msg.textContent = 'Welcome, ' + getUserDisplayName() + '. Use the tabs above to navigate.';
+    root.appendChild(msg);
+  }
+}
+
+// ── Shared ────────────────────────────────────────────────────────
+function dbRelTime(tsStr) {
+  const ms = Date.now() - new Date(tsStr).getTime();
+  const m=Math.floor(ms/60000),h=Math.floor(m/60),d=Math.floor(h/24);
+  if(d>0) return d+'d ago'; if(h>0) return h+'h ago'; if(m>1) return m+'m ago'; return 'just now';
+}
+function dbSection(title, actionLabel, actionFn) {
+  const wrap = document.createElement('div');
+  const hdr = document.createElement('div'); hdr.className = 'db-section-title';
+  const t = document.createElement('span'); t.textContent = title; hdr.appendChild(t);
+  if (actionLabel) {
+    const btn = document.createElement('button'); btn.className = 'db-section-action'; btn.textContent = actionLabel;
+    btn.onclick = actionFn; hdr.appendChild(btn);
+  }
+  wrap.appendChild(hdr);
+  return wrap;
+}
+
+// ── Admin dashboard ───────────────────────────────────────────────
+function renderAdminDashboard(root) {
+  const todayStr = localToday();
+  const hr = new Date().getHours();
+  const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  const OFF = new Set(['so','h','os','abs','ol','']);
+  const todayWeek = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
+  const inToday = todayWeek ? todayWeek.people.filter(p => {
+    const di=todayWeek.dates.indexOf(todayStr); return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has((p.shifts[di]||'').toLowerCase());
+  }) : [];
+  const outToday = todayWeek ? todayWeek.people.filter(p => {
+    const di=todayWeek.dates.indexOf(todayStr); return MY_TEAM.includes(p.name)&&di>=0&&OFF.has((p.shifts[di]||'').toLowerCase());
+  }) : [];
+  const weekStamp=mondayStamp(0);
+  const todayDay=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const todayTasks=tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
+  const overdueTasks=tasks.filter(t=>!t.done&&isOverdue(t));
+  const overdue1on1=get1on1OverduePeople(21);
+  let redCount=0,amberCount=0;
+  MY_TEAM.forEach(n=>{const p=loadProfile(n);if(p.rag==='red')redCount++;else if(p.rag==='amber')amberCount++;});
+  const allUsers=getUsers().filter(u=>!u.isAdmin);
+
+  // Collect notifications
+  const notifItems=[];
+  allUsers.forEach(u=>{
+    const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
+    const posts=loadFbPosts(u.name);
+    const lastSeen=localStorage.getItem(fbLastSeenKey(name))||'0';
+    posts.forEach(p=>{if(p.ts>lastSeen) notifItems.push({text:name+' posted feedback',sub:p.text.slice(0,55)+(p.text.length>55?'…':''),ts:p.ts,target:u.name});});
+    const agenda=loadAgenda(u.name);
+    const agendaSeen=localStorage.getItem('wtp_agenda_seen_'+normalizeKey(u.name))||'0';
+    agenda.forEach(a=>{if(a.ts>agendaSeen) notifItems.push({text:name+' added 1:1 topic',sub:a.text.slice(0,55),ts:a.ts,target:u.name});});
+  });
+  notifItems.sort((a,b)=>b.ts.localeCompare(a.ts));
+
+  // ── Hero ──────────────────────────────────────────────────────
+  const hero = document.createElement('div'); hero.className = 'db-hero';
+  const heroLeft = document.createElement('div'); heroLeft.className = 'db-hero-left';
+  const eyebrow = document.createElement('div'); eyebrow.className = 'db-hero-eyebrow';
+  eyebrow.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const greet = document.createElement('div'); greet.className = 'db-hero-greeting';
+  greet.textContent = greeting + ', ' + getUserDisplayName() + '.';
+  heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet);
+  hero.appendChild(heroLeft);
+
+  // KPIs
+  const kpis = document.createElement('div'); kpis.className = 'db-hero-right';
+  const mkKpi = (val,label,cls,fn) => {
+    const k=document.createElement('div'); k.className='db-kpi'; k.onclick=fn;
+    const v=document.createElement('div'); v.className='db-kpi-val '+cls; v.textContent=val;
+    const l=document.createElement('div'); l.className='db-kpi-label'; l.textContent=label;
+    k.appendChild(v); k.appendChild(l); return k;
+  };
+  kpis.appendChild(mkKpi(inToday.length+'/'+MY_TEAM.length,'Team in',inToday.length<MY_TEAM.length*0.6?'warn':'neutral',()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]'))));
+  kpis.appendChild(mkKpi(overdueTasks.length,'Overdue',overdueTasks.length>0?'danger':'ok',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
+  kpis.appendChild(mkKpi(todayTasks.length,'Tasks today','neutral',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
+  kpis.appendChild(mkKpi(overdue1on1.length,'1:1 due',overdue1on1.length>0?'danger':'ok',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
+  if(redCount) kpis.appendChild(mkKpi(redCount,'Red RAG','danger',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
+  if(amberCount) kpis.appendChild(mkKpi(amberCount,'Amber','warn',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
+  hero.appendChild(kpis);
+  root.appendChild(hero);
+
+  // ── Notification bar ─────────────────────────────────────────
+  if (notifItems.length) {
+    const bar = document.createElement('div'); bar.className = 'db-notif-bar';
+    const lbl = document.createElement('div'); lbl.className = 'db-notif-bar-label'; lbl.textContent = '🔔 New';
+    bar.appendChild(lbl);
+    notifItems.slice(0,5).forEach(n=>{
+      const pill = document.createElement('div'); pill.className = 'db-notif-pill';
+      pill.onclick = ()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
+      const dot = document.createElement('div'); dot.className = 'db-notif-dot';
+      const txt = document.createElement('span'); txt.textContent = n.text + ' · ' + dbRelTime(n.ts);
+      pill.appendChild(dot); pill.appendChild(txt); bar.appendChild(pill);
+    });
+    root.appendChild(bar);
+  }
+
+  // ── 3-column body ─────────────────────────────────────────────
+  const body = document.createElement('div'); body.className = 'db-body';
+
+  // Col 1: Team today
+  const col1 = document.createElement('div'); col1.className = 'db-col';
+  const teamSec = dbSection('👥 Team today', 'Full schedule', ()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]')));
+  const teamGrid = document.createElement('div'); teamGrid.className = 'db-team-grid';
+  inToday.forEach(p=>{
+    const di=todayWeek?todayWeek.dates.indexOf(todayStr):-1;
+    const shift=todayWeek&&di>=0?p.shifts[di]:'';
+    const role=todayWeek&&di>=0?p.roles[di]:'';
+    const roleColors={'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
+    const chip=document.createElement('div'); chip.className='db-team-chip';
+    const dot=document.createElement('div'); dot.className='db-team-chip-dot';
+    dot.style.background=roleColors[role]||'var(--text3)';
+    const name=document.createElement('span'); name.textContent=p.name; name.style.overflow='hidden'; name.style.textOverflow='ellipsis'; name.style.whiteSpace='nowrap';
+    const shiftEl=document.createElement('span'); shiftEl.className='db-team-chip-shift'; shiftEl.textContent=shift.split(' ')[0]||shift;
+    chip.appendChild(dot); chip.appendChild(name); chip.appendChild(shiftEl); teamGrid.appendChild(chip);
+  });
+  if(!inToday.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule data';teamGrid.appendChild(e);}
+  teamSec.appendChild(teamGrid);
+  if(outToday.length){
+    const offEl=document.createElement('div'); offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:8px;';
+    offEl.textContent='Off: '+outToday.map(p=>p.name).join(', ');
+    teamSec.appendChild(offEl);
+  }
+  col1.appendChild(teamSec);
+
+  // Team health
+  const healthSec = dbSection('❤️ Team health','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+  let hasRag=false;
+  MY_TEAM.forEach(name=>{
+    const profile=loadProfile(name); if(!profile.rag||profile.rag==='none') return; hasRag=true;
+    const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
+    row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
+    const n=document.createElement('div'); n.className='db-row-label'; n.textContent=name;
+    const dot=document.createElement('div'); dot.className='db-rag-dot';
+    dot.style.background=profile.rag==='red'?'#ff6b6b':profile.rag==='amber'?'#fbbf24':'#4ade80';
+    const lbl=document.createElement('div'); lbl.className='db-row-meta'; lbl.textContent=profile.rag;
+    row.appendChild(n); row.appendChild(lbl); row.appendChild(dot); healthSec.appendChild(row);
+  });
+  if(overdue1on1.length){
+    const warn=document.createElement('div'); warn.style.cssText='font-size:11px;color:var(--high-text);font-weight:600;margin-top:6px;';
+    warn.textContent='⚠ 1:1 overdue: '+overdue1on1.map(p=>p.name).join(', ');
+    healthSec.appendChild(warn);
+  }
+  if(!hasRag&&!overdue1on1.length){const e=document.createElement('div');e.className='db-empty';e.textContent='✓ All green';healthSec.appendChild(e);}
+  col1.appendChild(healthSec);
+  body.appendChild(col1);
+
+  // Col 2: Notifications + Feedback
+  const col2 = document.createElement('div'); col2.className = 'db-col';
+
+  if(notifItems.length){
+    const notifSec=dbSection('🔔 Notifications','All feedback',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]')));
+    notifItems.slice(0,6).forEach(n=>{
+      const item=document.createElement('div'); item.className='db-notif-item';
+      item.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
+      const dot=document.createElement('div'); dot.className='db-notif-item-dot';
+      const b=document.createElement('div'); b.className='db-notif-body';
+      const t=document.createElement('div'); t.className='db-notif-title'; t.textContent=n.text;
+      const s=document.createElement('div'); s.className='db-notif-sub'; s.textContent=n.sub;
+      const time=document.createElement('div'); time.className='db-notif-time'; time.textContent=dbRelTime(n.ts);
+      b.appendChild(t); b.appendChild(s); item.appendChild(dot); item.appendChild(b); item.appendChild(time);
+      notifSec.appendChild(item);
+    });
+    col2.appendChild(notifSec);
+  }
+
+  const fbSec=dbSection('💬 Feedback feed','All',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]')));
+  let hasFb=false;
+  allUsers.forEach(u=>{
+    const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
+    const posts=loadFbPosts(u.name).slice(-2).reverse();
+    posts.forEach(p=>{
+      hasFb=true;
+      const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
+      row.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
+      const from=document.createElement('div'); from.className='db-feedback-from'; from.textContent=name;
+      const text=document.createElement('div'); text.className='db-row-label'; text.style.cssText='font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      text.textContent=p.text;
+      const time=document.createElement('div'); time.className='db-row-meta'; time.textContent=dbRelTime(p.ts);
+      row.appendChild(from); row.appendChild(text); row.appendChild(time); fbSec.appendChild(row);
+    });
+  });
+  if(!hasFb){const e=document.createElement('div');e.className='db-empty';e.textContent='No feedback yet';fbSec.appendChild(e);}
+  col2.appendChild(fbSec);
+  body.appendChild(col2);
+
+  // Col 3: SLA + My tasks
+  const col3 = document.createElement('div'); col3.className = 'db-col';
+
+  // Tickets / queue status
+  const slaSec=dbSection('🎫 Tickets','Open queue',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+  if(zdReady()){
+    const slaRow=document.createElement('div'); slaRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;';
+    slaRow.id='db-sla-row'; slaRow.innerHTML='<span class="db-empty">Loading…</span>';
+    slaSec.appendChild(slaRow);
+    Promise.all([
+      zdCount('type:ticket sla_breach:true (status:open OR status:pending OR status:hold)').catch(()=>0),
+      zdCount('type:ticket no:assignee (status:open OR status:pending OR status:hold)').catch(()=>0),
+      zdCount('type:ticket status:open').catch(()=>0),
+    ]).then(([breached,unassigned,open])=>{
+      const el=document.getElementById('db-sla-row'); if(!el) return;
+      el.innerHTML='';
+      const mkBadge=(val,label,cls)=>{const b=document.createElement('div');b.className='db-sla-badge '+(val>0?cls:'ok');b.innerHTML='<span>'+val+'</span><span style="font-weight:500;opacity:0.8"> '+label+'</span>';return b;};
+      el.appendChild(mkBadge(open,'open','warn'));
+      el.appendChild(mkBadge(unassigned,'unassigned','warn'));
+      if(breached>0) el.appendChild(mkBadge(breached,'breached','breached'));
+    });
+  } else {
+    const e=document.createElement('div');e.className='db-empty';e.style.cssText='color:var(--text3);';
+    e.innerHTML='Not configured &nbsp;<a href="#" onclick="switchTab(\'settings\',null);return false;" style="color:var(--cal-text);text-decoration:none;font-weight:600;">Set up →</a>';
+    slaSec.appendChild(e);
+  }
+  col3.appendChild(slaSec);
+
+  // My tasks today
+  const taskSec=dbSection('✅ My tasks today','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
+  if(!todayTasks.length&&!overdueTasks.length){const e=document.createElement('div');e.className='db-empty';e.textContent='All clear for today ✓';taskSec.appendChild(e);}
+  overdueTasks.slice(0,3).forEach(t=>{
+    const row=document.createElement('div'); row.className='db-row';
+    const badge=document.createElement('span'); badge.className='db-row-badge'; badge.style.cssText='background:var(--high-bg);color:var(--high-text);'; badge.textContent='overdue';
+    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
+    row.appendChild(badge); row.appendChild(label); taskSec.appendChild(row);
+  });
+  todayTasks.slice(0,5).forEach(t=>{
+    const row=document.createElement('div'); row.className='db-row';
+    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
+    const pri=t.priority||''; if(pri){const b=document.createElement('span');b.className='db-row-badge';b.style.cssText=pri==='high'?'background:var(--high-bg);color:var(--high-text);':pri==='medium'?'background:var(--med-bg);color:var(--med-text);':'background:var(--low-bg);color:var(--low-text);';b.textContent=pri;row.appendChild(label);row.appendChild(b);}else row.appendChild(label);
+    taskSec.appendChild(row);
+  });
+  col3.appendChild(taskSec);
+
+  // Quick links (admin — shared links)
+  const qlSec = dbSection('🔗 Quick links');
+  renderQuickLinks(qlSec, currentUser.name, true);
+  col3.appendChild(qlSec);
+
+  body.appendChild(col3);
+
+  // ── Col 4: Mood + Handover ───────────────────────────────────
+  // Extend grid to 4 cols for these
+  const col4 = document.createElement('div'); col4.className = 'db-col';
+
+  const moodSec = dbSection('💭 Team pulse', null, null);
+  renderAdminMoodOverview(moodSec);
+  col4.appendChild(moodSec);
+
+  const handoverSec = dbSection('🔁 Handover notes');
+  renderHandoverWidget(handoverSec, currentUser.name, true);
+  col4.appendChild(handoverSec);
+
+  body.appendChild(col4);
+  root.appendChild(body);
+}
+async function renderTeamMemberDashboard(root) {
+  const scheduleName=getScheduleName();
+  const todayStr=localToday();
+  const hr=new Date().getHours();
+  const greeting=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  const OFF=new Set(['so','h','os','abs','ol','']);
+  const dayInfo=getPersonDayInfo(scheduleName,todayStr);
+  const isOff=!dayInfo||OFF.has((dayInfo.shift||'').toLowerCase());
+
+  // Notifications from manager
+  const adminUser=getUsers().find(u=>u.isAdmin);
+  const adminOtoKey=adminUser?'wtp_oto_'+adminUser.name.toLowerCase():null;
+  const notifKey='wtp_dash_notif_seen_'+normalizeKey(currentUser.name);
+  const lastSeen=localStorage.getItem(notifKey)||'0';
+  const newSharedNotes=[];
+  if(adminOtoKey){
+    try{
+      const raw=localStorage.getItem(adminOtoKey);
+      if(raw){const d=JSON.parse(raw);(d.sessions||[]).filter(s=>s.person===currentUser.name&&s.sharedNotes&&s.sharedNotes.trim()&&(s.updatedAt||s.date)>lastSeen).forEach(s=>newSharedNotes.push(s));}
+    }catch{}
+  }
+
+  // ── Hero ──────────────────────────────────────────────────────
+  const hero=document.createElement('div'); hero.className='db-hero';
+  const heroLeft=document.createElement('div'); heroLeft.className='db-hero-left';
+  const eyebrow=document.createElement('div'); eyebrow.className='db-hero-eyebrow';
+  eyebrow.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const greet=document.createElement('div'); greet.className='db-hero-greeting';
+  greet.textContent=greeting+', '+getUserDisplayName()+'.';
+  heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet); hero.appendChild(heroLeft);
+
+  // KPIs
+  const kpis=document.createElement('div'); kpis.className='db-hero-right';
+  const weekStamp=mondayStamp(0);
+  const todayDay=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const todayTasks=tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
+  const overdueTasks=tasks.filter(t=>!t.done&&isOverdue(t));
+  const agendaCount=loadAgenda(currentUser.name).length;
+  const mkKpi=(val,label,cls,fn)=>{const k=document.createElement('div');k.className='db-kpi';k.onclick=fn;const v=document.createElement('div');v.className='db-kpi-val '+cls;v.textContent=val;const l=document.createElement('div');l.className='db-kpi-label';l.textContent=label;k.appendChild(v);k.appendChild(l);return k;};
+  kpis.appendChild(mkKpi(todayTasks.length,'Tasks today','neutral',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
+  kpis.appendChild(mkKpi(overdueTasks.length,'Overdue',overdueTasks.length>0?'danger':'ok',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
+  if(agendaCount) kpis.appendChild(mkKpi(agendaCount,'1:1 topics','ok',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+  if(newSharedNotes.length) kpis.appendChild(mkKpi(newSharedNotes.length,'New notes','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+  hero.appendChild(kpis);
+  root.appendChild(hero);
+
+  // Notification bar
+  if(newSharedNotes.length){
+    const bar=document.createElement('div'); bar.className='db-notif-bar';
+    const lbl=document.createElement('div'); lbl.className='db-notif-bar-label'; lbl.textContent='✉ From your manager';
+    bar.appendChild(lbl);
+    newSharedNotes.slice(0,3).forEach(s=>{
+      const pill=document.createElement('div'); pill.className='db-notif-pill';
+      pill.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
+      const dot=document.createElement('div'); dot.className='db-notif-dot';
+      const txt=document.createElement('span'); txt.textContent='Note from 1:1 on '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+      pill.appendChild(dot); pill.appendChild(txt); bar.appendChild(pill);
+    });
+    root.appendChild(bar);
+  }
+
+  // ── Body ──────────────────────────────────────────────────────
+  const body=document.createElement('div'); body.className='db-body';
+
+  // Col 1: Today's shift + week strip
+  const col1=document.createElement('div'); col1.className='db-col';
+
+  const shiftSec=dbSection('📅 Today');
+  if(!dayInfo){const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule for today';shiftSec.appendChild(e);}
+  else if(isOff){
+    const o=document.createElement('div'); o.style.cssText='font-size:14px;color:var(--text3);padding:8px 0;';
+    const code=(dayInfo.shift||'').toUpperCase();
+    o.textContent=code==='ABS'?'🏖 Absent today':code==='SO'?'🔄 Day off (SO)':code==='H'?'🏠 Holiday':'Day off';
+    shiftSec.appendChild(o);
+  } else {
+    const card=document.createElement('div'); card.className='db-today-shift';
+    const shiftWrap=document.createElement('div');
+    const shiftLbl=document.createElement('div'); shiftLbl.className='db-today-shift-label'; shiftLbl.textContent='Shift';
+    const shiftVal=document.createElement('div'); shiftVal.className='db-today-shift-main'; shiftVal.textContent=dayInfo.shift;
+    shiftWrap.appendChild(shiftLbl); shiftWrap.appendChild(shiftVal); card.appendChild(shiftWrap);
+    if(dayInfo.role){
+      const div=document.createElement('div'); div.className='db-divider'; card.appendChild(div);
+      const roleWrap=document.createElement('div');
+      const roleLbl=document.createElement('div'); roleLbl.className='db-today-shift-label'; roleLbl.textContent='Role';
+      const roleVal=document.createElement('div'); roleVal.style.cssText='font-size:15px;font-weight:700;';
+      const roleColors={'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
+      roleVal.style.color=roleColors[dayInfo.role]||'var(--text)'; roleVal.textContent=dayInfo.role;
+      roleWrap.appendChild(roleLbl); roleWrap.appendChild(roleVal); card.appendChild(roleWrap);
+    }
+    shiftSec.appendChild(card);
+  }
+  col1.appendChild(shiftSec);
+
+  // Week strip
+  const weekSec=dbSection('📆 This week');
+  const strip=document.createElement('div'); strip.className='db-shift-strip';
+  const mon=getMonday(0);
+  for(let i=0;i<7;i++){
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const dStr=d.toISOString().slice(0,10);
+    const info=getPersonDayInfo(scheduleName,dStr);
+    const isToday2=dStr===todayStr;
+    const dow=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i];
+    const cell=document.createElement('div'); cell.className='db-shift-day'+(isToday2?' today':'');
+    const dowEl=document.createElement('div'); dowEl.className='db-shift-dow'; dowEl.textContent=dow;
+    const dateEl2=document.createElement('div'); dateEl2.className='db-shift-date'; dateEl2.textContent=d.getDate()+'/'+('0'+(d.getMonth()+1)).slice(-2);
+    const shiftEl=document.createElement('div'); shiftEl.className='db-shift-val';
+    const roleEl=document.createElement('div'); roleEl.className='db-shift-role';
+    if(!info||!info.shift){shiftEl.className+=' db-shift-off';shiftEl.textContent='—';}
+    else if(OFF.has(info.shift.toLowerCase())){shiftEl.className+=' db-shift-off';shiftEl.textContent=info.shift.toUpperCase()||'Off';}
+    else{shiftEl.textContent=info.shift;if(info.role)roleEl.textContent=info.role;}
+    cell.appendChild(dowEl);cell.appendChild(dateEl2);cell.appendChild(shiftEl);cell.appendChild(roleEl);
+    strip.appendChild(cell);
+  }
+  weekSec.appendChild(strip); col1.appendChild(weekSec); body.appendChild(col1);
+
+  // Col 2: Tasks + manager notes
+  const col2=document.createElement('div'); col2.className='db-col';
+
+  if(newSharedNotes.length){
+    const noteSec=dbSection('🔗 From your manager','See all',()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));});
+    newSharedNotes.slice(0,3).forEach(s=>{
+      const item=document.createElement('div'); item.className='db-notif-item pink-border';
+      item.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
+      const dot=document.createElement('div'); dot.className='db-notif-item-dot pink';
+      const b=document.createElement('div'); b.className='db-notif-body';
+      const t=document.createElement('div'); t.className='db-notif-title'; t.textContent='1:1 on '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      const sub=document.createElement('div'); sub.className='db-notif-sub'; sub.textContent=s.sharedNotes.slice(0,70)+(s.sharedNotes.length>70?'…':'');
+      b.appendChild(t); b.appendChild(sub); item.appendChild(dot); item.appendChild(b); noteSec.appendChild(item);
+    });
+    col2.appendChild(noteSec);
+  }
+
+  const taskSec=dbSection('✅ Tasks today','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
+  if(!todayTasks.length&&!overdueTasks.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No tasks yet today';taskSec.appendChild(e);}
+  overdueTasks.slice(0,3).forEach(t=>{
+    const row=document.createElement('div'); row.className='db-row';
+    const badge=document.createElement('span'); badge.className='db-row-badge'; badge.style.cssText='background:var(--high-bg);color:var(--high-text);';badge.textContent='overdue';
+    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
+    row.appendChild(badge); row.appendChild(label); taskSec.appendChild(row);
+  });
+  todayTasks.slice(0,6).forEach(t=>{
+    const row=document.createElement('div'); row.className='db-row';
+    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
+    row.appendChild(label); taskSec.appendChild(row);
+  });
+  col2.appendChild(taskSec);
+  body.appendChild(col2);
+
+  // Col 3: Tickets
+  const col3=document.createElement('div'); col3.className='db-col';
+  const ticketSec=dbSection('🎫 Your open tickets','All tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+  const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
+  const zdToken=localStorage.getItem('wtp_zd_token');
+  if(zdSubdomain&&zdToken){
+    const loading=document.createElement('div'); loading.className='db-empty'; loading.textContent='Loading tickets…';
+    ticketSec.appendChild(loading);
+    const agentsCached=JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+    const matched=agentsCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+    if(matched){
+      zdFetch('/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+matched.id+' (status:open OR status:pending OR status:hold)')+'&per_page=8&sort_by=created_at&sort_order=asc')
+        .then(r=>{
+          loading.remove(); const tickets=r.results||[];
+          if(!tickets.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No open tickets ✓';ticketSec.appendChild(e);return;}
+          tickets.forEach(t=>{
+            const a=document.createElement('a'); a.className='db-ticket-row';
+            a.href='https://'+zdSubdomain+'.zendesk.com/agent/tickets/'+t.id;
+            a.target='_blank'; a.rel='noopener';
+            const id=document.createElement('span');id.className='db-ticket-id';id.textContent='#'+t.id;
+            const subj=document.createElement('span');subj.className='db-ticket-subject';subj.textContent=t.subject||'(no subject)';
+            const ms=Date.now()-new Date(t.created_at).getTime(); const d=Math.floor(ms/86400000);
+            const age=document.createElement('span');age.className='db-ticket-age';age.textContent=d>0?d+'d':'today';
+            a.appendChild(id);a.appendChild(subj);a.appendChild(age);ticketSec.appendChild(a);
+          });
+        }).catch(()=>{loading.textContent='Could not load tickets';});
+    } else {
+      loading.textContent='No Zendesk match for '+scheduleName;
+    }
+  } else {
+    const e=document.createElement('div');e.className='db-empty';e.textContent='Zendesk not configured';ticketSec.appendChild(e);
+  }
+  col3.appendChild(ticketSec);
+
+  // Mood widget in col3
+  const moodSec = dbSection('💭 How are you feeling?');
+  renderMoodWidget(moodSec, currentUser.name);
+  col3.appendChild(moodSec);
+
+  body.appendChild(col3);
+
+  // ── Col 4: Handover + Quick links ────────────────────────────
+  const col4 = document.createElement('div'); col4.className = 'db-col';
+
+  // Handover — show for evening/night shifts
+  const isEvening = dayInfo && !OFF.has((dayInfo.shift||'').toLowerCase()) &&
+    ['e','n'].some(s => (dayInfo.shift||'').toLowerCase().startsWith(s));
+  const handoverSec = dbSection(isEvening ? '🔁 Leave a handover' : '🔁 Handover notes');
+  renderHandoverWidget(handoverSec, currentUser.name, isEvening || !dayInfo);
+  col4.appendChild(handoverSec);
+
+  // Quick links
+  const qlSec = dbSection('🔗 Quick links');
+  renderQuickLinks(qlSec, currentUser.name, true);
+  col4.appendChild(qlSec);
+
+  body.appendChild(col4);
+  root.appendChild(body);
+}
+function renderNonAdminBriefing(panel) {
+  const todayStr = localToday();
+  const hr = new Date().getHours();
+  const greeting = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  const scheduleName = getScheduleName();
+  const dayInfo = getPersonDayInfo(scheduleName, todayStr);
+  const OFF = new Set(['so','h','os','abs','ol','']);
+  const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
+
+  panel.style.display = '';
+  panel.innerHTML = '';
+
+  // ── Left: greeting + shift card ───────────────────────────────
+  const left = document.createElement('div'); left.style.cssText = 'flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px;';
+  const greetEl = document.createElement('div'); greetEl.className = 'briefing-greeting';
+  greetEl.textContent = greeting + ', ' + getUserDisplayName() + ' 👋';
+  const dateEl = document.createElement('div'); dateEl.style.cssText = 'font-size:11px;color:var(--text3);';
+  dateEl.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  left.appendChild(greetEl); left.appendChild(dateEl);
+
+  // Today's shift + role card
+  if (dayInfo) {
+    const card = document.createElement('div');
+    card.style.cssText = 'display:inline-flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:10px 16px;margin-top:4px;align-self:flex-start;flex-wrap:wrap;';
+
+    if (isOff) {
+      const offLabel = document.createElement('span'); offLabel.style.cssText = 'font-size:13px;color:var(--text3);';
+      const shiftCode = (dayInfo.shift||'').toUpperCase();
+      offLabel.textContent = shiftCode === 'ABS' ? '🏖 Absent today' : shiftCode === 'SO' ? '🔄 Day off (SO)' : shiftCode === 'H' ? '🏠 Holiday' : 'Day off';
+      card.appendChild(offLabel);
+    } else {
+      const shiftBadge = document.createElement('div'); shiftBadge.style.cssText = 'display:flex;flex-direction:column;gap:1px;';
+      const shiftLabel = document.createElement('div'); shiftLabel.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);';
+      shiftLabel.textContent = 'Today\'s shift';
+      const shiftVal = document.createElement('div'); shiftVal.style.cssText = 'font-size:15px;font-weight:700;font-family:"Fira Sans",sans-serif;color:var(--cal-text);letter-spacing:-0.01em;';
+      shiftVal.textContent = dayInfo.shift;
+      shiftBadge.appendChild(shiftLabel); shiftBadge.appendChild(shiftVal);
+      card.appendChild(shiftBadge);
+
+      if (dayInfo.role) {
+        const divider = document.createElement('div'); divider.style.cssText = 'width:1px;height:32px;background:var(--border);flex-shrink:0;';
+        const roleBadge = document.createElement('div'); roleBadge.style.cssText = 'display:flex;flex-direction:column;gap:1px;';
+        const roleLabel = document.createElement('div'); roleLabel.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);';
+        roleLabel.textContent = 'Role';
+        const roleVal = document.createElement('div'); roleVal.style.cssText = 'font-size:13px;font-weight:600;color:var(--text);';
+        // Map role to color
+        const roleColors = { 'Phone Guru': '#a5b4fc', 'Inbox Champion': '#4ade80', 'SLA Sherpa': '#fbbf24', 'Freelancer': '#94a3b8' };
+        roleVal.style.color = roleColors[dayInfo.role] || 'var(--text)';
+        roleVal.textContent = dayInfo.role;
+        roleBadge.appendChild(roleLabel); roleBadge.appendChild(roleVal);
+        card.appendChild(divider); card.appendChild(roleBadge);
+      }
+    }
+    left.appendChild(card);
+  }
+
+  // Who else is in today
+  const todayWeek = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
+  if (todayWeek) {
+    const inToday = todayWeek.people.filter(p => {
+      if (p.name === scheduleName) return false; // exclude self
+      const di = todayWeek.dates.indexOf(todayStr);
+      return MY_TEAM.includes(p.name) && di >= 0 && !OFF.has((p.shifts[di]||'').toLowerCase());
+    });
+    if (inToday.length) {
+      const whoEl = document.createElement('div'); whoEl.style.cssText = 'font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px;';
+      const lbl = document.createElement('span'); lbl.style.cssText = 'color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;';
+      lbl.textContent = 'Also in today:';
+      whoEl.appendChild(lbl);
+      inToday.forEach(p => {
+        const chip = document.createElement('span'); chip.style.cssText = 'background:rgba(255,255,255,0.06);border-radius:6px;padding:1px 7px;font-size:11px;';
+        chip.textContent = p.name; whoEl.appendChild(chip);
+      });
+      left.appendChild(whoEl);
+    }
+  }
+
+  panel.appendChild(left);
+
+  // ── Right: stats relevant to the agent ───────────────────────
+  const stats = document.createElement('div'); stats.className = 'briefing-stats';
+  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const weekStamp = mondayStamp(0);
+  const todayTasks = tasks.filter(t => t.day === todayDay && t.weekStamp === weekStamp && !t.done && !t.isMeeting);
+  const overdueTasks = tasks.filter(t => !t.done && isOverdue(t));
+  const agendaCount = loadAgenda(currentUser.name).length;
+  const statItems = [
+    { val: todayTasks.length,   label: 'Tasks today', cls: todayTasks.length > 5 ? 'warn' : 'neutral', onclick: () => {} },
+    { val: overdueTasks.length, label: 'Overdue',      cls: overdueTasks.length > 0 ? 'danger' : 'ok', onclick: () => {} },
+    ...(agendaCount > 0 ? [{ val: agendaCount, label: '1:1 topics', cls: 'ok', onclick: () => switchTab('feedback', document.querySelector('[onclick*="feedback"]')) }] : []),
+  ];
+  statItems.forEach(s => {
+    const stat = document.createElement('div'); stat.className = 'briefing-stat'; stat.onclick = s.onclick;
+    const val = document.createElement('div'); val.className = 'briefing-stat-val ' + s.cls; val.textContent = s.val;
+    const lbl = document.createElement('div'); lbl.className = 'briefing-stat-label'; lbl.textContent = s.label;
+    stat.appendChild(val); stat.appendChild(lbl); stats.appendChild(stat);
+  });
+  panel.appendChild(stats);
+}
+
 // ─── Morning Briefing ──────────────────────────────────────────────
 function renderMorningBriefing() {
   const panel = document.getElementById('morning-briefing');
   if (!panel || !currentUser) return;
+  // Non-admin with a schedule link gets their personal briefing
+  if (!isAdmin() && getScheduleName()) { renderNonAdminBriefing(panel); return; }
 
   const todayStr = localToday();
   const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
@@ -4233,6 +5607,71 @@ function profileKey(name) { return 'wtp_profile_' + normalizeKey(name); }
 function fbKey(username) { return 'wtp_fb_' + normalizeKey(username); }
 function fbLastSeenKey(name) { return 'wtp_fb_seen_' + normalizeKey(name); }
 function agendaKey(username) { return 'wtp_agenda_' + normalizeKey(username); }
+
+// ─── Mood / Pulse ─────────────────────────────────────────────────
+function moodKey(username) { return 'wtp_mood_' + normalizeKey(username); }
+function loadMoodHistory(username) { try { return JSON.parse(localStorage.getItem(moodKey(username)) || '[]'); } catch { return []; } }
+function saveMoodEntry(username, emoji) {
+  const week = getISOWeek();
+  const history = loadMoodHistory(username).filter(e => e.week !== week);
+  history.push({ week, emoji, ts: new Date().toISOString() });
+  // Keep last 12 weeks
+  history.sort((a,b) => a.week.localeCompare(b.week));
+  if (history.length > 12) history.splice(0, history.length - 12);
+  localStorage.setItem(moodKey(username), JSON.stringify(history));
+  scheduleSyncSave();
+}
+function getCurrentMood(username) {
+  const week = getISOWeek();
+  return loadMoodHistory(username).find(e => e.week === week) || null;
+}
+function getISOWeek() {
+  const d = new Date(); const day = d.getDay() || 7;
+  d.setDate(d.getDate() + 4 - day);
+  const y = d.getFullYear();
+  const w = Math.ceil(((d - new Date(y,0,1)) / 86400000 + 1) / 7);
+  return y + '-W' + String(w).padStart(2,'0');
+}
+
+// ─── Handover notes ───────────────────────────────────────────────
+function handoverKey(dateStr) { return 'wtp_handover_' + dateStr; }
+function loadHandover(dateStr) {
+  try {
+    const raw = localStorage.getItem(handoverKey(dateStr));
+    if (!raw) return null;
+    const note = JSON.parse(raw);
+    // Auto-expire after 48h
+    if (Date.now() - new Date(note.ts).getTime() > 48 * 60 * 60 * 1000) {
+      localStorage.removeItem(handoverKey(dateStr)); return null;
+    }
+    return note;
+  } catch { return null; }
+}
+function saveHandover(dateStr, text, author) {
+  if (!text.trim()) { localStorage.removeItem(handoverKey(dateStr)); return; }
+  localStorage.setItem(handoverKey(dateStr), JSON.stringify({ text: text.trim(), author, ts: new Date().toISOString() }));
+  scheduleSyncSave();
+}
+// Get today and yesterday handovers
+function getActiveHandovers() {
+  const today = localToday();
+  const yd = new Date(); yd.setDate(yd.getDate() - 1);
+  const yesterday = yd.toISOString().slice(0,10);
+  return [loadHandover(today), loadHandover(yesterday)].filter(Boolean);
+}
+
+// ─── Quick links ──────────────────────────────────────────────────
+function qlKey(username) { return 'wtp_ql_' + normalizeKey(username); }
+function qlSharedKey() { return 'wtp_ql_shared'; }
+function loadQuickLinks(username) { try { return JSON.parse(localStorage.getItem(qlKey(username)) || '[]'); } catch { return []; } }
+function loadSharedQuickLinks() { try { return JSON.parse(localStorage.getItem(qlSharedKey()) || '[]'); } catch { return []; } }
+function saveQuickLinks(username, links) { localStorage.setItem(qlKey(username), JSON.stringify(links)); scheduleSyncSave(); }
+function saveSharedQuickLinks(links) { localStorage.setItem(qlSharedKey(), JSON.stringify(links)); scheduleSyncSave(); }
+function getAllQuickLinks(username) {
+  const shared = loadSharedQuickLinks().map(l => ({...l, shared: true}));
+  const personal = loadQuickLinks(username).map(l => ({...l, shared: false}));
+  return [...shared, ...personal];
+}
 function loadAgenda(username) { try { return JSON.parse(localStorage.getItem(agendaKey(username)) || '[]'); } catch { return []; } }
 function saveAgenda(username, items) { localStorage.setItem(agendaKey(username), JSON.stringify(items)); scheduleSyncSave(); }
 function loadProfile(name) {
@@ -4374,6 +5813,54 @@ function renderProfilePanel(personName, container) {
   logSection.appendChild(addLogRow);
   renderLog();
   body.appendChild(logSection);
+
+  // ── Internal notes (private scratchpad) ──────────────────────
+  const notesSection = document.createElement('div');
+  const notesTitle = document.createElement('div'); notesTitle.className = 'profile-section-title';
+  notesTitle.style.cssText = 'margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;';
+  const notesTitleText = document.createElement('span'); notesTitleText.textContent = '🔒 Internal notes';
+  const notesPrivateTag = document.createElement('span');
+  notesPrivateTag.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);background:var(--surface3);padding:1px 7px;border-radius:8px;';
+  notesPrivateTag.textContent = 'Only you see this';
+  notesTitle.appendChild(notesTitleText); notesTitle.appendChild(notesPrivateTag);
+  notesSection.appendChild(notesTitle);
+
+  if (!profile.internalNotes) profile.internalNotes = '';
+
+  const notesArea = document.createElement('textarea');
+  notesArea.style.cssText = 'width:100%;min-height:90px;font-family:inherit;font-size:12px;font-weight:500;line-height:1.6;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:9px 11px;outline:none;resize:vertical;transition:border-color 0.15s;box-sizing:border-box;';
+  notesArea.placeholder = 'Private notes about this person — context, history, things to watch, reminders…';
+  notesArea.value = profile.internalNotes || '';
+  notesArea.addEventListener('focus', () => notesArea.style.borderColor = 'var(--cal-text)');
+  notesArea.addEventListener('blur', () => notesArea.style.borderColor = '');
+  let notesTimer;
+  notesArea.addEventListener('input', () => {
+    clearTimeout(notesTimer);
+    notesTimer = setTimeout(() => {
+      profile.internalNotes = notesArea.value;
+      saveProfile(personName, profile);
+    }, 500);
+  });
+  notesSection.appendChild(notesArea);
+
+  // Last edited timestamp
+  const notesTs = document.createElement('div');
+  notesTs.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;text-align:right;';
+  if (profile.internalNotesTs) {
+    notesTs.textContent = 'Last edited ' + new Date(profile.internalNotesTs).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) + ' at ' + new Date(profile.internalNotesTs).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  }
+  // Update timestamp on save
+  notesArea.addEventListener('input', () => {
+    clearTimeout(notesTimer);
+    notesTimer = setTimeout(() => {
+      profile.internalNotes = notesArea.value;
+      profile.internalNotesTs = new Date().toISOString();
+      saveProfile(personName, profile);
+      notesTs.textContent = 'Last edited just now';
+    }, 500);
+  });
+  notesSection.appendChild(notesTs);
+  body.appendChild(notesSection);
 
   // ── Goals ──
   const goalSection = document.createElement('div');
@@ -4557,6 +6044,7 @@ async function pushAgendaAsNonAdmin(username) {
     let data = {};
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
     data[agendaKey(username)] = loadAgenda(username);
+    try { data['wtp_users'] = JSON.parse(localStorage.getItem('wtp_users') || 'null') || data['wtp_users']; } catch {}
     const jsonStr = JSON.stringify(data, null, 2);
     const asciiSafe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
     await fetch(GH_API, { method: 'PUT', mode: 'cors', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'agenda from ' + username, content: btoa(asciiSafe), sha: json.sha }) });
@@ -4575,9 +6063,11 @@ async function pushFeedbackAsNonAdmin(username, posts) {
     const json = await res.json();
     let data = {};
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch {}
-    // Inject this user's feedback and agenda
+    // Inject this user's feedback, agenda, and updated user list (for password changes)
     data[fbKey(username)] = posts;
     data[agendaKey(username)] = loadAgenda(username);
+    // Include wtp_users so password changes by non-admins persist
+    try { data['wtp_users'] = JSON.parse(localStorage.getItem('wtp_users') || 'null') || data['wtp_users']; } catch {}
     const jsonStr = JSON.stringify(data, null, 2);
     const asciiSafe = jsonStr.replace(/[^\x00-\x7F]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0'));
     const body = { message: 'feedback from ' + username, content: btoa(asciiSafe), sha: json.sha };
@@ -5266,9 +6756,253 @@ function zdGetAbsentNames(fromDate, toDate) {
   return absent;
 }
 
+// ─── ZD auto-refresh (15 min) ─────────────────────────────────────
+let zdAutoRefreshTimer = null;
+let zdCountdownTimer = null;
+let zdNextRefreshAt = null;
+const ZD_REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
+
+function zdStartAutoRefresh() {
+  zdStopAutoRefresh();
+  zdNextRefreshAt = Date.now() + ZD_REFRESH_INTERVAL;
+  zdAutoRefreshTimer = setTimeout(() => { zdRefresh(); }, ZD_REFRESH_INTERVAL);
+  zdTickCountdown();
+}
+function zdStopAutoRefresh() {
+  clearTimeout(zdAutoRefreshTimer); clearInterval(zdCountdownTimer);
+  zdAutoRefreshTimer = null; zdCountdownTimer = null; zdNextRefreshAt = null;
+  const el = document.getElementById('zd-refresh-countdown'); if (el) el.style.display = 'none';
+}
+function zdTickCountdown() {
+  zdCountdownTimer = setInterval(() => {
+    const el = document.getElementById('zd-refresh-countdown'); if (!el || !zdNextRefreshAt) return;
+    const secs = Math.max(0, Math.ceil((zdNextRefreshAt - Date.now()) / 1000));
+    const m = Math.floor(secs / 60), s = secs % 60;
+    el.style.display = '';
+    el.textContent = 'Auto-refresh in ' + m + ':' + String(s).padStart(2,'0');
+  }, 1000);
+}
+
+// ─── Unassigned tickets panel ─────────────────────────────────────
+async function zdRefreshUnassigned() {
+  const panel = document.getElementById('zd-unassigned-panel'); if (!panel || !zdReady()) return;
+  panel.style.display = '';
+  const wrap = document.createElement('div'); wrap.className = 'zd-unassigned-panel';
+  const titleRow = document.createElement('div'); titleRow.className = 'zd-unassigned-title';
+  const titleTxt = document.createElement('span'); titleTxt.textContent = 'Unassigned tickets';
+  const countBadge = document.createElement('span'); countBadge.className = 'zd-unassigned-count'; countBadge.textContent = '…';
+  titleRow.appendChild(titleTxt); titleRow.appendChild(countBadge); wrap.appendChild(titleRow);
+  panel.innerHTML = ''; panel.appendChild(wrap);
+
+  try {
+    const groupFilter = zdGroupId ? ` group:${zdGroupId}` : '';
+    const q = `type:ticket no:assignee (status:open OR status:pending OR status:hold)${groupFilter}`;
+    const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=20&sort_by=created_at&sort_order=asc');
+    const tickets = r.results || [];
+    countBadge.textContent = tickets.length + (r.count > 20 ? '+' : '');
+    if (!tickets.length) {
+      const e = document.createElement('div'); e.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;padding:4px 0;'; e.textContent = 'No unassigned tickets'; wrap.appendChild(e); return;
+    }
+    tickets.forEach(t => {
+      const a = document.createElement('a'); a.className = 'zd-unassigned-row';
+      a.href = `https://${localStorage.getItem('wtp_zd_subdomain')}.zendesk.com/agent/tickets/${t.id}`;
+      a.target = '_blank'; a.rel = 'noopener';
+      const ms = Date.now() - new Date(t.created_at).getTime();
+      const d = Math.floor(ms/86400000), h = Math.floor((ms%86400000)/3600000);
+      const age = d > 0 ? d+'d' : h > 0 ? h+'h' : '<1h';
+      const ageEl = document.createElement('span'); ageEl.style.cssText = 'font-size:10px;color:var(--text3);font-weight:700;flex-shrink:0;min-width:28px;'; ageEl.textContent = age;
+      const idEl = document.createElement('span'); idEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;'; idEl.textContent = '#'+t.id;
+      const subj = document.createElement('span'); subj.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; subj.textContent = t.subject || '(no subject)';
+      const statusEl = document.createElement('span'); statusEl.style.cssText = 'font-size:10px;font-weight:700;flex-shrink:0;text-transform:capitalize;padding:1px 7px;border-radius:8px;';
+      if (t.status==='open') { statusEl.style.cssText += 'background:var(--high-bg);color:var(--high-text);'; }
+      else if (t.status==='pending') { statusEl.style.cssText += 'background:var(--med-bg);color:var(--med-text);'; }
+      else { statusEl.style.cssText += 'background:var(--surface3);color:var(--text2);'; }
+      statusEl.textContent = t.status;
+      a.appendChild(ageEl); a.appendChild(idEl); a.appendChild(subj); a.appendChild(statusEl);
+      wrap.appendChild(a);
+    });
+  } catch(e) { countBadge.textContent = '?'; countBadge.style.color = 'var(--high-text)'; }
+}
+
+// ─── TV Mode ──────────────────────────────────────────────────────
+let tvRefreshTimer = null;
+let tvCountdownTimer = null;
+let tvNextRefresh = null;
+
+function enterTvMode() {
+  const overlay = document.getElementById('tv-overlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  renderTvView();
+  tvScheduleRefresh();
+}
+
+function exitTvMode() {
+  const overlay = document.getElementById('tv-overlay');
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  clearTimeout(tvRefreshTimer); clearInterval(tvCountdownTimer);
+}
+
+function tvScheduleRefresh() {
+  clearTimeout(tvRefreshTimer); clearInterval(tvCountdownTimer);
+  tvNextRefresh = Date.now() + ZD_REFRESH_INTERVAL;
+  tvRefreshTimer = setTimeout(() => { renderTvView(); tvScheduleRefresh(); }, ZD_REFRESH_INTERVAL);
+  const cdEl = document.getElementById('tv-countdown');
+  tvCountdownTimer = setInterval(() => {
+    if (!cdEl || !tvNextRefresh) return;
+    const secs = Math.max(0, Math.ceil((tvNextRefresh - Date.now()) / 1000));
+    cdEl.textContent = 'Refreshes in ' + Math.floor(secs/60) + ':' + String(secs%60).padStart(2,'0');
+  }, 1000);
+}
+
+async function renderTvView() {
+  const root = document.getElementById('tv-root'); if (!root) return;
+  root.innerHTML = '';
+
+  // Header
+  const hdr = document.createElement('div'); hdr.className = 'tv-header';
+  const logo = document.createElement('div'); logo.className = 'tv-wordmark';
+  logo.innerHTML = 'munu<span class="tv-wordmark-dot">.</span>';
+  const titleEl = document.createElement('div'); titleEl.className = 'tv-title'; titleEl.textContent = 'Ticket Dashboard';
+  const metaDiv = document.createElement('div'); metaDiv.className = 'tv-meta';
+  const clockEl = document.createElement('div'); clockEl.className = 'tv-clock';
+  clockEl.textContent = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  const cdEl = document.createElement('div'); cdEl.id = 'tv-countdown'; cdEl.className = 'tv-countdown'; cdEl.textContent = '';
+  const exitBtn = document.createElement('button'); exitBtn.className = 'tv-exit'; exitBtn.textContent = 'Exit (Esc)';
+  exitBtn.onclick = exitTvMode;
+  metaDiv.appendChild(clockEl); metaDiv.appendChild(cdEl); metaDiv.appendChild(exitBtn);
+  hdr.appendChild(logo); hdr.appendChild(titleEl); hdr.appendChild(metaDiv);
+  root.appendChild(hdr);
+
+  // ESC to exit
+  const escHandler = (e) => { if (e.key === 'Escape') { exitTvMode(); document.removeEventListener('keydown', escHandler); } };
+  document.addEventListener('keydown', escHandler);
+
+  // Body — 4 columns
+  const body = document.createElement('div'); body.className = 'tv-body';
+  root.appendChild(body);
+
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+
+  if (!zdReady()) {
+    const msg = document.createElement('div'); msg.style.cssText = 'padding:40px;color:rgba(214,243,255,0.4);font-size:16px;grid-column:span 4;';
+    msg.textContent = 'Zendesk not configured. Set up credentials in the Tickets tab.';
+    body.appendChild(msg); return;
+  }
+
+  // Col 1: Live KPIs + unassigned list
+  const col1 = document.createElement('div'); col1.className = 'tv-col';
+  const col1Title = document.createElement('div'); col1Title.className = 'tv-col-title'; col1Title.textContent = 'Queue status';
+  col1.appendChild(col1Title);
+  const kpiRow = document.createElement('div'); kpiRow.className = 'tv-kpi-row';
+  const mkKpi = (val, lbl, cls) => { const k=document.createElement('div');k.className='tv-kpi';const v=document.createElement('div');v.className='tv-kpi-val '+cls;v.textContent=val;const l=document.createElement('div');l.className='tv-kpi-label';l.textContent=lbl;k.appendChild(v);k.appendChild(l);return k; };
+  // Load KPIs async
+  const groupFilter = zdGroupId ? ` group:${zdGroupId}` : '';
+  const statusF = `(status:open OR status:pending OR status:hold)`;
+  const [openCount, pendingCount, breachedCount, unassignedCount] = await Promise.all([
+    zdCount(`type:ticket${groupFilter} status:open`).catch(()=>'?'),
+    zdCount(`type:ticket${groupFilter} status:pending`).catch(()=>'?'),
+    zdCount(`type:ticket${groupFilter} sla_breach:true ${statusF}`).catch(()=>'?'),
+    zdCount(`type:ticket${groupFilter} no:assignee ${statusF}`).catch(()=>'?'),
+  ]);
+  kpiRow.appendChild(mkKpi(openCount, 'Open', openCount > 20 ? 'danger' : openCount > 10 ? 'warn' : 'ok'));
+  kpiRow.appendChild(mkKpi(pendingCount, 'Pending', 'neutral'));
+  col1.appendChild(kpiRow);
+  const kpiRow2 = document.createElement('div'); kpiRow2.className = 'tv-kpi-row';
+  kpiRow2.appendChild(mkKpi(breachedCount, 'SLA breached', breachedCount > 0 ? 'danger' : 'ok'));
+  kpiRow2.appendChild(mkKpi(unassignedCount, 'Unassigned', unassignedCount > 0 ? 'warn' : 'ok'));
+  col1.appendChild(kpiRow2);
+
+  // Unassigned list
+  const uTitle = document.createElement('div'); uTitle.className = 'tv-col-title'; uTitle.style.marginTop = '6px'; uTitle.textContent = 'Unassigned';
+  col1.appendChild(uTitle);
+  try {
+    const uRes = await zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket${groupFilter} no:assignee ${statusF}`) + '&per_page=15&sort_by=created_at&sort_order=asc');
+    const uTickets = uRes.results || [];
+    if (!uTickets.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='No unassigned tickets';col1.appendChild(e); }
+    else {
+      uTickets.forEach(t => {
+        const row = document.createElement('div'); row.className = 'tv-ticket-row';
+        const ms = Date.now()-new Date(t.created_at).getTime(), d=Math.floor(ms/86400000), h=Math.floor((ms%86400000)/3600000);
+        const age = d>0?d+'d':h>0?h+'h':'<1h';
+        const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
+        const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
+        const ageEl=document.createElement('span');ageEl.className='tv-ticket-age';ageEl.textContent=age;
+        row.appendChild(id);row.appendChild(subj);row.appendChild(ageEl);col1.appendChild(row);
+      });
+    }
+  } catch {}
+  body.appendChild(col1);
+
+  // Col 2 & 3: Agent cards (split into two columns)
+  const agentsToShow = zdAgents.filter(a => {
+    const d = zdData[a.id]; return d && ((d.solved||0)>0 || (d.open||0)>0 || (d.pending||0)>0);
+  }).sort((a,b) => (zdData[b.id]?.solved||0) - (zdData[a.id]?.solved||0));
+
+  const half = Math.ceil(agentsToShow.length / 2);
+  [agentsToShow.slice(0,half), agentsToShow.slice(half)].forEach((group, gi) => {
+    const col = document.createElement('div'); col.className = 'tv-col';
+    const colTitle = document.createElement('div'); colTitle.className = 'tv-col-title';
+    colTitle.textContent = gi === 0 ? 'Agent performance' : 'Agent performance (cont.)';
+    col.appendChild(colTitle);
+    if (!group.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='Loading data…';col.appendChild(e); }
+    group.forEach((agent, idx) => {
+      const d = zdData[agent.id] || {};
+      const color = barColors[(gi*half + idx) % barColors.length];
+      const card = document.createElement('div'); card.className = 'tv-agent-card';
+      card.style.borderTop = '2px solid ' + color;
+      const hdr2 = document.createElement('div'); hdr2.className = 'tv-agent-header';
+      const av = document.createElement('div'); av.className = 'tv-agent-avatar';
+      av.style.background = color;
+      av.textContent = agent.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const info = document.createElement('div');
+      const nm = document.createElement('div'); nm.className = 'tv-agent-name'; nm.textContent = agent.name.split(' ')[0];
+      const sub = document.createElement('div'); sub.className = 'tv-agent-solved'; sub.textContent = (d.solved||0)+' solved this period';
+      info.appendChild(nm); info.appendChild(sub);
+      hdr2.appendChild(av); hdr2.appendChild(info); card.appendChild(hdr2);
+      const stats = document.createElement('div'); stats.className = 'tv-agent-stats';
+      const mkChip = (val,lbl,cls) => { const c=document.createElement('span');c.className='tv-stat-chip '+cls;c.textContent=val+' '+lbl;return c; };
+      stats.appendChild(mkChip(d.solved||0,'solved','solved'));
+      if ((d.open||0)>0) stats.appendChild(mkChip(d.open,'open','open'));
+      if ((d.pending||0)>0) stats.appendChild(mkChip(d.pending,'pending','pending'));
+      card.appendChild(stats); col.appendChild(card);
+    });
+    body.appendChild(col);
+  });
+
+  // Col 4: Oldest open + last updated
+  const col4 = document.createElement('div'); col4.className = 'tv-col';
+  const col4Title = document.createElement('div'); col4Title.className = 'tv-col-title'; col4Title.textContent = 'Oldest open';
+  col4.appendChild(col4Title);
+  try {
+    const oldRes = await zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket${groupFilter} ${statusF}`) + '&per_page=15&sort_by=created_at&sort_order=asc');
+    const oldTickets = oldRes.results || [];
+    if (!oldTickets.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='No open tickets';col4.appendChild(e); }
+    else {
+      oldTickets.forEach(t => {
+        const row = document.createElement('div'); row.className = 'tv-ticket-row';
+        const ms=Date.now()-new Date(t.created_at).getTime(),d2=Math.floor(ms/86400000),h=Math.floor((ms%86400000)/3600000);
+        const age=d2>0?d2+'d':h>0?h+'h':'<1h';
+        const agentName = zdAgents.find(a=>a.id===t.assignee_id)?.name?.split(' ')[0] || '—';
+        const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
+        const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
+        const meta=document.createElement('span');meta.className='tv-ticket-age';meta.textContent=age+' · '+agentName;
+        row.appendChild(id);row.appendChild(subj);row.appendChild(meta);col4.appendChild(row);
+      });
+    }
+  } catch {}
+
+  const lastUpdated = document.createElement('div'); lastUpdated.className = 'tv-last-updated';
+  lastUpdated.textContent = 'Updated at ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  col4.appendChild(lastUpdated);
+  body.appendChild(col4);
+}
+
 async function zdRefresh() {
   if (!hasPrivilege('zendesk')) return;
   if (!zdReady()) { zdShowSetup(); return; }
+  zdStartAutoRefresh();
   const body = document.getElementById('zd-body');
   const fromDate = document.getElementById('zd-from')?.value;
   const toDate   = document.getElementById('zd-to')?.value;
@@ -5297,20 +7031,20 @@ async function zdRefresh() {
       zdData[agents[i].id] = await zdGetStats(agents[i].id, fromDate, toDate);
     }
     zdRender(agents, fromDate, toDate);
+    zdRefreshUnassigned();
   } catch(e) {
     body.innerHTML = '<div class="zd-error">✗ ' + e.message + '</div>';
     console.error('Zendesk error:', e);
   }
 }
 
-// ─── SLA Panel ───────────────────────────────────────────────────
+// ─── SLA / Unassigned Panel ───────────────────────────────────────
 let slaGroupId = null; // cached after first load
 
 async function initSlaPanel(groupId) {
   slaGroupId = groupId;
-  const panel = document.getElementById('zd-sla-panel');
-  if (panel) panel.style.display = '';
-  await refreshSlaPanel();
+  // SLA panel removed — load unassigned panel instead
+  zdRefreshUnassigned();
 }
 
 async function refreshSlaPanel() {
@@ -5880,7 +7614,7 @@ async function ghSave() {
       if (!k) continue;
       // Skip keys with non-ASCII characters — these are corrupted duplicates
       if (/[^\x00-\x7F]/.test(k)) { localStorage.removeItem(k); continue; }
-      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token') {
+      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k === 'wtp_ql_shared' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token') {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -5943,7 +7677,7 @@ async function ghReadOnlyLoad() {
     let data = {};
     try { data = JSON.parse(atob(json.content.replace(/\n/g,''))); } catch(e) { return; }
     // For non-admins: only pull shared keys (schedule, users, wingman) - NOT other users' tasks
-    const sharedKeys = ['wtp_users', 'wtp_wingman', 'wtp_encrypted_token']; // wtp_schedule always uses hardcoded version
+    const sharedKeys = ['wtp_users', 'wtp_wingman', 'wtp_encrypted_token', 'wtp_ql_shared']; // wtp_schedule always uses hardcoded version
     // Also pull this user's own feedback and agenda keys
     if (currentUser) {
       sharedKeys.push(fbKey(currentUser.name));
@@ -6207,7 +7941,28 @@ function loadUserData() {
   const nonAdminCard = document.getElementById('nonadmin-sync-card');
   if (nonAdminCard) nonAdminCard.style.display = (!currentUser?.isAdmin) ? '' : 'none';
   if (isMobile()) { buildMobileNav(); openMobileNotes(); }
-  else { renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule(); }
+  else {
+    // TV-only user: hide everything except Tickets tab and enter TV mode
+    if (currentUser.tvOnly) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-btn').forEach(b => b.style.display = 'none');
+      // Show only Tickets
+      const zdBtn = document.getElementById('tab-btn-zendesk');
+      if (zdBtn) { zdBtn.style.display = ''; }
+      // Hide non-ticket tab contents, show zendesk
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      const zdTab = document.getElementById('tab-zendesk'); if (zdTab) zdTab.classList.add('active');
+      // Hide sign-out and other controls from tabbar — just keep the wordmark
+      const userDisp = document.getElementById('user-display'); if (userDisp) userDisp.style.display = 'none';
+      // Init ZD and auto-enter TV mode
+      zdInitDates();
+      setTimeout(() => {
+        zdRefresh().then(() => enterTvMode());
+      }, 400);
+      return;
+    }
+    renderDashboard(); renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule();
+  }
   // Auto-pull from GitHub on every login if token is set
   if (localStorage.getItem('wtp_gh_token')) {
     ghToken = localStorage.getItem('wtp_gh_token');
@@ -6231,6 +7986,9 @@ function saveEvents() { if (currentUser) { localStorage.setItem(userCalKey(curre
 function renderUserList() {
   const list = document.getElementById('user-list');
   if (!list) return;
+  // Populate datalist for schedule name autocomplete
+  const dl = document.getElementById('schedule-names-list');
+  if (dl) { dl.innerHTML = ''; MY_TEAM.forEach(n => { const opt = document.createElement('option'); opt.value = n; dl.appendChild(opt); }); }
   const users = getUsers();
   list.innerHTML = '';
   users.forEach((u, idx) => {
@@ -6239,9 +7997,25 @@ function renderUserList() {
 
     const nameWrap = document.createElement('div'); nameWrap.style.cssText = 'flex:1;min-width:0;';
     const nameEl = document.createElement('div'); nameEl.style.cssText = 'font-size:12px;font-weight:600;color:var(--text);'; nameEl.textContent = getUserDisplayName(u);
-    const subEl = document.createElement('div'); subEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:1px;';
-    if (u.displayName && u.name !== u.displayName) subEl.textContent = u.name;
-    nameWrap.appendChild(nameEl); if (subEl.textContent) nameWrap.appendChild(subEl);
+    const subEl = document.createElement('div'); subEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:6px;';
+    if (u.displayName && u.name !== u.displayName) {
+      const loginSpan = document.createElement('span'); loginSpan.textContent = u.name; subEl.appendChild(loginSpan);
+    }
+    // Schedule link
+    const linkedName = u.scheduleName || getScheduleName(u);
+    if (linkedName) {
+      const linkChip = document.createElement('span'); linkChip.style.cssText = 'background:rgba(122,173,255,0.12);color:var(--cal-text);border-radius:4px;padding:0 5px;font-size:10px;font-weight:600;cursor:pointer;';
+      linkChip.textContent = '→ ' + linkedName;
+      linkChip.title = 'Click to change schedule link';
+      linkChip.onclick = () => promptScheduleLink(u, idx);
+      subEl.appendChild(linkChip);
+    } else if (!u.isAdmin) {
+      const linkBtn = document.createElement('button'); linkBtn.style.cssText = 'font-size:10px;color:var(--text3);background:none;border:1px dashed var(--border);border-radius:4px;padding:0 6px;cursor:pointer;';
+      linkBtn.textContent = '+ Link to schedule';
+      linkBtn.onclick = () => promptScheduleLink(u, idx);
+      subEl.appendChild(linkBtn);
+    }
+    nameWrap.appendChild(nameEl); if (subEl.childNodes.length) nameWrap.appendChild(subEl);
 
     const badges = document.createElement('div'); badges.style.cssText = 'display:flex;align-items:center;gap:5px;';
     const roleBadge = document.createElement('span');
@@ -6282,15 +8056,35 @@ function renderUserList() {
   });
 }
 
+function promptScheduleLink(user, idx) {
+  const current = user.scheduleName || getScheduleName(user) || '';
+  const opts = ['(none)', ...MY_TEAM];
+  const chosen = window.prompt(
+    'Link "' + getUserDisplayName(user) + '" to which team member?\n\nOptions: ' + MY_TEAM.join(', ') + '\n\nCurrent: ' + (current || 'none'),
+    current
+  );
+  if (chosen === null) return; // cancelled
+  const users = getUsers();
+  const target = users[idx];
+  if (!target) return;
+  if (!chosen || chosen === '(none)') { delete target.scheduleName; }
+  else { const match = MY_TEAM.find(n => n.toLowerCase() === chosen.trim().toLowerCase()); if (match) target.scheduleName = match; else { alert('Name not found in MY_TEAM: ' + chosen); return; } }
+  localStorage.setItem('wtp_users', JSON.stringify(users));
+  scheduleSyncSave();
+  renderUserList();
+}
+
 async function addUser() {
   const nameEl = document.getElementById('new-username');
   const displayEl = document.getElementById('new-displayname');
   const pwEl = document.getElementById('new-password');
+  const schedEl = document.getElementById('new-schedulename');
   const isAdminChk = document.getElementById('new-isadmin').checked;
   const privZendesk = document.getElementById('new-priv-zendesk').checked;
   const msg = document.getElementById('user-add-msg');
   const name = nameEl.value.trim();
   const displayName = displayEl ? displayEl.value.trim() : '';
+  const schedName = schedEl ? schedEl.value.trim() : '';
   const pw = pwEl.value;
   if (!name) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a username'; return; }
   if (!pw) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Enter a password'; return; }
@@ -6302,9 +8096,15 @@ async function addUser() {
   const newUser = { name, hash, isAdmin: isAdminChk };
   if (displayName) newUser.displayName = displayName;
   if (privileges.length) newUser.privileges = privileges;
+  // Validate and save scheduleName
+  if (schedName) {
+    const match = MY_TEAM.find(n => n.toLowerCase() === schedName.toLowerCase());
+    if (match) newUser.scheduleName = match;
+  }
   users.push(newUser);
   localStorage.setItem('wtp_users', JSON.stringify(users));
-  nameEl.value = ''; pwEl.value = ''; if (displayEl) displayEl.value = '';
+  scheduleSyncSave();
+  nameEl.value = ''; pwEl.value = ''; if (displayEl) displayEl.value = ''; if (schedEl) schedEl.value = '';
   document.getElementById('new-isadmin').checked = false;
   document.getElementById('new-priv-zendesk').checked = false;
   msg.style.color = 'var(--low-text)'; msg.textContent = '✓ User ' + (displayName || name) + ' added';
@@ -6658,6 +8458,25 @@ function getUserDisplayName(user) {
   // If name looks like an email, extract first name from local part
   if (u.name && u.name.includes('@')) return u.name.split('@')[0].split('.')[0].replace(/^./, c => c.toUpperCase());
   return u.name || '';
+}
+// Returns the MY_TEAM schedule name linked to a user (e.g. 'Vetle')
+function getScheduleName(user) {
+  const u = user || currentUser;
+  if (!u) return null;
+  if (u.scheduleName) return u.scheduleName;
+  const display = getUserDisplayName(u);
+  return MY_TEAM.find(n => n.toLowerCase() === display.toLowerCase()) || null;
+}
+// Returns { shift, role } for a person on a given date from SCHEDULE
+function getPersonDayInfo(scheduleName, dateStr) {
+  if (!scheduleName || !dateStr) return null;
+  const week = SCHEDULE.find(w => w.dates && w.dates.includes(dateStr));
+  if (!week) return null;
+  const person = week.people.find(p => p.name === scheduleName);
+  if (!person) return null;
+  const di = week.dates.indexOf(dateStr);
+  if (di < 0) return null;
+  return { shift: person.shifts[di] || '', role: person.roles[di] || '', weekLabel: week.week };
 }
 
 // ─── Time slots (global) ──────────────────────────────────────────
