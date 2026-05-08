@@ -275,7 +275,7 @@
       "timeEnd": "09:30",
       "recurring": false,
       "reminder": "",
-      "colour": "",
+      "colour": "amber",
       "pendingName": "",
       "weekStamp": "2026-05-18",
       "done": false
