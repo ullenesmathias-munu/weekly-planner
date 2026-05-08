@@ -471,5 +471,12 @@
     "rag": "none",
     "focus": "",
     "_open": false
+  },
+  "wtp_profile_vetle": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
   }
 }
