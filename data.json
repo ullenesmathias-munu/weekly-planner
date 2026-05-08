@@ -261,6 +261,24 @@
       "pendingName": "Kate",
       "weekStamp": "2026-05-11",
       "done": false
+    },
+    {
+      "id": "1778237795333",
+      "day": "Monday",
+      "title": "Standup Peppes GoLive May 18th",
+      "priority": "",
+      "due": "17 May",
+      "note": "Peppes will go live with some locations May  19th",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "",
+      "pendingName": "",
+      "weekStamp": "2026-05-18",
+      "done": false
     }
   ],
   "wtp_notepad_persistent": "Test",
