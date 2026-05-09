@@ -1573,8 +1573,18 @@ const DEFAULT_USERS = [
 ];
 
 function getUsers() {
-  try { return JSON.parse(localStorage.getItem('wtp_users')) || DEFAULT_USERS; }
-  catch { return DEFAULT_USERS; }
+  try {
+    const stored = JSON.parse(localStorage.getItem('wtp_users'));
+    if (!stored) return DEFAULT_USERS;
+    // Always ensure DEFAULT_USERS entries are present (e.g. Dashboard TV user)
+    const merged = [...stored];
+    DEFAULT_USERS.forEach(def => {
+      if (!merged.find(u => u.name.toLowerCase() === def.name.toLowerCase())) {
+        merged.push(def);
+      }
+    });
+    return merged;
+  } catch { return DEFAULT_USERS; }
 }
 
 let currentUser = null;
@@ -1804,9 +1814,9 @@ window.tryUnlock = async function() {
     </div>
     <div class="topbar-right">
       <div class="cal-view-toggle">
-        <button class="cal-view-btn active" id="cal-view-week" onclick="setCalView('week')">Week</button>
+        <button class="cal-view-btn" id="cal-view-week" onclick="setCalView('week')">Week</button>
         <button class="cal-view-btn" id="cal-view-day" onclick="setCalView('day')">Day</button>
-        <button class="cal-view-btn" id="cal-view-month" onclick="setCalView('month')">Month</button>
+        <button class="cal-view-btn active" id="cal-view-month" onclick="setCalView('month')">Month</button>
       </div>
       <button class="cal-sync-btn" onclick="refreshOutlookCal()">↻ Sync Outlook</button>
       <button class="cal-sync-btn" onclick="showCalSetup()" id="cal-setup-btn" style="color:var(--text3);">⚙ Setup</button>
@@ -2822,7 +2832,7 @@ function showWingmanEditModal(slot, idx) {
 
 // ─── Calendar Tab ──────────────────────────────────────────────────
 let calOffset = 0;         // week offset from today
-let calView = 'week';      // 'week' | 'day'
+let calView = 'month';     // 'week' | 'day' | 'month'
 let outlookEvents = [];    // events from Gist
 let calDayOffset = 0;      // for day view
 
@@ -2902,6 +2912,8 @@ function loadOutlookEvents() {
 function initCalTab() {
   outlookEvents = loadOutlookEvents();
   renderCalTab();
+  // Sync in background every time the tab is opened
+  refreshOutlookCal().catch(() => {});
 }
 
 function setCalView(view) {
