@@ -1847,6 +1847,7 @@ window.tryUnlock = async function() {
     </div>
   </div>
   <div id="zd-unassigned-panel" style="display:none;margin-bottom:16px;"></div>
+  <div id="zd-sla-breached-panel" style="display:none;margin-bottom:0;"></div>
   <div id="zd-body" style="margin-top:16px;">
     <div id="zd-inbox-stats"></div>
   </div>
@@ -2120,7 +2121,7 @@ function switchTab(name, btn) {
   if (name === 'dashboard') { renderDashboard(); }
   if (name === 'calendar') { initCalTab(); }
   if (name === 'onetoone') { renderOtoTab(); }
-  if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); }
+  if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); else { zdRefreshUnassigned(); zdRefreshSlaBreached(); } }
   else { zdStopAutoRefresh(); }
   if (name === 'settings') { initReadonlyTokenField(); }
   if (name === 'feedback') { renderFeedbackTab(); }
@@ -7106,64 +7107,256 @@ function zdTickCountdown() {
 }
 
 // ─── Unassigned tickets panel ─────────────────────────────────────
-async function zdRefreshUnassigned() {
+// ─── SLA Breached Tickets ─────────────────────────────────────────
+async function zdRefreshSlaBreached() {
   if (!zdReady()) return;
 
-  // Build/refresh the unassigned card inside zd-body
-  const body = document.getElementById('zd-body');
-  if (!body) return;
-
-  // Remove previous unassigned card if present
-  const old = body.querySelector('.zd-unassigned-card');
-  if (old) old.remove();
-
   const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
-  const groupFilter = zdGroupId ? ` group:${zdGroupId}` : '';
-  const q = `type:ticket no:assignee (status:open OR status:pending OR status:hold)${groupFilter}`;
+  const panel = document.getElementById('zd-sla-breached-panel');
+  if (!panel) return;
+  panel.style.display = '';
+  panel.innerHTML = '';
 
-  // Build the card
+  // ── Build card shell ─────────────────────────────────────────
   const card = document.createElement('div');
-  card.className = 'zd-agent-card zd-unassigned-card';
-  card.style.cssText = 'border-top:2px solid var(--med-text);';
+  card.className = 'zd-agent-card';
+  card.style.cssText = 'border-top:2px solid var(--high-text);margin-bottom:16px;';
+  panel.appendChild(card);
 
   const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
   const titleWrap = document.createElement('div');
-  const title = document.createElement('div'); title.className = 'zd-agent-name';
-  title.textContent = 'Unassigned tickets';
+  const title = document.createElement('div'); title.className = 'zd-agent-name'; title.textContent = 'SLA Breached tickets';
+  const countBadge = document.createElement('span');
+  countBadge.style.cssText = 'font-size:11px;font-weight:700;color:var(--high-text);background:var(--high-bg);padding:1px 8px;border-radius:10px;margin-top:2px;display:inline-block;';
+  countBadge.textContent = 'Checking…';
+  titleWrap.appendChild(title); titleWrap.appendChild(countBadge);
+  const toggle = document.createElement('button');
+  toggle.style.cssText = 'font-size:11px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;margin-left:auto;padding:2px 6px;';
+  toggle.textContent = 'Hide';
+  const ticketList = document.createElement('div');
+  ticketList.className = 'zd-agent-body';
+  let collapsed = false;
+  toggle.onclick = () => { collapsed = !collapsed; ticketList.style.display = collapsed?'none':''; toggle.textContent = collapsed?'Show':'Hide'; };
+  hdr.appendChild(titleWrap); hdr.appendChild(toggle);
+  card.appendChild(hdr); card.appendChild(ticketList);
+
+  // Diagnostic output element (shown only on error/debug)
+  const diagEl = document.createElement('div');
+  diagEl.style.cssText = 'font-size:10px;color:var(--text3);padding:4px 2px;margin-top:4px;';
+  ticketList.appendChild(diagEl);
+
+  const setDiag = (msg) => { diagEl.textContent = msg; };
+
+  // ── Resolve group ID ─────────────────────────────────────────
+  let gId = zdGroupId;
+  if (!gId) {
+    try { gId = await zdGetGroupId(); }
+    catch(e) {
+      setDiag('Could not resolve group: ' + e.message);
+      gId = null;
+    }
+  }
+
+  const groupFilter = gId ? ` group:${gId}` : '';
+  const statusFilter = `(status:open OR status:pending OR status:hold)`;
+
+  // ── Strategy 1: sla_breach:true (standard) ────────────────────
+  // ── Strategy 2: without group filter (in case group filter breaks SLA indexing)
+  // ── Strategy 3: via ticket sideload SLA metrics (most reliable but expensive)
+  // We try all three and show what works.
+
+  const strategies = [
+    { label: 'group+sla_breach:true', query: `type:ticket${groupFilter} sla_breach:true ${statusFilter}` },
+    { label: 'sla_breach:true (no group)',  query: `type:ticket sla_breach:true ${statusFilter}` },
+    { label: 'group only (no sla filter)',  query: `type:ticket${groupFilter} ${statusFilter}` },
+  ];
+
+  let tickets = [];
+  let usedStrategy = null;
+  const diagLines = [];
+
+  for (const s of strategies) {
+    try {
+      const r = await zdFetch('/search.json?query=' + encodeURIComponent(s.query) + '&per_page=25&sort_by=created_at&sort_order=asc');
+      const count = r.count ?? (r.results||[]).length;
+      diagLines.push(`${s.label}: ${count} results`);
+
+      // For strategies 1 & 2: use directly
+      if (s.label.includes('sla_breach:true') && (r.results||[]).length > 0) {
+        tickets = r.results || [];
+        usedStrategy = s.label;
+        break;
+      }
+      // Strategy 1 returns 0 — try strategy 2
+    } catch(e) {
+      diagLines.push(`${s.label}: ERROR — ${e.message}`);
+    }
+  }
+
+  // If sla_breach:true returns 0 from both strategies, use ticket sideloads
+  // to check SLA metrics directly on open tickets (most reliable)
+  if (!usedStrategy && gId) {
+    try {
+      setDiag('sla_breach:true returned 0 — checking ticket SLA metrics directly…');
+      const r = await zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket${groupFilter} ${statusFilter}`) + '&per_page=100&sort_by=created_at&sort_order=asc');
+      const allTickets = r.results || [];
+      diagLines.push(`Total open tickets for SLA check: ${allTickets.length}`);
+
+      // Fetch full ticket data with SLA sideloads for each ticket
+      // Zendesk API: /tickets/{id}?include=slas gives sla_policy_metric_sets
+      const now = new Date();
+      const breached = [];
+      const batchSize = 10;
+      for (let i = 0; i < Math.min(allTickets.length, 50); i += batchSize) {
+        const batch = allTickets.slice(i, i + batchSize);
+        const results = await Promise.all(batch.map(t =>
+          zdFetch(`/tickets/${t.id}.json?include=slas`)
+            .then(r2 => ({ ticket: r2.ticket || t, slas: r2.slas }))
+            .catch(() => ({ ticket: t, slas: null }))
+        ));
+        results.forEach(({ ticket, slas }) => {
+          // Check via sla_policy_metric_sets on ticket object
+          const metrics = ticket.sla_policy_metric_sets || slas?.policy_metrics || [];
+          const isBreach = metrics.some(m => {
+            if (m.breach_at) return new Date(m.breach_at) < now;
+            if (m.next_breach_at) return new Date(m.next_breach_at) < now;
+            return false;
+          });
+          if (isBreach) breached.push(ticket);
+        });
+        setDiag(`Checked ${Math.min(i+batchSize, allTickets.length)}/${Math.min(allTickets.length,50)} tickets for SLA…`);
+      }
+
+      if (breached.length > 0) {
+        tickets = breached;
+        usedStrategy = 'sla_policy_metric_sets sideload';
+        diagLines.push(`SLA sideload found ${breached.length} breached`);
+      } else {
+        diagLines.push('SLA sideload: 0 breached (either no breaches or SLA not configured)');
+      }
+    } catch(e) {
+      diagLines.push('SLA sideload failed: ' + e.message);
+    }
+  }
+
+  // ── Render results ────────────────────────────────────────────
+  diagEl.textContent = '';
+  ticketList.innerHTML = '';
+
+  if (!tickets.length) {
+    countBadge.textContent = '0 breached';
+    countBadge.style.cssText = 'font-size:11px;font-weight:700;color:var(--low-text);background:var(--low-bg);padding:1px 8px;border-radius:10px;margin-top:2px;display:inline-block;';
+    const empty = document.createElement('div');
+    empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;padding:6px 2px;';
+    empty.textContent = '✓ No SLA breaches detected';
+    ticketList.appendChild(empty);
+    // Show diagnostic info collapsed
+    const dbg = document.createElement('details');
+    dbg.style.cssText = 'margin-top:6px;';
+    const sum = document.createElement('summary'); sum.style.cssText = 'font-size:10px;color:var(--text3);cursor:pointer;'; sum.textContent = 'Diagnostic info';
+    dbg.appendChild(sum);
+    const pre = document.createElement('div'); pre.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;line-height:1.6;';
+    pre.textContent = diagLines.join('\n') + (usedStrategy ? '\nUsed: ' + usedStrategy : '\nNo strategy returned results');
+    dbg.appendChild(pre); ticketList.appendChild(dbg);
+    return;
+  }
+
+  countBadge.textContent = tickets.length + ' breached';
+  ticketList.innerHTML = '';
+
+  tickets.forEach(t => {
+    const ms = Date.now() - new Date(t.created_at).getTime();
+    const d = Math.floor(ms/86400000), h = Math.floor((ms%86400000)/3600000);
+    const age = d > 0 ? d+'d' : h > 0 ? h+'h' : '<1h';
+    const agentName = zdAgents?.find(a=>a.id===t.assignee_id)?.name?.split(' ')[0] || '—';
+
+    const row = document.createElement('a');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.2);border-radius:var(--radius-md);text-decoration:none;margin-bottom:4px;transition:background 0.12s;';
+    row.href = zdSubdomain ? `https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}` : '#';
+    row.target = '_blank'; row.rel = 'noopener';
+    row.onmouseover = () => row.style.background = 'rgba(255,107,107,0.13)';
+    row.onmouseout  = () => row.style.background = 'rgba(255,107,107,0.07)';
+
+    const idEl = document.createElement('span'); idEl.style.cssText = 'font-size:10px;color:var(--high-text);font-weight:700;flex-shrink:0;font-variant-numeric:tabular-nums;'; idEl.textContent = '#' + t.id;
+    const subj = document.createElement('span'); subj.style.cssText = 'flex:1;font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; subj.textContent = t.subject || '(no subject)';
+    const ageEl = document.createElement('span'); ageEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;'; ageEl.textContent = age;
+    const whoEl = document.createElement('span'); whoEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;font-weight:600;min-width:40px;text-align:right;'; whoEl.textContent = agentName;
+    const badge = document.createElement('span'); badge.style.cssText = 'font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;flex-shrink:0;background:var(--high-bg);color:var(--high-text);text-transform:uppercase;letter-spacing:0.04em;'; badge.textContent = 'SLA';
+
+    row.appendChild(idEl); row.appendChild(subj); row.appendChild(ageEl); row.appendChild(whoEl); row.appendChild(badge);
+    ticketList.appendChild(row);
+  });
+
+  // Strategy used footnote
+  if (usedStrategy) {
+    const note = document.createElement('div'); note.style.cssText = 'font-size:10px;color:var(--text3);padding:4px 2px;'; note.textContent = 'via ' + usedStrategy;
+    ticketList.appendChild(note);
+  }
+}
+
+async function zdRefreshUnassigned() {
+  if (!zdReady()) return;
+
+  const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
+
+  // Ensure group ID is resolved before building query
+  let gId = zdGroupId;
+  if (!gId) {
+    try { gId = await zdGetGroupId(); } catch(e) { gId = null; }
+  }
+  const groupFilter = gId ? ` group:${gId}` : '';
+
+  // Match your Zendesk saved filter: unassigned, open/pending/hold
+  const q = `type:ticket no:assignee (status:open OR status:pending OR status:hold)${groupFilter}`;
+
+  // ── Build/refresh card ────────────────────────────────────────
+  // Try to inject into zd-body grid; fall back to the floating panel
+  const body = document.getElementById('zd-body');
+  let card = body ? body.querySelector('.zd-unassigned-card') : null;
+  if (!card) {
+    card = document.createElement('div');
+    card.className = 'zd-agent-card zd-unassigned-card';
+    card.style.cssText = 'border-top:2px solid var(--med-text);margin-bottom:16px;';
+    if (body) {
+      const inboxStats = body.querySelector('#zd-inbox-stats');
+      if (inboxStats) body.insertBefore(card, inboxStats.nextSibling || body.firstChild);
+      else body.prepend(card);
+    } else {
+      // Fall back to floating panel
+      const panel = document.getElementById('zd-unassigned-panel');
+      if (panel) { panel.style.display = ''; panel.innerHTML = ''; panel.appendChild(card); }
+    }
+  } else {
+    card.innerHTML = '';
+    card.style.cssText = 'border-top:2px solid var(--med-text);margin-bottom:16px;';
+  }
+
+  const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
+  const titleWrap = document.createElement('div');
+  const title = document.createElement('div'); title.className = 'zd-agent-name'; title.textContent = 'Unassigned tickets';
   const countBadge = document.createElement('span');
   countBadge.style.cssText = 'font-size:11px;font-weight:700;color:var(--med-text);background:var(--med-bg);padding:1px 8px;border-radius:10px;margin-top:2px;display:inline-block;';
   countBadge.textContent = 'Loading…';
   titleWrap.appendChild(title); titleWrap.appendChild(countBadge);
-  hdr.appendChild(titleWrap);
 
-  // Toggle body
   const toggle = document.createElement('button');
   toggle.style.cssText = 'font-size:11px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;margin-left:auto;padding:2px 6px;';
   toggle.textContent = 'Hide';
-  let collapsed = false;
   const ticketList = document.createElement('div');
   ticketList.className = 'zd-agent-body'; ticketList.style.display = '';
-  toggle.onclick = () => {
-    collapsed = !collapsed;
-    ticketList.style.display = collapsed ? 'none' : '';
-    toggle.textContent = collapsed ? 'Show' : 'Hide';
-  };
-  hdr.appendChild(toggle);
-  card.appendChild(hdr); card.appendChild(ticketList);
+  let collapsed = false;
+  toggle.onclick = () => { collapsed = !collapsed; ticketList.style.display = collapsed ? 'none' : ''; toggle.textContent = collapsed ? 'Show' : 'Hide'; };
 
-  // Insert BEFORE the agent grid (first child after zd-inbox-stats)
-  const inboxStats = body.querySelector('#zd-inbox-stats');
-  if (inboxStats && inboxStats.nextSibling) {
-    body.insertBefore(card, inboxStats.nextSibling);
-  } else {
-    body.appendChild(card);
-  }
+  hdr.appendChild(titleWrap); hdr.appendChild(toggle);
+  card.appendChild(hdr); card.appendChild(ticketList);
 
   try {
     const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=25&sort_by=created_at&sort_order=asc');
     const tickets = r.results || [];
     const total = r.count || tickets.length;
-    countBadge.textContent = tickets.length + (total > 25 ? '+' : '') + ' tickets';
+    countBadge.textContent = total + (total > 25 ? '+' : '') + ' unassigned';
+    countBadge.style.color = total > 0 ? 'var(--med-text)' : 'var(--low-text)';
+    countBadge.style.background = total > 0 ? 'var(--med-bg)' : 'var(--low-bg)';
 
     if (!tickets.length) {
       const empty = document.createElement('div');
@@ -7179,12 +7372,11 @@ async function zdRefreshUnassigned() {
       const isOld = ms > 3 * 86400000;
 
       const row = document.createElement('a');
-      row.className = 'sla-ticket-row';
-      row.href = `https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}`;
-      row.target = '_blank'; row.rel = 'noopener';
       row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);text-decoration:none;color:var(--text);margin-bottom:4px;transition:background 0.12s,border-color 0.12s;';
-      row.onmouseover = () => row.style.background = 'var(--surface2)';
-      row.onmouseout  = () => row.style.background = 'var(--surface)';
+      row.href = zdSubdomain ? `https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}` : '#';
+      row.target = '_blank'; row.rel = 'noopener';
+      row.onmouseover = () => { row.style.background='var(--surface2)'; row.style.borderColor='var(--border2)'; };
+      row.onmouseout  = () => { row.style.background='var(--surface)';  row.style.borderColor='var(--border)'; };
 
       const ageEl = document.createElement('span');
       ageEl.style.cssText = `font-size:10px;font-weight:700;flex-shrink:0;min-width:28px;color:${isOld?'var(--med-text)':'var(--text3)'};`;
@@ -7199,14 +7391,10 @@ async function zdRefreshUnassigned() {
       subj.textContent = t.subject || '(no subject)';
 
       const statusEl = document.createElement('span');
-      statusEl.style.cssText = 'font-size:10px;font-weight:700;flex-shrink:0;text-transform:capitalize;padding:2px 8px;border-radius:8px;';
-      if (t.status === 'open') {
-        statusEl.style.cssText += 'background:var(--high-bg);color:var(--high-text);';
-      } else if (t.status === 'pending') {
-        statusEl.style.cssText += 'background:var(--med-bg);color:var(--med-text);';
-      } else {
-        statusEl.style.cssText += 'background:var(--surface3);color:var(--text2);';
-      }
+      const sc = t.status === 'open' ? 'background:var(--high-bg);color:var(--high-text);'
+                : t.status === 'pending' ? 'background:var(--med-bg);color:var(--med-text);'
+                : 'background:var(--surface3);color:var(--text2);';
+      statusEl.style.cssText = 'font-size:10px;font-weight:700;flex-shrink:0;text-transform:capitalize;padding:2px 8px;border-radius:8px;' + sc;
       statusEl.textContent = t.status;
 
       row.appendChild(ageEl); row.appendChild(idEl); row.appendChild(subj); row.appendChild(statusEl);
@@ -7220,17 +7408,14 @@ async function zdRefreshUnassigned() {
       ticketList.appendChild(more);
     }
   } catch(e) {
-    countBadge.textContent = '?';
-    countBadge.style.color = 'var(--high-text)';
+    countBadge.textContent = 'Error';
+    countBadge.style.cssText = 'font-size:11px;font-weight:700;color:var(--high-text);background:var(--high-bg);padding:1px 8px;border-radius:10px;margin-top:2px;display:inline-block;';
     const err = document.createElement('div');
-    err.style.cssText = 'font-size:11px;color:var(--high-text);padding:4px 0;';
-    err.textContent = 'Could not load unassigned tickets';
+    err.style.cssText = 'font-size:11px;color:var(--high-text);padding:6px 2px;';
+    err.textContent = e.message || 'Could not load unassigned tickets';
     ticketList.appendChild(err);
+    console.error('Unassigned tickets error:', e);
   }
-
-  // Also update the floating panel if it exists (legacy)
-  const floatPanel = document.getElementById('zd-unassigned-panel');
-  if (floatPanel) floatPanel.style.display = 'none';
 }
 
 // ─── TV Mode ──────────────────────────────────────────────────────
@@ -7463,6 +7648,7 @@ async function zdRefresh() {
     }
     zdRender(agents, fromDate, toDate);
     zdRefreshUnassigned();
+    zdRefreshSlaBreached();
   } catch(e) {
     body.innerHTML = '<div class="zd-error">✗ ' + e.message + '</div>';
     console.error('Zendesk error:', e);
