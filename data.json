@@ -35,7 +35,7 @@
       "colour": "amber",
       "pendingName": "",
       "reminder": "",
-      "done": false
+      "done": true
     },
     {
       "id": "1777282598128.9836",
@@ -91,7 +91,7 @@
       "colour": "",
       "pendingName": "",
       "weekStamp": "2026-04-26",
-      "done": false
+      "done": true
     },
     {
       "id": "1777317844804.5618",
@@ -148,7 +148,7 @@
       "colour": "red",
       "pendingName": "",
       "reminder": "",
-      "done": false
+      "done": true
     },
     {
       "id": "1777398981249.66",
@@ -186,7 +186,7 @@
       "colour": "red",
       "pendingName": "",
       "reminder": "",
-      "done": false
+      "done": true
     },
     {
       "id": "1778093303837.993",
