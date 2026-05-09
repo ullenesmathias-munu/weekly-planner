@@ -906,7 +906,7 @@
   .tv-body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr 1.2fr;
+    grid-template-columns: minmax(220px, 1fr) 1fr 1fr minmax(220px, 1fr);
     min-height: 0;
     overflow: hidden;
   }
@@ -1846,8 +1846,8 @@ window.tryUnlock = async function() {
       </div>
     </div>
   </div>
-  <div id="zd-unassigned-panel" style="display:none;margin-bottom:16px;"></div>
-  <div id="zd-sla-breached-panel" style="display:none;margin-bottom:0;"></div>
+  <div id="zd-unassigned-panel" style="display:none;"></div>
+  <div id="zd-sla-breached-panel" style="display:none;"></div>
   <div id="zd-body" style="margin-top:16px;">
     <div id="zd-inbox-stats"></div>
   </div>
@@ -2121,7 +2121,7 @@ function switchTab(name, btn) {
   if (name === 'dashboard') { renderDashboard(); }
   if (name === 'calendar') { initCalTab(); }
   if (name === 'onetoone') { renderOtoTab(); }
-  if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); else { zdRefreshUnassigned(); zdRefreshSlaBreached(); } }
+  if (name === 'zendesk') { zdInitDates(); if (!zdReady()) zdShowSetup(); }
   else { zdStopAutoRefresh(); }
   if (name === 'settings') { initReadonlyTokenField(); }
   if (name === 'feedback') { renderFeedbackTab(); }
@@ -7529,205 +7529,192 @@ async function renderTvView() {
   const escHandler = e => { if(e.key==='Escape'){exitTvMode();document.removeEventListener('keydown',escHandler);} };
   document.addEventListener('keydown', escHandler);
 
-  // ── Loading state ─────────────────────────────────────────────
-  const loadMsg = document.createElement('div');
-  loadMsg.style.cssText = 'padding:40px 48px;color:rgba(214,243,255,0.4);font-size:14px;';
-  loadMsg.textContent = 'Loading ticket data…';
-  root.appendChild(loadMsg);
+  // ── Scrollable content area ───────────────────────────────────
+  const content = document.createElement('div');
+  content.style.cssText = 'flex:1;overflow-y:auto;padding:20px 28px 28px;';
+  root.appendChild(content);
 
-  // ── Fetch all data in parallel ────────────────────────────────
+  // Loading
+  const loadMsg = document.createElement('div');
+  loadMsg.style.cssText = 'color:rgba(214,243,255,0.4);font-size:14px;padding:20px 0;';
+  loadMsg.textContent = '⟳ Loading ticket data…';
+  content.appendChild(loadMsg);
+
+  // ── Resolve group & date range ────────────────────────────────
   let gId = zdGroupId;
   if (!gId) { try { gId = await zdGetGroupId(); } catch(e) { gId = null; } }
-  const groupFilter = gId ? ` group:${gId}` : '';
-  const statusF = `(status:open OR status:pending OR status:hold)`;
-  const safeCount = async q => { try { return await zdCount(q); } catch { return '?'; } };
-  const safeFetch = async (q, sort, order) => {
-    try { const r = await zdFetch('/search.json?query='+encodeURIComponent(q)+'&per_page=25&sort_by='+sort+'&sort_order='+(order||'asc')); return r.results||[]; } catch { return []; }
-  };
 
-  // Get date range from the current picker values (same as normal view)
   const fromDate = document.getElementById('zd-from')?.value || new Date().toISOString().slice(0,10);
   const toDate   = document.getElementById('zd-to')?.value   || new Date().toISOString().slice(0,10);
+  const fmtD = s => new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
 
-  const [openCount, pendingCount, onholdCount, unassignedCount,
-         breachedCount, unassignedTickets, breachedTickets, oldestTickets] = await Promise.all([
-    safeCount(`type:ticket${groupFilter} status:open`),
-    safeCount(`type:ticket${groupFilter} status:pending`),
-    safeCount(`type:ticket${groupFilter} status:hold`),
-    safeCount(`type:ticket${groupFilter} no:assignee ${statusF}`),
-    safeCount(`type:ticket${groupFilter} sla_breach:true ${statusF}`),
-    safeFetch(`type:ticket${groupFilter} no:assignee ${statusF}`, 'created_at', 'asc'),
-    safeFetch(`type:ticket${groupFilter} sla_breach:true ${statusF}`, 'created_at', 'asc'),
-    safeFetch(`type:ticket${groupFilter} ${statusF}`, 'created_at', 'asc'),
-  ]);
-
-  // Use zdData already loaded from normal view (if available)
-  const agents = zdAgents.length ? zdAgents : [];
+  // ── Use existing zdData if available, otherwise re-fetch ──────
+  const groupFilter = gId ? ` group:${gId}` : '';
   const absentNames = zdGetAbsentNames(fromDate, toDate);
-  const presentAgents = agents.filter(a => !absentNames.has(a.name.split(' ')[0].toLowerCase()) && !absentNames.has(a.name.toLowerCase()));
-  const sortedAgents = [...presentAgents].sort((a,b)=>(zdData[b.id]?.solved||0)-(zdData[a.id]?.solved||0));
-  const maxSolved = Math.max(...sortedAgents.map(a=>zdData[a.id]?.solved||0), 1);
-  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b','#748ffc','#ff6b6b'];
+  const agents = zdAgents.filter(a =>
+    !absentNames.has(a.name.split(' ')[0].toLowerCase()) && !absentNames.has(a.name.toLowerCase())
+  );
+  const sortedAgents = [...agents].sort((a,b)=>(zdData[b.id]?.solved||0)-(zdData[a.id]?.solved||0));
+  const hasAgentData = sortedAgents.some(a => (zdData[a.id]?.solved||0) > 0);
 
-  const ticketAge = t => {
-    const ms=Date.now()-new Date(t.created_at).getTime(), d=Math.floor(ms/86400000), h=Math.floor((ms%86400000)/3600000);
-    return d>0?d+'d':h>0?h+'h':'<1h';
-  };
-  const isOld = t => (Date.now()-new Date(t.created_at).getTime()) > 3*86400000;
+  // If no agent data loaded yet, show a prompt
+  if (!hasAgentData) {
+    loadMsg.textContent = 'No agent data loaded — run Refresh in the Tickets tab first, then open TV mode.';
+    loadMsg.style.color = 'rgba(214,243,255,0.5)';
+    return;
+  }
 
   loadMsg.remove();
 
-  // ── KPI strip ─────────────────────────────────────────────────
-  const strip = document.createElement('div'); strip.className = 'tv-kpi-strip';
-  const mkKpiBig = (val,label,cls) => {
-    const k=document.createElement('div'); k.className='tv-kpi-big '+(+val>0?cls:'ok');
-    const l=document.createElement('div'); l.className='tv-kpi-big-label'; l.textContent=label;
-    const v=document.createElement('div'); v.className='tv-kpi-big-val '+(+val>0?cls:'ok'); v.textContent=val;
-    k.appendChild(l); k.appendChild(v); return k;
-  };
-  strip.appendChild(mkKpiBig(openCount,      'Open',        openCount>20?'danger':openCount>10?'warn':'ok'));
-  strip.appendChild(mkKpiBig(pendingCount,    'Pending',     'neutral'));
-  strip.appendChild(mkKpiBig(unassignedCount, 'Unassigned',  unassignedCount>0?'warn':'ok'));
-  strip.appendChild(mkKpiBig(breachedCount,   'SLA breached',breachedCount>0?'danger':'ok'));
-  root.appendChild(strip);
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b','#748ffc','#ff6b6b'];
 
-  // ── Date range context ────────────────────────────────────────
-  const fmtD = s => new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  const periodEl = document.createElement('div');
-  periodEl.style.cssText = 'padding:8px 48px;font-size:11px;color:rgba(214,243,255,0.3);letter-spacing:0.06em;border-bottom:1px solid rgba(214,243,255,0.07);';
-  periodEl.textContent = 'Period: '+fmtD(fromDate)+' – '+fmtD(toDate)+(sortedAgents.length?'  ·  '+sortedAgents.length+' agents':'');
-  root.appendChild(periodEl);
+  // ── Bar chart — identical logic to zdRender ───────────────────
+  const chartAgents = sortedAgents.filter(a => (zdData[a.id]?.solved||0) > 0);
+  const maxSolved = Math.max(...chartAgents.map(a => zdData[a.id]?.solved||0), 1);
 
-  // ── Main body — 4 columns ─────────────────────────────────────
-  const body = document.createElement('div'); body.className = 'tv-body';
-  root.appendChild(body);
+  const chartWrap = document.createElement('div');
+  chartWrap.style.cssText = 'background:rgba(214,243,255,0.04);border:1px solid rgba(214,243,255,0.1);border-radius:12px;padding:20px 24px 16px;margin-bottom:20px;';
+  const chartTitle = document.createElement('div');
+  chartTitle.style.cssText = 'font-family:"Fira Sans",sans-serif;font-size:15px;font-weight:900;color:#D6F3FF;letter-spacing:-0.02em;margin-bottom:16px;';
+  chartTitle.textContent = 'Tickets solved per agent — ' + fmtD(fromDate) + ' to ' + fmtD(toDate);
+  chartWrap.appendChild(chartTitle);
 
-  // ── Col 1: SLA Breached + Unassigned ─────────────────────────
-  const col1 = document.createElement('div'); col1.className = 'tv-col';
-  col1.style.cssText += 'gap:20px;';
+  const chart = document.createElement('div');
+  chart.style.cssText = 'display:flex;align-items:flex-end;gap:10px;height:180px;padding:0 4px;';
+  chartAgents.forEach((agent, idx) => {
+    const solved = zdData[agent.id]?.solved || 0;
+    const pct = solved / maxSolved;
+    const color = barColors[idx % barColors.length];
+    const firstName = agent.name.split(' ')[0];
 
-  // SLA Breached section
-  const breachTitle = document.createElement('div'); breachTitle.className = 'tv-col-title';
-  breachTitle.style.color = breachedTickets.length > 0 ? '#fca5a5' : 'rgba(214,243,255,0.3)';
-  breachTitle.textContent = 'SLA Breached';
-  col1.appendChild(breachTitle);
-  if (!breachedTickets.length) {
-    const e=document.createElement('div');e.className='tv-empty';e.textContent='✓ No active breaches';col1.appendChild(e);
-  } else {
-    breachedTickets.forEach(t => {
-      const row=document.createElement('div'); row.className='tv-ticket-row';
-      row.style.borderLeft='3px solid #fca5a5';
-      const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
-      const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
-      const who=document.createElement('span');who.className='tv-ticket-assignee';who.textContent=zdAgents?.find(a=>a.id===t.assignee_id)?.name?.split(' ')[0]||'—';
-      const badge=document.createElement('span');badge.className='tv-ticket-age';badge.style.color='#fca5a5';badge.textContent='BREACH';
-      row.appendChild(id);row.appendChild(subj);row.appendChild(who);row.appendChild(badge);col1.appendChild(row);
-    });
-  }
+    const col = document.createElement('div');
+    col.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;min-width:0;';
+    const val = document.createElement('div');
+    val.style.cssText = 'font-size:14px;font-weight:700;color:#D6F3FF;';
+    val.textContent = solved;
+    const bar = document.createElement('div');
+    bar.style.cssText = 'width:100%;border-radius:6px 6px 0 0;transition:height 0.6s cubic-bezier(0.34,1.4,0.64,1);min-height:3px;height:0;background:' + color + ';';
+    bar.title = agent.name + ': ' + solved + ' solved';
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:11px;font-weight:600;color:rgba(214,243,255,0.5);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;';
+    lbl.textContent = firstName;
 
-  // Divider
-  const divider1 = document.createElement('div'); divider1.style.cssText='height:1px;background:rgba(214,243,255,0.08);margin:4px 0;'; col1.appendChild(divider1);
-
-  // Unassigned section
-  const unassTitle = document.createElement('div'); unassTitle.className = 'tv-col-title';
-  unassTitle.style.color = unassignedTickets.length > 0 ? '#fcd34d' : 'rgba(214,243,255,0.3)';
-  unassTitle.textContent = 'Unassigned';
-  col1.appendChild(unassTitle);
-  if (!unassignedTickets.length) {
-    const e=document.createElement('div');e.className='tv-empty';e.textContent='Queue is clear';col1.appendChild(e);
-  } else {
-    unassignedTickets.slice(0,12).forEach(t => {
-      const row=document.createElement('div'); row.className='tv-ticket-row';
-      const age=ticketAge(t); const old=isOld(t);
-      const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
-      const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
-      const ageEl=document.createElement('span');ageEl.className='tv-ticket-age'+(old?' old':'');ageEl.textContent=age;
-      row.appendChild(id);row.appendChild(subj);row.appendChild(ageEl);col1.appendChild(row);
-    });
-    if(unassignedTickets.length>12){const m=document.createElement('div');m.className='tv-empty';m.textContent='+'+(unassignedTickets.length-12)+' more';col1.appendChild(m);}
-  }
-  body.appendChild(col1);
-
-  // ── Col 2 & 3: Agent performance (split in half) ──────────────
-  const half = Math.ceil(sortedAgents.length / 2);
-  [sortedAgents.slice(0, half), sortedAgents.slice(half)].forEach((group, gi) => {
-    const col = document.createElement('div'); col.className = 'tv-col';
-    const colTitle = document.createElement('div'); colTitle.className = 'tv-col-title';
-    colTitle.textContent = gi===0 ? 'Agent performance' : 'Agent performance (cont.)';
-    col.appendChild(colTitle);
-
-    if (!group.length) {
-      const e=document.createElement('div');e.className='tv-empty';e.textContent='No agent data — run Refresh first';col.appendChild(e);
-    }
-
-    group.forEach((agent, idx) => {
-      const d = zdData[agent.id] || {};
-      const color = barColors[(gi*half+idx) % barColors.length];
-      const pct = (d.solved||0) / maxSolved;
-
-      const card = document.createElement('div'); card.className = 'tv-agent-card';
-      card.id = 'tv-agent-' + agent.id;
-      // Top border colour via inline style on ::before via a style tag
-      const styleTag = document.createElement('style');
-      styleTag.textContent = '#tv-agent-'+agent.id+'::before { background: '+color+'; }';
-      card.appendChild(styleTag);
-
-      // Header
-      const ah = document.createElement('div'); ah.className = 'tv-agent-header';
-      const av = document.createElement('div'); av.className = 'tv-agent-avatar';
-      av.style.background = color;
-      av.textContent = agent.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const info = document.createElement('div'); info.className = 'tv-agent-info';
-      const nm = document.createElement('div'); nm.className = 'tv-agent-name'; nm.textContent = agent.name.split(' ')[0];
-      const sub = document.createElement('div'); sub.className = 'tv-agent-solved';
-      sub.textContent = (d.solved||0)+' solved · Open: '+(d.open||0)+' · Pending: '+(d.pending||0);
-      info.appendChild(nm); info.appendChild(sub); ah.appendChild(av); ah.appendChild(info); card.appendChild(ah);
-
-      // Mini bar for this agent
-      const barWrap = document.createElement('div'); barWrap.style.cssText='display:flex;align-items:center;gap:8px;margin-top:2px;';
-      const barBg = document.createElement('div'); barBg.style.cssText='flex:1;height:4px;background:rgba(214,243,255,0.06);border-radius:2px;overflow:hidden;';
-      const barFill = document.createElement('div'); barFill.style.cssText='height:100%;background:'+color+';border-radius:2px;width:0;transition:width 0.8s cubic-bezier(0.5,0,0,1);';
-      barBg.appendChild(barFill); barWrap.appendChild(barBg);
-      const barNum = document.createElement('div'); barNum.style.cssText='font-size:11px;font-weight:700;color:rgba(214,243,255,0.5);min-width:20px;text-align:right;'; barNum.textContent=d.solved||0;
-      barWrap.appendChild(barNum); card.appendChild(barWrap);
-      setTimeout(() => { barFill.style.width = Math.max(pct*100, (d.solved||0)>0?4:0)+'%'; }, 100 + (gi*half+idx)*40);
-
-      // Stat chips
-      const chips = document.createElement('div'); chips.className = 'tv-agent-stats';
-      const mkChip = (val, lbl, cls) => { const c=document.createElement('span');c.className='tv-stat-chip '+cls;c.textContent=val+' '+lbl;return c; };
-      chips.appendChild(mkChip(d.solved||0,'solved','solved'));
-      if((d.open||0)>0)    chips.appendChild(mkChip(d.open,'open','open'));
-      if((d.pending||0)>0) chips.appendChild(mkChip(d.pending,'pending','pending'));
-      if((d.onhold||0)>0)  chips.appendChild(mkChip(d.onhold,'hold','pending'));
-      card.appendChild(chips); col.appendChild(card);
-    });
-    body.appendChild(col);
+    col.appendChild(val); col.appendChild(bar); col.appendChild(lbl);
+    chart.appendChild(col);
+    setTimeout(() => { bar.style.height = Math.max(pct*160, solved>0?6:3) + 'px'; }, 60 + idx*35);
   });
+  chartWrap.appendChild(chart);
+  content.appendChild(chartWrap);
 
-  // ── Col 4: Oldest open ───────────────────────────────────────
-  const col4 = document.createElement('div'); col4.className = 'tv-col';
-  const col4T = document.createElement('div'); col4T.className = 'tv-col-title'; col4T.textContent = 'Oldest open';
-  col4.appendChild(col4T);
-  if (!oldestTickets.length) {
-    const e=document.createElement('div');e.className='tv-empty';e.textContent='No open tickets';col4.appendChild(e);
-  } else {
-    oldestTickets.slice(0,18).forEach(t=>{
-      const row=document.createElement('div'); row.className='tv-ticket-row';
-      const age=ticketAge(t); const old=isOld(t);
-      const agentName=zdAgents?.find(a=>a.id===t.assignee_id)?.name?.split(' ')[0]||'—';
-      const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
-      const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
-      const ageEl=document.createElement('span');ageEl.className='tv-ticket-age'+(old?' old':'');ageEl.textContent=age;
-      const assignee=document.createElement('span');assignee.className='tv-ticket-assignee';assignee.textContent=agentName;
-      row.appendChild(id);row.appendChild(subj);row.appendChild(ageEl);row.appendChild(assignee);col4.appendChild(row);
+  // ── Summary totals bar — identical to zdRender ────────────────
+  const totals = key => Object.values(zdData).reduce((s,d)=>(s+(d[key]||0)),0);
+  const hasChannelData = sortedAgents.some(a=>zdData[a.id]?.web!==null||zdData[a.id]?.email!==null);
+  const summaryItems = [
+    { val: totals('solved'),  label: 'Solved ' + fmtD(fromDate) + '–' + fmtD(toDate), color: '#6ee7b7', always: true },
+    { val: totals('email'),   label: 'Via email',        color: '#93c5fd', always: false },
+    { val: totals('web'),     label: 'Via web / phone',  color: '#fcd34d', always: false },
+    { val: totals('open'),    label: 'Open now',         color: '#fca5a5', always: true },
+    { val: totals('pending'), label: 'Pending now',      color: '#fcd34d', always: true },
+    { val: totals('onhold'),  label: 'On hold now',      color: 'rgba(214,243,255,0.4)', always: true },
+  ];
+  const summaryBar = document.createElement('div');
+  summaryBar.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;';
+  summaryItems.forEach(({ val, label, color, always }) => {
+    if (!always && !hasChannelData) return;
+    const pill = document.createElement('div');
+    pill.style.cssText = 'background:rgba(214,243,255,0.05);border:1px solid rgba(214,243,255,0.1);border-radius:10px;padding:12px 20px;display:flex;flex-direction:column;gap:3px;min-width:110px;';
+    const v2 = document.createElement('div'); v2.style.cssText = 'font-family:"Fira Sans",sans-serif;font-size:26px;font-weight:900;letter-spacing:-0.03em;color:'+color+';line-height:1;'; v2.textContent = val;
+    const l2 = document.createElement('div'); l2.style.cssText = 'font-size:11px;color:rgba(214,243,255,0.4);font-weight:600;'; l2.textContent = label;
+    pill.appendChild(v2); pill.appendChild(l2); summaryBar.appendChild(pill);
+  });
+  content.appendChild(summaryBar);
+
+  // ── Agent card grid — same structure as zdRender ──────────────
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;';
+  sortedAgents.forEach((agent, idx) => {
+    const d = zdData[agent.id] || {};
+    const agentColor = barColors[idx % barColors.length];
+
+    const card = document.createElement('div');
+    card.style.cssText = 'background:rgba(214,243,255,0.04);border:1px solid rgba(214,243,255,0.1);border-radius:12px;overflow:hidden;border-top:3px solid '+agentColor+';';
+
+    // Header
+    const cardHdr = document.createElement('div');
+    cardHdr.style.cssText = 'padding:14px 18px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(214,243,255,0.07);';
+    const av = document.createElement('div');
+    av.style.cssText = 'width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Fira Sans",sans-serif;font-size:13px;font-weight:900;color:#000743;flex-shrink:0;background:'+agentColor+';';
+    av.textContent = agent.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const info = document.createElement('div');
+    const nm = document.createElement('div');
+    nm.style.cssText = 'font-family:"Fira Sans",sans-serif;font-size:15px;font-weight:900;color:#D6F3FF;letter-spacing:-0.02em;';
+    nm.textContent = agent.name;
+    const sbRow = document.createElement('div'); sbRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:2px;';
+    const sb = document.createElement('div'); sb.style.cssText = 'font-size:11px;color:rgba(214,243,255,0.4);';
+    sb.textContent = (d.solved||0) + ' solved this period';
+    const trendEl = document.createElement('span');
+    trendEl.style.cssText = 'font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(214,243,255,0.08);color:rgba(214,243,255,0.4);';
+    trendEl.textContent = '…';
+    sbRow.appendChild(sb); sbRow.appendChild(trendEl);
+    info.appendChild(nm); info.appendChild(sbRow);
+    cardHdr.appendChild(av); cardHdr.appendChild(info); card.appendChild(cardHdr);
+
+    // Async trend
+    (async () => {
+      try {
+        const days = Math.max(1, Math.ceil((new Date(toDate)-new Date(fromDate))/86400000));
+        const prevTo = new Date(fromDate); prevTo.setDate(prevTo.getDate()-1);
+        const prevFrom = new Date(prevTo); prevFrom.setDate(prevFrom.getDate()-days+1);
+        const fmt2 = d2 => d2.toISOString().slice(0,10);
+        const prev = await zdCount(`type:ticket assignee_id:${agent.id} status>=solved solved>=${fmt2(prevFrom)} solved<=${fmt2(prevTo)}`);
+        const curr = d.solved||0; const diff = curr-prev;
+        trendEl.textContent = diff>0?'+'+diff:diff<0?''+diff:'±0';
+        const tc = diff>0?'rgba(110,231,183,0.9)':diff<0?'rgba(252,165,165,0.9)':'rgba(214,243,255,0.3)';
+        const tb = diff>0?'rgba(110,231,183,0.12)':diff<0?'rgba(252,165,165,0.12)':'rgba(214,243,255,0.06)';
+        trendEl.style.color=tc; trendEl.style.background=tb;
+        trendEl.title='Previous period: '+prev+' solved';
+      } catch { trendEl.style.display='none'; }
+    })();
+
+    // Stats body
+    const bdy = document.createElement('div');
+    bdy.style.cssText = 'padding:12px 18px;display:flex;flex-direction:column;gap:8px;';
+    const rows = [
+      { color: '#6ee7b7',              label: 'Solved',       val: d.solved||0,  bold: true },
+      ...(d.email!==null?[{ color:'#93c5fd', label:'Email',       val: d.email||0  }]:[]),
+      ...(d.web  !==null?[{ color:'#fcd34d', label:'Web / Phone', val: d.web||0    }]:[]),
+      ...(d.email!==null&&d.web!==null&&(d.email||0)+(d.web||0)>0?[{
+        color:'rgba(214,243,255,0.2)', label:'Ratio (email / web)',
+        val:(()=>{const t=(d.email||0)+(d.web||0);const ep=Math.round((d.email||0)/t*100);return ep+'% / '+(100-ep)+'%';})(),
+        ratio:true
+      }]:[]),
+      null,
+      { color: '#fca5a5',              label: 'Open',         val: d.open||0  },
+      { color: '#fcd34d',              label: 'Pending',      val: d.pending||0 },
+      { color: 'rgba(214,243,255,0.3)',label: 'On hold',      val: d.onhold||0 },
+    ];
+    rows.forEach(r => {
+      if (!r) {
+        const div2 = document.createElement('div'); div2.style.cssText='height:1px;background:rgba(214,243,255,0.07);margin:2px 0;'; bdy.appendChild(div2); return;
+      }
+      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;justify-content:space-between;'+(r.ratio?'opacity:0.55;':'');
+      const lbl = document.createElement('div'); lbl.style.cssText='display:flex;align-items:center;gap:7px;font-size:12px;color:rgba(214,243,255,0.6);';
+      const dot = document.createElement('div'); dot.style.cssText='width:7px;height:7px;border-radius:50%;flex-shrink:0;background:'+r.color+';';
+      lbl.appendChild(dot); lbl.appendChild(document.createTextNode(r.label));
+      const val = document.createElement('div'); val.style.cssText='font-size:'+(r.ratio?'11px':'13px')+';font-weight:'+(r.bold?'900':'600')+';color:'+(r.ratio?'rgba(214,243,255,0.4)':r.bold?r.color:'rgba(214,243,255,0.8)')+';font-family:'+(r.bold?'"Fira Sans",':'')+'sans-serif;';
+      val.textContent = r.val;
+      row.appendChild(lbl); row.appendChild(val); bdy.appendChild(row);
     });
-    if(oldestTickets.length>18){const m=document.createElement('div');m.className='tv-empty';m.textContent='+'+(oldestTickets.length-18)+' more';col4.appendChild(m);}
-  }
+    card.appendChild(bdy);
+    grid.appendChild(card);
+  });
+  content.appendChild(grid);
+
   // Last updated
-  const lastUpdated = document.createElement('div'); lastUpdated.className = 'tv-last-updated';
+  const lastUpdated = document.createElement('div');
+  lastUpdated.style.cssText = 'font-size:11px;color:rgba(214,243,255,0.2);margin-top:16px;text-align:right;';
   lastUpdated.textContent = 'Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  col4.appendChild(lastUpdated);
-  body.appendChild(col4);
+  content.appendChild(lastUpdated);
 }
 async function zdRefresh() {
   if (!hasPrivilege('zendesk')) return;
@@ -7761,8 +7748,6 @@ async function zdRefresh() {
       zdData[agents[i].id] = await zdGetStats(agents[i].id, fromDate, toDate);
     }
     zdRender(agents, fromDate, toDate);
-    zdRefreshUnassigned();
-    zdRefreshSlaBreached();
   } catch(e) {
     body.innerHTML = '<div class="zd-error">✗ ' + e.message + '</div>';
     console.error('Zendesk error:', e);
@@ -8079,6 +8064,35 @@ function zdRender(agents, fromDate, toDate) {
     const l2 = document.createElement('div'); l2.className = 'zd-summary-pill-label'; l2.textContent = label;
     pill.appendChild(v2); pill.appendChild(l2); bar.appendChild(pill);
   });
+
+  // Unassigned pill — load async
+  const mkPill = (val, label, color) => {
+    const pill = document.createElement('div'); pill.className = 'zd-summary-pill';
+    const v2 = document.createElement('div'); v2.className = 'zd-summary-pill-val'; v2.style.color = color; v2.textContent = val;
+    const l2 = document.createElement('div'); l2.className = 'zd-summary-pill-label'; l2.textContent = label;
+    pill.appendChild(v2); pill.appendChild(l2); return pill;
+  };
+  const unassignedPill = mkPill('…', 'Unassigned', 'var(--med-text)');
+  const breachedPill   = mkPill('…', 'SLA breached', 'var(--high-text)');
+  bar.appendChild(unassignedPill);
+  bar.appendChild(breachedPill);
+
+  // Fetch counts async — group already resolved
+  const gf = agents.length && zdGroupId ? ` group:${zdGroupId}` : '';
+  const statusNow = `(status:open OR status:pending OR status:hold)`;
+  Promise.all([
+    zdCount(`type:ticket${gf} no:assignee ${statusNow}`).catch(()=>'?'),
+    zdCount(`type:ticket${gf} sla_breach:true ${statusNow}`).catch(()=>'?'),
+  ]).then(([unassigned, breached]) => {
+    unassignedPill.querySelector('.zd-summary-pill-val').textContent = unassigned;
+    unassignedPill.querySelector('.zd-summary-pill-val').style.color = +unassigned > 0 ? 'var(--med-text)' : 'var(--text2)';
+    breachedPill.querySelector('.zd-summary-pill-val').textContent = breached;
+    breachedPill.querySelector('.zd-summary-pill-val').style.color = +breached > 0 ? 'var(--high-text)' : 'var(--text2)';
+    // Also run the detailed panels in background (for dashboard counts etc)
+    zdRefreshUnassigned();
+    zdRefreshSlaBreached();
+  });
+
   body.appendChild(bar);
 
   // Agent cards sorted by solved desc - use same order/colours as chart
@@ -8120,8 +8134,18 @@ function zdRender(agents, fromDate, toDate) {
     const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
     const rows = [
       { dot: 'var(--low-text)',  label: 'Solved',    val: d.solved||0, bold: true },
-      ...(d.email !== null ? [{ dot: 'var(--cal-text)',  label: '↳ Email',        val: d.email||0 }] : []),
-      ...(d.web   !== null ? [{ dot: 'var(--med-text)',  label: '↳ Web / Phone',  val: d.web||0 }] : []),
+      ...(d.email !== null ? [{ dot: 'var(--cal-text)',  label: 'Email',        val: d.email||0 }] : []),
+      ...(d.web   !== null ? [{ dot: 'var(--med-text)',  label: 'Web / Phone',  val: d.web||0 }] : []),
+      ...(d.email !== null && d.web !== null && (d.email||0)+(d.web||0) > 0 ? [{
+        dot: 'var(--border2)',
+        label: 'Ratio (email / web)',
+        val: (() => {
+          const total = (d.email||0) + (d.web||0);
+          const ep = Math.round((d.email||0)/total*100);
+          return ep + '% / ' + (100-ep) + '%';
+        })(),
+        ratio: true
+      }] : []),
       null,
       { dot: 'var(--high-text)', label: 'Open',      val: d.open||0 },
       { dot: 'var(--med-text)',  label: 'Pending',   val: d.pending||0 },
@@ -8130,10 +8154,12 @@ function zdRender(agents, fromDate, toDate) {
     rows.forEach(r => {
       if (!r) { const div2 = document.createElement('div'); div2.className = 'zd-divider'; bdy.appendChild(div2); return; }
       const row = document.createElement('div'); row.className = 'zd-stat-row';
+      if (r.ratio) row.style.opacity = '0.6';
       const lbl = document.createElement('div'); lbl.className = 'zd-stat-label';
       const dot = document.createElement('div'); dot.className = 'zd-stat-dot'; dot.style.background = r.dot;
       lbl.appendChild(dot); lbl.appendChild(document.createTextNode(r.label));
       const val = document.createElement('div'); val.className = 'zd-stat-val' + (r.bold ? ' highlight' : ''); val.textContent = r.val;
+      if (r.ratio) val.style.cssText = 'font-size:11px;color:var(--text3);';
       row.appendChild(lbl); row.appendChild(val); bdy.appendChild(row);
     });
     card.appendChild(bdy); grid.appendChild(card);
