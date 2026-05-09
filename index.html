@@ -2077,22 +2077,36 @@ function shiftClass(shift) {
 }
 
 // ─── Tab switching ────────────────────────────────────────────────
+let _switchingFromPopstate = false; // prevent push during popstate handling
+
 function switchTab(name, btn) {
+  // Find the button if not passed
+  if (!btn) btn = document.querySelector(`.tab-btn[onclick*="'${name}'"]`);
+
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
+  const tabEl = document.getElementById('tab-' + name);
+  if (!tabEl) return;
+  tabEl.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  // Push browser history so back button works within the app
+  if (!_switchingFromPopstate) {
+    const currentState = history.state?.tab;
+    if (currentState !== name) {
+      history.pushState({ tab: name }, '', '#' + name);
+    }
+  }
+
   if (name === 'settings') {
     renderHistory();
     renderUserList();
     const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name;
     const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = (currentUser && currentUser.isAdmin) ? '' : 'none';
-    // Hide advanced settings and history for non-admins
     const adv = document.getElementById('adv-toggle'); if (adv) adv.style.display = isAdmin() ? '' : 'none';
     const advBody = document.getElementById('adv-body'); if (advBody) advBody.style.display = isAdmin() ? '' : 'none';
     const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = isAdmin() ? '' : 'none';
     const ghCard = document.getElementById('gh-sync-card'); if (ghCard) ghCard.style.display = isAdmin() ? '' : 'none';
-    // Quick links settings (admin only)
     const qlCard = document.getElementById('ql-settings-card');
     if (qlCard) {
       qlCard.style.display = isAdmin() ? '' : 'none';
@@ -2112,6 +2126,18 @@ function switchTab(name, btn) {
   if (name === 'feedback') { renderFeedbackTab(); }
   if (isMobile()) buildMobileNav();
 }
+
+// Handle browser back/forward (mouse back button, keyboard Alt+←, etc.)
+window.addEventListener('popstate', (e) => {
+  const tab = e.state?.tab;
+  if (!tab) return;
+  // If the TV overlay is open, close it instead
+  const tv = document.getElementById('tv-overlay');
+  if (tv && tv.style.display !== 'none') { exitTvMode(); return; }
+  _switchingFromPopstate = true;
+  switchTab(tab, null);
+  _switchingFromPopstate = false;
+});
 
 // ─── Incomplete task history ──────────────────────────────────────
 function renderHistory() {
@@ -4186,20 +4212,30 @@ function renderAdminDashboard(root) {
   const overdue1on1=get1on1OverduePeople(21);
   let redCount=0,amberCount=0;
   MY_TEAM.forEach(n=>{const p=loadProfile(n);if(p.rag==='red')redCount++;else if(p.rag==='amber')amberCount++;});
-  const allUsers=getUsers().filter(u=>!u.isAdmin);
+  const allUsers=getUsers().filter(u=>!u.isAdmin&&!u.tvOnly);
 
-  // Collect notifications
+  // ── Collect notifications with read state ─────────────────────
   const notifItems=[];
   allUsers.forEach(u=>{
     const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
     const posts=loadFbPosts(u.name);
     const lastSeen=localStorage.getItem(fbLastSeenKey(name))||'0';
-    posts.forEach(p=>{if(p.ts>lastSeen) notifItems.push({text:name+' posted feedback',sub:p.text.slice(0,55)+(p.text.length>55?'…':''),ts:p.ts,target:u.name});});
+    posts.forEach(p=>{notifItems.push({text:name+' posted feedback',sub:p.text.slice(0,60)+(p.text.length>60?'…':''),ts:p.ts,unread:p.ts>lastSeen,target:u.name,type:'feedback'});});
     const agenda=loadAgenda(u.name);
     const agendaSeen=localStorage.getItem('wtp_agenda_seen_'+normalizeKey(u.name))||'0';
-    agenda.forEach(a=>{if(a.ts>agendaSeen) notifItems.push({text:name+' added 1:1 topic',sub:a.text.slice(0,55),ts:a.ts,target:u.name});});
+    agenda.forEach(a=>{notifItems.push({text:name+' added 1:1 topic',sub:a.text.slice(0,60),ts:a.ts,unread:a.ts>agendaSeen,target:u.name,type:'agenda'});});
   });
   notifItems.sort((a,b)=>b.ts.localeCompare(a.ts));
+  const unreadCount = notifItems.filter(n=>n.unread).length;
+
+  const markAllRead = () => {
+    allUsers.forEach(u=>{
+      const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
+      fbMarkSeen(name);
+      localStorage.setItem('wtp_agenda_seen_'+normalizeKey(u.name), new Date().toISOString());
+    });
+    renderDashboard();
+  };
 
   // ── Hero ──────────────────────────────────────────────────────
   const hero = document.createElement('div'); hero.className = 'db-hero';
@@ -4211,7 +4247,6 @@ function renderAdminDashboard(root) {
   heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet);
   hero.appendChild(heroLeft);
 
-  // KPIs
   const kpis = document.createElement('div'); kpis.className = 'db-hero-right';
   const mkKpi = (val,label,cls,fn) => {
     const k=document.createElement('div'); k.className='db-kpi'; k.onclick=fn;
@@ -4225,30 +4260,38 @@ function renderAdminDashboard(root) {
   kpis.appendChild(mkKpi(overdue1on1.length,'1:1 due',overdue1on1.length>0?'danger':'ok',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
   if(redCount) kpis.appendChild(mkKpi(redCount,'Red RAG','danger',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
   if(amberCount) kpis.appendChild(mkKpi(amberCount,'Amber','warn',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
+  if(unreadCount) kpis.appendChild(mkKpi(unreadCount,'Unread','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
   hero.appendChild(kpis);
   root.appendChild(hero);
 
   // ── Notification bar ─────────────────────────────────────────
-  if (notifItems.length) {
+  const unreadItems = notifItems.filter(n=>n.unread);
+  if (unreadItems.length) {
     const bar = document.createElement('div'); bar.className = 'db-notif-bar';
     const lbl = document.createElement('div'); lbl.className = 'db-notif-bar-label'; lbl.textContent = '🔔 New';
     bar.appendChild(lbl);
-    notifItems.slice(0,5).forEach(n=>{
+    unreadItems.slice(0,4).forEach(n=>{
       const pill = document.createElement('div'); pill.className = 'db-notif-pill';
       pill.onclick = ()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
       const dot = document.createElement('div'); dot.className = 'db-notif-dot';
       const txt = document.createElement('span'); txt.textContent = n.text + ' · ' + dbRelTime(n.ts);
       pill.appendChild(dot); pill.appendChild(txt); bar.appendChild(pill);
     });
+    const markBtn = document.createElement('button');
+    markBtn.style.cssText = 'font-size:10px;font-weight:700;color:rgba(241,183,242,0.6);background:none;border:none;cursor:pointer;margin-left:auto;padding:2px 8px;letter-spacing:0.04em;white-space:nowrap;';
+    markBtn.textContent = 'Mark all read';
+    markBtn.onclick = markAllRead;
+    bar.appendChild(markBtn);
     root.appendChild(bar);
   }
 
-  // ── 3-column body ─────────────────────────────────────────────
+  // ── 4-column body ─────────────────────────────────────────────
   const body = document.createElement('div'); body.className = 'db-body';
 
-  // Col 1: Team today
+  // ── Col 1: Team today + Week ahead ───────────────────────────
   const col1 = document.createElement('div'); col1.className = 'db-col';
-  const teamSec = dbSection('👥 Team today', 'Full schedule', ()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]')));
+
+  const teamSec = dbSection('👥 Team today', 'Schedule', ()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]')));
   const teamGrid = document.createElement('div'); teamGrid.className = 'db-team-grid';
   inToday.forEach(p=>{
     const di=todayWeek?todayWeek.dates.indexOf(todayStr):-1;
@@ -4256,9 +4299,8 @@ function renderAdminDashboard(root) {
     const role=todayWeek&&di>=0?p.roles[di]:'';
     const roleColors={'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
     const chip=document.createElement('div'); chip.className='db-team-chip';
-    const dot=document.createElement('div'); dot.className='db-team-chip-dot';
-    dot.style.background=roleColors[role]||'var(--text3)';
-    const name=document.createElement('span'); name.textContent=p.name; name.style.overflow='hidden'; name.style.textOverflow='ellipsis'; name.style.whiteSpace='nowrap';
+    const dot=document.createElement('div'); dot.className='db-team-chip-dot'; dot.style.background=roleColors[role]||'var(--text3)';
+    const name=document.createElement('span'); name.textContent=p.name; name.style.cssText='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;';
     const shiftEl=document.createElement('span'); shiftEl.className='db-team-chip-shift'; shiftEl.textContent=shift.split(' ')[0]||shift;
     chip.appendChild(dot); chip.appendChild(name); chip.appendChild(shiftEl); teamGrid.appendChild(chip);
   });
@@ -4271,37 +4313,55 @@ function renderAdminDashboard(root) {
   }
   col1.appendChild(teamSec);
 
-  // Team health
-  const healthSec = dbSection('❤️ Team health','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
-  let hasRag=false;
-  MY_TEAM.forEach(name=>{
-    const profile=loadProfile(name); if(!profile.rag||profile.rag==='none') return; hasRag=true;
-    const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
-    row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
-    const n=document.createElement('div'); n.className='db-row-label'; n.textContent=name;
-    const dot=document.createElement('div'); dot.className='db-rag-dot';
-    dot.style.background=profile.rag==='red'?'#ff6b6b':profile.rag==='amber'?'#fbbf24':'#4ade80';
-    const lbl=document.createElement('div'); lbl.className='db-row-meta'; lbl.textContent=profile.rag;
-    row.appendChild(n); row.appendChild(lbl); row.appendChild(dot); healthSec.appendChild(row);
-  });
-  if(overdue1on1.length){
-    const warn=document.createElement('div'); warn.style.cssText='font-size:11px;color:var(--high-text);font-weight:600;margin-top:6px;';
-    warn.textContent='⚠ 1:1 overdue: '+overdue1on1.map(p=>p.name).join(', ');
-    healthSec.appendChild(warn);
+  // ── IMPROVEMENT 1: Week ahead strip ──────────────────────────
+  const weekSec = dbSection('📅 Week ahead');
+  const mon = getMonday(0);
+  // Count people in per day Mon–Fri
+  const weekStrip = document.createElement('div'); weekStrip.style.cssText='display:flex;gap:4px;';
+  for (let i=0; i<5; i++) {
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const dStr=d.toISOString().slice(0,10);
+    const isToday2=dStr===todayStr;
+    const week=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
+    const present=week?week.people.filter(p=>{const di=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has((p.shifts[di]||'').toLowerCase());}).length:null;
+    const total=MY_TEAM.length;
+    const dow=['Mon','Tue','Wed','Thu','Fri'][i];
+    const cell=document.createElement('div');
+    cell.style.cssText=`flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--radius-md);border:1px solid ${isToday2?'rgba(214,243,255,0.35)':'var(--border)'};background:${isToday2?'#000743':'var(--surface2)'};cursor:default;`;
+    const dayEl=document.createElement('div'); dayEl.style.cssText=`font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${isToday2?'#D6F3FF':'var(--text3)'};`;
+    dayEl.textContent=dow;
+    const numEl=document.createElement('div'); numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;letter-spacing:-0.03em;`;
+    const cls=present===null?'var(--text3)':present<total*0.5?'var(--high-text)':present<total*0.8?'var(--med-text)':'var(--low-text)';
+    numEl.style.color=cls; numEl.textContent=present===null?'—':present;
+    const totEl=document.createElement('div'); totEl.style.cssText='font-size:8px;color:var(--text3);font-weight:600;'; totEl.textContent='/'+total;
+    cell.appendChild(dayEl); cell.appendChild(numEl); cell.appendChild(totEl);
+    // Off names tooltip
+    if(week){
+      const offPeople=week.people.filter(p=>{const di=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&di>=0&&OFF.has((p.shifts[di]||'').toLowerCase());});
+      if(offPeople.length) cell.title='Off: '+offPeople.map(p=>p.name).join(', ');
+    }
+    weekStrip.appendChild(cell);
   }
-  if(!hasRag&&!overdue1on1.length){const e=document.createElement('div');e.className='db-empty';e.textContent='✓ All green';healthSec.appendChild(e);}
-  col1.appendChild(healthSec);
+  weekSec.appendChild(weekStrip);
+  col1.appendChild(weekSec);
   body.appendChild(col1);
 
-  // Col 2: Notifications + Feedback
+  // ── Col 2: Notifications + 1:1s ──────────────────────────────
   const col2 = document.createElement('div'); col2.className = 'db-col';
 
-  if(notifItems.length){
-    const notifSec=dbSection('🔔 Notifications','All feedback',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]')));
-    notifItems.slice(0,6).forEach(n=>{
-      const item=document.createElement('div'); item.className='db-notif-item';
+  // ── IMPROVEMENT 2: Notifications with read/unread state ──────
+  const notifSec = dbSection('🔔 Notifications',
+    unreadCount ? 'Mark all read' : null,
+    unreadCount ? markAllRead : null
+  );
+  if(!notifItems.length){
+    const e=document.createElement('div'); e.className='db-empty'; e.textContent='Nothing new — all caught up.'; notifSec.appendChild(e);
+  } else {
+    notifItems.slice(0,8).forEach(n=>{
+      const item=document.createElement('div'); item.className='db-notif-item'+(n.unread?'':' db-notif-read');
+      if(!n.unread) item.style.cssText='opacity:0.45;border-left-color:rgba(214,243,255,0.1);';
       item.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
-      const dot=document.createElement('div'); dot.className='db-notif-item-dot';
+      const dot=document.createElement('div'); dot.className='db-notif-item-dot'; dot.style.opacity=n.unread?'1':'0';
       const b=document.createElement('div'); b.className='db-notif-body';
       const t=document.createElement('div'); t.className='db-notif-title'; t.textContent=n.text;
       const s=document.createElement('div'); s.className='db-notif-sub'; s.textContent=n.sub;
@@ -4309,61 +4369,136 @@ function renderAdminDashboard(root) {
       b.appendChild(t); b.appendChild(s); item.appendChild(dot); item.appendChild(b); item.appendChild(time);
       notifSec.appendChild(item);
     });
-    col2.appendChild(notifSec);
+    if(notifItems.length>8){
+      const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;text-align:center;';
+      more.textContent='+ '+(notifItems.length-8)+' more in Feedback';
+      notifSec.appendChild(more);
+    }
   }
+  col2.appendChild(notifSec);
 
-  const fbSec=dbSection('💬 Feedback feed','All',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]')));
-  let hasFb=false;
-  allUsers.forEach(u=>{
-    const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
-    const posts=loadFbPosts(u.name).slice(-2).reverse();
-    posts.forEach(p=>{
-      hasFb=true;
-      const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
-      row.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
-      const from=document.createElement('div'); from.className='db-feedback-from'; from.textContent=name;
-      const text=document.createElement('div'); text.className='db-row-label'; text.style.cssText='font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-      text.textContent=p.text;
-      const time=document.createElement('div'); time.className='db-row-meta'; time.textContent=dbRelTime(p.ts);
-      row.appendChild(from); row.appendChild(text); row.appendChild(time); fbSec.appendChild(row);
-    });
+  // ── IMPROVEMENT 3: Upcoming 1:1s ─────────────────────────────
+  const otoData = getOtoData();
+  const upcoming1on1 = [];
+  MY_TEAM.forEach(name => {
+    const sessions = (otoData.sessions||[]).filter(s=>s.person===name&&s.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date));
+    if(sessions[0]) upcoming1on1.push({name, date:sessions[0].date, isToday:sessions[0].date===todayStr});
   });
-  if(!hasFb){const e=document.createElement('div');e.className='db-empty';e.textContent='No feedback yet';fbSec.appendChild(e);}
-  col2.appendChild(fbSec);
+  upcoming1on1.sort((a,b)=>a.date.localeCompare(b.date));
+
+  const onoSec = dbSection('📋 Upcoming 1:1s', 'My Team', ()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+  if(!upcoming1on1.length&&!overdue1on1.length){
+    const e=document.createElement('div'); e.className='db-empty'; e.textContent='No upcoming sessions scheduled'; onoSec.appendChild(e);
+  }
+  upcoming1on1.slice(0,5).forEach(u=>{
+    const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
+    row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
+    const nameEl=document.createElement('div'); nameEl.className='db-row-label'; nameEl.textContent=u.name;
+    const dateEl=document.createElement('div'); dateEl.className='db-row-meta';
+    dateEl.textContent=u.isToday?'Today':new Date(u.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+    const dotEl=document.createElement('div'); dotEl.style.cssText=`width:7px;height:7px;border-radius:50%;flex-shrink:0;background:${u.isToday?'var(--cal-text)':'var(--border2)'};`;
+    row.appendChild(nameEl); row.appendChild(dateEl); row.appendChild(dotEl); onoSec.appendChild(row);
+  });
+  if(overdue1on1.length){
+    const sep=document.createElement('div'); sep.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--high-text);margin-top:10px;margin-bottom:4px;';
+    sep.textContent='Overdue'; onoSec.appendChild(sep);
+    overdue1on1.slice(0,4).forEach(p=>{
+      const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
+      row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
+      const nameEl=document.createElement('div'); nameEl.className='db-row-label'; nameEl.textContent=p.name;
+      const lbl=document.createElement('div'); lbl.className='db-row-meta'; lbl.style.color='var(--high-text)'; lbl.textContent=p.label;
+      row.appendChild(nameEl); row.appendChild(lbl); onoSec.appendChild(row);
+    });
+  }
+  col2.appendChild(onoSec);
   body.appendChild(col2);
 
-  // Col 3: SLA + My tasks
+  // ── Col 3: Tickets + Team health ─────────────────────────────
   const col3 = document.createElement('div'); col3.className = 'db-col';
 
-  // Tickets / queue status
-  const slaSec=dbSection('🎫 Tickets','Open queue',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+  // ── IMPROVEMENT 5: Clickable breached tickets ─────────────────
+  const slaSec = dbSection('🎫 Tickets','Open queue',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
   if(zdReady()){
-    const slaRow=document.createElement('div'); slaRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;';
+    const slaRow=document.createElement('div'); slaRow.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;';
     slaRow.id='db-sla-row'; slaRow.innerHTML='<span class="db-empty">Loading…</span>';
     slaSec.appendChild(slaRow);
+    const breachedList=document.createElement('div'); breachedList.id='db-breached-list';
+    slaSec.appendChild(breachedList);
+    const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
     Promise.all([
       zdCount('type:ticket sla_breach:true (status:open OR status:pending OR status:hold)').catch(()=>0),
       zdCount('type:ticket no:assignee (status:open OR status:pending OR status:hold)').catch(()=>0),
       zdCount('type:ticket status:open').catch(()=>0),
-    ]).then(([breached,unassigned,open])=>{
+      zdFetch('/search.json?query='+encodeURIComponent('type:ticket sla_breach:true (status:open OR status:pending OR status:hold)')+'&per_page=8&sort_by=created_at&sort_order=asc').then(r=>r.results||[]).catch(()=>[]),
+    ]).then(([breached,unassigned,open,breachedTickets])=>{
       const el=document.getElementById('db-sla-row'); if(!el) return;
       el.innerHTML='';
-      const mkBadge=(val,label,cls)=>{const b=document.createElement('div');b.className='db-sla-badge '+(val>0?cls:'ok');b.innerHTML='<span>'+val+'</span><span style="font-weight:500;opacity:0.8"> '+label+'</span>';return b;};
-      el.appendChild(mkBadge(open,'open','warn'));
-      el.appendChild(mkBadge(unassigned,'unassigned','warn'));
+      const mkBadge=(val,label,cls,onclick)=>{
+        const b=document.createElement('div'); b.className='db-sla-badge '+(val>0?cls:'ok');
+        b.innerHTML='<span>'+val+'</span><span style="font-weight:500;opacity:0.8"> '+label+'</span>';
+        if(onclick) b.style.cursor='pointer', b.onclick=onclick;
+        return b;
+      };
+      el.appendChild(mkBadge(open,'open','warn',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]'))));
+      el.appendChild(mkBadge(unassigned,'unassigned','warn',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]'))));
       if(breached>0) el.appendChild(mkBadge(breached,'breached','breached'));
+
+      const bl=document.getElementById('db-breached-list'); if(!bl) return;
+      bl.innerHTML='';
+      if(breachedTickets.length){
+        const hdr=document.createElement('div'); hdr.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--high-text);margin-bottom:5px;margin-top:4px;'; hdr.textContent='SLA Breached';
+        bl.appendChild(hdr);
+        breachedTickets.forEach(t=>{
+          const a=document.createElement('a'); a.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.2);border-radius:var(--radius-md);text-decoration:none;margin-bottom:3px;transition:background 0.12s;';
+          a.href=zdSubdomain?`https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}`:'#';
+          a.target='_blank'; a.rel='noopener';
+          a.onmouseover=()=>a.style.background='rgba(255,107,107,0.12)';
+          a.onmouseout=()=>a.style.background='rgba(255,107,107,0.07)';
+          const id=document.createElement('span'); id.style.cssText='font-size:10px;color:var(--high-text);font-weight:700;flex-shrink:0;'; id.textContent='#'+t.id;
+          const subj=document.createElement('span'); subj.style.cssText='flex:1;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; subj.textContent=t.subject||'(no subject)';
+          const agentName=zdAgents?.find(a2=>a2.id===t.assignee_id)?.name?.split(' ')[0]||'—';
+          const who=document.createElement('span'); who.style.cssText='font-size:10px;color:var(--text3);flex-shrink:0;'; who.textContent=agentName;
+          a.appendChild(id); a.appendChild(subj); a.appendChild(who); bl.appendChild(a);
+        });
+      }
     });
   } else {
-    const e=document.createElement('div');e.className='db-empty';e.style.cssText='color:var(--text3);';
+    const e=document.createElement('div'); e.className='db-empty'; e.style.cssText='color:var(--text3);';
     e.innerHTML='Not configured &nbsp;<a href="#" onclick="switchTab(\'settings\',null);return false;" style="color:var(--cal-text);text-decoration:none;font-weight:600;">Set up →</a>';
     slaSec.appendChild(e);
   }
   col3.appendChild(slaSec);
 
-  // My tasks today
+  // Team health with RAG
+  const healthSec = dbSection('❤️ Team health','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+  let hasRag=false;
+  MY_TEAM.forEach(name=>{
+    const profile=loadProfile(name); if(!profile.rag||profile.rag==='none') return; hasRag=true;
+    const row=document.createElement('div'); row.className='db-row'; row.style.cursor='pointer';
+    row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
+    const n=document.createElement('div'); n.className='db-row-label'; n.textContent=name;
+    // ── IMPROVEMENT 5: Mood sparkline ────────────────────────
+    const sparkWrap=document.createElement('div'); sparkWrap.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
+    const moodHistory=loadMoodHistory(name.toLowerCase())||loadMoodHistory(getUsers().find(u=>getScheduleName(u)===name||getUserDisplayName(u)===name)?.name||'');
+    moodHistory.slice(-4).forEach(m=>{
+      const s=document.createElement('span'); s.style.cssText='font-size:11px;line-height:1;opacity:0.75;'; s.textContent=m.emoji; sparkWrap.appendChild(s);
+    });
+    const dot=document.createElement('div'); dot.className='db-rag-dot';
+    dot.style.background=profile.rag==='red'?'#ff6b6b':profile.rag==='amber'?'#fbbf24':'#4ade80';
+    row.appendChild(n); row.appendChild(sparkWrap); row.appendChild(dot); healthSec.appendChild(row);
+  });
+  if(!hasRag){const e=document.createElement('div');e.className='db-empty';e.textContent='✓ All green';healthSec.appendChild(e);}
+  col3.appendChild(healthSec);
+  body.appendChild(col3);
+
+  // ── Col 4: My tasks + Pulse + Handover ───────────────────────
+  const col4 = document.createElement('div'); col4.className = 'db-col';
+
   const taskSec=dbSection('✅ My tasks today','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
-  if(!todayTasks.length&&!overdueTasks.length){const e=document.createElement('div');e.className='db-empty';e.textContent='All clear for today ✓';taskSec.appendChild(e);}
-  overdueTasks.slice(0,3).forEach(t=>{
+  if(!todayTasks.length&&!overdueTasks.length){
+    const e=document.createElement('div');e.className='db-empty';e.textContent='All clear for today ✓';taskSec.appendChild(e);
+  }
+  overdueTasks.slice(0,2).forEach(t=>{
     const row=document.createElement('div'); row.className='db-row';
     const badge=document.createElement('span'); badge.className='db-row-badge'; badge.style.cssText='background:var(--high-bg);color:var(--high-text);'; badge.textContent='overdue';
     const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
@@ -4375,232 +4510,384 @@ function renderAdminDashboard(root) {
     const pri=t.priority||''; if(pri){const b=document.createElement('span');b.className='db-row-badge';b.style.cssText=pri==='high'?'background:var(--high-bg);color:var(--high-text);':pri==='medium'?'background:var(--med-bg);color:var(--med-text);':'background:var(--low-bg);color:var(--low-text);';b.textContent=pri;row.appendChild(label);row.appendChild(b);}else row.appendChild(label);
     taskSec.appendChild(row);
   });
-  col3.appendChild(taskSec);
+  col4.appendChild(taskSec);
 
-  // Quick links (admin — shared links)
-  const qlSec = dbSection('🔗 Quick links');
-  renderQuickLinks(qlSec, currentUser.name, true);
-  col3.appendChild(qlSec);
-
-  body.appendChild(col3);
-
-  // ── Col 4: Mood + Handover ───────────────────────────────────
-  // Extend grid to 4 cols for these
-  const col4 = document.createElement('div'); col4.className = 'db-col';
-
-  const moodSec = dbSection('💭 Team pulse', null, null);
-  renderAdminMoodOverview(moodSec);
+  // ── IMPROVEMENT 4: Team pulse with per-person sparklines ──────
+  const moodSec = dbSection('💭 Team pulse');
+  const allNonAdmin = getUsers().filter(u=>!u.isAdmin&&!u.tvOnly);
+  const submitted=[], pending=[];
+  allNonAdmin.forEach(u=>{
+    const display=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
+    const history=loadMoodHistory(u.name);
+    const current=getCurrentMood(u.name);
+    if(current) submitted.push({name:display,emoji:current.emoji,history});
+    else pending.push(display);
+  });
+  if(!submitted.length&&!pending.length){
+    const e=document.createElement('div');e.className='db-empty';e.textContent='No team members yet';moodSec.appendChild(e);
+  }
+  submitted.forEach(s=>{
+    const row=document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+    const em=document.createElement('span'); em.style.cssText='font-size:16px;line-height:1;flex-shrink:0;'; em.textContent=s.emoji;
+    const nameEl=document.createElement('span'); nameEl.style.cssText='font-size:12px;font-weight:600;color:var(--text);flex:1;'; nameEl.textContent=s.name;
+    // sparkline — last 4 weeks
+    const spark=document.createElement('div'); spark.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
+    s.history.slice(-4).forEach((h,i,arr)=>{
+      const dot=document.createElement('span'); dot.style.cssText=`font-size:${i===arr.length-1?'13px':'10px'};opacity:${0.35+i*0.22};line-height:1;`; dot.textContent=h.emoji;
+      spark.appendChild(dot);
+    });
+    row.appendChild(em); row.appendChild(nameEl); row.appendChild(spark); moodSec.appendChild(row);
+  });
+  if(pending.length){
+    const p=document.createElement('div'); p.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';
+    p.textContent='Pending: '+pending.join(', '); moodSec.appendChild(p);
+  }
   col4.appendChild(moodSec);
 
+  // Handover
   const handoverSec = dbSection('🔁 Handover notes');
   renderHandoverWidget(handoverSec, currentUser.name, true);
   col4.appendChild(handoverSec);
+
+  // Quick links
+  const qlSec = dbSection('🔗 Quick links');
+  renderQuickLinks(qlSec, currentUser.name, true);
+  col4.appendChild(qlSec);
 
   body.appendChild(col4);
   root.appendChild(body);
 }
 async function renderTeamMemberDashboard(root) {
-  const scheduleName=getScheduleName();
-  const todayStr=localToday();
-  const hr=new Date().getHours();
-  const greeting=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  const OFF=new Set(['so','h','os','abs','ol','']);
-  const dayInfo=getPersonDayInfo(scheduleName,todayStr);
-  const isOff=!dayInfo||OFF.has((dayInfo.shift||'').toLowerCase());
+  const scheduleName = getScheduleName();
+  const todayStr = localToday();
+  const hr = new Date().getHours();
+  const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  const OFF = new Set(['so','h','os','abs','ol','']);
+  const dayInfo = getPersonDayInfo(scheduleName, todayStr);
+  const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
+  const weekStamp = mondayStamp(0);
+  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
 
-  // Notifications from manager
-  const adminUser=getUsers().find(u=>u.isAdmin);
-  const adminOtoKey=adminUser?'wtp_oto_'+adminUser.name.toLowerCase():null;
-  const notifKey='wtp_dash_notif_seen_'+normalizeKey(currentUser.name);
-  const lastSeen=localStorage.getItem(notifKey)||'0';
-  const newSharedNotes=[];
-  if(adminOtoKey){
-    try{
-      const raw=localStorage.getItem(adminOtoKey);
-      if(raw){const d=JSON.parse(raw);(d.sessions||[]).filter(s=>s.person===currentUser.name&&s.sharedNotes&&s.sharedNotes.trim()&&(s.updatedAt||s.date)>lastSeen).forEach(s=>newSharedNotes.push(s));}
-    }catch{}
+  // ── Notifications from manager ────────────────────────────────
+  const adminUser = getUsers().find(u=>u.isAdmin);
+  const adminOtoKey = adminUser ? 'wtp_oto_'+adminUser.name.toLowerCase() : null;
+  const notifKey = 'wtp_dash_notif_seen_'+normalizeKey(currentUser.name);
+  const lastSeen = localStorage.getItem(notifKey)||'0';
+  const newSharedNotes = [];
+  if (adminOtoKey) {
+    try {
+      const raw = localStorage.getItem(adminOtoKey);
+      if (raw) {
+        const d = JSON.parse(raw);
+        (d.sessions||[]).filter(s=>s.person===currentUser.name&&s.sharedNotes&&s.sharedNotes.trim()&&(s.updatedAt||s.date)>lastSeen).forEach(s=>newSharedNotes.push(s));
+      }
+    } catch {}
+  }
+
+  // ── Task data ─────────────────────────────────────────────────
+  const todayTasks = tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
+  const overdueTasks = tasks.filter(t=>!t.done&&isOverdue(t));
+  const agendaItems = loadAgenda(currentUser.name);
+
+  // ── Upcoming 1:1 check ────────────────────────────────────────
+  const otoData = getOtoData();
+  const in7Days = new Date(); in7Days.setDate(in7Days.getDate()+7);
+  const in7Str = in7Days.toISOString().slice(0,10);
+  const upcomingSession = (otoData.sessions||[])
+    .filter(s=>s.person===currentUser.name&&s.date>=todayStr&&s.date<=in7Str)
+    .sort((a,b)=>a.date.localeCompare(b.date))[0]||null;
+
+  // ── Who else is in today ──────────────────────────────────────
+  const todayWeek = SCHEDULE.find(w=>w.dates&&w.dates.includes(todayStr));
+  const colleaguesIn = todayWeek ? todayWeek.people.filter(p=>{
+    if (p.name===scheduleName) return false;
+    const di=todayWeek.dates.indexOf(todayStr);
+    return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has((p.shifts[di]||'').toLowerCase());
+  }) : [];
+
+  // ── Contextual greeting subtitle ─────────────────────────────
+  const roleColors = {'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
+  let subtitle = '';
+  if (isOff) {
+    const code = (dayInfo?.shift||'').toUpperCase();
+    subtitle = code==='ABS'?'Enjoy the day off.':code==='H'?'Holiday today.':'Day off today.';
+  } else if (dayInfo?.role) {
+    subtitle = dayInfo.role + ' today.';
+  } else if (dayInfo?.shift) {
+    subtitle = 'On shift ' + dayInfo.shift + '.';
   }
 
   // ── Hero ──────────────────────────────────────────────────────
-  const hero=document.createElement('div'); hero.className='db-hero';
-  const heroLeft=document.createElement('div'); heroLeft.className='db-hero-left';
-  const eyebrow=document.createElement('div'); eyebrow.className='db-hero-eyebrow';
-  eyebrow.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const greet=document.createElement('div'); greet.className='db-hero-greeting';
-  greet.textContent=greeting+', '+getUserDisplayName()+'.';
-  heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet); hero.appendChild(heroLeft);
+  const hero = document.createElement('div'); hero.className = 'db-hero';
+  const heroLeft = document.createElement('div'); heroLeft.className = 'db-hero-left';
+  const eyebrow = document.createElement('div'); eyebrow.className = 'db-hero-eyebrow';
+  eyebrow.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const greet = document.createElement('div'); greet.className = 'db-hero-greeting';
+  greet.textContent = greeting + ', ' + getUserDisplayName() + '.';
+  heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet);
+  if (subtitle) {
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:13px;color:rgba(214,243,255,0.5);margin-top:5px;font-weight:500;letter-spacing:-0.01em;';
+    sub.textContent = subtitle; heroLeft.appendChild(sub);
+  }
+  hero.appendChild(heroLeft);
 
-  // KPIs
-  const kpis=document.createElement('div'); kpis.className='db-hero-right';
-  const weekStamp=mondayStamp(0);
-  const todayDay=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
-  const todayTasks=tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
-  const overdueTasks=tasks.filter(t=>!t.done&&isOverdue(t));
-  const agendaCount=loadAgenda(currentUser.name).length;
-  const mkKpi=(val,label,cls,fn)=>{const k=document.createElement('div');k.className='db-kpi';k.onclick=fn;const v=document.createElement('div');v.className='db-kpi-val '+cls;v.textContent=val;const l=document.createElement('div');l.className='db-kpi-label';l.textContent=label;k.appendChild(v);k.appendChild(l);return k;};
+  // KPI tiles
+  const kpis = document.createElement('div'); kpis.className = 'db-hero-right';
+  const mkKpi = (val,label,cls,fn) => {
+    const k=document.createElement('div');k.className='db-kpi';k.onclick=fn;
+    const v=document.createElement('div');v.className='db-kpi-val '+cls;v.textContent=val;
+    const l=document.createElement('div');l.className='db-kpi-label';l.textContent=label;
+    k.appendChild(v);k.appendChild(l);return k;
+  };
   kpis.appendChild(mkKpi(todayTasks.length,'Tasks today','neutral',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
-  kpis.appendChild(mkKpi(overdueTasks.length,'Overdue',overdueTasks.length>0?'danger':'ok',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
-  if(agendaCount) kpis.appendChild(mkKpi(agendaCount,'1:1 topics','ok',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
-  if(newSharedNotes.length) kpis.appendChild(mkKpi(newSharedNotes.length,'New notes','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+  if (overdueTasks.length) kpis.appendChild(mkKpi(overdueTasks.length,'Overdue','danger',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
+  if (agendaItems.length) kpis.appendChild(mkKpi(agendaItems.length,'1:1 topics','ok',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+  if (newSharedNotes.length) kpis.appendChild(mkKpi(newSharedNotes.length,'From manager','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
   hero.appendChild(kpis);
   root.appendChild(hero);
 
-  // Notification bar
-  if(newSharedNotes.length){
-    const bar=document.createElement('div'); bar.className='db-notif-bar';
-    const lbl=document.createElement('div'); lbl.className='db-notif-bar-label'; lbl.textContent='✉ From your manager';
+  // ── Notification bar — manager notes ─────────────────────────
+  if (newSharedNotes.length) {
+    const bar = document.createElement('div'); bar.className = 'db-notif-bar';
+    const lbl = document.createElement('div'); lbl.className = 'db-notif-bar-label'; lbl.textContent = '✉ From your manager';
     bar.appendChild(lbl);
     newSharedNotes.slice(0,3).forEach(s=>{
-      const pill=document.createElement('div'); pill.className='db-notif-pill';
-      pill.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
-      const dot=document.createElement('div'); dot.className='db-notif-dot';
-      const txt=document.createElement('span'); txt.textContent='Note from 1:1 on '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+      const pill = document.createElement('div'); pill.className = 'db-notif-pill';
+      pill.onclick = ()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
+      const dot = document.createElement('div'); dot.className = 'db-notif-dot';
+      const txt = document.createElement('span');
+      txt.textContent = 'Note from 1:1 on '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
       pill.appendChild(dot); pill.appendChild(txt); bar.appendChild(pill);
     });
     root.appendChild(bar);
   }
 
   // ── Body ──────────────────────────────────────────────────────
-  const body=document.createElement('div'); body.className='db-body';
+  const body = document.createElement('div'); body.className = 'db-body';
 
-  // Col 1: Today's shift + week strip
-  const col1=document.createElement('div'); col1.className='db-col';
+  // ── Col 1: Today's shift (hero) + colleagues in ───────────────
+  const col1 = document.createElement('div'); col1.className = 'db-col';
 
-  const shiftSec=dbSection('📅 Today');
-  if(!dayInfo){const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule for today';shiftSec.appendChild(e);}
-  else if(isOff){
-    const o=document.createElement('div'); o.style.cssText='font-size:14px;color:var(--text3);padding:8px 0;';
-    const code=(dayInfo.shift||'').toUpperCase();
-    o.textContent=code==='ABS'?'🏖 Absent today':code==='SO'?'🔄 Day off (SO)':code==='H'?'🏠 Holiday':'Day off';
-    shiftSec.appendChild(o);
+  const shiftSec = dbSection('Today');
+  if (!dayInfo) {
+    const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule found for today';shiftSec.appendChild(e);
+  } else if (isOff) {
+    const code = (dayInfo.shift||'').toUpperCase();
+    const offCard = document.createElement('div');
+    offCard.style.cssText = 'padding:20px 18px;background:var(--surface2);border-radius:var(--radius-lg);border:1px solid var(--border);';
+    const offEmoji = document.createElement('div'); offEmoji.style.cssText='font-size:28px;margin-bottom:8px;'; offEmoji.textContent=code==='ABS'?'🏖':code==='H'?'🏠':'🔄';
+    const offLabel = document.createElement('div'); offLabel.style.cssText='font-family:"Fira Sans",sans-serif;font-size:20px;font-weight:900;color:var(--text);letter-spacing:-0.02em;';
+    offLabel.textContent=code==='ABS'?'Absent today':code==='H'?'Holiday':code==='SO'?'Day off (SO)':'Day off';
+    const offSub = document.createElement('div'); offSub.style.cssText='font-size:12px;color:var(--text3);margin-top:4px;';
+    offSub.textContent='See you on the next shift.';
+    offCard.appendChild(offEmoji);offCard.appendChild(offLabel);offCard.appendChild(offSub);shiftSec.appendChild(offCard);
   } else {
-    const card=document.createElement('div'); card.className='db-today-shift';
-    const shiftWrap=document.createElement('div');
-    const shiftLbl=document.createElement('div'); shiftLbl.className='db-today-shift-label'; shiftLbl.textContent='Shift';
-    const shiftVal=document.createElement('div'); shiftVal.className='db-today-shift-main'; shiftVal.textContent=dayInfo.shift;
+    // Shift hero card — visually dominant
+    const card = document.createElement('div'); card.className = 'db-today-shift';
+    card.style.cssText = 'display:flex;align-items:center;gap:18px;padding:18px 22px;background:#000743;border:1px solid rgba(214,243,255,0.18);border-radius:var(--radius-lg);position:relative;overflow:hidden;';
+    // Subtle radial glow
+    const glow = document.createElement('div'); glow.style.cssText='position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(214,243,255,0.12),transparent 70%);pointer-events:none;';
+    card.appendChild(glow);
+    const shiftWrap = document.createElement('div'); shiftWrap.style.position='relative';
+    const shiftLbl = document.createElement('div'); shiftLbl.className = 'db-today-shift-label'; shiftLbl.textContent = 'Shift';
+    const shiftVal = document.createElement('div'); shiftVal.className = 'db-today-shift-main'; shiftVal.textContent = dayInfo.shift;
     shiftWrap.appendChild(shiftLbl); shiftWrap.appendChild(shiftVal); card.appendChild(shiftWrap);
-    if(dayInfo.role){
-      const div=document.createElement('div'); div.className='db-divider'; card.appendChild(div);
-      const roleWrap=document.createElement('div');
-      const roleLbl=document.createElement('div'); roleLbl.className='db-today-shift-label'; roleLbl.textContent='Role';
-      const roleVal=document.createElement('div'); roleVal.style.cssText='font-size:15px;font-weight:700;';
-      const roleColors={'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
-      roleVal.style.color=roleColors[dayInfo.role]||'var(--text)'; roleVal.textContent=dayInfo.role;
+    if (dayInfo.role) {
+      const div = document.createElement('div'); div.className = 'db-divider'; card.appendChild(div);
+      const roleWrap = document.createElement('div'); roleWrap.style.position='relative';
+      const roleLbl = document.createElement('div'); roleLbl.className = 'db-today-shift-label'; roleLbl.textContent = 'Role';
+      const roleVal = document.createElement('div'); roleVal.style.cssText='font-size:16px;font-weight:700;letter-spacing:-0.01em;';
+      roleVal.style.color = roleColors[dayInfo.role]||'var(--text)'; roleVal.textContent = dayInfo.role;
       roleWrap.appendChild(roleLbl); roleWrap.appendChild(roleVal); card.appendChild(roleWrap);
     }
     shiftSec.appendChild(card);
   }
   col1.appendChild(shiftSec);
 
-  // Week strip
-  const weekSec=dbSection('📆 This week');
-  const strip=document.createElement('div'); strip.className='db-shift-strip';
-  const mon=getMonday(0);
-  for(let i=0;i<7;i++){
+  // Who's in today with me
+  const colleagSec = dbSection('Team in today');
+  if (!colleaguesIn.length && !todayWeek) {
+    const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule data';colleagSec.appendChild(e);
+  } else if (!colleaguesIn.length) {
+    const e=document.createElement('div');e.className='db-empty';e.textContent='No colleagues in today';colleagSec.appendChild(e);
+  } else {
+    const grid = document.createElement('div'); grid.className = 'db-team-grid';
+    colleaguesIn.forEach(p=>{
+      const di=todayWeek?todayWeek.dates.indexOf(todayStr):-1;
+      const shift=di>=0?p.shifts[di]:'';
+      const role=di>=0?p.roles[di]:'';
+      const chip=document.createElement('div'); chip.className='db-team-chip';
+      const dot=document.createElement('div'); dot.className='db-team-chip-dot'; dot.style.background=roleColors[role]||'var(--text3)';
+      const name=document.createElement('span'); name.style.cssText='flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; name.textContent=p.name;
+      const shiftEl=document.createElement('span'); shiftEl.className='db-team-chip-shift'; shiftEl.textContent=shift.split(' ')[0]||shift;
+      chip.appendChild(dot);chip.appendChild(name);chip.appendChild(shiftEl); grid.appendChild(chip);
+    });
+    colleagSec.appendChild(grid);
+    // Show who's off
+    const offPeople = todayWeek ? todayWeek.people.filter(p=>{
+      if(p.name===scheduleName)return false;
+      const di=todayWeek.dates.indexOf(todayStr); return MY_TEAM.includes(p.name)&&di>=0&&OFF.has((p.shifts[di]||'').toLowerCase());
+    }) : [];
+    if (offPeople.length) {
+      const offEl=document.createElement('div'); offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:8px;';
+      offEl.textContent='Off today: '+offPeople.map(p=>p.name).join(', '); colleagSec.appendChild(offEl);
+    }
+  }
+  col1.appendChild(colleagSec);
+  body.appendChild(col1);
+
+  // ── Col 2: Full week + upcoming 1:1 ──────────────────────────
+  const col2 = document.createElement('div'); col2.className = 'db-col';
+
+  const weekSec = dbSection('This week');
+  const mon = getMonday(0);
+  const strip = document.createElement('div'); strip.style.cssText='display:flex;flex-direction:column;gap:4px;';
+  for (let i=0;i<7;i++) {
     const d=new Date(mon); d.setDate(mon.getDate()+i);
     const dStr=d.toISOString().slice(0,10);
     const info=getPersonDayInfo(scheduleName,dStr);
     const isToday2=dStr===todayStr;
-    const dow=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i];
-    const cell=document.createElement('div'); cell.className='db-shift-day'+(isToday2?' today':'');
-    const dowEl=document.createElement('div'); dowEl.className='db-shift-dow'; dowEl.textContent=dow;
-    const dateEl2=document.createElement('div'); dateEl2.className='db-shift-date'; dateEl2.textContent=d.getDate()+'/'+('0'+(d.getMonth()+1)).slice(-2);
-    const shiftEl=document.createElement('div'); shiftEl.className='db-shift-val';
-    const roleEl=document.createElement('div'); roleEl.className='db-shift-role';
-    if(!info||!info.shift){shiftEl.className+=' db-shift-off';shiftEl.textContent='—';}
-    else if(OFF.has(info.shift.toLowerCase())){shiftEl.className+=' db-shift-off';shiftEl.textContent=info.shift.toUpperCase()||'Off';}
-    else{shiftEl.textContent=info.shift;if(info.role)roleEl.textContent=info.role;}
-    cell.appendChild(dowEl);cell.appendChild(dateEl2);cell.appendChild(shiftEl);cell.appendChild(roleEl);
-    strip.appendChild(cell);
+    const dayOff=!info||!info.shift||OFF.has(info.shift.toLowerCase());
+    const dows=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+    const row=document.createElement('div');
+    row.style.cssText=`display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:var(--radius-md);background:${isToday2?'#000743':'var(--surface2)'};border:1px solid ${isToday2?'rgba(214,243,255,0.3)':'var(--border)'};transition:background 0.12s;`;
+    const dowEl=document.createElement('div'); dowEl.style.cssText=`font-size:11px;font-weight:700;color:${isToday2?'#D6F3FF':'var(--text2)'};width:68px;flex-shrink:0;`; dowEl.textContent=dows[i];
+    const dateEl=document.createElement('div'); dateEl.style.cssText='font-size:10px;color:var(--text3);width:36px;flex-shrink:0;font-variant-numeric:tabular-nums;'; dateEl.textContent=d.getDate()+'/'+(d.getMonth()+1);
+    const shiftEl=document.createElement('div'); shiftEl.style.cssText=`font-size:11px;font-weight:700;flex:1;color:${isToday2?'#D6F3FF':dayOff?'var(--text3)':'var(--text)'};font-style:${dayOff?'italic':'normal'};`;
+    shiftEl.textContent=dayOff?(info?.shift?.toUpperCase()||'Off'):(info?.shift||'—');
+    const roleEl=document.createElement('div'); roleEl.style.cssText='font-size:10px;color:var(--text3);flex-shrink:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;';
+    if (info?.role && !dayOff) { roleEl.textContent=info.role; roleEl.style.color=roleColors[info.role]||'var(--text3)'; }
+    row.appendChild(dowEl);row.appendChild(dateEl);row.appendChild(shiftEl);row.appendChild(roleEl);
+    strip.appendChild(row);
   }
-  weekSec.appendChild(strip); col1.appendChild(weekSec); body.appendChild(col1);
+  weekSec.appendChild(strip);
+  col2.appendChild(weekSec);
 
-  // Col 2: Tasks + manager notes
-  const col2=document.createElement('div'); col2.className='db-col';
-
-  if(newSharedNotes.length){
-    const noteSec=dbSection('🔗 From your manager','See all',()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));});
-    newSharedNotes.slice(0,3).forEach(s=>{
-      const item=document.createElement('div'); item.className='db-notif-item pink-border';
-      item.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
-      const dot=document.createElement('div'); dot.className='db-notif-item-dot pink';
-      const b=document.createElement('div'); b.className='db-notif-body';
-      const t=document.createElement('div'); t.className='db-notif-title'; t.textContent='1:1 on '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-      const sub=document.createElement('div'); sub.className='db-notif-sub'; sub.textContent=s.sharedNotes.slice(0,70)+(s.sharedNotes.length>70?'…':'');
-      b.appendChild(t); b.appendChild(sub); item.appendChild(dot); item.appendChild(b); noteSec.appendChild(item);
-    });
-    col2.appendChild(noteSec);
+  // Upcoming 1:1
+  if (upcomingSession || agendaItems.length) {
+    const oneToOneSec = dbSection('Your 1:1','Feedback',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]')));
+    if (upcomingSession) {
+      const sessionCard = document.createElement('div');
+      sessionCard.style.cssText='padding:10px 13px;background:rgba(214,243,255,0.05);border:1px solid rgba(214,243,255,0.15);border-radius:var(--radius-md);margin-bottom:8px;';
+      const daysUntil = Math.ceil((new Date(upcomingSession.date+'T00:00:00')-new Date(todayStr+'T00:00:00'))/86400000);
+      const when = daysUntil===0?'Today':daysUntil===1?'Tomorrow':new Date(upcomingSession.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      const sessionLbl = document.createElement('div'); sessionLbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:rgba(214,243,255,0.4);margin-bottom:3px;'; sessionLbl.textContent='Next session';
+      const sessionDate = document.createElement('div'); sessionDate.style.cssText='font-family:"Fira Sans",sans-serif;font-size:18px;font-weight:900;color:#D6F3FF;letter-spacing:-0.02em;'; sessionDate.textContent=when;
+      sessionCard.appendChild(sessionLbl);sessionCard.appendChild(sessionDate);
+      oneToOneSec.appendChild(sessionCard);
+    }
+    if (agendaItems.length) {
+      const agendaLbl=document.createElement('div'); agendaLbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; agendaLbl.textContent='Your agenda';
+      oneToOneSec.appendChild(agendaLbl);
+      agendaItems.slice(0,4).forEach(a=>{
+        const row=document.createElement('div'); row.className='db-row';
+        const dot=document.createElement('div'); dot.style.cssText='width:5px;height:5px;border-radius:50%;background:var(--cal-text);flex-shrink:0;margin-top:1px;';
+        const txt=document.createElement('div'); txt.className='db-row-label'; txt.textContent=a.text;
+        row.appendChild(dot);row.appendChild(txt);oneToOneSec.appendChild(row);
+      });
+      if (agendaItems.length>4) {
+        const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;'; more.textContent='+'+(agendaItems.length-4)+' more in Feedback'; oneToOneSec.appendChild(more);
+      }
+    }
+    if (newSharedNotes.length) {
+      const noteLbl=document.createElement('div'); noteLbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:rgba(241,183,242,0.6);margin-top:10px;margin-bottom:6px;'; noteLbl.textContent='From your manager';
+      oneToOneSec.appendChild(noteLbl);
+      newSharedNotes.slice(0,2).forEach(s=>{
+        const item=document.createElement('div'); item.className='db-notif-item pink-border'; item.style.marginBottom='5px';
+        item.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
+        const dot=document.createElement('div'); dot.className='db-notif-item-dot pink';
+        const b=document.createElement('div'); b.className='db-notif-body';
+        const t=document.createElement('div'); t.className='db-notif-title'; t.textContent='1:1 '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+        const sub=document.createElement('div'); sub.className='db-notif-sub'; sub.textContent=s.sharedNotes.slice(0,65)+(s.sharedNotes.length>65?'…':'');
+        b.appendChild(t);b.appendChild(sub);item.appendChild(dot);item.appendChild(b);oneToOneSec.appendChild(item);
+      });
+    }
+    col2.appendChild(oneToOneSec);
   }
-
-  const taskSec=dbSection('✅ Tasks today','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
-  if(!todayTasks.length&&!overdueTasks.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No tasks yet today';taskSec.appendChild(e);}
-  overdueTasks.slice(0,3).forEach(t=>{
-    const row=document.createElement('div'); row.className='db-row';
-    const badge=document.createElement('span'); badge.className='db-row-badge'; badge.style.cssText='background:var(--high-bg);color:var(--high-text);';badge.textContent='overdue';
-    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
-    row.appendChild(badge); row.appendChild(label); taskSec.appendChild(row);
-  });
-  todayTasks.slice(0,6).forEach(t=>{
-    const row=document.createElement('div'); row.className='db-row';
-    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
-    row.appendChild(label); taskSec.appendChild(row);
-  });
-  col2.appendChild(taskSec);
   body.appendChild(col2);
 
-  // Col 3: Tickets
-  const col3=document.createElement('div'); col3.className='db-col';
-  const ticketSec=dbSection('🎫 Your open tickets','All tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
-  const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
-  const zdToken=localStorage.getItem('wtp_zd_token');
-  if(zdSubdomain&&zdToken){
-    const loading=document.createElement('div'); loading.className='db-empty'; loading.textContent='Loading tickets…';
-    ticketSec.appendChild(loading);
-    const agentsCached=JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-    const matched=agentsCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
-    if(matched){
-      zdFetch('/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+matched.id+' (status:open OR status:pending OR status:hold)')+'&per_page=8&sort_by=created_at&sort_order=asc')
-        .then(r=>{
-          loading.remove(); const tickets=r.results||[];
-          if(!tickets.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No open tickets ✓';ticketSec.appendChild(e);return;}
-          tickets.forEach(t=>{
-            const a=document.createElement('a'); a.className='db-ticket-row';
-            a.href='https://'+zdSubdomain+'.zendesk.com/agent/tickets/'+t.id;
-            a.target='_blank'; a.rel='noopener';
-            const id=document.createElement('span');id.className='db-ticket-id';id.textContent='#'+t.id;
-            const subj=document.createElement('span');subj.className='db-ticket-subject';subj.textContent=t.subject||'(no subject)';
-            const ms=Date.now()-new Date(t.created_at).getTime(); const d=Math.floor(ms/86400000);
-            const age=document.createElement('span');age.className='db-ticket-age';age.textContent=d>0?d+'d':'today';
-            a.appendChild(id);a.appendChild(subj);a.appendChild(age);ticketSec.appendChild(a);
-          });
-        }).catch(()=>{loading.textContent='Could not load tickets';});
-    } else {
-      loading.textContent='No Zendesk match for '+scheduleName;
-    }
-  } else {
-    const e=document.createElement('div');e.className='db-empty';e.textContent='Zendesk not configured';ticketSec.appendChild(e);
+  // ── Col 3: Tasks ─────────────────────────────────────────────
+  const col3 = document.createElement('div'); col3.className = 'db-col';
+
+  const taskSec = dbSection('Tasks today','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
+  if (!todayTasks.length && !overdueTasks.length) {
+    const e=document.createElement('div');e.className='db-empty';e.textContent='Nothing on the list yet.';taskSec.appendChild(e);
   }
-  col3.appendChild(ticketSec);
+  overdueTasks.slice(0,3).forEach(t=>{
+    const row=document.createElement('div'); row.className='db-row';
+    const badge=document.createElement('span'); badge.className='db-row-badge'; badge.style.cssText='background:var(--high-bg);color:var(--high-text);flex-shrink:0;'; badge.textContent='overdue';
+    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
+    row.appendChild(badge);row.appendChild(label);taskSec.appendChild(row);
+  });
+  todayTasks.slice(0,8).forEach(t=>{
+    const row=document.createElement('div'); row.className='db-row';
+    const done=document.createElement('div'); done.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--border2);';
+    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
+    const pri=t.priority||'';
+    row.appendChild(done);row.appendChild(label);
+    if (pri) {
+      const b=document.createElement('span');b.className='db-row-badge';
+      b.style.cssText=pri==='high'?'background:var(--high-bg);color:var(--high-text);':pri==='medium'?'background:var(--med-bg);color:var(--med-text);':'background:var(--low-bg);color:var(--low-text);';
+      b.textContent=pri; row.appendChild(b);
+    }
+    taskSec.appendChild(row);
+  });
+  if (todayTasks.length>8) {
+    const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;'; more.textContent='+'+(todayTasks.length-8)+' more in Planner'; taskSec.appendChild(more);
+  }
+  col3.appendChild(taskSec);
 
-  // Mood widget in col3
-  const moodSec = dbSection('💭 How are you feeling?');
-  renderMoodWidget(moodSec, currentUser.name);
-  col3.appendChild(moodSec);
-
+  // Tickets
+  const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
+  const zdToken = localStorage.getItem('wtp_zd_token');
+  if (zdSubdomain && zdToken) {
+    const ticketSec = dbSection('Open tickets','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+    const loading = document.createElement('div'); loading.className='db-empty'; loading.textContent='Loading…';
+    ticketSec.appendChild(loading);
+    col3.appendChild(ticketSec);
+    const agentsCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+    const matched = agentsCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+    if (matched) {
+      zdFetch('/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+matched.id+' (status:open OR status:pending OR status:hold)')+'&per_page=6&sort_by=created_at&sort_order=asc').then(r=>{
+        loading.remove();
+        const tickets=r.results||[];
+        if (!tickets.length) { const e=document.createElement('div');e.className='db-empty';e.textContent='Queue is clear.';ticketSec.appendChild(e);return; }
+        tickets.forEach(t=>{
+          const a=document.createElement('a');a.className='db-ticket-row';
+          a.href='https://'+zdSubdomain+'.zendesk.com/agent/tickets/'+t.id;a.target='_blank';a.rel='noopener';
+          const ms=Date.now()-new Date(t.created_at).getTime();const d=Math.floor(ms/86400000);const h=Math.floor((ms%86400000)/3600000);
+          const id=document.createElement('span');id.className='db-ticket-id';id.textContent='#'+t.id;
+          const subj=document.createElement('span');subj.className='db-ticket-subject';subj.textContent=t.subject||'(no subject)';
+          const age=document.createElement('span');age.className='db-ticket-age';age.textContent=d>0?d+'d':h>0?h+'h':'now';
+          a.appendChild(id);a.appendChild(subj);a.appendChild(age);ticketSec.appendChild(a);
+        });
+      }).catch(()=>{loading.textContent='Could not load tickets.';});
+    } else {
+      loading.textContent='No agent match for '+scheduleName;
+    }
+  }
   body.appendChild(col3);
 
-  // ── Col 4: Handover + Quick links ────────────────────────────
+  // ── Col 4: Mood + Handover + Quick links ─────────────────────
   const col4 = document.createElement('div'); col4.className = 'db-col';
 
-  // Handover — show for evening/night shifts
-  const isEvening = dayInfo && !OFF.has((dayInfo.shift||'').toLowerCase()) &&
-    ['e','n'].some(s => (dayInfo.shift||'').toLowerCase().startsWith(s));
-  const handoverSec = dbSection(isEvening ? '🔁 Leave a handover' : '🔁 Handover notes');
-  renderHandoverWidget(handoverSec, currentUser.name, isEvening || !dayInfo);
-  col4.appendChild(handoverSec);
+  // Mood — contextual prompt copy based on day
+  const moodSec = dbSection('How are you doing?');
+  renderMoodWidget(moodSec, currentUser.name);
+  col4.appendChild(moodSec);
+
+  // Handover — only when contextually relevant (evening/night shift or off/no schedule)
+  const isEveningShift = dayInfo && !isOff && ['e','n','l'].some(s=>(dayInfo.shift||'').toLowerCase().startsWith(s));
+  const activeHandovers = getActiveHandovers();
+  if (isEveningShift || activeHandovers.length) {
+    const handoverSec = dbSection(isEveningShift ? 'Leave a handover' : 'Handover notes');
+    renderHandoverWidget(handoverSec, currentUser.name, isEveningShift);
+    col4.appendChild(handoverSec);
+  }
 
   // Quick links
-  const qlSec = dbSection('🔗 Quick links');
+  const qlSec = dbSection('Quick links');
   renderQuickLinks(qlSec, currentUser.name, true);
   col4.appendChild(qlSec);
 
@@ -8106,6 +8393,10 @@ function loadUserData() {
       return;
     }
     renderDashboard(); renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule();
+    // Seed history state so the back button has a baseline to return to
+    if (!history.state?.tab) {
+      history.replaceState({ tab: 'dashboard' }, '', '#dashboard');
+    }
   }
   // Auto-pull from GitHub on every login if token is set
   if (localStorage.getItem('wtp_gh_token')) {
