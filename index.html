@@ -517,55 +517,44 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    animation: dbFadeIn 0.4s var(--ease-smooth) both;
   }
-  @keyframes dbFadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-  /* Hero — Munu dark blue foundation */
+  /* Staggered entrance — brand motion spec: smooth ease, mask-in */
+  @keyframes dbFadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes dbSlideIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+
+  /* ── Hero ─────────────────────────────────────────────────── */
   .db-hero {
     background: #000743;
-    padding: 28px 36px 26px;
+    background-image:
+      radial-gradient(ellipse at 15% -20%, rgba(214,243,255,0.09) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 120%, rgba(241,183,242,0.05) 0%, transparent 50%);
+    padding: 30px 40px 28px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 24px;
     flex-wrap: wrap;
     flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .db-hero::after {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 240px; height: 240px;
-    background: radial-gradient(circle, rgba(214,243,255,0.07) 0%, transparent 65%);
-    pointer-events: none;
+    animation: dbFadeIn 0.5s cubic-bezier(0.5,0,0,1) both;
   }
   .db-hero-left { position: relative; z-index: 1; }
   .db-hero-eyebrow {
     font-family: 'Inter', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(214,243,255,0.45);
-    margin-bottom: 6px;
+    color: rgba(214,243,255,0.38);
+    margin-bottom: 7px;
   }
   .db-hero-greeting {
     font-family: 'Fira Sans', sans-serif;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 900;
     color: #D6F3FF;
     letter-spacing: -0.03em;
     line-height: 1.05;
-  }
-  .db-hero-date {
-    font-size: 12px;
-    color: rgba(214,243,255,0.4);
-    margin-top: 5px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
   }
   .db-hero-right {
     display: flex;
@@ -576,90 +565,66 @@
     z-index: 1;
   }
 
-  /* KPI tiles — on dark blue hero */
+  /* KPI tiles — glass on dark blue */
   .db-kpi {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 76px;
-    padding: 10px 14px;
+    min-width: 82px;
+    padding: 12px 16px;
     background: rgba(214,243,255,0.07);
-    border: 1px solid rgba(214,243,255,0.14);
-    border-radius: 10px;
+    border: 1px solid rgba(214,243,255,0.13);
+    border-radius: 12px;
     cursor: pointer;
-    transition: background 0.18s var(--ease-smooth), border-color 0.18s, transform 0.15s;
-    gap: 3px;
+    transition: background 0.18s cubic-bezier(0.5,0,0,1), border-color 0.18s, transform 0.15s;
+    gap: 4px;
+    animation: dbFadeIn 0.6s cubic-bezier(0.5,0,0,1) both;
   }
-  .db-kpi:hover {
-    background: rgba(214,243,255,0.13);
-    border-color: rgba(214,243,255,0.28);
-    transform: translateY(-2px);
-  }
+  .db-kpi:nth-child(1) { animation-delay: 0.05s; }
+  .db-kpi:nth-child(2) { animation-delay: 0.10s; }
+  .db-kpi:nth-child(3) { animation-delay: 0.15s; }
+  .db-kpi:nth-child(4) { animation-delay: 0.20s; }
+  .db-kpi:hover { background: rgba(214,243,255,0.13); border-color: rgba(214,243,255,0.25); transform: translateY(-2px); }
   .db-kpi-val {
     font-family: 'Fira Sans', sans-serif;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 900;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
     color: #D6F3FF;
   }
   .db-kpi-val.ok      { color: #6ee7b7; }
   .db-kpi-val.warn    { color: #fcd34d; }
   .db-kpi-val.danger  { color: #fca5a5; }
   .db-kpi-val.neutral { color: #D6F3FF; }
-  .db-kpi-val.white   { color: #F9FBFF; }
   .db-kpi-label {
     font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgba(214,243,255,0.45);
+    letter-spacing: 0.10em;
+    color: rgba(214,243,255,0.4);
     text-align: center;
     white-space: nowrap;
   }
 
-  /* Notification bar — subtle, not dominant */
+  /* Notification bar */
   .db-notif-bar {
-    padding: 8px 36px;
-    background: rgba(241,183,242,0.06);
-    border-bottom: 1px solid rgba(241,183,242,0.15);
+    padding: 9px 40px;
+    background: rgba(241,183,242,0.05);
+    border-bottom: 1px solid rgba(241,183,242,0.12);
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     flex-shrink: 0;
   }
-  .db-notif-bar-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(241,183,242,0.55);
-    flex-shrink: 0;
-  }
-  .db-notif-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(241,183,242,0.08);
-    border: 1px solid rgba(241,183,242,0.18);
-    border-radius: 20px;
-    padding: 3px 11px;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text2);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-  .db-notif-pill:hover {
-    background: rgba(241,183,242,0.14);
-    border-color: rgba(241,183,242,0.3);
-  }
+  .db-notif-bar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(241,183,242,0.5); flex-shrink: 0; }
+  .db-notif-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(241,183,242,0.07); border: 1px solid rgba(241,183,242,0.15); border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 500; color: var(--text2); cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .db-notif-pill:hover { background: rgba(241,183,242,0.13); }
   .db-notif-dot { width: 5px; height: 5px; border-radius: 50%; background: #F1B7F2; flex-shrink: 0; }
 
-  /* Column grid body */
+  /* Column layout — column accent colors create visual scannability */
   .db-body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -670,295 +635,116 @@
   }
   .db-col {
     border-right: 1px solid var(--border);
-    padding: 24px 26px;
+    padding: 26px 28px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 22px;
     min-width: 0;
     min-height: 400px;
+    position: relative;
+    animation: dbFadeIn 0.55s cubic-bezier(0.5,0,0,1) both;
   }
+  .db-col:nth-child(1) { animation-delay: 0.08s; }
+  .db-col:nth-child(2) { animation-delay: 0.14s; }
+  .db-col:nth-child(3) { animation-delay: 0.20s; }
+  .db-col:nth-child(4) { animation-delay: 0.26s; }
+  /* Thin color accent at top of each column */
+  .db-col::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .db-col:nth-child(1)::before { background: rgba(214,243,255,0.25); }
+  .db-col:nth-child(2)::before { background: rgba(214,243,255,0.15); }
+  .db-col:nth-child(3)::before { background: rgba(214,243,255,0.10); }
+  .db-col:nth-child(4)::before { background: rgba(241,183,242,0.2); }
   .db-col:last-child { border-right: none; }
 
   /* Section headers */
   .db-section-title {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     color: var(--text3);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
-  .db-section-action {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--cal-text);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    text-transform: none;
-    letter-spacing: 0;
-    opacity: 0.8;
-    transition: opacity 0.15s;
-  }
+  .db-section-action { font-size: 10px; font-weight: 600; color: var(--cal-text); background: none; border: none; cursor: pointer; padding: 0; text-transform: none; letter-spacing: 0; opacity: 0.75; transition: opacity 0.15s; }
   .db-section-action:hover { opacity: 1; text-decoration: underline; }
 
   /* Rows */
-  .db-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-  }
-  .db-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .db-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; }
+  .db-row:last-child { border-bottom: none; }
   .db-row-label { flex: 1; color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .db-row-meta { color: var(--text3); font-size: 11px; flex-shrink: 0; }
   .db-row-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; white-space: nowrap; }
-  .db-empty { font-size: 12px; color: var(--text3); font-style: italic; padding: 6px 0; line-height: 1.5; }
+  .db-empty { font-size: 12px; color: var(--text3); font-style: italic; padding: 8px 0; line-height: 1.5; }
 
   /* Notification items */
-  .db-notif-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 12px;
-    background: var(--surface2);
-    border-radius: var(--radius-md);
-    border-left: 2px solid #D6F3FF;
-    cursor: pointer;
-    transition: background 0.12s;
-    margin-bottom: 6px;
-  }
+  .db-notif-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--surface2); border-radius: var(--radius-md); border-left: 2px solid rgba(214,243,255,0.3); cursor: pointer; transition: background 0.12s; margin-bottom: 6px; }
   .db-notif-item:hover { background: var(--surface3); }
-  .db-notif-item.pink-border { border-left-color: #F1B7F2; }
-  .db-notif-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #D6F3FF; flex-shrink: 0; margin-top: 4px; }
-  .db-notif-item-dot.pink { background: #F1B7F2; }
+  .db-notif-item.pink-border { border-left-color: rgba(241,183,242,0.5); }
+  .db-notif-item-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(214,243,255,0.5); flex-shrink: 0; margin-top: 4px; }
+  .db-notif-item-dot.pink { background: rgba(241,183,242,0.7); }
   .db-notif-body { flex: 1; min-width: 0; }
   .db-notif-title { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
   .db-notif-sub { font-size: 11px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .db-notif-time { font-size: 10px; color: var(--text3); flex-shrink: 0; margin-top: 3px; }
 
-  /* Shift strip — week view */
+  /* Shift strip */
   .db-shift-strip { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
   .db-shift-strip::-webkit-scrollbar { height: 2px; }
   .db-shift-strip::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-  .db-shift-day {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    min-width: 52px;
-    background: var(--surface2);
-    border-radius: var(--radius-md);
-    padding: 8px 4px 7px;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .db-shift-day.today {
-    background: #000743;
-    border-color: #D6F3FF;
-  }
+  .db-shift-day { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 50px; background: var(--surface2); border-radius: var(--radius-md); padding: 8px 4px; border: 1px solid var(--border); flex-shrink: 0; }
+  .db-shift-day.today { background: #000743; border-color: rgba(214,243,255,0.4); }
   .db-shift-day.today .db-shift-dow { color: #D6F3FF; font-weight: 800; }
   .db-shift-day.today .db-shift-val { color: #D6F3FF; }
-  .db-shift-day.today .db-shift-date { color: rgba(214,243,255,0.5); }
+  .db-shift-day.today .db-shift-date { color: rgba(214,243,255,0.45); }
   .db-shift-dow { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); }
   .db-shift-date { font-size: 8px; color: var(--text3); font-variant-numeric: tabular-nums; }
-  .db-shift-val { font-size: 10px; font-weight: 700; color: var(--text); text-align: center; line-height: 1.2; margin-top: 1px; letter-spacing: -0.01em; }
-  .db-shift-role { font-size: 8px; color: var(--text3); text-align: center; margin-top: 1px; line-height: 1.2; }
+  .db-shift-val { font-size: 10px; font-weight: 700; color: var(--text); text-align: center; line-height: 1.2; margin-top: 1px; }
+  .db-shift-role { font-size: 8px; color: var(--text3); text-align: center; margin-top: 1px; }
   .db-shift-off { color: var(--text3); font-style: italic; font-weight: 400; font-size: 9px; }
 
-  /* Today's shift — hero card */
-  .db-today-shift {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 14px 18px;
-    background: #000743;
-    border: 1px solid rgba(214,243,255,0.2);
-    border-radius: var(--radius-lg);
-  }
-  .db-today-shift-main {
-    font-family: 'Fira Sans', sans-serif;
-    font-size: 32px;
-    font-weight: 900;
-    color: #D6F3FF;
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-  .db-today-shift-label {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(214,243,255,0.4);
-    margin-bottom: 3px;
-  }
-  .db-divider { width: 1px; height: 38px; background: rgba(214,243,255,0.15); flex-shrink: 0; }
+  /* Today shift card */
+  .db-today-shift { display: flex; align-items: center; gap: 18px; padding: 14px 18px; background: #000743; border: 1px solid rgba(214,243,255,0.18); border-radius: var(--radius-lg); }
+  .db-today-shift-main { font-family: 'Fira Sans', sans-serif; font-size: 34px; font-weight: 900; color: #D6F3FF; letter-spacing: -0.04em; line-height: 1; }
+  .db-today-shift-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(214,243,255,0.38); margin-bottom: 4px; }
+  .db-divider { width: 1px; height: 38px; background: rgba(214,243,255,0.12); flex-shrink: 0; }
 
   /* Team chips */
   .db-team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-  .db-team-chip {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 9px;
-    background: var(--surface2);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text);
-    transition: background 0.12s;
-  }
-  .db-team-chip:hover { background: var(--surface3); }
-  .db-team-chip-shift { font-size: 10px; color: var(--cal-text); font-weight: 700; margin-left: auto; flex-shrink: 0; letter-spacing: -0.01em; }
+  .db-team-chip { display: flex; align-items: center; gap: 7px; padding: 7px 9px; background: var(--surface2); border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 11px; font-weight: 500; color: var(--text); transition: background 0.12s, border-color 0.12s; }
+  .db-team-chip:hover { background: var(--surface3); border-color: var(--border2); }
+  .db-team-chip-shift { font-size: 10px; font-weight: 700; color: var(--cal-text); margin-left: auto; flex-shrink: 0; letter-spacing: -0.01em; }
   .db-team-chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-  /* RAG + SLA */
+  /* RAG */
   .db-rag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .db-sla-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+
+  /* SLA badges */
+  .db-sla-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
   .db-sla-badge.breached { background: var(--high-bg); color: var(--high-text); }
   .db-sla-badge.warn     { background: var(--med-bg); color: var(--med-text); }
   .db-sla-badge.ok       { background: var(--low-bg); color: var(--low-text); }
 
-  /* Feedback feed */
-  .db-feedback-from { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--cal-text); flex-shrink: 0; min-width: 58px; }
+  /* Feedback from label */
+  .db-feedback-from { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--cal-text); flex-shrink: 0; min-width: 56px; }
 
   /* Tickets */
-  .db-ticket-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 10px;
-    background: var(--surface2);
-    border-radius: var(--radius-md);
-    font-size: 12px;
-    text-decoration: none;
-    transition: background 0.12s, border-color 0.12s;
-    margin-bottom: 4px;
-    border: 1px solid var(--border);
-  }
+  .db-ticket-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface2); border-radius: var(--radius-md); font-size: 12px; text-decoration: none; transition: background 0.12s, border-color 0.12s; margin-bottom: 4px; border: 1px solid var(--border); }
   .db-ticket-row:hover { background: var(--surface3); border-color: var(--border2); }
   .db-ticket-id { color: var(--text3); font-size: 10px; flex-shrink: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
   .db-ticket-subject { flex: 1; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
   .db-ticket-age { font-size: 10px; color: var(--text3); flex-shrink: 0; }
 
-  /* Mood widget */
-  .mood-picker { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 2px; }
-  .mood-emoji {
-    font-size: 20px;
-    cursor: pointer;
-    border-radius: 8px;
-    padding: 5px 7px;
-    border: 1.5px solid transparent;
-    transition: transform 0.15s var(--ease-smooth), border-color 0.12s, background 0.12s;
-    user-select: none;
-    line-height: 1;
-  }
-  .mood-emoji:hover { transform: scale(1.2); background: var(--surface3); }
-  .mood-emoji.selected { border-color: #D6F3FF; background: rgba(214,243,255,0.08); transform: scale(1.1); }
-  .mood-submitted { font-size: 13px; color: var(--text2); padding: 2px 0; font-weight: 500; }
-  .mood-history-bar { display: flex; gap: 5px; align-items: flex-end; margin-top: 10px; flex-wrap: wrap; }
-  .mood-week-dot { display: flex; flex-direction: column; align-items: center; gap: 1px; }
-  .mood-week-emoji { font-size: 15px; line-height: 1; }
-  .mood-week-lbl { font-size: 8px; color: var(--text3); font-weight: 600; text-align: center; }
-
-  /* Handover */
-  .handover-area {
-    width: 100%;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 9px 11px;
-    outline: none;
-    resize: none;
-    transition: border-color 0.15s;
-    min-height: 72px;
-    box-sizing: border-box;
-    line-height: 1.55;
-  }
-  .handover-area:focus { border-color: rgba(214,243,255,0.35); }
-  .handover-note {
-    background: rgba(0,7,67,0.4);
-    border-left: 2px solid #D6F3FF;
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    padding: 10px 13px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.6;
-    white-space: pre-wrap;
-  }
-  .handover-meta { font-size: 10px; color: var(--text3); margin-top: 5px; letter-spacing: 0.01em; }
-
-  /* Quick links */
-  .ql-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-  .ql-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: var(--text);
-    font-size: 11px;
-    font-weight: 500;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
-    line-height: 1.2;
-  }
-  .ql-link:hover { background: #000743; border-color: rgba(214,243,255,0.25); color: #D6F3FF; }
-  .ql-icon { font-size: 14px; flex-shrink: 0; line-height: 1; }
-  .ql-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ql-del { font-size: 10px; color: transparent; background: none; border: none; cursor: pointer; padding: 0 2px; flex-shrink: 0; transition: color 0.1s; }
-  .ql-link:hover .ql-del { color: rgba(214,243,255,0.4); }
-  .ql-del:hover { color: #F1B7F2 !important; }
-  .ql-add-row { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
-  .ql-input {
-    flex: 1;
-    min-width: 70px;
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 5px 8px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .ql-input:focus { border-color: rgba(214,243,255,0.3); }
-  .ql-add-btn {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    background: #D6F3FF;
-    color: #000743;
-    border: none;
-    border-radius: var(--radius-md);
-    padding: 5px 12px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.15s;
-    flex-shrink: 0;
-    letter-spacing: -0.01em;
-  }
-  .ql-add-btn:hover { opacity: 0.88; }
-
-  /* Light mode overrides for dashboard */
+  /* Light mode */
   .light-mode .db-hero { background: #000743; }
   .light-mode .db-kpi { background: rgba(214,243,255,0.07); border-color: rgba(214,243,255,0.14); }
   .light-mode .db-kpi:hover { background: rgba(214,243,255,0.14); }
@@ -967,68 +753,317 @@
   .light-mode .db-kpi-val.warn { color: #fcd34d; }
   .light-mode .db-kpi-val.danger { color: #fca5a5; }
   .light-mode .db-kpi-label { color: rgba(214,243,255,0.45); }
-  .light-mode .db-today-shift { background: #000743; border-color: rgba(214,243,255,0.25); }
-  .light-mode .db-shift-day.today { background: #000743; border-color: #D6F3FF; }
-  .light-mode .db-notif-item { background: #f5f7ff; border-left-color: #000743; }
-  .light-mode .db-notif-item:hover { background: #eef1fb; }
-  .light-mode .db-notif-item.pink-border { border-left-color: #c9559e; }
-  .light-mode .db-notif-item-dot { background: #000743; }
-  .light-mode .db-notif-item-dot.pink { background: #c9559e; }
-  .light-mode .db-team-chip { background: #f0f4ff; border-color: rgba(0,7,67,0.1); }
+  .light-mode .db-today-shift { background: #000743; border-color: rgba(214,243,255,0.22); }
+  .light-mode .db-shift-day.today { background: #000743; border-color: rgba(214,243,255,0.5); }
+  .light-mode .db-notif-item { background: #f4f6fc; }
+  .light-mode .db-notif-item:hover { background: #eaedfa; }
+  .light-mode .db-team-chip { background: #f0f3ff; border-color: rgba(0,7,67,0.09); }
   .light-mode .db-team-chip:hover { background: #e4eaff; }
-  .light-mode .db-handover-note { background: rgba(0,7,67,0.05); border-left-color: #000743; }
   .light-mode .ql-link:hover { background: #000743; border-color: #000743; color: #D6F3FF; }
-  .light-mode .mood-emoji.selected { border-color: #000743; background: rgba(0,7,67,0.06); }
 
-  /* Responsive */
   @media (max-width: 1100px) { .db-body { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .db-body { grid-template-columns: 1fr; } .db-hero { padding: 20px 20px 18px; } .db-col { padding: 18px 20px; } }
   @media (max-width: 700px)  { .db-body { grid-template-columns: 1fr; } .db-hero { padding: 20px 20px 18px; } .db-col { padding: 18px 20px; } }
 
   .tabs { border-bottom: 1px solid var(--border); }
   .tab-btn { position: relative; }
   .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
   .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 12px; right: 12px; height: 2px; background: var(--cal-text); border-radius: 2px 2px 0 0; }
-  /* ─── TV View ────────────────────────────────────── */
+  /* ─── TV View ────────────────────────────────────────────────── */
   #tv-overlay { font-family: 'Inter', sans-serif; }
-  .tv-header { background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(214,243,255,0.1); padding: 14px 36px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-  .tv-wordmark { font-family: 'Fira Sans', sans-serif; font-weight: 900; font-size: 22px; color: #D6F3FF; letter-spacing: -0.03em; }
+
+  /* Full-bleed #000743 bg with subtle noise texture feel */
+  #tv-root {
+    background: #000743;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(214,243,255,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(241,183,242,0.04) 0%, transparent 50%);
+  }
+
+  /* Header — generous, readable from across the room */
+  .tv-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(214,243,255,0.12);
+    background: rgba(0,7,67,0.6);
+    backdrop-filter: blur(8px);
+    flex-shrink: 0;
+  }
+  .tv-header-left { display: flex; align-items: center; gap: 24px; }
+  .tv-wordmark {
+    font-family: 'Fira Sans', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: #D6F3FF;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
   .tv-wordmark-dot { color: #F1B7F2; }
-  .tv-title { font-size: 13px; font-weight: 700; color: rgba(214,243,255,0.5); letter-spacing: 0.10em; text-transform: uppercase; }
-  .tv-meta { display: flex; align-items: center; gap: 16px; }
-  .tv-clock { font-family: 'Fira Sans', sans-serif; font-size: 20px; font-weight: 900; color: #D6F3FF; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-  .tv-countdown { font-size: 11px; color: rgba(214,243,255,0.4); font-weight: 600; }
-  .tv-exit { font-size: 11px; font-weight: 600; color: rgba(214,243,255,0.4); background: rgba(214,243,255,0.08); border: 1px solid rgba(214,243,255,0.15); border-radius: 6px; padding: 4px 12px; cursor: pointer; transition: background 0.15s; }
-  .tv-exit:hover { background: rgba(214,243,255,0.15); color: #D6F3FF; }
-  .tv-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0; min-height: 0; overflow: hidden; }
-  .tv-col { border-right: 1px solid rgba(214,243,255,0.08); padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
-  .tv-col::-webkit-scrollbar { width: 3px; }
-  .tv-col::-webkit-scrollbar-thumb { background: rgba(214,243,255,0.15); border-radius: 2px; }
+  .tv-divider-v { width: 1px; height: 28px; background: rgba(214,243,255,0.15); }
+  .tv-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(214,243,255,0.4);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .tv-header-right { display: flex; align-items: center; gap: 20px; }
+  .tv-clock {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: #D6F3FF;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .tv-clock-date {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(214,243,255,0.35);
+    letter-spacing: 0.04em;
+    text-align: right;
+    margin-top: 2px;
+  }
+  .tv-countdown {
+    font-size: 11px;
+    color: rgba(214,243,255,0.3);
+    font-weight: 600;
+    background: rgba(214,243,255,0.05);
+    border: 1px solid rgba(214,243,255,0.1);
+    border-radius: 20px;
+    padding: 4px 12px;
+  }
+  .tv-exit {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(214,243,255,0.35);
+    background: rgba(214,243,255,0.06);
+    border: 1px solid rgba(214,243,255,0.12);
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .tv-exit:hover { background: rgba(214,243,255,0.12); color: #D6F3FF; }
+
+  /* KPI strip — full width, prominent numbers */
+  .tv-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid rgba(214,243,255,0.08);
+    flex-shrink: 0;
+  }
+  .tv-kpi-big {
+    padding: 24px 40px;
+    border-right: 1px solid rgba(214,243,255,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+    animation: tvKpiFadeIn 0.6s var(--ease-smooth) both;
+  }
+  .tv-kpi-big:last-child { border-right: none; }
+  .tv-kpi-big::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: rgba(214,243,255,0.1);
+  }
+  .tv-kpi-big.danger::before { background: #fca5a5; }
+  .tv-kpi-big.warn::before   { background: #fcd34d; }
+  .tv-kpi-big.ok::before     { background: #6ee7b7; }
+  .tv-kpi-big.neutral::before{ background: rgba(214,243,255,0.3); }
+  .tv-kpi-big-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(214,243,255,0.4);
+  }
+  .tv-kpi-big-val {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: #D6F3FF;
+    font-variant-numeric: tabular-nums;
+  }
+  .tv-kpi-big-val.danger { color: #fca5a5; }
+  .tv-kpi-big-val.warn   { color: #fcd34d; }
+  .tv-kpi-big-val.ok     { color: #6ee7b7; }
+  .tv-kpi-big-val.neutral{ color: #D6F3FF; }
+  @keyframes tvKpiFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* Main grid body */
+  .tv-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1.2fr;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .tv-col {
+    border-right: 1px solid rgba(214,243,255,0.08);
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    animation: tvColIn 0.5s var(--ease-smooth) both;
+  }
+  .tv-col:nth-child(2) { animation-delay: 0.05s; }
+  .tv-col:nth-child(3) { animation-delay: 0.1s; }
+  .tv-col:nth-child(4) { animation-delay: 0.15s; }
+  @keyframes tvColIn { from { opacity:0; } to { opacity:1; } }
+  .tv-col::-webkit-scrollbar { width: 2px; }
+  .tv-col::-webkit-scrollbar-thumb { background: rgba(214,243,255,0.12); }
   .tv-col:last-child { border-right: none; }
-  .tv-col-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(214,243,255,0.35); padding-bottom: 8px; border-bottom: 1px solid rgba(214,243,255,0.08); }
-  .tv-kpi-row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .tv-kpi { flex: 1; min-width: 80px; background: rgba(214,243,255,0.05); border: 1px solid rgba(214,243,255,0.1); border-radius: 10px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .tv-kpi-val { font-family: 'Fira Sans', sans-serif; font-size: 36px; font-weight: 900; line-height: 1; letter-spacing: -0.03em; color: #D6F3FF; }
-  .tv-kpi-val.danger { color: #fca5a5; }
-  .tv-kpi-val.warn   { color: #fcd34d; }
-  .tv-kpi-val.ok     { color: #6ee7b7; }
-  .tv-kpi-val.neutral{ color: #D6F3FF; }
-  .tv-kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(214,243,255,0.4); text-align: center; }
-  .tv-agent-card { background: rgba(214,243,255,0.04); border: 1px solid rgba(214,243,255,0.08); border-radius: 10px; padding: 12px 14px; }
-  .tv-agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .tv-agent-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #000743; flex-shrink: 0; }
-  .tv-agent-name { font-size: 13px; font-weight: 700; color: #D6F3FF; letter-spacing: -0.01em; }
-  .tv-agent-solved { font-size: 11px; color: rgba(214,243,255,0.45); }
-  .tv-agent-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-  .tv-stat-chip { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
-  .tv-stat-chip.solved  { background: rgba(110,231,183,0.15); color: #6ee7b7; }
-  .tv-stat-chip.open    { background: rgba(252,165,165,0.15); color: #fca5a5; }
-  .tv-stat-chip.pending { background: rgba(252,211,77,0.15);  color: #fcd34d; }
-  .tv-ticket-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: rgba(214,243,255,0.04); border-radius: 8px; border: 1px solid rgba(214,243,255,0.07); margin-bottom: 4px; }
-  .tv-ticket-id { font-size: 10px; color: rgba(214,243,255,0.35); font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-  .tv-ticket-subject { flex: 1; font-size: 11px; color: rgba(214,243,255,0.8); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
-  .tv-ticket-age { font-size: 10px; color: rgba(214,243,255,0.4); flex-shrink: 0; font-weight: 600; }
-  .tv-empty { font-size: 12px; color: rgba(214,243,255,0.3); font-style: italic; padding: 8px 0; }
-  .tv-last-updated { font-size: 10px; color: rgba(214,243,255,0.2); padding-top: 8px; text-align: center; }
+
+  /* Column headers */
+  .tv-col-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(214,243,255,0.3);
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(214,243,255,0.07);
+    margin-bottom: 4px;
+  }
+
+  /* Agent cards — readable at 3m */
+  .tv-agent-card {
+    background: rgba(214,243,255,0.03);
+    border: 1px solid rgba(214,243,255,0.08);
+    border-radius: 12px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+  .tv-agent-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .tv-agent-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .tv-agent-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #000743;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+  }
+  .tv-agent-info { flex: 1; min-width: 0; }
+  .tv-agent-name {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    color: #D6F3FF;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .tv-agent-solved {
+    font-size: 12px;
+    color: rgba(214,243,255,0.4);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .tv-agent-stats { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tv-stat-chip {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 20px;
+    letter-spacing: -0.01em;
+  }
+  .tv-stat-chip.solved  { background: rgba(110,231,183,0.12); color: #6ee7b7; border: 1px solid rgba(110,231,183,0.2); }
+  .tv-stat-chip.open    { background: rgba(252,165,165,0.12); color: #fca5a5; border: 1px solid rgba(252,165,165,0.2); }
+  .tv-stat-chip.pending { background: rgba(252,211,77,0.12);  color: #fcd34d; border: 1px solid rgba(252,211,77,0.2);  }
+
+  /* Ticket rows — big enough to read from a TV */
+  .tv-ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(214,243,255,0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(214,243,255,0.07);
+    margin-bottom: 5px;
+    transition: background 0.15s;
+  }
+  .tv-ticket-row.urgent { border-left: 3px solid #fca5a5; }
+  .tv-ticket-id {
+    font-size: 11px;
+    color: rgba(214,243,255,0.3);
+    font-weight: 700;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    min-width: 44px;
+  }
+  .tv-ticket-subject {
+    flex: 1;
+    font-size: 13px;
+    color: rgba(214,243,255,0.85);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .tv-ticket-age {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(214,243,255,0.45);
+    flex-shrink: 0;
+    min-width: 32px;
+    text-align: right;
+  }
+  .tv-ticket-age.old { color: #fcd34d; }
+  .tv-ticket-assignee {
+    font-size: 11px;
+    color: rgba(214,243,255,0.3);
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+  .tv-empty {
+    font-size: 14px;
+    color: rgba(214,243,255,0.25);
+    font-style: italic;
+    padding: 16px 0;
+    text-align: center;
+  }
+  .tv-last-updated {
+    font-size: 11px;
+    color: rgba(214,243,255,0.18);
+    margin-top: auto;
+    padding-top: 12px;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+  @media (max-width: 1400px) {
+    .tv-kpi-big-val { font-size: 48px; }
+    .tv-kpi-big { padding: 18px 28px; }
+    .tv-agent-name { font-size: 15px; }
+    .tv-col { padding: 20px 22px; }
+  }
   .zd-unassigned-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 18px; }
   .zd-unassigned-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .zd-unassigned-count { font-size: 11px; font-weight: 700; color: var(--med-text); background: var(--med-bg); padding: 1px 8px; border-radius: 10px; }
@@ -6785,43 +6820,130 @@ function zdTickCountdown() {
 
 // ─── Unassigned tickets panel ─────────────────────────────────────
 async function zdRefreshUnassigned() {
-  const panel = document.getElementById('zd-unassigned-panel'); if (!panel || !zdReady()) return;
-  panel.style.display = '';
-  const wrap = document.createElement('div'); wrap.className = 'zd-unassigned-panel';
-  const titleRow = document.createElement('div'); titleRow.className = 'zd-unassigned-title';
-  const titleTxt = document.createElement('span'); titleTxt.textContent = 'Unassigned tickets';
-  const countBadge = document.createElement('span'); countBadge.className = 'zd-unassigned-count'; countBadge.textContent = '…';
-  titleRow.appendChild(titleTxt); titleRow.appendChild(countBadge); wrap.appendChild(titleRow);
-  panel.innerHTML = ''; panel.appendChild(wrap);
+  if (!zdReady()) return;
+
+  // Build/refresh the unassigned card inside zd-body
+  const body = document.getElementById('zd-body');
+  if (!body) return;
+
+  // Remove previous unassigned card if present
+  const old = body.querySelector('.zd-unassigned-card');
+  if (old) old.remove();
+
+  const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
+  const groupFilter = zdGroupId ? ` group:${zdGroupId}` : '';
+  const q = `type:ticket no:assignee (status:open OR status:pending OR status:hold)${groupFilter}`;
+
+  // Build the card
+  const card = document.createElement('div');
+  card.className = 'zd-agent-card zd-unassigned-card';
+  card.style.cssText = 'border-top:2px solid var(--med-text);';
+
+  const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
+  const titleWrap = document.createElement('div');
+  const title = document.createElement('div'); title.className = 'zd-agent-name';
+  title.textContent = 'Unassigned tickets';
+  const countBadge = document.createElement('span');
+  countBadge.style.cssText = 'font-size:11px;font-weight:700;color:var(--med-text);background:var(--med-bg);padding:1px 8px;border-radius:10px;margin-top:2px;display:inline-block;';
+  countBadge.textContent = 'Loading…';
+  titleWrap.appendChild(title); titleWrap.appendChild(countBadge);
+  hdr.appendChild(titleWrap);
+
+  // Toggle body
+  const toggle = document.createElement('button');
+  toggle.style.cssText = 'font-size:11px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;margin-left:auto;padding:2px 6px;';
+  toggle.textContent = 'Hide';
+  let collapsed = false;
+  const ticketList = document.createElement('div');
+  ticketList.className = 'zd-agent-body'; ticketList.style.display = '';
+  toggle.onclick = () => {
+    collapsed = !collapsed;
+    ticketList.style.display = collapsed ? 'none' : '';
+    toggle.textContent = collapsed ? 'Show' : 'Hide';
+  };
+  hdr.appendChild(toggle);
+  card.appendChild(hdr); card.appendChild(ticketList);
+
+  // Insert BEFORE the agent grid (first child after zd-inbox-stats)
+  const inboxStats = body.querySelector('#zd-inbox-stats');
+  if (inboxStats && inboxStats.nextSibling) {
+    body.insertBefore(card, inboxStats.nextSibling);
+  } else {
+    body.appendChild(card);
+  }
 
   try {
-    const groupFilter = zdGroupId ? ` group:${zdGroupId}` : '';
-    const q = `type:ticket no:assignee (status:open OR status:pending OR status:hold)${groupFilter}`;
-    const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=20&sort_by=created_at&sort_order=asc');
+    const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=25&sort_by=created_at&sort_order=asc');
     const tickets = r.results || [];
-    countBadge.textContent = tickets.length + (r.count > 20 ? '+' : '');
+    const total = r.count || tickets.length;
+    countBadge.textContent = tickets.length + (total > 25 ? '+' : '') + ' tickets';
+
     if (!tickets.length) {
-      const e = document.createElement('div'); e.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;padding:4px 0;'; e.textContent = 'No unassigned tickets'; wrap.appendChild(e); return;
+      const empty = document.createElement('div');
+      empty.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;padding:6px 2px;';
+      empty.textContent = 'No unassigned tickets — queue is clear';
+      ticketList.appendChild(empty); return;
     }
+
     tickets.forEach(t => {
-      const a = document.createElement('a'); a.className = 'zd-unassigned-row';
-      a.href = `https://${localStorage.getItem('wtp_zd_subdomain')}.zendesk.com/agent/tickets/${t.id}`;
-      a.target = '_blank'; a.rel = 'noopener';
       const ms = Date.now() - new Date(t.created_at).getTime();
       const d = Math.floor(ms/86400000), h = Math.floor((ms%86400000)/3600000);
       const age = d > 0 ? d+'d' : h > 0 ? h+'h' : '<1h';
-      const ageEl = document.createElement('span'); ageEl.style.cssText = 'font-size:10px;color:var(--text3);font-weight:700;flex-shrink:0;min-width:28px;'; ageEl.textContent = age;
-      const idEl = document.createElement('span'); idEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;'; idEl.textContent = '#'+t.id;
-      const subj = document.createElement('span'); subj.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; subj.textContent = t.subject || '(no subject)';
-      const statusEl = document.createElement('span'); statusEl.style.cssText = 'font-size:10px;font-weight:700;flex-shrink:0;text-transform:capitalize;padding:1px 7px;border-radius:8px;';
-      if (t.status==='open') { statusEl.style.cssText += 'background:var(--high-bg);color:var(--high-text);'; }
-      else if (t.status==='pending') { statusEl.style.cssText += 'background:var(--med-bg);color:var(--med-text);'; }
-      else { statusEl.style.cssText += 'background:var(--surface3);color:var(--text2);'; }
+      const isOld = ms > 3 * 86400000;
+
+      const row = document.createElement('a');
+      row.className = 'sla-ticket-row';
+      row.href = `https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}`;
+      row.target = '_blank'; row.rel = 'noopener';
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);text-decoration:none;color:var(--text);margin-bottom:4px;transition:background 0.12s,border-color 0.12s;';
+      row.onmouseover = () => row.style.background = 'var(--surface2)';
+      row.onmouseout  = () => row.style.background = 'var(--surface)';
+
+      const ageEl = document.createElement('span');
+      ageEl.style.cssText = `font-size:10px;font-weight:700;flex-shrink:0;min-width:28px;color:${isOld?'var(--med-text)':'var(--text3)'};`;
+      ageEl.textContent = age;
+
+      const idEl = document.createElement('span');
+      idEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:600;';
+      idEl.textContent = '#' + t.id;
+
+      const subj = document.createElement('span');
+      subj.style.cssText = 'flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      subj.textContent = t.subject || '(no subject)';
+
+      const statusEl = document.createElement('span');
+      statusEl.style.cssText = 'font-size:10px;font-weight:700;flex-shrink:0;text-transform:capitalize;padding:2px 8px;border-radius:8px;';
+      if (t.status === 'open') {
+        statusEl.style.cssText += 'background:var(--high-bg);color:var(--high-text);';
+      } else if (t.status === 'pending') {
+        statusEl.style.cssText += 'background:var(--med-bg);color:var(--med-text);';
+      } else {
+        statusEl.style.cssText += 'background:var(--surface3);color:var(--text2);';
+      }
       statusEl.textContent = t.status;
-      a.appendChild(ageEl); a.appendChild(idEl); a.appendChild(subj); a.appendChild(statusEl);
-      wrap.appendChild(a);
+
+      row.appendChild(ageEl); row.appendChild(idEl); row.appendChild(subj); row.appendChild(statusEl);
+      ticketList.appendChild(row);
     });
-  } catch(e) { countBadge.textContent = '?'; countBadge.style.color = 'var(--high-text)'; }
+
+    if (total > 25) {
+      const more = document.createElement('div');
+      more.style.cssText = 'font-size:11px;color:var(--text3);padding:6px 0;text-align:center;';
+      more.textContent = `+ ${total - 25} more — open Zendesk to see all`;
+      ticketList.appendChild(more);
+    }
+  } catch(e) {
+    countBadge.textContent = '?';
+    countBadge.style.color = 'var(--high-text)';
+    const err = document.createElement('div');
+    err.style.cssText = 'font-size:11px;color:var(--high-text);padding:4px 0;';
+    err.textContent = 'Could not load unassigned tickets';
+    ticketList.appendChild(err);
+  }
+
+  // Also update the floating panel if it exists (legacy)
+  const floatPanel = document.getElementById('zd-unassigned-panel');
+  if (floatPanel) floatPanel.style.display = 'none';
 }
 
 // ─── TV Mode ──────────────────────────────────────────────────────
@@ -6860,145 +6982,167 @@ async function renderTvView() {
   const root = document.getElementById('tv-root'); if (!root) return;
   root.innerHTML = '';
 
-  // Header
+  // ── Header ────────────────────────────────────────────────────
   const hdr = document.createElement('div'); hdr.className = 'tv-header';
+  const hdrLeft = document.createElement('div'); hdrLeft.className = 'tv-header-left';
   const logo = document.createElement('div'); logo.className = 'tv-wordmark';
   logo.innerHTML = 'munu<span class="tv-wordmark-dot">.</span>';
+  const divV = document.createElement('div'); divV.className = 'tv-divider-v';
   const titleEl = document.createElement('div'); titleEl.className = 'tv-title'; titleEl.textContent = 'Ticket Dashboard';
-  const metaDiv = document.createElement('div'); metaDiv.className = 'tv-meta';
+  hdrLeft.appendChild(logo); hdrLeft.appendChild(divV); hdrLeft.appendChild(titleEl);
+
+  const hdrRight = document.createElement('div'); hdrRight.className = 'tv-header-right';
+  const clockWrap = document.createElement('div'); clockWrap.style.cssText = 'text-align:right;';
   const clockEl = document.createElement('div'); clockEl.className = 'tv-clock';
   clockEl.textContent = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  // Update clock every second
+  setInterval(() => { clockEl.textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }, 1000);
+  const clockDate = document.createElement('div'); clockDate.className = 'tv-clock-date';
+  clockDate.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  clockWrap.appendChild(clockEl); clockWrap.appendChild(clockDate);
   const cdEl = document.createElement('div'); cdEl.id = 'tv-countdown'; cdEl.className = 'tv-countdown'; cdEl.textContent = '';
-  const exitBtn = document.createElement('button'); exitBtn.className = 'tv-exit'; exitBtn.textContent = 'Exit (Esc)';
+  const exitBtn = document.createElement('button'); exitBtn.className = 'tv-exit'; exitBtn.textContent = 'Exit  Esc';
   exitBtn.onclick = exitTvMode;
-  metaDiv.appendChild(clockEl); metaDiv.appendChild(cdEl); metaDiv.appendChild(exitBtn);
-  hdr.appendChild(logo); hdr.appendChild(titleEl); hdr.appendChild(metaDiv);
+  hdrRight.appendChild(clockWrap); hdrRight.appendChild(cdEl); hdrRight.appendChild(exitBtn);
+  hdr.appendChild(hdrLeft); hdr.appendChild(hdrRight);
   root.appendChild(hdr);
 
   // ESC to exit
   const escHandler = (e) => { if (e.key === 'Escape') { exitTvMode(); document.removeEventListener('keydown', escHandler); } };
   document.addEventListener('keydown', escHandler);
 
-  // Body — 4 columns
-  const body = document.createElement('div'); body.className = 'tv-body';
-  root.appendChild(body);
-
-  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
-
   if (!zdReady()) {
-    const msg = document.createElement('div'); msg.style.cssText = 'padding:40px;color:rgba(214,243,255,0.4);font-size:16px;grid-column:span 4;';
+    const msg = document.createElement('div');
+    msg.style.cssText = 'padding:80px;color:rgba(214,243,255,0.4);font-size:20px;text-align:center;';
     msg.textContent = 'Zendesk not configured. Set up credentials in the Tickets tab.';
-    body.appendChild(msg); return;
+    root.appendChild(msg); return;
   }
 
-  // Col 1: Live KPIs + unassigned list
-  const col1 = document.createElement('div'); col1.className = 'tv-col';
-  const col1Title = document.createElement('div'); col1Title.className = 'tv-col-title'; col1Title.textContent = 'Queue status';
-  col1.appendChild(col1Title);
-  const kpiRow = document.createElement('div'); kpiRow.className = 'tv-kpi-row';
-  const mkKpi = (val, lbl, cls) => { const k=document.createElement('div');k.className='tv-kpi';const v=document.createElement('div');v.className='tv-kpi-val '+cls;v.textContent=val;const l=document.createElement('div');l.className='tv-kpi-label';l.textContent=lbl;k.appendChild(v);k.appendChild(l);return k; };
-  // Load KPIs async
   const groupFilter = zdGroupId ? ` group:${zdGroupId}` : '';
   const statusF = `(status:open OR status:pending OR status:hold)`;
-  const [openCount, pendingCount, breachedCount, unassignedCount] = await Promise.all([
+
+  // ── Fetch all data in parallel ────────────────────────────────
+  const [openCount, pendingCount, breachedCount, unassignedCount, unassignedTickets, oldestTickets] = await Promise.all([
     zdCount(`type:ticket${groupFilter} status:open`).catch(()=>'?'),
     zdCount(`type:ticket${groupFilter} status:pending`).catch(()=>'?'),
     zdCount(`type:ticket${groupFilter} sla_breach:true ${statusF}`).catch(()=>'?'),
     zdCount(`type:ticket${groupFilter} no:assignee ${statusF}`).catch(()=>'?'),
+    zdFetch('/search.json?query='+encodeURIComponent(`type:ticket${groupFilter} no:assignee ${statusF}`)+'&per_page=20&sort_by=created_at&sort_order=asc').then(r=>r.results||[]).catch(()=>[]),
+    zdFetch('/search.json?query='+encodeURIComponent(`type:ticket${groupFilter} ${statusF}`)+'&per_page=15&sort_by=created_at&sort_order=asc').then(r=>r.results||[]).catch(()=>[]),
   ]);
-  kpiRow.appendChild(mkKpi(openCount, 'Open', openCount > 20 ? 'danger' : openCount > 10 ? 'warn' : 'ok'));
-  kpiRow.appendChild(mkKpi(pendingCount, 'Pending', 'neutral'));
-  col1.appendChild(kpiRow);
-  const kpiRow2 = document.createElement('div'); kpiRow2.className = 'tv-kpi-row';
-  kpiRow2.appendChild(mkKpi(breachedCount, 'SLA breached', breachedCount > 0 ? 'danger' : 'ok'));
-  kpiRow2.appendChild(mkKpi(unassignedCount, 'Unassigned', unassignedCount > 0 ? 'warn' : 'ok'));
-  col1.appendChild(kpiRow2);
 
-  // Unassigned list
-  const uTitle = document.createElement('div'); uTitle.className = 'tv-col-title'; uTitle.style.marginTop = '6px'; uTitle.textContent = 'Unassigned';
-  col1.appendChild(uTitle);
-  try {
-    const uRes = await zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket${groupFilter} no:assignee ${statusF}`) + '&per_page=15&sort_by=created_at&sort_order=asc');
-    const uTickets = uRes.results || [];
-    if (!uTickets.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='No unassigned tickets';col1.appendChild(e); }
-    else {
-      uTickets.forEach(t => {
-        const row = document.createElement('div'); row.className = 'tv-ticket-row';
-        const ms = Date.now()-new Date(t.created_at).getTime(), d=Math.floor(ms/86400000), h=Math.floor((ms%86400000)/3600000);
-        const age = d>0?d+'d':h>0?h+'h':'<1h';
-        const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
-        const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
-        const ageEl=document.createElement('span');ageEl.className='tv-ticket-age';ageEl.textContent=age;
-        row.appendChild(id);row.appendChild(subj);row.appendChild(ageEl);col1.appendChild(row);
-      });
-    }
-  } catch {}
+  // ── KPI strip ─────────────────────────────────────────────────
+  const strip = document.createElement('div'); strip.className = 'tv-kpi-strip';
+  const mkKpiBig = (val, label, cls) => {
+    const k=document.createElement('div'); k.className='tv-kpi-big '+(val>0?cls:'ok');
+    const l=document.createElement('div'); l.className='tv-kpi-big-label'; l.textContent=label;
+    const v=document.createElement('div'); v.className='tv-kpi-big-val '+(val>0?cls:'ok'); v.textContent=val;
+    k.appendChild(l); k.appendChild(v); return k;
+  };
+  strip.appendChild(mkKpiBig(openCount,      'Open tickets',    openCount>20?'danger':openCount>10?'warn':'ok'));
+  strip.appendChild(mkKpiBig(pendingCount,    'Pending',         'neutral'));
+  strip.appendChild(mkKpiBig(unassignedCount, 'Unassigned',      unassignedCount>0?'warn':'ok'));
+  strip.appendChild(mkKpiBig(breachedCount,   'SLA breached',    breachedCount>0?'danger':'ok'));
+  root.appendChild(strip);
+
+  // ── 4-col body ────────────────────────────────────────────────
+  const body = document.createElement('div'); body.className = 'tv-body';
+  root.appendChild(body);
+
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b','#748ffc','#ff6b6b'];
+
+  const ticketAge = (createdAt) => {
+    const ms=Date.now()-new Date(createdAt).getTime(), d=Math.floor(ms/86400000), h=Math.floor((ms%86400000)/3600000);
+    return d>0?d+'d':h>0?h+'h':'<1h';
+  };
+  const isOld = (createdAt) => (Date.now()-new Date(createdAt).getTime()) > 3*24*60*60*1000; // 3+ days
+
+  // Col 1: Unassigned tickets
+  const col1 = document.createElement('div'); col1.className = 'tv-col';
+  const col1T = document.createElement('div'); col1T.className = 'tv-col-title'; col1T.textContent = 'Unassigned';
+  col1.appendChild(col1T);
+  if (!unassignedTickets.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='No unassigned tickets';col1.appendChild(e); }
+  else {
+    unassignedTickets.forEach(t => {
+      const row=document.createElement('div'); row.className='tv-ticket-row';
+      const age=ticketAge(t.created_at); const old=isOld(t.created_at);
+      const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
+      const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
+      const ageEl=document.createElement('span');ageEl.className='tv-ticket-age'+(old?' old':'');ageEl.textContent=age;
+      row.appendChild(id);row.appendChild(subj);row.appendChild(ageEl);col1.appendChild(row);
+    });
+  }
   body.appendChild(col1);
 
-  // Col 2 & 3: Agent cards (split into two columns)
+  // Col 2 & 3: Agent performance (split evenly)
   const agentsToShow = zdAgents.filter(a => {
-    const d = zdData[a.id]; return d && ((d.solved||0)>0 || (d.open||0)>0 || (d.pending||0)>0);
-  }).sort((a,b) => (zdData[b.id]?.solved||0) - (zdData[a.id]?.solved||0));
+    const d=zdData[a.id]; return d && ((d.solved||0)>0||(d.open||0)>0||(d.pending||0)>0);
+  }).sort((a,b)=>(zdData[b.id]?.solved||0)-(zdData[a.id]?.solved||0));
 
-  const half = Math.ceil(agentsToShow.length / 2);
+  const half = Math.ceil(agentsToShow.length/2);
   [agentsToShow.slice(0,half), agentsToShow.slice(half)].forEach((group, gi) => {
-    const col = document.createElement('div'); col.className = 'tv-col';
-    const colTitle = document.createElement('div'); colTitle.className = 'tv-col-title';
-    colTitle.textContent = gi === 0 ? 'Agent performance' : 'Agent performance (cont.)';
-    col.appendChild(colTitle);
-    if (!group.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='Loading data…';col.appendChild(e); }
-    group.forEach((agent, idx) => {
-      const d = zdData[agent.id] || {};
-      const color = barColors[(gi*half + idx) % barColors.length];
-      const card = document.createElement('div'); card.className = 'tv-agent-card';
-      card.style.borderTop = '2px solid ' + color;
-      const hdr2 = document.createElement('div'); hdr2.className = 'tv-agent-header';
-      const av = document.createElement('div'); av.className = 'tv-agent-avatar';
-      av.style.background = color;
-      av.textContent = agent.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const info = document.createElement('div');
-      const nm = document.createElement('div'); nm.className = 'tv-agent-name'; nm.textContent = agent.name.split(' ')[0];
-      const sub = document.createElement('div'); sub.className = 'tv-agent-solved'; sub.textContent = (d.solved||0)+' solved this period';
-      info.appendChild(nm); info.appendChild(sub);
-      hdr2.appendChild(av); hdr2.appendChild(info); card.appendChild(hdr2);
-      const stats = document.createElement('div'); stats.className = 'tv-agent-stats';
-      const mkChip = (val,lbl,cls) => { const c=document.createElement('span');c.className='tv-stat-chip '+cls;c.textContent=val+' '+lbl;return c; };
+    const col=document.createElement('div'); col.className='tv-col';
+    const colT=document.createElement('div'); colT.className='tv-col-title';
+    colT.textContent=gi===0?'Agent performance':'Performance (cont.)';
+    col.appendChild(colT);
+    if(!group.length){const e=document.createElement('div');e.className='tv-empty';e.textContent='Run a refresh to load data';col.appendChild(e);}
+    group.forEach((agent,idx)=>{
+      const d=zdData[agent.id]||{};
+      const color=barColors[(gi*half+idx)%barColors.length];
+      const card=document.createElement('div'); card.className='tv-agent-card';
+      card.style.setProperty('--agent-color', color);
+      card.querySelector = undefined; // prevent stale ref
+      // Set top border color
+      card.style.cssText += ';';
+      const beforeStyle = document.createElement('style');
+      const cardId = 'agent-card-' + agent.id;
+      card.id = cardId;
+      beforeStyle.textContent = '#'+cardId+'::before { background: '+color+'; }';
+      card.appendChild(beforeStyle);
+
+      const hdr2=document.createElement('div'); hdr2.className='tv-agent-header';
+      const av=document.createElement('div'); av.className='tv-agent-avatar';
+      av.style.background=color;
+      av.textContent=agent.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const info=document.createElement('div'); info.className='tv-agent-info';
+      const nm=document.createElement('div'); nm.className='tv-agent-name'; nm.textContent=agent.name.split(' ')[0];
+      const sub=document.createElement('div'); sub.className='tv-agent-solved';
+      sub.textContent=(d.solved||0)+' solved this period';
+      info.appendChild(nm); info.appendChild(sub); hdr2.appendChild(av); hdr2.appendChild(info);
+      card.appendChild(hdr2);
+
+      const stats=document.createElement('div'); stats.className='tv-agent-stats';
+      const mkChip=(val,lbl,cls)=>{const c=document.createElement('span');c.className='tv-stat-chip '+cls;c.textContent=val+' '+lbl;return c;};
       stats.appendChild(mkChip(d.solved||0,'solved','solved'));
-      if ((d.open||0)>0) stats.appendChild(mkChip(d.open,'open','open'));
-      if ((d.pending||0)>0) stats.appendChild(mkChip(d.pending,'pending','pending'));
+      if((d.open||0)>0) stats.appendChild(mkChip(d.open,'open','open'));
+      if((d.pending||0)>0) stats.appendChild(mkChip(d.pending,'pending','pending'));
       card.appendChild(stats); col.appendChild(card);
     });
     body.appendChild(col);
   });
 
-  // Col 4: Oldest open + last updated
-  const col4 = document.createElement('div'); col4.className = 'tv-col';
-  const col4Title = document.createElement('div'); col4Title.className = 'tv-col-title'; col4Title.textContent = 'Oldest open';
-  col4.appendChild(col4Title);
-  try {
-    const oldRes = await zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket${groupFilter} ${statusF}`) + '&per_page=15&sort_by=created_at&sort_order=asc');
-    const oldTickets = oldRes.results || [];
-    if (!oldTickets.length) { const e=document.createElement('div');e.className='tv-empty';e.textContent='No open tickets';col4.appendChild(e); }
-    else {
-      oldTickets.forEach(t => {
-        const row = document.createElement('div'); row.className = 'tv-ticket-row';
-        const ms=Date.now()-new Date(t.created_at).getTime(),d2=Math.floor(ms/86400000),h=Math.floor((ms%86400000)/3600000);
-        const age=d2>0?d2+'d':h>0?h+'h':'<1h';
-        const agentName = zdAgents.find(a=>a.id===t.assignee_id)?.name?.split(' ')[0] || '—';
-        const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
-        const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
-        const meta=document.createElement('span');meta.className='tv-ticket-age';meta.textContent=age+' · '+agentName;
-        row.appendChild(id);row.appendChild(subj);row.appendChild(meta);col4.appendChild(row);
-      });
-    }
-  } catch {}
-
-  const lastUpdated = document.createElement('div'); lastUpdated.className = 'tv-last-updated';
-  lastUpdated.textContent = 'Updated at ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  // Col 4: Oldest open tickets
+  const col4=document.createElement('div'); col4.className='tv-col';
+  const col4T=document.createElement('div'); col4T.className='tv-col-title'; col4T.textContent='Oldest open';
+  col4.appendChild(col4T);
+  if(!oldestTickets.length){const e=document.createElement('div');e.className='tv-empty';e.textContent='No open tickets';col4.appendChild(e);}
+  else {
+    oldestTickets.forEach(t=>{
+      const row=document.createElement('div'); row.className='tv-ticket-row';
+      const age=ticketAge(t.created_at); const old=isOld(t.created_at);
+      const agentName=zdAgents.find(a=>a.id===t.assignee_id)?.name?.split(' ')[0]||'—';
+      const id=document.createElement('span');id.className='tv-ticket-id';id.textContent='#'+t.id;
+      const subj=document.createElement('span');subj.className='tv-ticket-subject';subj.textContent=t.subject||'(no subject)';
+      const ageEl=document.createElement('span');ageEl.className='tv-ticket-age'+(old?' old':'');ageEl.textContent=age;
+      const assignee=document.createElement('span');assignee.className='tv-ticket-assignee';assignee.textContent=agentName;
+      row.appendChild(id);row.appendChild(subj);row.appendChild(ageEl);row.appendChild(assignee);col4.appendChild(row);
+    });
+  }
+  const lastUpdated=document.createElement('div'); lastUpdated.className='tv-last-updated';
+  lastUpdated.textContent='Last updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   col4.appendChild(lastUpdated);
   body.appendChild(col4);
 }
-
 async function zdRefresh() {
   if (!hasPrivilege('zendesk')) return;
   if (!zdReady()) { zdShowSetup(); return; }
