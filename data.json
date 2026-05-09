@@ -488,6 +488,28 @@
       "to": "2026-06-23"
     }
   ],
+  "wtp_tasks_kate.rooke@munu.cloud": [
+    {
+      "id": "1778342571989",
+      "day": "Wednesday",
+      "title": "Test",
+      "priority": "",
+      "due": "8 May",
+      "note": "Test",
+      "people": [
+        "Marie"
+      ],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-05-04",
+      "done": false
+    }
+  ],
   "wtp_fb_kate.rooke@munu.cloud": [],
   "wtp_profile_jonas": {
     "log": [],
