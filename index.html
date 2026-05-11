@@ -1114,31 +1114,6 @@
   .ann-post-btn { font-family: inherit; font-size: 12px; font-weight: 700; background: #D6F3FF; color: #000743; border: none; border-radius: var(--radius-md); padding: 8px 18px; cursor: pointer; align-self: flex-start; transition: opacity 0.15s; }
   .ann-post-btn:hover { opacity: 0.88; }
   /* ─── SLA panel ──────────────────────────────────── */
-  .sla-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
-  .sla-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
-  .sla-panel-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text2); display: flex; align-items: center; gap: 8px; }
-  .sla-counts { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .sla-count-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
-  .sla-count-pill.breached { background: var(--high-bg); color: var(--high-text); border: 1px solid rgba(239,83,80,0.3); }
-  .sla-count-pill.soon { background: var(--med-bg); color: var(--med-text); border: 1px solid rgba(255,183,77,0.3); }
-  .sla-count-pill.unassigned { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
-  .sla-count-pill.ok { background: var(--low-bg); color: var(--low-text); border: 1px solid rgba(76,175,80,0.3); }
-  .sla-refresh-btn { font-family: inherit; font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border2); background: none; color: var(--text3); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; white-space: nowrap; }
-  .sla-refresh-btn:hover { color: var(--cal-text); border-color: var(--cal-text); background: var(--cal); }
-  .sla-sections { display: grid; grid-template-columns: 1fr 1fr; }
-  .sla-section { padding: 14px 18px; }
-  .sla-section:first-child { border-right: 1px solid var(--border); }
-  .sla-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-  .sla-section-title.breached { color: var(--high-text); }
-  .sla-section-title.soon { color: var(--med-text); }
-  .sla-ticket-list { display: flex; flex-direction: column; gap: 5px; }
-  .sla-ticket-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--radius-md); background: var(--surface2); border: 1px solid var(--border); cursor: pointer; transition: background 0.12s, border-color 0.12s; text-decoration: none; }
-  .sla-ticket-row:hover { background: var(--surface3); border-color: var(--border2); }
-  .sla-ticket-row.breached-row { border-left: 3px solid var(--high-text); }
-  .sla-ticket-row.soon-row { border-left: 3px solid var(--med-text); }
-  .sla-ticket-id { font-size: 11px; font-weight: 700; color: var(--text3); font-family: var(--font-mono, monospace); flex-shrink: 0; min-width: 52px; }
-  .sla-ticket-subject { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .sla-ticket-status { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; flex-shrink: 0; white-space: nowrap; }
   .sla-ticket-status.breached { background: var(--high-bg); color: var(--high-text); }
   .sla-ticket-status.soon { background: var(--med-bg); color: var(--med-text); }
   .sla-empty { font-size: 12px; color: var(--low-text); font-weight: 500; padding: 6px 0; display: flex; align-items: center; gap: 6px; }
@@ -1685,9 +1660,16 @@ let currentUser = null;
   if (saved) {
     try {
       const s = JSON.parse(saved);
-      const users = getUsers();
-      const u = users.find(u => u.name === s.name && u.hash === s.hash);
-      if (u) { currentUser = u; document.getElementById('lock-screen').style.display = 'none'; return; }
+      // Check session hasn't timed out
+      const lastActive = parseInt(localStorage.getItem('wtp_last_active') || Date.now().toString());
+      if (Date.now() - lastActive > 8 * 60 * 60 * 1000) {
+        localStorage.removeItem('wtp_session');
+        localStorage.removeItem('wtp_last_active');
+      } else {
+        const users = getUsers();
+        const u = users.find(u => u.name === s.name && u.hash === s.hash);
+        if (u) { currentUser = u; localStorage.setItem('wtp_last_active', Date.now().toString()); document.getElementById('lock-screen').style.display = 'none'; return; }
+      }
     } catch {}
   }
   document.getElementById('lock-username').focus();
@@ -1741,6 +1723,7 @@ window.tryUnlock = async function() {
   if (u) {
     currentUser = u;
     localStorage.setItem('wtp_session', JSON.stringify({name: u.name, hash: u.hash}));
+    localStorage.setItem('wtp_last_active', Date.now().toString());
     document.getElementById('lock-screen').style.display = 'none';
     // Load this user's data
     loadUserData();
@@ -4059,6 +4042,7 @@ function toggleNotepadMode() {
       persistent.oninput = () => {
         localStorage.setItem('wtp_notepad_persistent_' + (currentUser?.name||'shared').toLowerCase() + '', persistent.value);
         const s = document.getElementById('notepad-saved'); if (s) { s.textContent = 'saved'; setTimeout(() => s.textContent='',1200); }
+        schedulePersonalSync();
       };
       persistent.focus();
     }
@@ -4207,29 +4191,6 @@ function renderUnifonPanel(container) {
   sw.appendChild(sb); form.appendChild(sw); card.appendChild(form);
   toggleBtn.onclick=()=>{formVisible=!formVisible;form.style.display=formVisible?'grid':'none';toggleBtn.textContent=formVisible?'✕ Close':'+ Log calls';};
   container.appendChild(card);
-}
-
-function renderUnifonMini(container) {
-  const weekData=getUnifonWeek();
-  const todayData=getUnifonToday();
-  if(!weekData.length&&!todayData){
-    const e=document.createElement('div');e.className='db-empty';
-    e.innerHTML='No data logged. <a href="#" onclick="switchTab(\'zendesk\',null);return false;" style="color:var(--cal-text);text-decoration:none;font-weight:600;">Log in Tickets →</a>';
-    container.appendChild(e);return;
-  }
-  const totalOffered=weekData.reduce((s,d)=>s+(d.offered||0),0);
-  const totalMissed=weekData.reduce((s,d)=>s+(d.missed||0),0);
-  const missedPct=totalOffered>0?Math.round(totalMissed/totalOffered*100):0;
-  const mini=document.createElement('div');mini.className='unifon-mini';
-  const mkS=(val,lbl,color)=>{const d=document.createElement('div');d.className='unifon-mini-stat';const v=document.createElement('div');v.className='unifon-mini-val';v.style.color=color||'var(--text)';v.textContent=val;const l=document.createElement('div');l.className='unifon-mini-lbl';l.textContent=lbl;d.appendChild(v);d.appendChild(l);return d;};
-  mini.appendChild(mkS(totalOffered,'Offered this wk','var(--text)'));
-  mini.appendChild(mkS(totalMissed,'Missed',totalMissed>0?'var(--high-text)':'var(--low-text)'));
-  mini.appendChild(mkS(missedPct+'%','Miss %',missedPct>15?'var(--high-text)':missedPct>8?'var(--med-text)':'var(--low-text)'));
-  if(todayData)mini.appendChild(mkS(todayData.offered||0,'Today','var(--cal-text)'));
-  container.appendChild(mini);
-  const lnk=document.createElement('div');lnk.style.cssText='margin-top:6px;';
-  lnk.innerHTML='<a href="#" onclick="switchTab(\'zendesk\',null);return false;" style="font-size:11px;color:var(--cal-text);text-decoration:none;font-weight:600;">Full detail in Tickets →</a>';
-  container.appendChild(lnk);
 }
 
 function renderUnifonSettings(container) {
@@ -4482,43 +4443,6 @@ function renderMoodWidget(container, username) {
 }
 
 // Admin mood overview — aggregate current week across all team members
-function renderAdminMoodOverview(container) {
-  const allUsers = getUsers().filter(u => !u.isAdmin && !u.tvOnly);
-  if (!allUsers.length) {
-    const e = document.createElement('div'); e.className = 'db-empty'; e.textContent = 'No team members yet';
-    container.appendChild(e); return;
-  }
-
-  const submitted = [], pending = [];
-  allUsers.forEach(u => {
-    const entry = getCurrentMood(u.name);
-    const display = u.scheduleName || getScheduleName(u) || getUserDisplayName(u);
-    if (entry) submitted.push({ name: display, emoji: entry.emoji });
-    else pending.push(display);
-  });
-
-  if (submitted.length) {
-    const row = document.createElement('div'); row.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;';
-    submitted.forEach(s => {
-      const chip = document.createElement('div'); chip.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;background:var(--surface2);border-radius:8px;padding:4px 9px;border:1px solid var(--border);';
-      chip.innerHTML = '<span style="font-size:15px;line-height:1">' + s.emoji + '</span><span style="color:var(--text);font-weight:600">' + s.name + '</span>';
-      row.appendChild(chip);
-    });
-    container.appendChild(row);
-  }
-
-  if (pending.length) {
-    const p = document.createElement('div'); p.style.cssText = 'font-size:11px;color:var(--text3);line-height:1.5;';
-    p.textContent = 'Pending: ' + pending.join(', ');
-    container.appendChild(p);
-  }
-
-  if (!submitted.length && !pending.length) {
-    const e = document.createElement('div'); e.className = 'db-empty'; e.textContent = 'No responses this week yet';
-    container.appendChild(e);
-  }
-}
-
 async function pushMoodAsNonAdmin(username) {
   const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
   if (!token) return;
@@ -4710,19 +4634,21 @@ function renderAdminDashboard(root, viewerMode=false) {
   const todayTasks=tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
   const overdueTasks=tasks.filter(t=>!t.done&&isOverdue(t));
   const overdue1on1=get1on1OverduePeople(21);
-  let redCount=0,amberCount=0;
+  let redCount=0, amberCount=0;
   MY_TEAM.forEach(n=>{const p=loadProfile(n);if(p.rag==='red')redCount++;else if(p.rag==='amber')amberCount++;});
   const allUsers=getUsers().filter(u=>!u.isAdmin&&!u.tvOnly);
   const roleColors={'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
+  const agentsIn=inToday.length, totalTeam=MY_TEAM.length;
+  const mon=getMonday(0);
 
   // Notifications
   const notifItems=[];
   allUsers.forEach(u=>{
     const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);
     const posts=loadFbPosts(u.name); const lastSeen=localStorage.getItem(fbLastSeenKey(name))||'0';
-    posts.forEach(p=>{notifItems.push({text:name+' posted feedback',sub:p.text.slice(0,60)+(p.text.length>60?'…':''),ts:p.ts,unread:p.ts>lastSeen});});
+    posts.forEach(p=>{notifItems.push({text:name+' posted feedback',sub:p.text.slice(0,55)+(p.text.length>55?'…':''),ts:p.ts,unread:p.ts>lastSeen});});
     const agenda=loadAgenda(u.name); const agendaSeen=localStorage.getItem('wtp_agenda_seen_'+normalizeKey(u.name))||'0';
-    agenda.forEach(a=>{notifItems.push({text:name+' added 1:1 topic',sub:a.text.slice(0,60),ts:a.ts,unread:a.ts>agendaSeen});});
+    agenda.forEach(a=>{notifItems.push({text:name+' added 1:1 topic',sub:a.text.slice(0,55),ts:a.ts,unread:a.ts>agendaSeen});});
   });
   notifItems.sort((a,b)=>b.ts.localeCompare(a.ts));
   const unreadCount=notifItems.filter(n=>n.unread).length;
@@ -4730,7 +4656,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   allUsers.forEach(u=>{totalAnnUnread+=getUnreadAnnouncements(u.name).length;});
   const markAllRead=()=>{allUsers.forEach(u=>{const name=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);fbMarkSeen(name);localStorage.setItem('wtp_agenda_seen_'+normalizeKey(u.name),new Date().toISOString());});renderDashboard();};
 
-  // ── Hero ──────────────────────────────────────────────────────
+  // ── HERO ──────────────────────────────────────────────────────
   const hero=document.createElement('div'); hero.className='db-hero';
   const heroLeft=document.createElement('div'); heroLeft.className='db-hero-left';
   const eyebrow=document.createElement('div'); eyebrow.className='db-hero-eyebrow';
@@ -4738,45 +4664,39 @@ function renderAdminDashboard(root, viewerMode=false) {
   const greet=document.createElement('div'); greet.className='db-hero-greeting';
   greet.textContent=greeting+', '+getUserDisplayName()+'.';
   heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet);
-  if (viewerMode) {
-    const viewerBadge = document.createElement('div');
-    viewerBadge.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:rgba(214,243,255,0.4);margin-top:6px;';
-    viewerBadge.textContent = 'Operations view';
-    heroLeft.appendChild(viewerBadge);
-  }
+  if(viewerMode){const vb=document.createElement('div');vb.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:rgba(214,243,255,0.4);margin-top:6px;';vb.textContent='Operations view';heroLeft.appendChild(vb);}
   hero.appendChild(heroLeft);
+
+  // KPIs — max 5, only actionable items
   const kpis=document.createElement('div'); kpis.className='db-hero-right';
-  const mkKpi=(val,label,cls,fn)=>{const k=document.createElement('div');k.className='db-kpi';k.onclick=fn;const v=document.createElement('div');v.className='db-kpi-val '+cls;v.textContent=val;const l=document.createElement('div');l.className='db-kpi-label';l.textContent=label;k.appendChild(v);k.appendChild(l);return k;};
-  kpis.appendChild(mkKpi(inToday.length+'/'+MY_TEAM.length,'Team in',inToday.length<MY_TEAM.length*0.6?'warn':'neutral',()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]'))));
-  if(absPeople.length) kpis.appendChild(mkKpi(absPeople.length,'Absent','warn',()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]'))));
-  if (!viewerMode) kpis.appendChild(mkKpi(overdueTasks.length,'Overdue tasks',overdueTasks.length>0?'danger':'ok',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
-  if (!viewerMode) kpis.appendChild(mkKpi(overdue1on1.length,'1:1 due',overdue1on1.length>0?'danger':'ok',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
+  const mkKpi=(val,label,cls,fn)=>{const k=document.createElement('div');k.className='db-kpi';if(fn)k.onclick=fn;const v=document.createElement('div');v.className='db-kpi-val '+cls;v.textContent=val;const l=document.createElement('div');l.className='db-kpi-label';l.textContent=label;k.appendChild(v);k.appendChild(l);return k;};
+  kpis.appendChild(mkKpi(inToday.length+'/'+totalTeam,'Team in',inToday.length<totalTeam*0.6?'warn':'neutral',()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]'))));
+  if(!viewerMode&&overdue1on1.length) kpis.appendChild(mkKpi(overdue1on1.length,'1:1 overdue','danger',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
   if(redCount) kpis.appendChild(mkKpi(redCount,'Red RAG','danger',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'))));
-  if(announcements.length) kpis.appendChild(mkKpi(totalAnnUnread>0?totalAnnUnread:'✓','Updates unread',totalAnnUnread>0?'warn':'ok',()=>switchTab('settings',document.querySelector('[onclick*="settings"]'))));
-  if (!viewerMode && unreadCount) kpis.appendChild(mkKpi(unreadCount, 'Unread', 'neutral', ()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
-  // ZD live KPIs
-  const zdOpenKpi=mkKpi('…','Open','neutral',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+  if(announcements.length&&totalAnnUnread>0) kpis.appendChild(mkKpi(totalAnnUnread,'Updates unread','warn',()=>switchTab('settings',document.querySelector('[onclick*="settings"]'))));
+  if(!viewerMode&&unreadCount) kpis.appendChild(mkKpi(unreadCount,'Unread','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+  // Live ZD KPIs
+  const zdOpenKpi=mkKpi('…','Open tickets','neutral',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
   const zdSolvedKpi=mkKpi('…','Solved today','ok',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
   if(zdReady()){kpis.appendChild(zdOpenKpi);kpis.appendChild(zdSolvedKpi);}
-  hero.appendChild(kpis); root.appendChild(hero);
-  // Async ZD hero KPIs
+  hero.appendChild(kpis);
+  root.appendChild(hero);
+
   if(zdReady()){
     const t=localToday();
     Promise.all([zdCount('type:ticket status:open').catch(()=>'?'),zdCount(`type:ticket status>=solved solved>=${t} solved<=${t}`).catch(()=>'?')]).then(([open,solved])=>{
       zdOpenKpi.querySelector('.db-kpi-val').textContent=open;
       zdOpenKpi.querySelector('.db-kpi-val').className='db-kpi-val '+(+open>100?'danger':+open>60?'warn':'ok');
       zdSolvedKpi.querySelector('.db-kpi-val').textContent=solved;
-      zdSolvedKpi.querySelector('.db-kpi-val').className='db-kpi-val ok';
     });
   }
 
-  // ── Notification bar ─────────────────────────────────────────
-  const unreadItems=notifItems.filter(n=>n.unread);
-  if(unreadItems.length && !viewerMode){
+  // Notification bar — only when there are unread items
+  if(unreadCount&&!viewerMode){
     const bar=document.createElement('div'); bar.className='db-notif-bar';
     const lbl=document.createElement('div'); lbl.className='db-notif-bar-label'; lbl.textContent='New';
     bar.appendChild(lbl);
-    unreadItems.slice(0,4).forEach(n=>{
+    notifItems.filter(n=>n.unread).slice(0,3).forEach(n=>{
       const pill=document.createElement('div'); pill.className='db-notif-pill';
       pill.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
       const dot=document.createElement('div'); dot.className='db-notif-dot';
@@ -4787,31 +4707,24 @@ function renderAdminDashboard(root, viewerMode=false) {
     bar.appendChild(markBtn); root.appendChild(bar);
   }
 
-  // ── TIER 1: Fire alerts banner — full width, always first ─────
-  const fireAlertBanner=document.createElement('div'); fireAlertBanner.id='db-fire-banner';
-  root.appendChild(fireAlertBanner);
-  // Sync alerts (schedule data — immediate)
+  // ── TIER 1: Fire alerts — full-width, only when triggered ─────
+  const fireEl=document.createElement('div'); fireEl.id='db-fire-banner';
+  root.appendChild(fireEl);
   const syncAlerts=[];
-  const agentsIn=inToday.length, totalTeam=MY_TEAM.length;
-  if(agentsIn<totalTeam*0.5) syncAlerts.push({level:'danger',msg:'Critical understaffing — only '+agentsIn+'/'+totalTeam+' agents in today'});
+  if(agentsIn<totalTeam*0.5) syncAlerts.push({level:'danger',msg:'Critical understaffing — '+agentsIn+'/'+totalTeam+' agents in'});
   else if(agentsIn<totalTeam*0.7) syncAlerts.push({level:'warn',msg:'Low staffing — '+agentsIn+'/'+totalTeam+' agents in'});
-  if(absPeople.length>=3) syncAlerts.push({level:'warn',msg:absPeople.length+' agents absent/sick simultaneously'});
-  if(redCount>0) syncAlerts.push({level:'danger',msg:redCount+' team member'+(redCount>1?'s':'')+' on Red RAG — check My Team'});
-  if(overdue1on1.length>=5) syncAlerts.push({level:'warn',msg:overdue1on1.length+' overdue 1:1s ('+overdue1on1.slice(0,3).map(p=>p.name).join(', ')+(overdue1on1.length>3?'…':'')+')'});
-  renderFireBanner(fireAlertBanner, syncAlerts, []);
-  // Async ZD alerts
+  if(absPeople.length>=3) syncAlerts.push({level:'warn',msg:absPeople.length+' agents absent simultaneously'});
+  if(redCount>0) syncAlerts.push({level:'danger',msg:redCount+' team member'+(redCount>1?'s':'')+' on Red RAG'});
+  if(overdue1on1.length>=5) syncAlerts.push({level:'warn',msg:overdue1on1.length+' overdue 1:1s'});
+  renderFireBanner(fireEl, syncAlerts, []);
   if(zdReady()){
-    const gf=zdGroupId?` group:${zdGroupId}`:'';
-    Promise.all([
-      zdCount('type:ticket status:open').catch(()=>0),
-    ]).then(([open])=>{
-      const zdAlerts=[];
-      // Load pressure — use total team (not just today's agents) for a stable ratio
-      const stableAgents=Math.max(agentsIn, Math.round(totalTeam*0.7));
+    zdCount('type:ticket status:open').catch(()=>0).then(open=>{
+      const stableAgents=Math.max(agentsIn,Math.round(totalTeam*0.7));
       const ratio=stableAgents>0?Math.round(+open/stableAgents):0;
-      if(ratio>40) zdAlerts.push({level:'danger',msg:'High queue load: ~'+ratio+' open tickets per active agent'});
-      else if(ratio>25) zdAlerts.push({level:'warn',msg:'Elevated queue: ~'+ratio+' open tickets per active agent'});
-      renderFireBanner(fireAlertBanner, syncAlerts, zdAlerts);
+      const zdAlerts=[];
+      if(ratio>40) zdAlerts.push({level:'danger',msg:'High queue: ~'+ratio+' open tickets per agent'});
+      else if(ratio>25) zdAlerts.push({level:'warn',msg:'Elevated queue: ~'+ratio+' open tickets per agent'});
+      renderFireBanner(fireEl, syncAlerts, zdAlerts);
     });
   }
 
@@ -4819,7 +4732,9 @@ function renderAdminDashboard(root, viewerMode=false) {
   const body=document.createElement('div'); body.className='db-body cols-5';
   root.appendChild(body);
 
-  // ── COL 1: Team today + sick + week ahead ─────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // COL 1: Team & schedule
+  // ═══════════════════════════════════════════════════════════════
   const col1=document.createElement('div'); col1.className='db-col';
 
   const teamSec=dbSection('Team today','Schedule',()=>switchTab('schedule',document.querySelector('[onclick*="schedule"]')));
@@ -4837,24 +4752,20 @@ function renderAdminDashboard(root, viewerMode=false) {
   if(outToday.length){const offEl=document.createElement('div');offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:8px;';offEl.textContent='Off: '+outToday.map(p=>p.name).join(', ');teamSec.appendChild(offEl);}
   col1.appendChild(teamSec);
 
-  // Absent/sick
   if(absPeople.length){
     const sickSec=dbSection('Absent today');
     absPeople.forEach(p=>{
       const row=document.createElement('div');row.className='db-row';
       const nm=document.createElement('div');nm.className='db-row-label';nm.textContent=p.name;
       const s=(p.shifts[di]||'').toLowerCase();
-      const badge=document.createElement('span');badge.className='db-row-badge';
-      badge.style.cssText=s==='abs'?'background:var(--high-bg);color:var(--high-text);':'background:var(--surface3);color:var(--text3);';
-      badge.textContent=s==='abs'?'Absent':'Holiday';
+      const badge=document.createElement('span');badge.className='db-row-badge';badge.style.cssText=s==='abs'?'background:var(--high-bg);color:var(--high-text);':'background:var(--surface3);color:var(--text3);';badge.textContent=s==='abs'?'Absent':'Holiday';
       row.appendChild(nm);row.appendChild(badge);sickSec.appendChild(row);
     });
     col1.appendChild(sickSec);
   }
 
-  // Week ahead
+  // Week ahead strip
   const weekSec=dbSection('Week ahead');
-  const mon=getMonday(0);
   const weekStrip=document.createElement('div'); weekStrip.style.cssText='display:flex;gap:4px;';
   for(let i=0;i<5;i++){
     const d=new Date(mon); d.setDate(mon.getDate()+i);
@@ -4863,12 +4774,9 @@ function renderAdminDashboard(root, viewerMode=false) {
     const present=week?week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&!OFF.has((p.shifts[idx]||'').toLowerCase());}).length:null;
     const cell=document.createElement('div');
     cell.style.cssText=`flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--radius-md);border:1px solid ${isToday2?'rgba(214,243,255,0.35)':'var(--border)'};background:${isToday2?'#000743':'var(--surface2)'};`;
-    const dayEl=document.createElement('div');dayEl.style.cssText=`font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${isToday2?'#D6F3FF':'var(--text3)'};`;
-    dayEl.textContent=['Mon','Tue','Wed','Thu','Fri'][i];
-    const numEl=document.createElement('div');numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;`;
-    numEl.style.color=present===null?'var(--text3)':present<MY_TEAM.length*0.5?'var(--high-text)':present<MY_TEAM.length*0.8?'var(--med-text)':'var(--low-text)';
-    numEl.textContent=present===null?'—':present;
-    const totEl=document.createElement('div');totEl.style.cssText='font-size:8px;color:var(--text3);font-weight:600;';totEl.textContent='/'+MY_TEAM.length;
+    const dayEl=document.createElement('div');dayEl.style.cssText=`font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${isToday2?'#D6F3FF':'var(--text3)'};`;dayEl.textContent=['Mon','Tue','Wed','Thu','Fri'][i];
+    const numEl=document.createElement('div');numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;color:${present===null?'var(--text3)':present<totalTeam*0.5?'var(--high-text)':present<totalTeam*0.8?'var(--med-text)':'var(--low-text)'};`;numEl.textContent=present===null?'—':present;
+    const totEl=document.createElement('div');totEl.style.cssText='font-size:8px;color:var(--text3);font-weight:600;';totEl.textContent='/'+totalTeam;
     cell.appendChild(dayEl);cell.appendChild(numEl);cell.appendChild(totEl);
     if(week){const offP=week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&OFF.has((p.shifts[idx]||'').toLowerCase());});if(offP.length)cell.title='Off: '+offP.map(p=>p.name).join(', ');}
     weekStrip.appendChild(cell);
@@ -4877,391 +4785,300 @@ function renderAdminDashboard(root, viewerMode=false) {
   col1.appendChild(weekSec);
   body.appendChild(col1);
 
-  // ── COL 2: Queue health (tickets + solved + calls) ────────────
+  // ═══════════════════════════════════════════════════════════════
+  // COL 2: Queue & calls (current state)
+  // ═══════════════════════════════════════════════════════════════
   const col2=document.createElement('div'); col2.className='db-col';
   const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
-
-  // Queue status — open/pending/hold/solved in a clean grid
-  // ── Queue status + Unifon — with Mon–Fri / Weekend split ─────
-  const isWeekend = [0,6].includes(new Date().getDay());
-  let queuePeriod = isWeekend ? 'weekend' : 'weekday'; // default to current context
+  const isWeekend=[0,6].includes(new Date().getDay());
+  let queuePeriod=isWeekend?'weekend':'weekday';
 
   const queueSec=dbSection('Queue & calls','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
-
-  // Period toggle
   const periodToggle=document.createElement('div');periodToggle.style.cssText='display:flex;gap:4px;margin-bottom:12px;';
-  const mkToggleBtn=(label,active)=>{
-    const b=document.createElement('button');
-    b.style.cssText=`font-family:inherit;font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--radius-md);cursor:pointer;border:1px solid;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.06em;${active?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);'}`;
-    b.textContent=label; return b;
-  };
-  const wdBtn=mkToggleBtn('Mon–Fri', queuePeriod==='weekday');
-  const weBtn=mkToggleBtn('Sat–Sun', queuePeriod==='weekend');
-  periodToggle.appendChild(wdBtn); periodToggle.appendChild(weBtn);
+  const mkTBtn=(label,active)=>{const b=document.createElement('button');b.style.cssText=`font-family:inherit;font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--radius-md);cursor:pointer;border:1px solid;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.06em;${active?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);'}`;b.textContent=label;return b;};
+  const wdBtn=mkTBtn('Mon–Fri',queuePeriod==='weekday');
+  const weBtn=mkTBtn('Sat–Sun',queuePeriod==='weekend');
+  periodToggle.appendChild(wdBtn);periodToggle.appendChild(weBtn);
   queueSec.appendChild(periodToggle);
-
-  // Two panel containers
   const wdPanel=document.createElement('div');
-  const wePanel=document.createElement('div'); wePanel.style.display='none';
-  queueSec.appendChild(wdPanel); queueSec.appendChild(wePanel);
+  const wePanel=document.createElement('div');wePanel.style.display='none';
+  queueSec.appendChild(wdPanel);queueSec.appendChild(wePanel);
+  const setQP=(p)=>{queuePeriod=p;wdPanel.style.display=p==='weekday'?'':'none';wePanel.style.display=p==='weekend'?'':'none';[wdBtn,weBtn].forEach((b,i)=>{const a=['weekday','weekend'][i]===p;b.style.background=a?'var(--cal-text)':'none';b.style.color=a?'#000743':'var(--text3)';b.style.borderColor=a?'var(--cal-text)':'var(--border)';});};
+  wdBtn.onclick=()=>setQP('weekday');weBtn.onclick=()=>setQP('weekend');
 
-  const setQueuePeriod=(p)=>{
-    queuePeriod=p;
-    wdPanel.style.display=p==='weekday'?'':'none';
-    wePanel.style.display=p==='weekend'?'':'none';
-    wdBtn.style.cssText=wdBtn.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+(p==='weekday'?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);');
-    weBtn.style.cssText=weBtn.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+(p==='weekend'?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);');
-  };
-  wdBtn.onclick=()=>setQueuePeriod('weekday');
-  weBtn.onclick=()=>setQueuePeriod('weekend');
+  const mkQStat=(id,label,color)=>{const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;cell.appendChild(val);cell.appendChild(lbl);return cell;};
 
-  const mkQStat=(id,label,color)=>{
-    const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';
-    const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';
-    const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;
-    cell.appendChild(val);cell.appendChild(lbl);return cell;
-  };
-
-  // ── Weekday panel ─────────────────────────────────────────────
+  // Weekday panel
   const wdQGrid=document.createElement('div');wdQGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
-  wdQGrid.appendChild(mkQStat('db-q-open',   'Open',         'var(--high-text)'));
-  wdQGrid.appendChild(mkQStat('db-q-pending','Pending',      'var(--med-text)'));
-  wdQGrid.appendChild(mkQStat('db-q-solved', 'Solved today', 'var(--low-text)'));
-  wdQGrid.appendChild(mkQStat('db-q-hold',   'On hold',      'var(--text2)'));
+  wdQGrid.appendChild(mkQStat('db-q-open','Open','var(--high-text)'));
+  wdQGrid.appendChild(mkQStat('db-q-pending','Pending','var(--med-text)'));
+  wdQGrid.appendChild(mkQStat('db-q-solved','Solved today','var(--low-text)'));
+  wdQGrid.appendChild(mkQStat('db-q-hold','On hold','var(--text2)'));
   wdPanel.appendChild(wdQGrid);
-
   // Weekday Unifon
-  const wdUnifon=getUnifonWeekByDays(false); // Mon-Fri only
+  const wdUnifon=getUnifonWeekByDays(false);
   if(wdUnifon.length){
     const wdDiv=document.createElement('div');wdDiv.style.cssText='border-top:1px solid var(--border);padding-top:10px;margin-top:2px;';
     const wdULbl=document.createElement('div');wdULbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';wdULbl.textContent='Unifon calls';
     wdDiv.appendChild(wdULbl);
     const wdUGrid=document.createElement('div');wdUGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;';
-    const uOff=wdUnifon.reduce((s,d)=>s+(d.offered||0),0);
-    const uAns=wdUnifon.reduce((s,d)=>s+(d.answered||0),0);
-    const uMis=wdUnifon.reduce((s,d)=>s+(d.missed||0),0);
+    const uOff=wdUnifon.reduce((s,d)=>s+(d.offered||0),0),uAns=wdUnifon.reduce((s,d)=>s+(d.answered||0),0),uMis=wdUnifon.reduce((s,d)=>s+(d.missed||0),0);
     const uPct=uOff>0?Math.round(uMis/uOff*100):0;
     const mkUC=(v,l,c)=>{const cel=document.createElement('div');cel.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const vv=document.createElement('div');vv.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${c||'var(--text)'};`;vv.textContent=v;const ll=document.createElement('div');ll.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';ll.textContent=l;cel.appendChild(vv);cel.appendChild(ll);return cel;};
-    wdUGrid.appendChild(mkUC(uOff,'Offered','var(--text)'));
-    wdUGrid.appendChild(mkUC(uAns,'Answered','var(--low-text)'));
-    wdUGrid.appendChild(mkUC(uMis,'Missed',uMis>0?'var(--high-text)':'var(--text3)'));
-    wdUGrid.appendChild(mkUC(uPct+'%','Miss rate',uPct>15?'var(--high-text)':uPct>8?'var(--med-text)':'var(--text3)'));
-    wdDiv.appendChild(wdUGrid);
-    wdPanel.appendChild(wdDiv);
-  } else if(!getUnifonWeek().length) {
-    // No data at all — show log prompt
-    const noData=document.createElement('div');noData.style.cssText='border-top:1px solid var(--border);padding-top:10px;margin-top:2px;';
-    const noLbl=document.createElement('div');noLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;';noLbl.textContent='Unifon calls';
-    noData.appendChild(noLbl);
-    const noMsg=document.createElement('div');noMsg.className='db-empty';noMsg.innerHTML='No data. <a href="#" onclick="switchTab(\'settings\',null);return false;" style="color:var(--cal-text);font-weight:600;text-decoration:none;">Log calls →</a>';
-    noData.appendChild(noMsg);wdPanel.appendChild(noData);
+    wdUGrid.appendChild(mkUC(uOff,'Offered','var(--text)'));wdUGrid.appendChild(mkUC(uAns,'Answered','var(--low-text)'));
+    wdUGrid.appendChild(mkUC(uMis,'Missed',uMis>0?'var(--high-text)':'var(--text3)'));wdUGrid.appendChild(mkUC(uPct+'%','Miss rate',uPct>15?'var(--high-text)':uPct>8?'var(--med-text)':'var(--text3)'));
+    wdDiv.appendChild(wdUGrid);wdPanel.appendChild(wdDiv);
   }
 
-  // ── Weekend panel ─────────────────────────────────────────────
-  const weNote=document.createElement('div');weNote.style.cssText='font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5;';weNote.textContent='Weekend staffing: 2 agents on duty.';
+  // Weekend panel
+  const weNote=document.createElement('div');weNote.style.cssText='font-size:11px;color:var(--text3);margin-bottom:10px;';weNote.textContent='Weekend: 2 agents on duty.';
   wePanel.appendChild(weNote);
-
   const weQGrid=document.createElement('div');weQGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
   weQGrid.appendChild(mkQStat('db-q-we-solved','Solved (Sat–Sun)','var(--low-text)'));
-  weQGrid.appendChild(mkQStat('db-q-we-open',  'Open now',        'var(--high-text)'));
+  weQGrid.appendChild(mkQStat('db-q-we-open','Open now','var(--high-text)'));
   wePanel.appendChild(weQGrid);
-
-  // Weekend staffing from schedule — reuse mon already declared above
   const weStaff=[];
   [5,6].forEach(i=>{
     const d=new Date(mon);d.setDate(mon.getDate()+i);
     const dStr=d.toISOString().slice(0,10);
     const OFF2=new Set(['so','h','os','abs','ol','']);
     const week2=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
-    if(week2){
-      const idx2=week2.dates.indexOf(dStr);
-      const present=week2.people.filter(p=>MY_TEAM.includes(p.name)&&idx2>=0&&!OFF2.has((p.shifts[idx2]||'').toLowerCase()));
-      weStaff.push({day:['Saturday','Sunday'][i-5],date:dStr,people:present});
-    }
+    if(week2){const idx2=week2.dates.indexOf(dStr);const present=week2.people.filter(p=>MY_TEAM.includes(p.name)&&idx2>=0&&!OFF2.has((p.shifts[idx2]||'').toLowerCase()));weStaff.push({day:['Saturday','Sunday'][i-5],people:present});}
   });
   weStaff.forEach(({day,people})=>{
     const row=document.createElement('div');row.className='db-row';
     const lbl=document.createElement('div');lbl.className='db-row-label';lbl.textContent=day;
-    const val=document.createElement('div');val.className='db-row-meta';
-    val.textContent=people.length?people.map(p=>p.name.split(' ')[0]).join(', '):'No one scheduled';
-    val.style.color=people.length===0?'var(--high-text)':'var(--text2)';
+    const val=document.createElement('div');val.className='db-row-meta';val.textContent=people.length?people.map(p=>p.name.split(' ')[0]).join(', '):'None scheduled';val.style.color=people.length===0?'var(--high-text)':'var(--text2)';
     row.appendChild(lbl);row.appendChild(val);wePanel.appendChild(row);
   });
-
-  // Weekend Unifon
-  const weUnifon=getUnifonWeekByDays(true); // Sat-Sun only
+  const weUnifon=getUnifonWeekByDays(true);
   if(weUnifon.length){
     const weDiv=document.createElement('div');weDiv.style.cssText='border-top:1px solid var(--border);padding-top:10px;margin-top:8px;';
     const weULbl=document.createElement('div');weULbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';weULbl.textContent='Unifon calls';
     weDiv.appendChild(weULbl);
     const weUGrid=document.createElement('div');weUGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;';
-    const wuOff=weUnifon.reduce((s,d)=>s+(d.offered||0),0);
-    const wuAns=weUnifon.reduce((s,d)=>s+(d.answered||0),0);
-    const wuMis=weUnifon.reduce((s,d)=>s+(d.missed||0),0);
+    const wuOff=weUnifon.reduce((s,d)=>s+(d.offered||0),0),wuAns=weUnifon.reduce((s,d)=>s+(d.answered||0),0),wuMis=weUnifon.reduce((s,d)=>s+(d.missed||0),0);
     const wuPct=wuOff>0?Math.round(wuMis/wuOff*100):0;
     const mkUC2=(v,l,c)=>{const cel=document.createElement('div');cel.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const vv=document.createElement('div');vv.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${c||'var(--text)'};`;vv.textContent=v;const ll=document.createElement('div');ll.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';ll.textContent=l;cel.appendChild(vv);cel.appendChild(ll);return cel;};
-    weUGrid.appendChild(mkUC2(wuOff,'Offered','var(--text)'));
-    weUGrid.appendChild(mkUC2(wuAns,'Answered','var(--low-text)'));
-    weUGrid.appendChild(mkUC2(wuMis,'Missed',wuMis>0?'var(--high-text)':'var(--text3)'));
-    weUGrid.appendChild(mkUC2(wuPct+'%','Miss rate',wuPct>15?'var(--high-text)':wuPct>8?'var(--med-text)':'var(--text3)'));
-    weDiv.appendChild(weUGrid);
-    wePanel.appendChild(weDiv);
+    weUGrid.appendChild(mkUC2(wuOff,'Offered','var(--text)'));weUGrid.appendChild(mkUC2(wuAns,'Answered','var(--low-text)'));
+    weUGrid.appendChild(mkUC2(wuMis,'Missed',wuMis>0?'var(--high-text)':'var(--text3)'));weUGrid.appendChild(mkUC2(wuPct+'%','Miss rate',wuPct>15?'var(--high-text)':wuPct>8?'var(--med-text)':'var(--text3)'));
+    weDiv.appendChild(weUGrid);wePanel.appendChild(weDiv);
   }
-
   col2.appendChild(queueSec);
 
-  // Fetch ZD data for both panels async
+  // ZD async
   if(zdReady()){
     const t=localToday();
-    // Weekend date range (Sat-Sun of this week)
     const sat=new Date(mon);sat.setDate(mon.getDate()+5);
     const sun=new Date(mon);sun.setDate(mon.getDate()+6);
-    const satStr=sat.toISOString().slice(0,10);
-    const sunStr=sun.toISOString().slice(0,10);
-    Promise.all([
-      zdCount('type:ticket status:open').catch(()=>'?'),
-      zdCount('type:ticket status:pending').catch(()=>'?'),
-      zdCount(`type:ticket status>=solved solved>=${t} solved<=${t}`).catch(()=>'?'),
-      zdCount('type:ticket status:hold').catch(()=>'?'),
-      zdCount(`type:ticket status>=solved solved>=${satStr} solved<=${sunStr}`).catch(()=>'?'),
-    ]).then(([open,pending,solved,hold,weSolved])=>{
+    Promise.all([zdCount('type:ticket status:open').catch(()=>'?'),zdCount('type:ticket status:pending').catch(()=>'?'),zdCount(`type:ticket status>=solved solved>=${t} solved<=${t}`).catch(()=>'?'),zdCount('type:ticket status:hold').catch(()=>'?'),zdCount(`type:ticket status>=solved solved>=${sat.toISOString().slice(0,10)} solved<=${sun.toISOString().slice(0,10)}`).catch(()=>'?')]).then(([open,pending,solved,hold,weSolved])=>{
       const setQ=(id,val,color)=>{const el=document.getElementById(id);if(el){el.textContent=val;if(color)el.style.color=color;}};
-      setQ('db-q-open',  open,   +open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
-      setQ('db-q-pending',pending);
-      setQ('db-q-solved',solved, 'var(--low-text)');
-      setQ('db-q-hold',  hold);
-      setQ('db-q-we-solved', weSolved, 'var(--low-text)');
-      setQ('db-q-we-open',   open, +open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
+      setQ('db-q-open',open,+open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
+      setQ('db-q-pending',pending);setQ('db-q-solved',solved,'var(--low-text)');setQ('db-q-hold',hold);
+      setQ('db-q-we-solved',weSolved,'var(--low-text)');setQ('db-q-we-open',open,+open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
     });
   } else {
     ['db-q-open','db-q-pending','db-q-solved','db-q-hold','db-q-we-solved','db-q-we-open'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
-    const cfgEl=document.createElement('div');cfgEl.className='db-empty';cfgEl.innerHTML='<a href="#" onclick="switchTab(\'settings\',null);return false;" style="color:var(--cal-text);font-weight:600;text-decoration:none;">Configure Zendesk →</a>';
-    queueSec.appendChild(cfgEl);
   }
-  const slaSec=dbSection('SLA risk');
-  const slaRiskEl=document.createElement('div');slaRiskEl.id='db-sla-risk2';slaRiskEl.innerHTML='<div class="db-empty">Loading…</div>';
-  slaSec.appendChild(slaRiskEl);
-  if(zdReady()){
-    zdFetch('/search.json?query='+encodeURIComponent('type:ticket (status:open OR status:pending OR status:hold)')+'&per_page=50&sort_by=created_at&sort_order=asc').then(r=>{
-      const el=document.getElementById('db-sla-risk2');if(!el)return;
-      const tickets=r.results||[];
-      const now=new Date();
-      const withRisk=tickets.map(t=>{const res=zdCalcSlaBreached(t);const ageH=(now-new Date(t.created_at))/3600000;const pct=ageH/res.targetHours;return{t,res,pct};})
-        .filter(x=>x.pct>=0.7).sort((a,b)=>b.pct-a.pct);
-      el.innerHTML='';
-      if(!withRisk.length){el.innerHTML='<div class="db-empty" style="color:var(--low-text);">✓ No tickets near SLA limit</div>';return;}
-      withRisk.slice(0,5).forEach(({t,res,pct})=>{
-        const a=document.createElement('a');
-        const isBreached=res.breached,isClose=pct>=0.9;
-        a.style.cssText=`display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--radius-md);text-decoration:none;margin-bottom:3px;border:1px solid;${isBreached?'background:rgba(255,107,107,0.07);border-color:rgba(255,107,107,0.2);':isClose?'background:rgba(252,211,77,0.07);border-color:rgba(252,211,77,0.2);':'background:var(--surface2);border-color:var(--border);'}`;
-        a.href=zdSubdomain?`https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}`:'#';a.target='_blank';a.rel='noopener';
-        const id=document.createElement('span');id.style.cssText=`font-size:10px;font-weight:700;flex-shrink:0;color:${isBreached?'var(--high-text)':isClose?'var(--med-text)':'var(--text3)'}`;id.textContent='#'+t.id;
-        const subj=document.createElement('span');subj.style.cssText='flex:1;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';subj.textContent=t.subject||'(no subject)';
-        const pctEl=document.createElement('span');pctEl.style.cssText=`font-size:10px;font-weight:700;flex-shrink:0;color:${isBreached?'var(--high-text)':isClose?'var(--med-text)':'var(--text3)'}`;
-        pctEl.textContent=isBreached?zdFormatOverBy(res.overByMs):Math.round(pct*100)+'%';
-        a.appendChild(id);a.appendChild(subj);a.appendChild(pctEl);el.appendChild(a);
-      });
-      if(withRisk.length>5){const m=document.createElement('div');m.style.cssText='font-size:11px;color:var(--text3);padding:3px 0;text-align:center;';m.textContent='+'+(withRisk.length-5)+' more';el.appendChild(m);}
-    }).catch(()=>{const el=document.getElementById('db-sla-risk2');if(el)el.innerHTML='<div class="db-empty">Could not load</div>';});
-  } else {slaRiskEl.innerHTML='<div class="db-empty">ZD not configured</div>';}
-  col2.appendChild(slaSec);
-
   body.appendChild(col2);
 
-  // ── COL 3: Notifications + Upcoming 1:1s ─────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // COL 3: Performance metrics (CSAT, MTTR, Backlog trend)
+  // ═══════════════════════════════════════════════════════════════
   const col3=document.createElement('div'); col3.className='db-col';
 
-  const notifSec=dbSection('Notifications',unreadCount?'Mark all read':null,unreadCount?markAllRead:null);
-  if(!notifItems.length){const e=document.createElement('div');e.className='db-empty';e.textContent='All caught up.';notifSec.appendChild(e);}
-  else{
-    notifItems.slice(0,8).forEach(n=>{
-      const item=document.createElement('div');item.className='db-notif-item'+(n.unread?'':' db-notif-read');
-      if(!n.unread)item.style.cssText='opacity:0.4;border-left-color:rgba(214,243,255,0.08);';
-      item.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
-      const dot=document.createElement('div');dot.className='db-notif-item-dot';dot.style.opacity=n.unread?'1':'0';
-      const b=document.createElement('div');b.className='db-notif-body';
-      const t=document.createElement('div');t.className='db-notif-title';t.textContent=n.text;
-      const s=document.createElement('div');s.className='db-notif-sub';s.textContent=n.sub;
-      const time=document.createElement('div');time.className='db-notif-time';time.textContent=dbRelTime(n.ts);
-      b.appendChild(t);b.appendChild(s);item.appendChild(dot);item.appendChild(b);item.appendChild(time);notifSec.appendChild(item);
-    });
-    if(notifItems.length>8){const more=document.createElement('div');more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;text-align:center;';more.textContent='+'+(notifItems.length-8)+' more in Feedback';notifSec.appendChild(more);}
-  }
-  if (!viewerMode) col3.appendChild(notifSec);
-
-  const otoData=getOtoData();
-  const upcoming1on1=[];
-  MY_TEAM.forEach(name=>{
-    const sessions=(otoData.sessions||[]).filter(s=>s.person===name&&s.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date));
-    if(sessions[0])upcoming1on1.push({name,date:sessions[0].date,isToday:sessions[0].date===todayStr});
-  });
-  upcoming1on1.sort((a,b)=>a.date.localeCompare(b.date));
-  const onoSec=dbSection('Upcoming 1:1s','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
-  if(!upcoming1on1.length&&!overdue1on1.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No sessions scheduled';onoSec.appendChild(e);}
-  upcoming1on1.slice(0,5).forEach(u=>{
-    const row=document.createElement('div');row.className='db-row';row.style.cursor='pointer';
-    row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
-    const nameEl=document.createElement('div');nameEl.className='db-row-label';nameEl.textContent=u.name;
-    const dateEl=document.createElement('div');dateEl.className='db-row-meta';
-    dateEl.textContent=u.isToday?'Today':new Date(u.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    const dotEl=document.createElement('div');dotEl.style.cssText=`width:7px;height:7px;border-radius:50%;flex-shrink:0;background:${u.isToday?'var(--cal-text)':'var(--border2)'};`;
-    row.appendChild(nameEl);row.appendChild(dateEl);row.appendChild(dotEl);onoSec.appendChild(row);
-  });
-  if(overdue1on1.length){
-    const sep=document.createElement('div');sep.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--high-text);margin-top:10px;margin-bottom:4px;';sep.textContent='Overdue';onoSec.appendChild(sep);
-    overdue1on1.slice(0,4).forEach(p=>{
-      const row=document.createElement('div');row.className='db-row';
-      const nm=document.createElement('div');nm.className='db-row-label';nm.textContent=p.name;
-      const lbl=document.createElement('div');lbl.className='db-row-meta';lbl.style.color='var(--high-text)';lbl.textContent=p.label;
-      row.appendChild(nm);row.appendChild(lbl);onoSec.appendChild(row);
-    });
-  }
-  if (!viewerMode) col3.appendChild(onoSec);
-
-  // My tasks (compact)
-  const taskSec=dbSection('My tasks','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
-  if(!todayTasks.length&&!overdueTasks.length){const e=document.createElement('div');e.className='db-empty';e.textContent='All clear ✓';taskSec.appendChild(e);}
-  overdueTasks.slice(0,2).forEach(t=>{const row=document.createElement('div');row.className='db-row';const badge=document.createElement('span');badge.className='db-row-badge';badge.style.cssText='background:var(--high-bg);color:var(--high-text);';badge.textContent='overdue';const label=document.createElement('div');label.className='db-row-label';label.textContent=t.text;row.appendChild(badge);row.appendChild(label);taskSec.appendChild(row);});
-  todayTasks.slice(0,4).forEach(t=>{const row=document.createElement('div');row.className='db-row';const label=document.createElement('div');label.className='db-row-label';label.textContent=t.text;row.appendChild(label);taskSec.appendChild(row);});
-  if (!viewerMode) col3.appendChild(taskSec);
-  const col4=document.createElement('div'); col4.className='db-col';
-
-  // Queue volume — 7-day solved bar chart
-  const queueVolSec=dbSection('Solved per day (7d)');
-  const queueChart=document.createElement('div');queueChart.id='db-queue-chart2';queueChart.innerHTML='<div class="db-empty">Loading…</div>';
-  queueVolSec.appendChild(queueChart);
+  // CSAT — mini donut, prominent position
   if(zdReady()){
-    const days7=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days7.push(d.toISOString().slice(0,10));}
-    Promise.all(days7.map(d=>zdCount(`type:ticket status>=solved solved>=${d} solved<=${d}`).catch(()=>0))).then(solved=>{
-      const el=document.getElementById('db-queue-chart2');if(!el)return;
+    const csatSec=dbSection('Satisfaction (30d)','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+    const csatEl=document.createElement('div');csatEl.id='db-csat-mini';csatEl.innerHTML='<div class="db-empty">Loading…</div>';
+    csatSec.appendChild(csatEl);col3.appendChild(csatSec);
+    const d30=new Date();d30.setDate(d30.getDate()-30);
+    zdFetch(`/satisfaction_ratings.json?start_time=${Math.floor(d30.getTime()/1000)}&end_time=${Math.floor(Date.now()/1000)-3600}&per_page=100`).then(r=>{
+      const el=document.getElementById('db-csat-mini');if(!el)return;
+      const ratings=r.satisfaction_ratings||[];
+      const good=ratings.filter(r2=>r2.score==='good').length,bad=ratings.filter(r2=>r2.score==='bad').length,total=good+bad;
       el.innerHTML='';
-      const max=Math.max(...solved.map(v=>+v),1);
-      const chartEl=document.createElement('div');chartEl.style.cssText='display:flex;align-items:flex-end;gap:4px;height:56px;margin-bottom:8px;';
-      days7.forEach((d,i)=>{
-        const isToday3=d===todayStr;
-        const col5=document.createElement('div');col5.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;';
-        const bw=document.createElement('div');bw.style.cssText='width:100%;flex:1;display:flex;align-items:flex-end;';
-        const bar=document.createElement('div');bar.style.cssText=`width:100%;height:0;border-radius:3px 3px 0 0;transition:height 0.6s cubic-bezier(0.34,1.4,0.64,1);background:${isToday3?'#D6F3FF':'rgba(214,243,255,0.3)'};`;
-        bw.appendChild(bar);
-        const lbl=document.createElement('div');lbl.style.cssText=`font-size:8px;color:${isToday3?'var(--cal-text)':'var(--text3)'};font-weight:${isToday3?700:600};`;
-        const d2=new Date(d);lbl.textContent=['M','T','W','T','F','S','S'][d2.getDay()===0?6:d2.getDay()-1];
-        col5.appendChild(bw);col5.appendChild(lbl);chartEl.appendChild(col5);
-        setTimeout(()=>{bar.style.height=Math.max(+solved[i]/max*48,+solved[i]>0?3:0)+'px';},50+i*35);
-      });
-      el.appendChild(chartEl);
-      const totRow=document.createElement('div');totRow.style.cssText='display:flex;gap:10px;flex-wrap:wrap;';
-      const totalSolved=solved.reduce((a,b)=>a+ +b,0);
-      const daysWithData=solved.filter(v=>+v>0).length||1;
-      const dailyAvg=Math.round(totalSolved/Math.max(daysWithData,1));
-      const mkStat2=(v,l,c)=>{const d2=document.createElement('div');d2.style.cssText='display:flex;flex-direction:column;gap:1px;';const vEl=document.createElement('div');vEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;color:${c};letter-spacing:-0.03em;line-height:1;`;vEl.textContent=v;const lEl=document.createElement('div');lEl.style.cssText='font-size:10px;color:var(--text3);font-weight:600;';lEl.textContent=l;d2.appendChild(vEl);d2.appendChild(lEl);return d2;};
-      totRow.appendChild(mkStat2(totalSolved,'Solved (7d)','var(--low-text)'));
-      totRow.appendChild(mkStat2(dailyAvg,'Daily avg','var(--cal-text)'));
-      el.appendChild(totRow);
-    });
-  } else {queueChart.innerHTML='<div class="db-empty">ZD not configured</div>';}
-  col4.appendChild(queueVolSec);
+      if(!total){el.innerHTML='<div class="db-empty">No ratings yet</div>';return;}
+      const pct=Math.round(good/total*100);
+      const wrap=document.createElement('div');wrap.style.cssText='display:flex;align-items:center;gap:14px;';
+      const svgR=30,svgCx=36,svgCy=36,svgSt=11,circ=2*Math.PI*svgR,gDash=(good/total)*circ;
+      const svgEl=document.createElementNS('http://www.w3.org/2000/svg','svg');svgEl.setAttribute('viewBox','0 0 72 72');svgEl.setAttribute('width','72');svgEl.setAttribute('height','72');
+      const bgC=document.createElementNS('http://www.w3.org/2000/svg','circle');bgC.setAttribute('cx',svgCx);bgC.setAttribute('cy',svgCy);bgC.setAttribute('r',svgR);bgC.setAttribute('fill','none');bgC.setAttribute('stroke','rgba(255,107,107,0.25)');bgC.setAttribute('stroke-width',svgSt);
+      const fgC=document.createElementNS('http://www.w3.org/2000/svg','circle');fgC.setAttribute('cx',svgCx);fgC.setAttribute('cy',svgCy);fgC.setAttribute('r',svgR);fgC.setAttribute('fill','none');fgC.setAttribute('stroke','#4ade80');fgC.setAttribute('stroke-width',svgSt);fgC.setAttribute('stroke-dasharray',gDash+' '+(circ-gDash));fgC.setAttribute('stroke-dashoffset',circ*0.25);
+      const cTxt=document.createElementNS('http://www.w3.org/2000/svg','text');cTxt.setAttribute('x',svgCx);cTxt.setAttribute('y',svgCy+1);cTxt.setAttribute('text-anchor','middle');cTxt.setAttribute('dominant-baseline','middle');cTxt.setAttribute('font-family','Fira Sans, sans-serif');cTxt.setAttribute('font-size','13');cTxt.setAttribute('font-weight','900');cTxt.setAttribute('fill',pct>=90?'#4ade80':pct>=75?'#fbbf24':'#ff6b6b');cTxt.textContent=pct+'%';
+      svgEl.appendChild(bgC);svgEl.appendChild(fgC);svgEl.appendChild(cTxt);wrap.appendChild(svgEl);
+      const stats=document.createElement('div');stats.style.cssText='display:flex;flex-direction:column;gap:4px;flex:1;';
+      const mkSR=(v,l,c)=>{const d2=document.createElement('div');d2.className='db-row';const l2=document.createElement('div');l2.className='db-row-label';l2.textContent=l;const v2=document.createElement('div');v2.className='db-row-meta';v2.style.color=c||'var(--text2)';v2.textContent=v;d2.appendChild(l2);d2.appendChild(v2);return d2;};
+      stats.appendChild(mkSR(good+' / '+total,'Good / Total','var(--low-text)'));
+      stats.appendChild(mkSR(bad,'Bad',bad>0?'var(--high-text)':'var(--text2)'));
+      wrap.appendChild(stats);el.appendChild(wrap);
+    }).catch(e=>{const el=document.getElementById('db-csat-mini');if(el)el.innerHTML='<div class="db-empty">'+e.message+'</div>';});
 
-  // Backlog trend — compare DAILY AVG this week vs last week (not raw totals)
-  const backlogSec=dbSection('Backlog trend');
+    // MTTR
+    const mttrSec=dbSection('Median resolution (30d)');
+    const mttrEl=document.createElement('div');mttrEl.id='db-mttr-mini';mttrEl.innerHTML='<div class="db-empty">Loading…</div>';
+    mttrSec.appendChild(mttrEl);col3.appendChild(mttrSec);
+    const d30b=new Date();d30b.setDate(d30b.getDate()-30);
+    zdFetch('/search.json?query='+encodeURIComponent(`type:ticket status>=solved solved>=${d30b.toISOString().slice(0,10)} solved<=${todayStr}`)+'&per_page=100&sort_by=solved_at&sort_order=desc').then(r2=>{
+      const el=document.getElementById('db-mttr-mini');if(!el)return;
+      const tickets2=r2.results||[];
+      if(!tickets2.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
+      const times=tickets2.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
+      if(!times.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
+      const median=times[Math.floor(times.length/2)];
+      const mean=Math.round(times.reduce((a,b)=>a+b,0)/times.length);
+      const fmtD2=(mins)=>{if(!mins)return'—';const h=Math.floor(mins/60),m=mins%60,d=Math.floor(h/24);return d>0?d+'d '+(h%24)+'h':h>0?h+'h'+(m>0?' '+m+'m':''):m+'m';};
+      el.innerHTML='';
+      const bigRow=document.createElement('div');bigRow.style.cssText='display:flex;align-items:flex-end;gap:10px;margin-bottom:8px;';
+      const bigVal=document.createElement('div');bigVal.style.cssText="font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);";bigVal.textContent=fmtD2(median);
+      const bigSub=document.createElement('div');bigSub.style.cssText='font-size:10px;color:var(--text3);padding-bottom:4px;line-height:1.5;';bigSub.textContent='median · '+tickets2.length+' tickets';
+      bigRow.appendChild(bigVal);bigRow.appendChild(bigSub);el.appendChild(bigRow);
+      const mkMR=(v,l)=>{const d2=document.createElement('div');d2.className='db-row';const l2=document.createElement('div');l2.className='db-row-label';l2.textContent=l;const v2=document.createElement('div');v2.className='db-row-meta';v2.textContent=v;d2.appendChild(l2);d2.appendChild(v2);return d2;};
+      el.appendChild(mkMR(fmtD2(mean),'Mean'));
+    }).catch(e=>{const el=document.getElementById('db-mttr-mini');if(el)el.innerHTML='<div class="db-empty">'+e.message+'</div>';});
+  }
+
+  // Backlog trend — daily avg comparison
+  const backlogSec=dbSection('Volume trend');
   const backlogEl=document.createElement('div');backlogEl.id='db-backlog2';backlogEl.innerHTML='<div class="db-empty">Loading…</div>';
   backlogSec.appendChild(backlogEl);
   if(zdReady()){
     const thisMonStr=getMonday(0).toISOString().slice(0,10);
     const lastMonStr=getMonday(-1).toISOString().slice(0,10);
     const lastSunStr=new Date(new Date(thisMonStr).getTime()-86400000).toISOString().slice(0,10);
-    // Days elapsed this week (Mon=1 ... today)
-    const dayOfWeek=new Date().getDay()||7; // 1=Mon, 7=Sun
-    const daysThisWeek=Math.max(dayOfWeek-1,1); // days Mon through today (min 1)
-    Promise.all([
-      zdCount(`type:ticket status>=solved solved>=${thisMonStr} solved<=${todayStr}`).catch(()=>'?'),
-      zdCount(`type:ticket status>=solved solved>=${lastMonStr} solved<=${lastSunStr}`).catch(()=>'?'),
-      zdCount('type:ticket status:open').catch(()=>'?'),
-      zdCount(`type:ticket status:open created<${lastMonStr}`).catch(()=>'?'),
-    ]).then(([thisWeekRaw,lastWeekRaw,openNow,backlogOld])=>{
+    const dayOfWeek=new Date().getDay()||7;
+    const daysThisWeek=Math.max(dayOfWeek-1,1);
+    Promise.all([zdCount(`type:ticket status>=solved solved>=${thisMonStr} solved<=${todayStr}`).catch(()=>'?'),zdCount(`type:ticket status>=solved solved>=${lastMonStr} solved<=${lastSunStr}`).catch(()=>'?'),zdCount('type:ticket status:open').catch(()=>'?'),zdCount(`type:ticket status:open created<${lastMonStr}`).catch(()=>'?')]).then(([thisWeekRaw,lastWeekRaw,openNow,backlogOld])=>{
       const el=document.getElementById('db-backlog2');if(!el)return;
       el.innerHTML='';
-      // Compare daily averages for a fair week-to-date comparison
-      const thisAvg=Math.round(+thisWeekRaw/daysThisWeek);
-      const lastAvg=Math.round(+lastWeekRaw/5); // last week was full 5 days
-      const diff=thisAvg-lastAvg;
-      const diffColor=diff>0?'var(--low-text)':diff<0?'var(--high-text)':'var(--text3)';
-      const diffArrow=diff>0?'↑':diff<0?'↓':'→';
-      // Main comparison row
-      const row=document.createElement('div');row.style.cssText='display:flex;align-items:flex-end;gap:12px;margin-bottom:10px;';
-      const thisEl=document.createElement('div');thisEl.style.cssText='display:flex;flex-direction:column;gap:1px;';
-      const tV=document.createElement('div');tV.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:24px;font-weight:900;color:var(--low-text);letter-spacing:-0.03em;line-height:1;`;tV.textContent=thisAvg;
-      const tL=document.createElement('div');tL.style.cssText='font-size:10px;color:var(--text3);font-weight:600;margin-top:2px;';tL.textContent='Daily avg this wk';
-      thisEl.appendChild(tV);thisEl.appendChild(tL);
-      const arrowEl=document.createElement('div');arrowEl.style.cssText=`font-size:18px;font-weight:900;color:${diffColor};line-height:1.2;`;arrowEl.textContent=diffArrow;
-      const diffEl=document.createElement('div');diffEl.style.cssText='display:flex;flex-direction:column;gap:1px;';
-      const dV=document.createElement('div');dV.style.cssText=`font-size:13px;font-weight:700;color:${diffColor};`;dV.textContent=(diff>0?'+':'')+diff+' vs last wk';
-      const dL=document.createElement('div');dL.style.cssText='font-size:10px;color:var(--text3);';dL.textContent='Last week avg: '+lastAvg+'/day';
-      diffEl.appendChild(dV);diffEl.appendChild(dL);
-      row.appendChild(thisEl);row.appendChild(arrowEl);row.appendChild(diffEl);
-      el.appendChild(row);
-      // Context rows
-      const ctx=document.createElement('div');ctx.style.cssText='display:flex;flex-direction:column;gap:4px;';
-      const mkCtxRow=(label,val,color)=>{const r=document.createElement('div');r.className='db-row';const l=document.createElement('div');l.className='db-row-label';l.textContent=label;const v=document.createElement('div');v.className='db-row-meta';v.style.color=color||'var(--text2)';v.textContent=val;r.appendChild(l);r.appendChild(v);return r;};
-      ctx.appendChild(mkCtxRow('Total solved this week',thisWeekRaw+' ('+daysThisWeek+'d elapsed)'));
-      ctx.appendChild(mkCtxRow('Open now',openNow,+openNow>100?'var(--high-text)':'var(--text2)'));
-      ctx.appendChild(mkCtxRow('Old open (pre-last-wk)',backlogOld,+backlogOld>20?'var(--med-text)':'var(--text2)'));
-      el.appendChild(ctx);
+      const thisAvg=Math.round(+thisWeekRaw/daysThisWeek),lastAvg=Math.round(+lastWeekRaw/5);
+      const diff=thisAvg-lastAvg,diffColor=diff>0?'var(--low-text)':diff<0?'var(--high-text)':'var(--text3)';
+      const topRow=document.createElement('div');topRow.style.cssText='display:flex;align-items:flex-end;gap:10px;margin-bottom:8px;';
+      const tV=document.createElement('div');tV.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:var(--low-text);letter-spacing:-0.03em;line-height:1;`;tV.textContent=thisAvg;
+      const tSub=document.createElement('div');tSub.style.cssText='font-size:10px;color:var(--text3);padding-bottom:4px;line-height:1.5;';tSub.textContent='solved/day this wk\n('+daysThisWeek+'d elapsed)';tSub.style.whiteSpace='pre';
+      const arrow=document.createElement('div');arrow.style.cssText=`font-size:16px;font-weight:900;color:${diffColor};padding-bottom:3px;`;arrow.textContent=diff>0?'↑':diff<0?'↓':'→';
+      topRow.appendChild(tV);topRow.appendChild(tSub);topRow.appendChild(arrow);el.appendChild(topRow);
+      const mkCtx=(label,val,color)=>{const r2=document.createElement('div');r2.className='db-row';const l=document.createElement('div');l.className='db-row-label';l.textContent=label;const v=document.createElement('div');v.className='db-row-meta';v.style.color=color||'var(--text2)';v.textContent=val;r2.appendChild(l);r2.appendChild(v);return r2;};
+      el.appendChild(mkCtx('Last week avg',lastAvg+'/day'));
+      el.appendChild(mkCtx('vs last week',(diff>0?'+':'')+diff+' / day',diffColor));
+      el.appendChild(mkCtx('Open now',openNow,+openNow>100?'var(--high-text)':'var(--text2)'));
+      el.appendChild(mkCtx('Old open (pre-last-wk)',backlogOld,+backlogOld>20?'var(--med-text)':'var(--text2)'));
     });
   } else {backlogEl.innerHTML='<div class="db-empty">ZD not configured</div>';}
-  col4.appendChild(backlogSec);
+  col3.appendChild(backlogSec);
+  body.appendChild(col3);
+
+  // ═══════════════════════════════════════════════════════════════
+  // COL 4: Risk & operations (SLA risk, staffing, notifications)
+  // ═══════════════════════════════════════════════════════════════
+  const col4=document.createElement('div'); col4.className='db-col';
+
+  // SLA risk — top tickets approaching breach
+  const slaSec=dbSection('SLA risk');
+  const slaRiskEl=document.createElement('div');slaRiskEl.id='db-sla-risk2';slaRiskEl.innerHTML='<div class="db-empty">Loading…</div>';
+  slaSec.appendChild(slaRiskEl);
+  if(zdReady()){
+    zdFetch('/search.json?query='+encodeURIComponent('type:ticket (status:open OR status:pending OR status:hold)')+'&per_page=50&sort_by=created_at&sort_order=asc').then(r=>{
+      const el=document.getElementById('db-sla-risk2');if(!el)return;
+      const now=new Date();
+      const withRisk=(r.results||[]).map(t=>{const res=zdCalcSlaBreached(t);const ageH=(now-new Date(t.created_at))/3600000;const pct=ageH/res.targetHours;return{t,res,pct};}).filter(x=>x.pct>=0.7).sort((a,b)=>b.pct-a.pct);
+      el.innerHTML='';
+      if(!withRisk.length){el.innerHTML='<div class="db-empty" style="color:var(--low-text);">✓ No tickets near SLA limit</div>';return;}
+      withRisk.slice(0,6).forEach(({t,res,pct})=>{
+        const a=document.createElement('a');const isBreached=res.breached,isClose=pct>=0.9;
+        a.style.cssText=`display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--radius-md);text-decoration:none;margin-bottom:3px;border:1px solid;${isBreached?'background:rgba(255,107,107,0.07);border-color:rgba(255,107,107,0.2);':isClose?'background:rgba(252,211,77,0.07);border-color:rgba(252,211,77,0.2);':'background:var(--surface2);border-color:var(--border);'}`;
+        a.href=zdSubdomain?`https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}`:'#';a.target='_blank';a.rel='noopener';
+        const id=document.createElement('span');id.style.cssText=`font-size:10px;font-weight:700;flex-shrink:0;color:${isBreached?'var(--high-text)':isClose?'var(--med-text)':'var(--text3)'}`;id.textContent='#'+t.id;
+        const subj=document.createElement('span');subj.style.cssText='flex:1;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';subj.textContent=t.subject||'(no subject)';
+        const pctEl=document.createElement('span');pctEl.style.cssText=`font-size:10px;font-weight:700;flex-shrink:0;color:${isBreached?'var(--high-text)':isClose?'var(--med-text)':'var(--text3)'}`;pctEl.textContent=isBreached?zdFormatOverBy(res.overByMs):Math.round(pct*100)+'%';
+        a.appendChild(id);a.appendChild(subj);a.appendChild(pctEl);el.appendChild(a);
+      });
+      if(withRisk.length>6){const m=document.createElement('div');m.style.cssText='font-size:11px;color:var(--text3);padding:3px 0;text-align:center;';m.textContent='+'+(withRisk.length-6)+' more';el.appendChild(m);}
+    }).catch(()=>{const el=document.getElementById('db-sla-risk2');if(el)el.innerHTML='<div class="db-empty">Could not load</div>';});
+  } else {slaRiskEl.innerHTML='<div class="db-empty">ZD not configured</div>';}
+  col4.appendChild(slaSec);
 
   // Staffing vs load
   const staffSec=dbSection('Staffing vs load');
   const staffPct=totalTeam>0?Math.round(agentsIn/totalTeam*100):0;
-  const barWrapEl=document.createElement('div');barWrapEl.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:8px;';
-  const barLabelEl=document.createElement('div');barLabelEl.style.cssText='font-size:12px;color:var(--text2);flex-shrink:0;width:56px;';barLabelEl.textContent=agentsIn+'/'+totalTeam;
-  const barBgEl=document.createElement('div');barBgEl.style.cssText='flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;';
-  const barFillEl=document.createElement('div');barFillEl.style.cssText=`height:100%;border-radius:3px;width:${staffPct}%;background:${staffPct<60?'var(--high-text)':staffPct<80?'var(--med-text)':'var(--low-text)'};transition:width 0.8s;`;
-  barBgEl.appendChild(barFillEl);barWrapEl.appendChild(barLabelEl);barWrapEl.appendChild(barBgEl);
-  staffSec.appendChild(barWrapEl);
-  // Role breakdown — collect names per role
-  const roleCount={}, roleNames={};
-  inToday.forEach(p=>{
-    if(di<0) return;
-    const r=p.roles[di]||'Unassigned';
-    roleCount[r]=(roleCount[r]||0)+1;
-    if(!roleNames[r]) roleNames[r]=[];
-    roleNames[r].push(p.name.split(' ')[0]);
-  });
-  const roleOrder=['Phone Guru','Inbox Champion','SLA Sherpa','Unassigned','Freelancer'];
-  const sortedRoles=Object.keys(roleCount).sort((a,b)=>roleOrder.indexOf(a)-roleOrder.indexOf(b));
-  sortedRoles.forEach(role=>{
-    const count=roleCount[role];
-    const names=roleNames[role]||[];
-    const showNames=role!=='Freelancer';
+  const bwEl=document.createElement('div');bwEl.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:10px;';
+  const blEl=document.createElement('div');blEl.style.cssText='font-size:12px;color:var(--text2);flex-shrink:0;width:56px;';blEl.textContent=agentsIn+'/'+totalTeam;
+  const bbEl=document.createElement('div');bbEl.style.cssText='flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;';
+  const bfEl=document.createElement('div');bfEl.style.cssText=`height:100%;border-radius:3px;width:${staffPct}%;background:${staffPct<60?'var(--high-text)':staffPct<80?'var(--med-text)':'var(--low-text)'};transition:width 0.8s;`;
+  bbEl.appendChild(bfEl);bwEl.appendChild(blEl);bwEl.appendChild(bbEl);staffSec.appendChild(bwEl);
+  const roleCount2={},roleNames2={};
+  inToday.forEach(p=>{if(di<0)return;const r2=p.roles[di]||'Unassigned';roleCount2[r2]=(roleCount2[r2]||0)+1;if(!roleNames2[r2])roleNames2[r2]=[];roleNames2[r2].push(p.name.split(' ')[0]);});
+  const roleOrder2=['Phone Guru','Inbox Champion','SLA Sherpa','Unassigned','Freelancer'];
+  Object.keys(roleCount2).sort((a,b)=>roleOrder2.indexOf(a)-roleOrder2.indexOf(b)).forEach(role=>{
+    const names2=roleNames2[role]||[];const showNames2=role!=='Freelancer';
     const row=document.createElement('div');row.className='db-row';row.style.alignItems='flex-start';
     const left=document.createElement('div');left.style.cssText='display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;';
-    const roleEl=document.createElement('div');roleEl.className='db-row-label';roleEl.style.color=roleColors[role]||'var(--text3)';roleEl.textContent=role;
-    left.appendChild(roleEl);
-    if(showNames&&names.length){
-      const namesEl=document.createElement('div');namesEl.style.cssText='font-size:10px;color:var(--text3);font-weight:500;';namesEl.textContent=names.join(', ');
-      left.appendChild(namesEl);
-    }
-    const ct=document.createElement('div');ct.className='db-row-meta';ct.style.paddingTop='1px';ct.textContent=count+(count===1?' agent':' agents');
-    row.appendChild(left);row.appendChild(ct);staffSec.appendChild(row);
+    const roleEl2=document.createElement('div');roleEl2.className='db-row-label';roleEl2.style.color=roleColors[role]||'var(--text3)';roleEl2.textContent=role;
+    left.appendChild(roleEl2);
+    if(showNames2&&names2.length){const namesEl2=document.createElement('div');namesEl2.style.cssText='font-size:10px;color:var(--text3);font-weight:500;';namesEl2.textContent=names2.join(', ');left.appendChild(namesEl2);}
+    const ct2=document.createElement('div');ct2.className='db-row-meta';ct2.style.paddingTop='1px';ct2.textContent=roleCount2[role]+(roleCount2[role]===1?' agent':' agents');
+    row.appendChild(left);row.appendChild(ct2);staffSec.appendChild(row);
   });
-  // Tickets per agent — async
   const tpaRow=document.createElement('div');tpaRow.className='db-row';tpaRow.id='db-tpa-row2';
   const tpaLbl=document.createElement('div');tpaLbl.className='db-row-label';tpaLbl.textContent='Open / agent (est.)';
   const tpaVal=document.createElement('div');tpaVal.className='db-row-meta';tpaVal.textContent='…';
   tpaRow.appendChild(tpaLbl);tpaRow.appendChild(tpaVal);staffSec.appendChild(tpaRow);
-  if(zdReady()&&agentsIn>0){
-    zdCount('type:ticket status:open').then(open=>{
-      const el=document.getElementById('db-tpa-row2');if(!el)return;
-      const ratio=Math.round(+open/agentsIn);
-      el.querySelector('.db-row-meta').textContent=ratio+' / agent';
-      el.querySelector('.db-row-meta').style.color=ratio>40?'var(--high-text)':ratio>25?'var(--med-text)':'var(--text2)';
-    }).catch(()=>{});
-  }
+  if(zdReady()&&agentsIn>0){zdCount('type:ticket status:open').then(open=>{const el=document.getElementById('db-tpa-row2');if(!el)return;const ratio=Math.round(+open/agentsIn);el.querySelector('.db-row-meta').textContent=ratio+' / agent';el.querySelector('.db-row-meta').style.color=ratio>40?'var(--high-text)':ratio>25?'var(--med-text)':'var(--text2)';}).catch(()=>{});}
   col4.appendChild(staffSec);
+
+  // Notifications — in risk col because they drive action
+  if(!viewerMode){
+    const notifSec=dbSection('Notifications',unreadCount?'Mark all read':null,unreadCount?markAllRead:null);
+    if(!notifItems.length){const e=document.createElement('div');e.className='db-empty';e.textContent='All caught up.';notifSec.appendChild(e);}
+    else{
+      notifItems.slice(0,6).forEach(n=>{
+        const item=document.createElement('div');item.className='db-notif-item'+(n.unread?'':' db-notif-read');
+        if(!n.unread)item.style.cssText='opacity:0.4;border-left-color:rgba(214,243,255,0.08);';
+        item.onclick=()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'));
+        const dot=document.createElement('div');dot.className='db-notif-item-dot';dot.style.opacity=n.unread?'1':'0';
+        const b=document.createElement('div');b.className='db-notif-body';
+        const t=document.createElement('div');t.className='db-notif-title';t.textContent=n.text;
+        const s=document.createElement('div');s.className='db-notif-sub';s.textContent=n.sub;
+        const time=document.createElement('div');time.className='db-notif-time';time.textContent=dbRelTime(n.ts);
+        b.appendChild(t);b.appendChild(s);item.appendChild(dot);item.appendChild(b);item.appendChild(time);notifSec.appendChild(item);
+      });
+      if(notifItems.length>6){const more=document.createElement('div');more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;text-align:center;';more.textContent='+'+(notifItems.length-6)+' more';notifSec.appendChild(more);}
+    }
+    col4.appendChild(notifSec);
+
+    // Upcoming 1:1s
+    const otoData=getOtoData();
+    const upcoming1on1=[];
+    MY_TEAM.forEach(name=>{const sessions=(otoData.sessions||[]).filter(s=>s.person===name&&s.date>=todayStr).sort((a,b)=>a.date.localeCompare(b.date));if(sessions[0])upcoming1on1.push({name,date:sessions[0].date,isToday:sessions[0].date===todayStr});});
+    upcoming1on1.sort((a,b)=>a.date.localeCompare(b.date));
+    const onoSec=dbSection('Upcoming 1:1s','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+    if(!upcoming1on1.length&&!overdue1on1.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No sessions scheduled';onoSec.appendChild(e);}
+    upcoming1on1.slice(0,4).forEach(u=>{
+      const row=document.createElement('div');row.className='db-row';row.style.cursor='pointer';row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
+      const nameEl=document.createElement('div');nameEl.className='db-row-label';nameEl.textContent=u.name;
+      const dateEl=document.createElement('div');dateEl.className='db-row-meta';dateEl.textContent=u.isToday?'Today':new Date(u.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      const dotEl=document.createElement('div');dotEl.style.cssText=`width:7px;height:7px;border-radius:50%;flex-shrink:0;background:${u.isToday?'var(--cal-text)':'var(--border2)'};`;
+      row.appendChild(nameEl);row.appendChild(dateEl);row.appendChild(dotEl);onoSec.appendChild(row);
+    });
+    if(overdue1on1.length){
+      const sep=document.createElement('div');sep.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--high-text);margin-top:10px;margin-bottom:4px;';sep.textContent='Overdue';onoSec.appendChild(sep);
+      overdue1on1.slice(0,3).forEach(p=>{const row=document.createElement('div');row.className='db-row';const nm=document.createElement('div');nm.className='db-row-label';nm.textContent=p.name;const lbl=document.createElement('div');lbl.className='db-row-meta';lbl.style.color='var(--high-text)';lbl.textContent=p.label;row.appendChild(nm);row.appendChild(lbl);onoSec.appendChild(row);});
+    }
+    col4.appendChild(onoSec);
+
+    // My tasks compact
+    if(todayTasks.length||overdueTasks.length){
+      const taskSec=dbSection('My tasks','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
+      overdueTasks.slice(0,2).forEach(t=>{const row=document.createElement('div');row.className='db-row';const badge=document.createElement('span');badge.className='db-row-badge';badge.style.cssText='background:var(--high-bg);color:var(--high-text);';badge.textContent='overdue';const label=document.createElement('div');label.className='db-row-label';label.textContent=t.text;row.appendChild(badge);row.appendChild(label);taskSec.appendChild(row);});
+      todayTasks.slice(0,3).forEach(t=>{const row=document.createElement('div');row.className='db-row';const label=document.createElement('div');label.className='db-row-label';label.textContent=t.text;row.appendChild(label);taskSec.appendChild(row);});
+      col4.appendChild(taskSec);
+    }
+  }
   body.appendChild(col4);
 
-  // ── COL 5: Team health + Pulse + Handover ────────────────────
+  // ═══════════════════════════════════════════════════════════════
+  // COL 5: People health
+  // ═══════════════════════════════════════════════════════════════
   const col5=document.createElement('div'); col5.className='db-col';
 
   const healthSec=dbSection('Team health',viewerMode?null:'My Team',viewerMode?null:()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
@@ -5280,50 +5097,32 @@ function renderAdminDashboard(root, viewerMode=false) {
   if(!hasRag){const e=document.createElement('div');e.className='db-empty';e.textContent='✓ All green';healthSec.appendChild(e);}
   col5.appendChild(healthSec);
 
-  const moodSec=dbSection('Team pulse');
-  const allNonAdmin=getUsers().filter(u=>!u.isAdmin&&!u.tvOnly);
-  const submitted=[],pendingMood=[];
-  allNonAdmin.forEach(u=>{const display=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);const history=loadMoodHistory(u.name);const current=getCurrentMood(u.name);if(current)submitted.push({name:display,emoji:current.emoji,history});else pendingMood.push(display);});
-  if(!submitted.length&&!pendingMood.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No team members yet';moodSec.appendChild(e);}
-  submitted.forEach(s=>{
-    const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
-    const em=document.createElement('span');em.style.cssText='font-size:16px;line-height:1;flex-shrink:0;';em.textContent=s.emoji;
-    const nameEl=document.createElement('span');nameEl.style.cssText='font-size:12px;font-weight:600;color:var(--text);flex:1;';nameEl.textContent=s.name;
-    const spark=document.createElement('div');spark.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
-    s.history.slice(-4).forEach((h,i,arr)=>{const dot2=document.createElement('span');dot2.style.cssText=`font-size:${i===arr.length-1?'13px':'10px'};opacity:${0.35+i*0.22};line-height:1;`;dot2.textContent=h.emoji;spark.appendChild(dot2);});
-    row.appendChild(em);row.appendChild(nameEl);row.appendChild(spark);moodSec.appendChild(row);
-  });
-  if(pendingMood.length){const p=document.createElement('div');p.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';p.textContent='Pending: '+pendingMood.join(', ');moodSec.appendChild(p);}
-  if (!viewerMode) col5.appendChild(moodSec);
+  if(!viewerMode){
+    const moodSec=dbSection('Team pulse');
+    const allNonAdmin=getUsers().filter(u=>!u.isAdmin&&!u.tvOnly);
+    const submitted=[],pendingMood=[];
+    allNonAdmin.forEach(u=>{const display=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);const history=loadMoodHistory(u.name);const current=getCurrentMood(u.name);if(current)submitted.push({name:display,emoji:current.emoji,history});else pendingMood.push(display);});
+    submitted.forEach(s=>{
+      const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+      const em=document.createElement('span');em.style.cssText='font-size:16px;line-height:1;flex-shrink:0;';em.textContent=s.emoji;
+      const nameEl=document.createElement('span');nameEl.style.cssText='font-size:12px;font-weight:600;color:var(--text);flex:1;';nameEl.textContent=s.name;
+      const spark=document.createElement('div');spark.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
+      s.history.slice(-4).forEach((h,i,arr)=>{const d2=document.createElement('span');d2.style.cssText=`font-size:${i===arr.length-1?'13px':'10px'};opacity:${0.35+i*0.22};line-height:1;`;d2.textContent=h.emoji;spark.appendChild(d2);});
+      row.appendChild(em);row.appendChild(nameEl);row.appendChild(spark);moodSec.appendChild(row);
+    });
+    if(pendingMood.length){const p=document.createElement('div');p.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';p.textContent='Pending: '+pendingMood.join(', ');moodSec.appendChild(p);}
+    if(!submitted.length&&!pendingMood.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No team members yet';moodSec.appendChild(e);}
+    col5.appendChild(moodSec);
 
-  const handoverSec=dbSection('Handover notes');
-  renderHandoverWidget(handoverSec,currentUser.name,true);
-  if (!viewerMode) col5.appendChild(handoverSec);
+    const handoverSec=dbSection('Handover notes');
+    renderHandoverWidget(handoverSec,currentUser.name,true);
+    col5.appendChild(handoverSec);
 
-  const qlSec=dbSection('Quick links');
-  renderQuickLinks(qlSec,currentUser.name,true);
-  if (!viewerMode) col5.appendChild(qlSec);
-
+    const qlSec=dbSection('Quick links');
+    renderQuickLinks(qlSec,currentUser.name,true);
+    col5.appendChild(qlSec);
+  }
   body.appendChild(col5);
-}
-
-// ── Fire alerts banner ─────────────────────────────────────────
-function renderFireBanner(container, syncAlerts, zdAlerts) {
-  container.innerHTML='';
-  const all=[...syncAlerts,...zdAlerts];
-  if(!all.length) return; // no alerts = banner hidden
-  const bannerEl=document.createElement('div');
-  bannerEl.style.cssText='padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid rgba(255,107,107,0.15);background:rgba(255,107,107,0.04);';
-  const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--high-text);flex-shrink:0;';lbl.textContent='Needs attention';
-  bannerEl.appendChild(lbl);
-  all.forEach(a=>{
-    const pill=document.createElement('div');
-    pill.style.cssText=`display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;${a.level==='danger'?'background:rgba(255,107,107,0.12);color:var(--high-text);border:1px solid rgba(255,107,107,0.25);':'background:rgba(252,211,77,0.10);color:var(--med-text);border:1px solid rgba(252,211,77,0.2);'}`;
-    const icon=document.createElement('span');icon.textContent=a.level==='danger'?'🔴':'🟡';
-    const txt=document.createElement('span');txt.textContent=a.msg;
-    pill.appendChild(icon);pill.appendChild(txt);bannerEl.appendChild(pill);
-  });
-  container.appendChild(bannerEl);
 }
 async function renderTeamMemberDashboard(root) {
   const scheduleName = getScheduleName();
@@ -5912,11 +5711,6 @@ function renderTeamHealthBar() {
 }
 
 // ─── RAG dot helper ────────────────────────────────────────────────
-function makeRagDot(rag) {
-  const dot = document.createElement('span'); dot.className = 'rag-dot ' + (rag||'none');
-  return dot;
-}
-
 // ─── 1:1 Prep Brief ────────────────────────────────────────────────
 function renderPrepBrief(personName, container) {
   const profile = loadProfile(personName);
@@ -6871,6 +6665,7 @@ function saveMoodEntry(username, emoji) {
   if (history.length > 12) history.splice(0, history.length - 12);
   localStorage.setItem(moodKey(username), JSON.stringify(history));
   scheduleSyncSave();
+  schedulePersonalSync();
 }
 function getCurrentMood(username) {
   const week = getISOWeek();
@@ -7203,7 +6998,8 @@ async function renderTeamOverview(data) {
     av.style.background = avatarColors[Math.abs(hash) % avatarColors.length];
     av.textContent = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const nm = document.createElement('div'); nm.className = 'team-card-name';
-    nm.innerHTML = p.name + (hasNew ? ' <span style="font-size:10px;background:var(--low-text);color:#0f0f11;border-radius:6px;padding:1px 5px;font-weight:700;vertical-align:middle;">NEW</span>' : '');
+    nm.textContent = p.name;
+    if (hasNew) { const badge = document.createElement('span'); badge.style.cssText = 'font-size:10px;background:var(--low-text);color:#0f0f11;border-radius:6px;padding:1px 5px;font-weight:700;vertical-align:middle;margin-left:5px;'; badge.textContent = 'NEW'; nm.appendChild(badge); }
     const rag = document.createElement('div'); rag.className = 'rag-dot ' + (profile.rag || 'none'); rag.title = profile.rag || 'No status';
     top.appendChild(av); top.appendChild(nm); top.appendChild(rag); card.appendChild(top);
 
@@ -7302,6 +7098,13 @@ async function pushAgendaAsNonAdmin(username) {
   } catch(e) { console.warn('Agenda push failed:', e); }
 }
 
+async function pushPersonalDataAsNonAdmin(username) {
+  // Push personal data (tasks, notepad, mood, handover) for non-admin users
+  // so their data survives a device change
+  if (!username || isAdmin()) return;
+  await pushFeedbackAsNonAdmin(username, loadFbPosts(username));
+}
+
 async function pushFeedbackAsNonAdmin(username, posts) {
   // Use the feedback write token if set, otherwise fall back to readonly token
   const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
@@ -7317,6 +7120,15 @@ async function pushFeedbackAsNonAdmin(username, posts) {
     // Inject this user's feedback, agenda, and updated user list (for password changes)
     data[fbKey(username)] = posts;
     data[agendaKey(username)] = loadAgenda(username);
+    data[moodKey(username)] = JSON.parse(localStorage.getItem(moodKey(username)) || '[]');
+    data[annReadKey(username)] = JSON.parse(localStorage.getItem(annReadKey(username)) || '[]');
+    // Personal data — sync so it survives a device change
+    const taskKey = userTaskKey(username);
+    const noteKey = userNoteKey(username);
+    const persistNoteKey = 'wtp_notepad_persistent_' + normalizeKey(username);
+    if (localStorage.getItem(taskKey)) try { data[taskKey] = JSON.parse(localStorage.getItem(taskKey)); } catch {}
+    if (localStorage.getItem(noteKey)) data[noteKey] = localStorage.getItem(noteKey);
+    if (localStorage.getItem(persistNoteKey)) data[persistNoteKey] = localStorage.getItem(persistNoteKey);
     // Include wtp_users so password changes by non-admins persist
     try { data['wtp_users'] = JSON.parse(localStorage.getItem('wtp_users') || 'null') || data['wtp_users']; } catch {}
     const jsonStr = JSON.stringify(data, null, 2);
@@ -7860,12 +7672,7 @@ function getZdCreds() {
     email:     localStorage.getItem('wtp_zd_email') || '',
     token:     localStorage.getItem('wtp_zd_token') || '',
   };
-}
-function zdAuth() {
-  const c = getZdCreds();
-  return 'Basic ' + btoa(c.email + '/token:' + c.token);
-}
-function zdBase() {
+}function zdBase() {
   const c = getZdCreds();
   return 'https://' + c.subdomain + '.zendesk.com/api/v2';
 }
@@ -7934,11 +7741,22 @@ async function zdGetAgents(groupId) {
     .map(u => ({ id: u.id, name: u.name, email: u.email }));
 }
 
+// zdCount cache — 5 minute TTL to avoid hammering the proxy on dashboard load
+const _zdCountCache = new Map(); // query → {count, ts}
+const ZD_COUNT_TTL = 5 * 60 * 1000; // 5 minutes
+
 async function zdCount(query) {
+  // Check cache first
+  const cached = _zdCountCache.get(query);
+  if (cached && Date.now() - cached.ts < ZD_COUNT_TTL) return cached.count;
   // /search/count returns {count: N} without 1000-result pagination limit
   const data = await zdFetch('/search/count.json?query=' + encodeURIComponent(query));
-  return data.count || 0;
+  const count = data.count || 0;
+  _zdCountCache.set(query, { count, ts: Date.now() });
+  return count;
 }
+
+function zdClearCountCache() { _zdCountCache.clear(); }
 
 async function zdGetStats(agentId, fromDate, toDate) {
   // status>=solved includes both "solved" and "closed" — matches Zendesk UI query: status>=SOLVED
@@ -8534,6 +8352,7 @@ function zdFormatOverBy(ms) {
 async function zdRefresh() {
   if (!hasPrivilege('zendesk')) return;
   if (!zdReady()) { zdShowSetup(); return; }
+  zdClearCountCache(); // fresh data on manual refresh
   zdStartAutoRefresh();
   const body = document.getElementById('zd-body');
   const fromDate = document.getElementById('zd-from')?.value;
@@ -8553,7 +8372,7 @@ async function zdRefresh() {
     try { groupId = await zdGetGroupId(); } catch(e) { throw new Error('Group lookup failed: ' + e.message); }
     loadMsg.textContent = '⟳ Step 2: Got group ' + groupId + ' — fetching agents…';
     // Init SLA panel at top (runs independently, doesn't block agent stats)
-    initSlaPanel(groupId);
+    // SLA panel removed
     let agents;
     try { agents = await zdGetAgents(groupId); } catch(e) { throw new Error('Agent lookup failed: ' + e.message); }
     loadMsg.textContent = '⟳ Step 3: Found ' + agents.length + ' agents — fetching stats…';
@@ -8571,80 +8390,6 @@ async function zdRefresh() {
 
 // ─── SLA / Unassigned Panel ───────────────────────────────────────
 let slaGroupId = null; // cached after first load
-
-async function initSlaPanel(groupId) {
-  slaGroupId = groupId;
-  // SLA/unassigned panels removed
-}
-
-async function refreshSlaPanel() {
-  if (!slaGroupId) return;
-  const btn = document.getElementById('sla-refresh-btn');
-  if (btn) { btn.textContent = '⟳ Loading…'; btn.disabled = true; }
-
-  const showErr = (msg) => {
-    const countsEl = document.getElementById('sla-counts');
-    if (countsEl) { countsEl.innerHTML = ''; const e = document.createElement('span'); e.style.cssText='font-size:11px;color:var(--high-text);'; e.textContent='⚠ '+msg; countsEl.appendChild(e); }
-  };
-
-  try {
-    const statusFilter = `(status:open OR status:pending OR status:hold)`;
-    const groupFilter  = ` group:${slaGroupId}`;
-
-    const breachedQuery   = `type:ticket${groupFilter} sla_breach:true ${statusFilter}`;
-    const unassignedQuery = `type:ticket${groupFilter} no:assignee ${statusFilter}`;
-    const oldestQuery     = `type:ticket${groupFilter} ${statusFilter}`;
-
-    // Test breached query — fall back to no group filter if it errors
-    let finalGroup = groupFilter;
-    try { await zdCount(breachedQuery); } catch(e) { finalGroup = ''; }
-
-    const finalBreached   = `type:ticket${finalGroup} sla_breach:true ${statusFilter}`;
-    const finalUnassigned = `type:ticket${finalGroup} no:assignee ${statusFilter}`;
-    const finalOldest     = `type:ticket${finalGroup} ${statusFilter}`;
-
-    const safeCount = async (q) => { try { return await zdCount(q); } catch(e) { return '?'; } };
-    const safeFetch = async (q, sort, order) => {
-      try {
-        const r = await zdFetch('/search.json?query=' + encodeURIComponent(q) + '&per_page=25&sort_by=' + sort + '&sort_order=' + (order||'asc'));
-        return r.results || [];
-      } catch(e) { return []; }
-    };
-
-    const [breachedCount, unassignedCount, breachedTickets, oldestTickets] = await Promise.all([
-      safeCount(finalBreached),
-      safeCount(finalUnassigned),
-      safeFetch(finalBreached, 'created_at', 'asc'),
-      safeFetch(finalOldest, 'created_at', 'asc'),
-    ]);
-
-    const countsEl = document.getElementById('sla-counts');
-    if (countsEl) {
-      countsEl.innerHTML = '';
-      const pills = [
-        { label: breachedCount + ' breached',    cls: breachedCount > 0 ? 'breached' : 'ok' },
-        { label: unassignedCount + ' unassigned', cls: unassignedCount > 0 ? 'unassigned' : 'ok' },
-      ];
-      pills.forEach(p => {
-        const pill = document.createElement('span'); pill.className = 'sla-count-pill ' + p.cls;
-        pill.textContent = p.label; countsEl.appendChild(pill);
-      });
-      const dbg = document.createElement('span'); dbg.style.cssText = 'font-size:10px;color:var(--text3);cursor:help;';
-      dbg.textContent = finalGroup ? 'group filter active' : 'no group filter';
-      dbg.title = 'Breached query: ' + finalBreached;
-      countsEl.appendChild(dbg);
-    }
-
-    renderSlaTicketList('sla-breached-list', breachedTickets, 'breached');
-    renderSlaTicketList('sla-oldest-list', oldestTickets, 'oldest');
-
-  } catch(e) {
-    showErr(e.message);
-    console.error('SLA panel error:', e);
-  } finally {
-    if (btn) { btn.textContent = '↻ Refresh SLA'; btn.disabled = false; }
-  }
-}
 
 function renderSlaTicketList(containerId, tickets, type) {
   const el = document.getElementById(containerId);
@@ -8730,76 +8475,6 @@ async function zdGetInboxStats(groupId) {
   } catch(e) {}
 
   return { unassigned, breached, soonBreaching, breachingTickets, soonTickets };
-}
-
-async function renderInboxStats(groupId) {
-  const container = document.getElementById('zd-inbox-stats');
-  if (!container) return;
-  container.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px 0;">⟳ Loading inbox stats…</div>';
-
-  try {
-    const stats = await zdGetInboxStats(groupId);
-    container.innerHTML = '';
-
-    // Summary cards row
-    const cards = [
-      { val: stats.unassigned,    label: 'Unassigned',      sub: 'No agent assigned',      cls: 'neutral' },
-      { val: stats.soonBreaching, label: 'Breaching soon',  sub: 'SLA breach within 5 hrs', cls: stats.soonBreaching > 0 ? 'warning' : 'neutral' },
-      { val: stats.breached,      label: 'SLA Breached',    sub: 'Active SLA breaches',     cls: stats.breached > 0 ? 'danger' : 'neutral' },
-    ];
-    const wrap = document.createElement('div'); wrap.className = 'zd-inbox-wrap';
-    cards.forEach(c => {
-      const card = document.createElement('div'); card.className = 'zd-inbox-card ' + c.cls;
-      const val = document.createElement('div'); val.className = 'zd-inbox-val'; val.textContent = c.val;
-      const lbl = document.createElement('div'); lbl.className = 'zd-inbox-label'; lbl.textContent = c.label;
-      const sub = document.createElement('div'); sub.className = 'zd-inbox-sub'; sub.textContent = c.sub;
-      card.appendChild(val); card.appendChild(lbl); card.appendChild(sub); wrap.appendChild(card);
-    });
-    container.appendChild(wrap);
-
-    // SLA ticket lists
-    const renderTicketList = (tickets, title, cls) => {
-      if (!tickets.length) return;
-      const section = document.createElement('div'); section.style.cssText = 'margin-bottom:16px;';
-      const hdr = document.createElement('div'); hdr.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:8px;';
-      hdr.textContent = title;
-      const badge = document.createElement('span'); badge.style.cssText = `font-size:10px;padding:1px 6px;border-radius:8px;background:${cls==='danger'?'var(--high-bg)':'var(--med-bg)'};color:${cls==='danger'?'var(--high-text)':'var(--med-text)'};`;
-      badge.textContent = tickets.length + (tickets.length === 10 ? '+' : '');
-      hdr.appendChild(badge); section.appendChild(hdr);
-
-      const list = document.createElement('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
-      tickets.forEach(t => {
-        const row = document.createElement('div');
-        row.style.cssText = `display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-left:3px solid ${cls==='danger'?'var(--high-text)':'var(--med-text)'};border-radius:0 var(--radius-md) var(--radius-md) 0;cursor:pointer;transition:background 0.12s;`;
-        row.onmouseover = () => row.style.background = 'var(--surface2)';
-        row.onmouseout = () => row.style.background = 'var(--surface)';
-        row.onclick = () => window.open(`https://munu3272.zendesk.com/agent/tickets/${t.id}`, '_blank');
-
-        const idBadge = document.createElement('span'); idBadge.style.cssText = 'font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0;font-family:monospace;';
-        idBadge.textContent = '#' + t.id;
-
-        const subject = document.createElement('div'); subject.style.cssText = 'flex:1;font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-        subject.textContent = t.subject || '(no subject)';
-
-        const assignee = document.createElement('span'); assignee.style.cssText = 'font-size:11px;color:var(--text3);flex-shrink:0;white-space:nowrap;';
-        const agentName = zdAgents?.find(a => a.id === t.assignee_id)?.name?.split(' ')[0] || '—';
-        assignee.textContent = agentName;
-
-        const statusBadge = document.createElement('span'); statusBadge.style.cssText = `font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;flex-shrink:0;background:${cls==='danger'?'var(--high-bg)':'var(--med-bg)'};color:${cls==='danger'?'var(--high-text)':'var(--med-text)'};`;
-        statusBadge.textContent = cls === 'danger' ? '🔴 BREACHED' : '⚠ SOON';
-
-        row.appendChild(idBadge); row.appendChild(subject); row.appendChild(assignee); row.appendChild(statusBadge);
-        list.appendChild(row);
-      });
-      section.appendChild(list); container.appendChild(section);
-    };
-
-    if (stats.breachingTickets?.length) renderTicketList(stats.breachingTickets, '🔴 Currently breached', 'danger');
-    if (stats.soonTickets?.length) renderTicketList(stats.soonTickets, '⚠ Breaching within 5 hours', 'warning');
-
-  } catch(e) {
-    container.innerHTML = '<div class="zd-error" style="padding:8px 12px;font-size:11px;">Could not load inbox stats: ' + e.message + '</div>';
-  }
 }
 
 function zdRender(agents, fromDate, toDate) {
@@ -9028,7 +8703,6 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const good = ratings.filter(r2 => r2.score === 'good').length;
     const bad  = ratings.filter(r2 => r2.score === 'bad').length;
     const total = good + bad;
-    const goodPct = total > 0 ? Math.round(good / total * 100) : null;
 
     el.innerHTML = '';
     if (!total) {
@@ -9036,26 +8710,61 @@ async function zdRenderInsights(body, fromDate, toDate) {
       return;
     }
 
-    // Big CSAT number
-    const bigRow = document.createElement('div'); bigRow.style.cssText = 'display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;';
-    const bigVal = document.createElement('div'); bigVal.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:" + (goodPct>=90?'var(--low-text)':goodPct>=75?'var(--med-text)':'var(--high-text)') + ";"; bigVal.textContent = goodPct + '%';
-    const bigSub = document.createElement('div'); bigSub.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;'; bigSub.textContent = 'satisfaction\n' + total + ' ratings';
-    bigSub.style.whiteSpace = 'pre';
-    bigRow.appendChild(bigVal); bigRow.appendChild(bigSub); el.appendChild(bigRow);
+    // SVG donut chart — matches Zendesk Explore style
+    const goodPct2 = Math.round(good / total * 100);
+    const radius = 52, cx = 72, cy = 72, stroke = 18;
+    const circumference = 2 * Math.PI * radius;
+    const goodDash = (good / total) * circumference;
+    const badDash  = circumference - goodDash;
 
-    // Donut bar
-    const barWrap = document.createElement('div'); barWrap.style.cssText = 'height:6px;background:var(--high-bg);border-radius:3px;overflow:hidden;margin-bottom:8px;';
-    const barFill = document.createElement('div'); barFill.style.cssText = 'height:100%;border-radius:3px;background:var(--low-text);width:0;transition:width 0.8s cubic-bezier(0.5,0,0,1);';
-    barWrap.appendChild(barFill); el.appendChild(barWrap);
-    setTimeout(() => { barFill.style.width = goodPct + '%'; }, 80);
+    const chartWrap = document.createElement('div'); chartWrap.style.cssText = 'display:flex;align-items:center;gap:16px;';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 144 144'); svg.setAttribute('width','120'); svg.setAttribute('height','120');
 
-    // Good / Bad counts
-    const countRow = document.createElement('div'); countRow.style.cssText = 'display:flex;justify-content:space-between;';
-    const goodEl = document.createElement('div'); goodEl.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);';
-    goodEl.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:var(--low-text);display:inline-block;flex-shrink:0;"></span>' + good + ' good';
-    const badEl = document.createElement('div'); badEl.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);';
-    badEl.innerHTML = bad + ' bad <span style="width:8px;height:8px;border-radius:50%;background:var(--high-text);display:inline-block;flex-shrink:0;"></span>';
-    countRow.appendChild(goodEl); countRow.appendChild(badEl); el.appendChild(countRow);
+    // Background circle
+    const bgCircle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    bgCircle.setAttribute('cx',cx); bgCircle.setAttribute('cy',cy); bgCircle.setAttribute('r',radius);
+    bgCircle.setAttribute('fill','none'); bgCircle.setAttribute('stroke','rgba(255,107,107,0.25)'); bgCircle.setAttribute('stroke-width',stroke);
+    svg.appendChild(bgCircle);
+
+    // Good arc (green) — starts at top (-90deg = -PI/2)
+    const goodArc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    goodArc.setAttribute('cx',cx); goodArc.setAttribute('cy',cy); goodArc.setAttribute('r',radius);
+    goodArc.setAttribute('fill','none'); goodArc.setAttribute('stroke','#4ade80'); goodArc.setAttribute('stroke-width',stroke);
+    goodArc.setAttribute('stroke-dasharray', goodDash + ' ' + badDash);
+    goodArc.setAttribute('stroke-dashoffset', circumference * 0.25); // rotate to start at top
+    goodArc.setAttribute('stroke-linecap','butt');
+    goodArc.style.transition = 'stroke-dasharray 0.8s cubic-bezier(0.5,0,0,1)';
+    svg.appendChild(goodArc);
+
+    // Centre label
+    const centreG = document.createElementNS('http://www.w3.org/2000/svg','g');
+    const centreVal = document.createElementNS('http://www.w3.org/2000/svg','text');
+    centreVal.setAttribute('x',cx); centreVal.setAttribute('y',cy+2);
+    centreVal.setAttribute('text-anchor','middle'); centreVal.setAttribute('dominant-baseline','middle');
+    centreVal.setAttribute('font-family','Fira Sans, sans-serif'); centreVal.setAttribute('font-size','22');
+    centreVal.setAttribute('font-weight','900'); centreVal.setAttribute('fill', goodPct2>=90?'#4ade80':goodPct2>=75?'#fbbf24':'#ff6b6b');
+    centreVal.textContent = goodPct2 + '%';
+    centreG.appendChild(centreVal); svg.appendChild(centreG);
+    chartWrap.appendChild(svg);
+
+    // Legend
+    const legend = document.createElement('div'); legend.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+    const mkLegItem = (color, label, count, pct) => {
+      const item = document.createElement('div'); item.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      const dot = document.createElement('div'); dot.style.cssText = `width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;`;
+      const text = document.createElement('div');
+      const lbl = document.createElement('div'); lbl.style.cssText = 'font-size:11px;color:var(--text2);font-weight:600;'; lbl.textContent = label;
+      const cnt = document.createElement('div'); cnt.style.cssText = 'font-size:10px;color:var(--text3);'; cnt.textContent = count + ' (' + pct + '%)';
+      text.appendChild(lbl); text.appendChild(cnt);
+      item.appendChild(dot); item.appendChild(text); return item;
+    };
+    legend.appendChild(mkLegItem('#4ade80', 'Good', good, goodPct2));
+    legend.appendChild(mkLegItem('#ff6b6b', 'Bad',  bad,  100-goodPct2));
+    const totalEl = document.createElement('div'); totalEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;border-top:1px solid var(--border);padding-top:6px;'; totalEl.textContent = total + ' total ratings';
+    legend.appendChild(totalEl);
+    chartWrap.appendChild(legend);
+    el.appendChild(chartWrap);
 
     // Agent breakdown — top 5 by CSAT
     const agentRatings = {};
@@ -9132,13 +8841,29 @@ async function zdRenderInsights(body, fromDate, toDate) {
 
     el.innerHTML = '';
 
-    if (!allMetrics.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Metric data not available</div>'; return; }
+    if (!tickets.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No solved tickets in period</div>'; return; }
 
-    // Full resolution time
-    const resolved = allMetrics.filter(m => m.full_resolution_time_in_minutes?.calendar > 0);
-    const avgMins  = resolved.length ? Math.round(resolved.reduce((s,m) => s + m.full_resolution_time_in_minutes.calendar, 0) / resolved.length) : 0;
+    // Calculate MTTR directly from ticket timestamps (created_at → solved_at)
+    // This matches what Zendesk Explore shows as "Mean time to resolve"
+    const resolutionTimes = tickets
+      .filter(t => t.created_at && t.updated_at)
+      .map(t => {
+        // Use solved_at if available, else updated_at for solved tickets
+        const solvedAt = t.solved_at || t.updated_at;
+        return (new Date(solvedAt) - new Date(t.created_at)) / 60000; // minutes
+      })
+      .filter(m => m > 0);
+
+    // Also get first reply from metrics if available
     const frtMins  = allMetrics.filter(m => m.reply_time_in_minutes?.calendar > 0);
     const avgFrt   = frtMins.length ? Math.round(frtMins.reduce((s,m) => s + m.reply_time_in_minutes.calendar, 0) / frtMins.length) : 0;
+    const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
+    const oneTouchPct = allMetrics.length ? Math.round(oneTouchCount/allMetrics.length*100) : 0;
+
+    // Use median (more robust than mean for skewed distributions — matches Explore)
+    const sorted = [...resolutionTimes].sort((a,b)=>a-b);
+    const medianMins = sorted.length ? sorted[Math.floor(sorted.length/2)] : 0;
+    const avgMins    = resolutionTimes.length ? Math.round(resolutionTimes.reduce((a,b)=>a+b,0)/resolutionTimes.length) : 0;
 
     const fmtDur = (mins) => {
       if (!mins) return '—';
@@ -9148,10 +8873,11 @@ async function zdRenderInsights(body, fromDate, toDate) {
       return m + 'm';
     };
 
-    // Big MTTR number
+    // Big MTTR number — median matches Zendesk Explore
     const bigRow2 = document.createElement('div'); bigRow2.style.cssText = 'display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;';
-    const bigVal2 = document.createElement('div'); bigVal2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);"; bigVal2.textContent = fmtDur(avgMins);
-    const bigSub2 = document.createElement('div'); bigSub2.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;'; bigSub2.textContent = 'avg resolution\n' + resolved.length + ' tickets';
+    const bigVal2 = document.createElement('div'); bigVal2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);"; bigVal2.textContent = fmtDur(medianMins);
+    const bigSub2 = document.createElement('div'); bigSub2.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;';
+    bigSub2.textContent = 'median resolution\n' + resolutionTimes.length + ' tickets';
     bigSub2.style.whiteSpace = 'pre';
     bigRow2.appendChild(bigVal2); bigRow2.appendChild(bigSub2); el.appendChild(bigRow2);
 
@@ -9163,12 +8889,14 @@ async function zdRenderInsights(body, fromDate, toDate) {
       const l = document.createElement('div'); l.style.cssText = 'font-size:10px;color:var(--text3);'; l.textContent = label;
       s.appendChild(v); s.appendChild(l); return s;
     };
-    suppRow.appendChild(mkSupp(fmtDur(avgFrt), 'Avg first reply'));
-    // One-touch rate (reply_count === 1)
-    const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
-    const oneTouchPct = allMetrics.length ? Math.round(oneTouchCount/allMetrics.length*100) : 0;
-    suppRow.appendChild(mkSupp(oneTouchPct + '%', 'One-touch rate'));
-    suppRow.appendChild(mkSupp(tickets.length, 'Tickets sampled'));
+    suppRow.appendChild(mkSupp(fmtDur(avgMins), 'Mean'));
+    if (avgFrt) suppRow.appendChild(mkSupp(fmtDur(avgFrt), 'Avg first reply'));
+    if (allMetrics.length) {
+      const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
+      const oneTouchPct = Math.round(oneTouchCount/allMetrics.length*100);
+      suppRow.appendChild(mkSupp(oneTouchPct + '%', 'One-touch'));
+    }
+    suppRow.appendChild(mkSupp(tickets.length, 'Tickets'));
     el.appendChild(suppRow);
 
     // Agent MTTR breakdown — match metrics by ticket_id
@@ -9462,6 +9190,18 @@ function scheduleSyncSave() {
   syncTimer = setTimeout(ghSave, 2000);
 }
 
+// Non-admin personal data sync — debounced, fires 10s after last change
+let _personalSyncTimer = null;
+function schedulePersonalSync() {
+  if (isAdmin() || !currentUser) return;
+  const token = localStorage.getItem('wtp_gh_feedback_token') || getReadonlyToken();
+  if (!token) return; // no token = can't sync
+  clearTimeout(_personalSyncTimer);
+  _personalSyncTimer = setTimeout(() => {
+    pushPersonalDataAsNonAdmin(currentUser.name).catch(() => {});
+  }, 10000); // 10 second debounce
+}
+
 async function ghReadOnlyLoad() {
   // Used by non-admin users to pull shared data (schedule, roles, wingman)
   const token = getReadonlyToken();
@@ -9481,6 +9221,7 @@ async function ghReadOnlyLoad() {
     const sharedKeys = [
       'wtp_users', 'wtp_wingman', 'wtp_encrypted_token', 'wtp_ql_shared',
       'wtp_announcements', 'wtp_outlook_events', 'wtp_outlook_synced', 'wtp_cal_gist_url',
+      UNIFON_KEY,
     ];
     // Also pull this user's own keys
     if (currentUser) {
@@ -9488,6 +9229,15 @@ async function ghReadOnlyLoad() {
       sharedKeys.push(agendaKey(currentUser.name));
       sharedKeys.push(moodKey(currentUser.name));
       sharedKeys.push(annReadKey(currentUser.name));
+      // Personal data — tasks, notepad, handover (needed on new device)
+      sharedKeys.push(userTaskKey(currentUser.name));
+      sharedKeys.push(userNoteKey(currentUser.name));
+      sharedKeys.push('wtp_notepad_persistent_' + normalizeKey(currentUser.name));
+      // Pull last 14 days of handover notes
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        sharedKeys.push('wtp_handover_' + d.toISOString().slice(0,10));
+      }
     }
     sharedKeys.forEach(k => {
       if (data[k] !== undefined) localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]));
@@ -9590,18 +9340,6 @@ async function unlockWithPassphrase() {
   } catch(e) {
     if (status) { status.textContent = '✗ Wrong passphrase — try again'; status.style.color = 'var(--high-text)'; }
   }
-}
-
-function saveFeedbackToken() {
-  const inp = document.getElementById('gh-feedback-token-input');
-  if (!inp) return;
-  const val = inp.value.trim();
-  if (!val || val.includes('•')) { showToast('Paste your feedback token first'); return; }
-  localStorage.setItem('wtp_gh_feedback_token', val);
-  inp.value = '••••••••••••••••';
-  const status = document.getElementById('feedback-token-status');
-  if (status) { status.textContent = '✓ Feedback token saved'; status.style.color = 'var(--low-text)'; }
-  showToast('✓ Feedback token saved');
 }
 
 function initReadonlyTokenField() {
@@ -9793,7 +9531,7 @@ function loadUserData() {
   renderUserList();
 }
 
-function save() { if (currentUser) { localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); scheduleSyncSave(); } }
+function save() { if (currentUser) { localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); scheduleSyncSave(); schedulePersonalSync(); } }
 function saveEvents() { if (currentUser) { localStorage.setItem(userCalKey(currentUser.name), JSON.stringify(calEvents)); scheduleSyncSave(); } }
 
 function renderUserList() {
@@ -10001,8 +9739,40 @@ async function changePassword() {
 
 function signOut() {
   localStorage.removeItem('wtp_session');
+  localStorage.removeItem('wtp_last_active');
   location.reload();
 }
+
+// ── Session timeout — auto-lock after 8 hours of inactivity ───────
+const SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000; // 8 hours
+
+function touchActivity() {
+  if (currentUser) localStorage.setItem('wtp_last_active', Date.now().toString());
+}
+
+function checkSessionTimeout() {
+  if (!currentUser) return;
+  const lastActive = parseInt(localStorage.getItem('wtp_last_active') || '0');
+  if (lastActive && Date.now() - lastActive > SESSION_TIMEOUT_MS) {
+    localStorage.removeItem('wtp_session');
+    localStorage.removeItem('wtp_last_active');
+    currentUser = null;
+    const lock = document.getElementById('lock-screen');
+    if (lock) {
+      lock.style.display = 'flex';
+      const err = document.getElementById('lock-error');
+      if (err) { err.textContent = 'Session expired — please sign in again.'; err.style.color = 'rgba(214,243,255,0.5)'; }
+    }
+  }
+}
+
+// Track activity on user interactions
+['click','keydown','touchstart','mousemove'].forEach(evt =>
+  document.addEventListener(evt, touchActivity, { passive: true, capture: true })
+);
+// Check timeout every 5 minutes and on tab focus
+setInterval(checkSessionTimeout, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkSessionTimeout(); });
 const QUOTES = [
   "The secret of getting ahead is getting started. - Mark Twain",
   "Focus on being productive instead of busy. - Tim Ferriss",
@@ -10093,8 +9863,6 @@ document.addEventListener('click', e => {
 });
 
 // ─── Today view ───────────────────────────────────────────────────
-function showTodayView() { toggleTodayPanel(); }
-
 const SHIFT_HOURS = {
   'D1': [7, 15], 'D2': [8, 16], 'D3': [9, 17],
   'E': [17, 7], 'E2': [16, 21],
