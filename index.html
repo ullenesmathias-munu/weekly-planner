@@ -9016,7 +9016,11 @@ async function zdRenderInsights(body, fromDate, toDate) {
 
   // ── Fetch CSAT ────────────────────────────────────────────────
   const fromTs = Math.floor(new Date(fromDate + 'T00:00:00').getTime() / 1000);
-  const toTs   = Math.floor(new Date(toDate   + 'T23:59:59').getTime() / 1000);
+  // Cap toTs at 1 hour ago — Zendesk rejects end times that are too recent
+  const toTs = Math.min(
+    Math.floor(new Date(toDate + 'T23:59:59').getTime() / 1000),
+    Math.floor(Date.now() / 1000) - 3600
+  );
 
   zdFetch(`/satisfaction_ratings.json?start_time=${fromTs}&end_time=${toTs}&per_page=100`).then(r => {
     const el = document.getElementById('zd-csat-body'); if (!el) return;
@@ -9094,15 +9098,36 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const tickets = r.results || [];
     if (!tickets.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No solved tickets in period</div>'; return; }
 
-    // Fetch metrics in batches of 25
+    // Fetch metrics via ticket_metrics endpoint — more reliable than show_many include
     const ids = tickets.map(t => t.id);
     let allMetrics = [];
+    // Use the bulk metrics endpoint
     for (let i = 0; i < Math.min(ids.length, 75); i += 25) {
       try {
         const batch = ids.slice(i, i+25);
-        const mr = await zdFetch('/tickets/show_many.json?ids=' + batch.join(',') + '&include=metric_sets');
-        (mr.tickets || []).forEach(t => { if (t.metric_sets) allMetrics.push(t.metric_sets); });
-      } catch(e) {}
+        // Try bulk first
+        const mr = await zdFetch('/ticket_metrics.json?ticket_ids=' + batch.join(','));
+        if (mr.ticket_metrics?.length) {
+          allMetrics = allMetrics.concat(mr.ticket_metrics);
+        } else {
+          // Fallback: fetch individually for this batch
+          for (const id of batch) {
+            try {
+              const tm = await zdFetch(`/tickets/${id}/metrics.json`);
+              if (tm.ticket_metric) allMetrics.push(tm.ticket_metric);
+            } catch(e2) {}
+          }
+        }
+      } catch(e) {
+        // Fallback per-ticket for this batch
+        const batch = ids.slice(i, i+25);
+        for (const id of batch) {
+          try {
+            const tm = await zdFetch(`/tickets/${id}/metrics.json`);
+            if (tm.ticket_metric) allMetrics.push(tm.ticket_metric);
+          } catch(e2) {}
+        }
+      }
     }
 
     el.innerHTML = '';
@@ -9140,16 +9165,18 @@ async function zdRenderInsights(body, fromDate, toDate) {
     };
     suppRow.appendChild(mkSupp(fmtDur(avgFrt), 'Avg first reply'));
     // One-touch rate (reply_count === 1)
-    const oneTouchCount = allMetrics.filter(m => m.replies === 1 || m.reply_count === 1).length;
+    const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
     const oneTouchPct = allMetrics.length ? Math.round(oneTouchCount/allMetrics.length*100) : 0;
     suppRow.appendChild(mkSupp(oneTouchPct + '%', 'One-touch rate'));
     suppRow.appendChild(mkSupp(tickets.length, 'Tickets sampled'));
     el.appendChild(suppRow);
 
-    // Agent MTTR breakdown
+    // Agent MTTR breakdown — match metrics by ticket_id
+    const metricsById = {};
+    allMetrics.forEach(m => { if (m.ticket_id) metricsById[m.ticket_id] = m; });
     const agentMetrics = {};
-    tickets.forEach((t, i) => {
-      const m = allMetrics[i]; if (!m) return;
+    tickets.forEach(t => {
+      const m = metricsById[t.id]; if (!m) return;
       const aid = t.assignee_id; if (!aid) return;
       if (!agentMetrics[aid]) agentMetrics[aid] = { total: 0, count: 0 };
       if (m.full_resolution_time_in_minutes?.calendar > 0) {
