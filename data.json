@@ -658,7 +658,8 @@
       "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
       "isAdmin": false,
       "privileges": [
-        "zendesk"
+        "zendesk",
+        "manager_view"
       ]
     },
     {
@@ -666,6 +667,16 @@
       "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
       "isAdmin": false,
       "displayName": "Vetle"
+    },
+    {
+      "name": "Dashboard",
+      "displayName": "TV Dashboard",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk"
+      ],
+      "tvOnly": true
     }
   ],
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
@@ -683,26 +694,6 @@
     "focus": "",
     "_open": true
   },
-  "wtp_tasks_michael": [
-    {
-      "id": "1777319031387",
-      "day": "Monday",
-      "title": "testing",
-      "priority": "medium",
-      "due": "27 Apr",
-      "note": "test",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "09:45",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-04-26",
-      "done": false
-    }
-  ],
   "wtp_profile_bernadett": {
     "log": [],
     "goals": [],
