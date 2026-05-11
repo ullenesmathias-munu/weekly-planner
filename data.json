@@ -694,6 +694,26 @@
     "focus": "",
     "_open": true
   },
+  "wtp_tasks_michael": [
+    {
+      "id": "1777319031387",
+      "day": "Monday",
+      "title": "testing",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "test",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "09:45",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    }
+  ],
   "wtp_profile_bernadett": {
     "log": [],
     "goals": [],
