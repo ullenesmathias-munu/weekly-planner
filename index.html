@@ -5104,14 +5104,31 @@ function renderAdminDashboard(root, viewerMode=false) {
   const barFillEl=document.createElement('div');barFillEl.style.cssText=`height:100%;border-radius:3px;width:${staffPct}%;background:${staffPct<60?'var(--high-text)':staffPct<80?'var(--med-text)':'var(--low-text)'};transition:width 0.8s;`;
   barBgEl.appendChild(barFillEl);barWrapEl.appendChild(barLabelEl);barWrapEl.appendChild(barBgEl);
   staffSec.appendChild(barWrapEl);
-  // Role breakdown
-  const roleCount={};
-  inToday.forEach(p=>{if(di>=0){const r=p.roles[di]||'Unassigned';roleCount[r]=(roleCount[r]||0)+1;}});
-  Object.entries(roleCount).forEach(([role,count])=>{
-    const row=document.createElement('div');row.className='db-row';
-    const nm=document.createElement('div');nm.className='db-row-label';nm.style.color=roleColors[role]||'var(--text3)';nm.textContent=role;
-    const ct=document.createElement('div');ct.className='db-row-meta';ct.textContent=count+(count===1?' agent':' agents');
-    row.appendChild(nm);row.appendChild(ct);staffSec.appendChild(row);
+  // Role breakdown — collect names per role
+  const roleCount={}, roleNames={};
+  inToday.forEach(p=>{
+    if(di<0) return;
+    const r=p.roles[di]||'Unassigned';
+    roleCount[r]=(roleCount[r]||0)+1;
+    if(!roleNames[r]) roleNames[r]=[];
+    roleNames[r].push(p.name.split(' ')[0]);
+  });
+  const roleOrder=['Phone Guru','Inbox Champion','SLA Sherpa','Unassigned','Freelancer'];
+  const sortedRoles=Object.keys(roleCount).sort((a,b)=>roleOrder.indexOf(a)-roleOrder.indexOf(b));
+  sortedRoles.forEach(role=>{
+    const count=roleCount[role];
+    const names=roleNames[role]||[];
+    const showNames=role!=='Freelancer';
+    const row=document.createElement('div');row.className='db-row';row.style.alignItems='flex-start';
+    const left=document.createElement('div');left.style.cssText='display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;';
+    const roleEl=document.createElement('div');roleEl.className='db-row-label';roleEl.style.color=roleColors[role]||'var(--text3)';roleEl.textContent=role;
+    left.appendChild(roleEl);
+    if(showNames&&names.length){
+      const namesEl=document.createElement('div');namesEl.style.cssText='font-size:10px;color:var(--text3);font-weight:500;';namesEl.textContent=names.join(', ');
+      left.appendChild(namesEl);
+    }
+    const ct=document.createElement('div');ct.className='db-row-meta';ct.style.paddingTop='1px';ct.textContent=count+(count===1?' agent':' agents');
+    row.appendChild(left);row.appendChild(ct);staffSec.appendChild(row);
   });
   // Tickets per agent — async
   const tpaRow=document.createElement('div');tpaRow.className='db-row';tpaRow.id='db-tpa-row2';
@@ -5132,12 +5149,12 @@ function renderAdminDashboard(root, viewerMode=false) {
   // ── COL 5: Team health + Pulse + Handover ────────────────────
   const col5=document.createElement('div'); col5.className='db-col';
 
-  const healthSec=dbSection('Team health','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+  const healthSec=dbSection('Team health',viewerMode?null:'My Team',viewerMode?null:()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
   let hasRag=false;
   MY_TEAM.forEach(name=>{
     const profile=loadProfile(name);if(!profile.rag||profile.rag==='none')return;hasRag=true;
-    const row=document.createElement('div');row.className='db-row';row.style.cursor='pointer';
-    row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));
+    const row=document.createElement('div');row.className='db-row';
+    if(!viewerMode){row.style.cursor='pointer';row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));}
     const n=document.createElement('div');n.className='db-row-label';n.textContent=name;
     const sparkWrap=document.createElement('div');sparkWrap.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
     const moodHistory=loadMoodHistory(name.toLowerCase())||loadMoodHistory(getUsers().find(u=>getScheduleName(u)===name||getUserDisplayName(u)===name)?.name||'');
@@ -8099,6 +8116,8 @@ async function zdRunDiagnostics() {
   if (bestUnassigned) {
     logOk('Unassigned: use → ' + bestUnassigned);
     localStorage.setItem('wtp_zd_unass_query', bestUnassigned);
+    // Also store the group ID for direct use
+    if (gId) localStorage.setItem('wtp_zd_group_id', gId);
   } else {
     logWarn('Unassigned: all query formats returned 0 — verify in Zendesk UI that unassigned tickets exist');
     localStorage.removeItem('wtp_zd_unass_query');
@@ -8370,6 +8389,33 @@ async function renderTvView() {
   lastUpdated.textContent = 'Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   content.appendChild(lastUpdated);
 }
+// ─── SLA time-based calculation (used by SLA Risk section) ───────
+// Targets from your Zendesk config:
+//   Incidents: FRT Urgent 2h, High 4h, Normal 9h, Low 36h
+//   Requests:  FRT Urgent 18h, High 27h, Normal 36h, Low 54h
+const SLA_TARGETS_H = {
+  incident: { urgent: 2,  high: 4,  normal: 9,  low: 36 },
+  request:  { urgent: 18, high: 27, normal: 36, low: 54 },
+};
+function zdCalcSlaBreached(ticket) {
+  const type = (ticket.type || 'request').toLowerCase();
+  const pri  = (ticket.priority || 'normal').toLowerCase();
+  const targets = SLA_TARGETS_H[type] || SLA_TARGETS_H.request;
+  const targetHours = targets[pri] || targets.normal;
+  const created = new Date(ticket.created_at);
+  const deadline = new Date(created.getTime() + targetHours * 3600000);
+  const now = new Date();
+  const overByMs = now - deadline;
+  return { breached: overByMs > 0, deadline, overByMs, targetHours };
+}
+function zdFormatOverBy(ms) {
+  if (ms <= 0) return '';
+  const mins = Math.floor(ms/60000), hrs = Math.floor(mins/60), days = Math.floor(hrs/24);
+  if (days > 0) return days + 'd ' + (hrs%24) + 'h over';
+  if (hrs > 0)  return hrs + 'h ' + (mins%60) + 'm over';
+  return mins + 'm over';
+}
+
 async function zdRefresh() {
   if (!hasPrivilege('zendesk')) return;
   if (!zdReady()) { zdShowSetup(); return; }
@@ -8672,7 +8718,7 @@ function zdRender(agents, fromDate, toDate) {
 
   const chartWrap = document.createElement('div'); chartWrap.className = 'zd-chart-wrap';
   const chartTitle = document.createElement('div'); chartTitle.className = 'zd-chart-title';
-  chartTitle.textContent = 'Tickets solved per agent - ' + fromFmt + ' to ' + toFmt;
+  chartTitle.textContent = 'Tickets solved per agent — ' + fromFmt + ' to ' + toFmt + '  ·  Queue counts are live (all time)';
   chartWrap.appendChild(chartTitle);
 
   const chart = document.createElement('div'); chart.className = 'zd-chart';
@@ -8795,13 +8841,21 @@ function zdRender(agents, fromDate, toDate) {
         })(),
         ratio: true
       }] : []),
-      null,
-      { dot: 'var(--high-text)', label: 'Open',      val: d.open||0 },
-      { dot: 'var(--med-text)',  label: 'Pending',   val: d.pending||0 },
-      { dot: 'var(--text3)',     label: 'On hold',   val: d.onhold||0 },
+      { dividerLabel: 'Live queue' },
+      { dot: 'var(--high-text)', label: 'Open now',      val: d.open||0 },
+      { dot: 'var(--med-text)',  label: 'Pending now',   val: d.pending||0 },
+      { dot: 'var(--text3)',     label: 'On hold now',   val: d.onhold||0 },
     ];
     rows.forEach(r => {
       if (!r) { const div2 = document.createElement('div'); div2.className = 'zd-divider'; bdy.appendChild(div2); return; }
+      if (r.dividerLabel) {
+        const div2 = document.createElement('div'); div2.className = 'zd-divider';
+        const lbl2 = document.createElement('span'); lbl2.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);background:var(--surface);padding:0 6px;';
+        lbl2.textContent = r.dividerLabel;
+        div2.style.cssText = 'position:relative;display:flex;align-items:center;justify-content:center;';
+        div2.appendChild(lbl2);
+        bdy.appendChild(div2); return;
+      }
       const row = document.createElement('div'); row.className = 'zd-stat-row';
       if (r.ratio) row.style.opacity = '0.6';
       const lbl = document.createElement('div'); lbl.className = 'zd-stat-label';
