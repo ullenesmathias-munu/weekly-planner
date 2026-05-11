@@ -4085,6 +4085,22 @@ function getUnifonWeek() {
   return loadUnifonData().filter(d=>d.date>=mon&&d.date<=sun.toISOString().slice(0,10));
 }
 
+function getUnifonWeekByDays(weekendOnly) {
+  // weekendOnly=true → Sat+Sun, false → Mon–Fri
+  const mon = getMonday(0);
+  const entries = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(mon.getDate()+i);
+    const dow = d.getDay(); // 0=Sun,6=Sat
+    const isWeekend = dow === 0 || dow === 6;
+    if (isWeekend !== weekendOnly) continue;
+    const dStr = d.toISOString().slice(0,10);
+    const entry = loadUnifonData().find(e => e.date === dStr);
+    if (entry) entries.push(entry);
+  }
+  return entries;
+}
+
 function renderUnifonPanel(container) {
   container.innerHTML='';
   const card=document.createElement('div'); card.className='unifon-card';
@@ -4866,44 +4882,162 @@ function renderAdminDashboard(root, viewerMode=false) {
   const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
 
   // Queue status — open/pending/hold/solved in a clean grid
-  const queueSec=dbSection('Queue status','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
-  const queueGrid=document.createElement('div'); queueGrid.id='db-queue-grid';
-  queueGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;';
+  // ── Queue status + Unifon — with Mon–Fri / Weekend split ─────
+  const isWeekend = [0,6].includes(new Date().getDay());
+  let queuePeriod = isWeekend ? 'weekend' : 'weekday'; // default to current context
+
+  const queueSec=dbSection('Queue & calls','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+
+  // Period toggle
+  const periodToggle=document.createElement('div');periodToggle.style.cssText='display:flex;gap:4px;margin-bottom:12px;';
+  const mkToggleBtn=(label,active)=>{
+    const b=document.createElement('button');
+    b.style.cssText=`font-family:inherit;font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--radius-md);cursor:pointer;border:1px solid;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.06em;${active?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);'}`;
+    b.textContent=label; return b;
+  };
+  const wdBtn=mkToggleBtn('Mon–Fri', queuePeriod==='weekday');
+  const weBtn=mkToggleBtn('Sat–Sun', queuePeriod==='weekend');
+  periodToggle.appendChild(wdBtn); periodToggle.appendChild(weBtn);
+  queueSec.appendChild(periodToggle);
+
+  // Two panel containers
+  const wdPanel=document.createElement('div');
+  const wePanel=document.createElement('div'); wePanel.style.display='none';
+  queueSec.appendChild(wdPanel); queueSec.appendChild(wePanel);
+
+  const setQueuePeriod=(p)=>{
+    queuePeriod=p;
+    wdPanel.style.display=p==='weekday'?'':'none';
+    wePanel.style.display=p==='weekend'?'':'none';
+    wdBtn.style.cssText=wdBtn.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+(p==='weekday'?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);');
+    weBtn.style.cssText=weBtn.style.cssText.replace(/background:[^;]+;color:[^;]+;border-color:[^;]+;/,'')+(p==='weekend'?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:none;color:var(--text3);border-color:var(--border);');
+  };
+  wdBtn.onclick=()=>setQueuePeriod('weekday');
+  weBtn.onclick=()=>setQueuePeriod('weekend');
+
   const mkQStat=(id,label,color)=>{
     const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';
     const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';
     const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;
     cell.appendChild(val);cell.appendChild(lbl);return cell;
   };
-  queueGrid.appendChild(mkQStat('db-q-open',   'Open',      'var(--high-text)'));
-  queueGrid.appendChild(mkQStat('db-q-pending', 'Pending',   'var(--med-text)'));
-  queueGrid.appendChild(mkQStat('db-q-solved',  'Solved today','var(--low-text)'));
 
-  queueSec.appendChild(queueGrid);
+  // ── Weekday panel ─────────────────────────────────────────────
+  const wdQGrid=document.createElement('div');wdQGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
+  wdQGrid.appendChild(mkQStat('db-q-open',   'Open',         'var(--high-text)'));
+  wdQGrid.appendChild(mkQStat('db-q-pending','Pending',      'var(--med-text)'));
+  wdQGrid.appendChild(mkQStat('db-q-solved', 'Solved today', 'var(--low-text)'));
+  wdQGrid.appendChild(mkQStat('db-q-hold',   'On hold',      'var(--text2)'));
+  wdPanel.appendChild(wdQGrid);
+
+  // Weekday Unifon
+  const wdUnifon=getUnifonWeekByDays(false); // Mon-Fri only
+  if(wdUnifon.length){
+    const wdDiv=document.createElement('div');wdDiv.style.cssText='border-top:1px solid var(--border);padding-top:10px;margin-top:2px;';
+    const wdULbl=document.createElement('div');wdULbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';wdULbl.textContent='Unifon calls';
+    wdDiv.appendChild(wdULbl);
+    const wdUGrid=document.createElement('div');wdUGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;';
+    const uOff=wdUnifon.reduce((s,d)=>s+(d.offered||0),0);
+    const uAns=wdUnifon.reduce((s,d)=>s+(d.answered||0),0);
+    const uMis=wdUnifon.reduce((s,d)=>s+(d.missed||0),0);
+    const uPct=uOff>0?Math.round(uMis/uOff*100):0;
+    const mkUC=(v,l,c)=>{const cel=document.createElement('div');cel.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const vv=document.createElement('div');vv.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${c||'var(--text)'};`;vv.textContent=v;const ll=document.createElement('div');ll.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';ll.textContent=l;cel.appendChild(vv);cel.appendChild(ll);return cel;};
+    wdUGrid.appendChild(mkUC(uOff,'Offered','var(--text)'));
+    wdUGrid.appendChild(mkUC(uAns,'Answered','var(--low-text)'));
+    wdUGrid.appendChild(mkUC(uMis,'Missed',uMis>0?'var(--high-text)':'var(--text3)'));
+    wdUGrid.appendChild(mkUC(uPct+'%','Miss rate',uPct>15?'var(--high-text)':uPct>8?'var(--med-text)':'var(--text3)'));
+    wdDiv.appendChild(wdUGrid);
+    wdPanel.appendChild(wdDiv);
+  } else if(!getUnifonWeek().length) {
+    // No data at all — show log prompt
+    const noData=document.createElement('div');noData.style.cssText='border-top:1px solid var(--border);padding-top:10px;margin-top:2px;';
+    const noLbl=document.createElement('div');noLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;';noLbl.textContent='Unifon calls';
+    noData.appendChild(noLbl);
+    const noMsg=document.createElement('div');noMsg.className='db-empty';noMsg.innerHTML='No data. <a href="#" onclick="switchTab(\'settings\',null);return false;" style="color:var(--cal-text);font-weight:600;text-decoration:none;">Log calls →</a>';
+    noData.appendChild(noMsg);wdPanel.appendChild(noData);
+  }
+
+  // ── Weekend panel ─────────────────────────────────────────────
+  const weNote=document.createElement('div');weNote.style.cssText='font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5;';weNote.textContent='Weekend staffing: 2 agents on duty.';
+  wePanel.appendChild(weNote);
+
+  const weQGrid=document.createElement('div');weQGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
+  weQGrid.appendChild(mkQStat('db-q-we-solved','Solved (Sat–Sun)','var(--low-text)'));
+  weQGrid.appendChild(mkQStat('db-q-we-open',  'Open now',        'var(--high-text)'));
+  wePanel.appendChild(weQGrid);
+
+  // Weekend staffing from schedule — reuse mon already declared above
+  const weStaff=[];
+  [5,6].forEach(i=>{
+    const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const dStr=d.toISOString().slice(0,10);
+    const OFF2=new Set(['so','h','os','abs','ol','']);
+    const week2=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
+    if(week2){
+      const idx2=week2.dates.indexOf(dStr);
+      const present=week2.people.filter(p=>MY_TEAM.includes(p.name)&&idx2>=0&&!OFF2.has((p.shifts[idx2]||'').toLowerCase()));
+      weStaff.push({day:['Saturday','Sunday'][i-5],date:dStr,people:present});
+    }
+  });
+  weStaff.forEach(({day,people})=>{
+    const row=document.createElement('div');row.className='db-row';
+    const lbl=document.createElement('div');lbl.className='db-row-label';lbl.textContent=day;
+    const val=document.createElement('div');val.className='db-row-meta';
+    val.textContent=people.length?people.map(p=>p.name.split(' ')[0]).join(', '):'No one scheduled';
+    val.style.color=people.length===0?'var(--high-text)':'var(--text2)';
+    row.appendChild(lbl);row.appendChild(val);wePanel.appendChild(row);
+  });
+
+  // Weekend Unifon
+  const weUnifon=getUnifonWeekByDays(true); // Sat-Sun only
+  if(weUnifon.length){
+    const weDiv=document.createElement('div');weDiv.style.cssText='border-top:1px solid var(--border);padding-top:10px;margin-top:8px;';
+    const weULbl=document.createElement('div');weULbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';weULbl.textContent='Unifon calls';
+    weDiv.appendChild(weULbl);
+    const weUGrid=document.createElement('div');weUGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;';
+    const wuOff=weUnifon.reduce((s,d)=>s+(d.offered||0),0);
+    const wuAns=weUnifon.reduce((s,d)=>s+(d.answered||0),0);
+    const wuMis=weUnifon.reduce((s,d)=>s+(d.missed||0),0);
+    const wuPct=wuOff>0?Math.round(wuMis/wuOff*100):0;
+    const mkUC2=(v,l,c)=>{const cel=document.createElement('div');cel.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const vv=document.createElement('div');vv.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${c||'var(--text)'};`;vv.textContent=v;const ll=document.createElement('div');ll.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';ll.textContent=l;cel.appendChild(vv);cel.appendChild(ll);return cel;};
+    weUGrid.appendChild(mkUC2(wuOff,'Offered','var(--text)'));
+    weUGrid.appendChild(mkUC2(wuAns,'Answered','var(--low-text)'));
+    weUGrid.appendChild(mkUC2(wuMis,'Missed',wuMis>0?'var(--high-text)':'var(--text3)'));
+    weUGrid.appendChild(mkUC2(wuPct+'%','Miss rate',wuPct>15?'var(--high-text)':wuPct>8?'var(--med-text)':'var(--text3)'));
+    weDiv.appendChild(weUGrid);
+    wePanel.appendChild(weDiv);
+  }
 
   col2.appendChild(queueSec);
 
+  // Fetch ZD data for both panels async
   if(zdReady()){
     const t=localToday();
-    const gf=zdGroupId?` group:${zdGroupId}`:'';
+    // Weekend date range (Sat-Sun of this week)
+    const sat=new Date(mon);sat.setDate(mon.getDate()+5);
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    const satStr=sat.toISOString().slice(0,10);
+    const sunStr=sun.toISOString().slice(0,10);
     Promise.all([
       zdCount('type:ticket status:open').catch(()=>'?'),
       zdCount('type:ticket status:pending').catch(()=>'?'),
       zdCount(`type:ticket status>=solved solved>=${t} solved<=${t}`).catch(()=>'?'),
-    ]).then(([open,pending,solved])=>{
+      zdCount('type:ticket status:hold').catch(()=>'?'),
+      zdCount(`type:ticket status>=solved solved>=${satStr} solved<=${sunStr}`).catch(()=>'?'),
+    ]).then(([open,pending,solved,hold,weSolved])=>{
       const setQ=(id,val,color)=>{const el=document.getElementById(id);if(el){el.textContent=val;if(color)el.style.color=color;}};
-      setQ('db-q-open',open,+open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
+      setQ('db-q-open',  open,   +open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
       setQ('db-q-pending',pending);
-      setQ('db-q-solved',solved,'var(--low-text)');
-
+      setQ('db-q-solved',solved, 'var(--low-text)');
+      setQ('db-q-hold',  hold);
+      setQ('db-q-we-solved', weSolved, 'var(--low-text)');
+      setQ('db-q-we-open',   open, +open>100?'var(--high-text)':+open>60?'var(--med-text)':'var(--low-text)');
     });
   } else {
-    ['db-q-open','db-q-pending','db-q-solved'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+    ['db-q-open','db-q-pending','db-q-solved','db-q-hold','db-q-we-solved','db-q-we-open'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
     const cfgEl=document.createElement('div');cfgEl.className='db-empty';cfgEl.innerHTML='<a href="#" onclick="switchTab(\'settings\',null);return false;" style="color:var(--cal-text);font-weight:600;text-decoration:none;">Configure Zendesk →</a>';
     queueSec.appendChild(cfgEl);
   }
-
-  // SLA risk — top 5 tickets approaching breach
   const slaSec=dbSection('SLA risk');
   const slaRiskEl=document.createElement('div');slaRiskEl.id='db-sla-risk2';slaRiskEl.innerHTML='<div class="db-empty">Loading…</div>';
   slaSec.appendChild(slaRiskEl);
@@ -4932,25 +5066,6 @@ function renderAdminDashboard(root, viewerMode=false) {
   } else {slaRiskEl.innerHTML='<div class="db-empty">ZD not configured</div>';}
   col2.appendChild(slaSec);
 
-  // Unifon calls — compact 2x2 stat grid, no labels bloating it
-  const uniWk=getUnifonWeek();
-  if(uniWk.length){
-    const unifonSec=dbSection('Unifon calls','Log',()=>switchTab('settings',document.querySelector('[onclick*="settings"]')));
-    const uGrid=document.createElement('div');uGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:6px;';
-    const uOffered=uniWk.reduce((s,d)=>s+(d.offered||0),0);
-    const uMissed=uniWk.reduce((s,d)=>s+(d.missed||0),0);
-    const uAnswered=uniWk.reduce((s,d)=>s+(d.answered||0),0);
-    const uPct=uOffered>0?Math.round(uMissed/uOffered*100):0;
-    const todayU=getUnifonToday();
-    const mkUCell=(val,lbl,color)=>{const c=document.createElement('div');c.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const v=document.createElement('div');v.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${color||'var(--text)'};`;v.textContent=val;const l=document.createElement('div');l.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';l.textContent=lbl;c.appendChild(v);c.appendChild(l);return c;};
-    uGrid.appendChild(mkUCell(uOffered,'Offered this wk','var(--text)'));
-    uGrid.appendChild(mkUCell(uAnswered,'Answered','var(--low-text)'));
-    uGrid.appendChild(mkUCell(uMissed,'Missed',uMissed>0?'var(--high-text)':'var(--text3)'));
-    uGrid.appendChild(mkUCell(uPct+'%','Miss rate',uPct>15?'var(--high-text)':uPct>8?'var(--med-text)':'var(--text3)'));
-    unifonSec.appendChild(uGrid);
-    if(todayU){const td=document.createElement('div');td.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';td.textContent='Today: '+todayU.offered+' offered, '+(todayU.missed||0)+' missed';unifonSec.appendChild(td);}
-    col2.appendChild(unifonSec);
-  }
   body.appendChild(col2);
 
   // ── COL 3: Notifications + Upcoming 1:1s ─────────────────────
@@ -8868,6 +8983,205 @@ function zdRender(agents, fromDate, toDate) {
     card.appendChild(bdy); grid.appendChild(card);
   });
   body.appendChild(grid);
+
+  // ── MTTR + CSAT row — below chart/summary, above agent grid ──
+  zdRenderInsights(body, fromDate, toDate);
+}
+
+async function zdRenderInsights(body, fromDate, toDate) {
+  if (!zdReady()) return;
+
+  const insightRow = document.createElement('div');
+  insightRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;';
+
+  // ── CSAT card ─────────────────────────────────────────────────
+  const csatCard = document.createElement('div');
+  csatCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;';
+  const csatTitle = document.createElement('div'); csatTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-bottom:12px;"; csatTitle.textContent = 'Customer satisfaction';
+  csatCard.appendChild(csatTitle);
+  const csatBody = document.createElement('div'); csatBody.id = 'zd-csat-body'; csatBody.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Loading…</div>';
+  csatCard.appendChild(csatBody);
+
+  // ── MTTR card ─────────────────────────────────────────────────
+  const mttrCard = document.createElement('div');
+  mttrCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;';
+  const mttrTitle = document.createElement('div'); mttrTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-bottom:12px;"; mttrTitle.textContent = 'Mean time to resolve';
+  mttrCard.appendChild(mttrTitle);
+  const mttrBody = document.createElement('div'); mttrBody.id = 'zd-mttr-body'; mttrBody.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Loading…</div>';
+  mttrCard.appendChild(mttrBody);
+
+  insightRow.appendChild(csatCard);
+  insightRow.appendChild(mttrCard);
+  body.insertBefore(insightRow, body.querySelector('.zd-agent-grid') || body.firstChild);
+
+  // ── Fetch CSAT ────────────────────────────────────────────────
+  const fromTs = Math.floor(new Date(fromDate + 'T00:00:00').getTime() / 1000);
+  const toTs   = Math.floor(new Date(toDate   + 'T23:59:59').getTime() / 1000);
+
+  zdFetch(`/satisfaction_ratings.json?start_time=${fromTs}&end_time=${toTs}&per_page=100`).then(r => {
+    const el = document.getElementById('zd-csat-body'); if (!el) return;
+    const ratings = r.satisfaction_ratings || [];
+    const good = ratings.filter(r2 => r2.score === 'good').length;
+    const bad  = ratings.filter(r2 => r2.score === 'bad').length;
+    const total = good + bad;
+    const goodPct = total > 0 ? Math.round(good / total * 100) : null;
+
+    el.innerHTML = '';
+    if (!total) {
+      el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No ratings for this period</div>';
+      return;
+    }
+
+    // Big CSAT number
+    const bigRow = document.createElement('div'); bigRow.style.cssText = 'display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;';
+    const bigVal = document.createElement('div'); bigVal.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:" + (goodPct>=90?'var(--low-text)':goodPct>=75?'var(--med-text)':'var(--high-text)') + ";"; bigVal.textContent = goodPct + '%';
+    const bigSub = document.createElement('div'); bigSub.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;'; bigSub.textContent = 'satisfaction\n' + total + ' ratings';
+    bigSub.style.whiteSpace = 'pre';
+    bigRow.appendChild(bigVal); bigRow.appendChild(bigSub); el.appendChild(bigRow);
+
+    // Donut bar
+    const barWrap = document.createElement('div'); barWrap.style.cssText = 'height:6px;background:var(--high-bg);border-radius:3px;overflow:hidden;margin-bottom:8px;';
+    const barFill = document.createElement('div'); barFill.style.cssText = 'height:100%;border-radius:3px;background:var(--low-text);width:0;transition:width 0.8s cubic-bezier(0.5,0,0,1);';
+    barWrap.appendChild(barFill); el.appendChild(barWrap);
+    setTimeout(() => { barFill.style.width = goodPct + '%'; }, 80);
+
+    // Good / Bad counts
+    const countRow = document.createElement('div'); countRow.style.cssText = 'display:flex;justify-content:space-between;';
+    const goodEl = document.createElement('div'); goodEl.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);';
+    goodEl.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:var(--low-text);display:inline-block;flex-shrink:0;"></span>' + good + ' good';
+    const badEl = document.createElement('div'); badEl.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);';
+    badEl.innerHTML = bad + ' bad <span style="width:8px;height:8px;border-radius:50%;background:var(--high-text);display:inline-block;flex-shrink:0;"></span>';
+    countRow.appendChild(goodEl); countRow.appendChild(badEl); el.appendChild(countRow);
+
+    // Agent breakdown — top 5 by CSAT
+    const agentRatings = {};
+    ratings.forEach(r2 => {
+      const aid = r2.assignee_id; if (!aid) return;
+      if (!agentRatings[aid]) agentRatings[aid] = { good: 0, bad: 0 };
+      if (r2.score === 'good') agentRatings[aid].good++;
+      else if (r2.score === 'bad') agentRatings[aid].bad++;
+    });
+    const agentList = Object.entries(agentRatings).map(([id, v]) => {
+      const agent = zdAgents.find(a => a.id === +id);
+      const t = v.good + v.bad;
+      return { name: agent?.name?.split(' ')[0] || '?', good: v.good, bad: v.bad, total: t, pct: t > 0 ? Math.round(v.good/t*100) : 0 };
+    }).filter(a => a.total >= 3).sort((a,b) => a.pct - b.pct); // lowest CSAT first
+
+    if (agentList.length) {
+      const sep = document.createElement('div'); sep.style.cssText = 'margin-top:12px;padding-top:10px;border-top:1px solid var(--border);';
+      const sepLbl = document.createElement('div'); sepLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; sepLbl.textContent = 'By agent';
+      sep.appendChild(sepLbl);
+      agentList.slice(0,5).forEach(a => {
+        const aRow = document.createElement('div'); aRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;';
+        const nm = document.createElement('div'); nm.style.cssText = 'font-size:11px;color:var(--text2);width:60px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'; nm.textContent = a.name;
+        const bg = document.createElement('div'); bg.style.cssText = 'flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;';
+        const fill = document.createElement('div'); fill.style.cssText = `height:100%;border-radius:2px;background:${a.pct>=90?'var(--low-text)':a.pct>=75?'var(--med-text)':'var(--high-text)'};width:0;transition:width 0.6s;`;
+        bg.appendChild(fill);
+        const pctEl = document.createElement('div'); pctEl.style.cssText = `font-size:10px;font-weight:700;color:${a.pct>=90?'var(--low-text)':a.pct>=75?'var(--med-text)':'var(--high-text)'};width:32px;text-align:right;flex-shrink:0;`; pctEl.textContent = a.pct + '%';
+        aRow.appendChild(nm); aRow.appendChild(bg); aRow.appendChild(pctEl); sep.appendChild(aRow);
+        setTimeout(() => { fill.style.width = a.pct + '%'; }, 150);
+      });
+      el.appendChild(sep);
+    }
+  }).catch(e => {
+    const el = document.getElementById('zd-csat-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
+  });
+
+  // ── Fetch MTTR ────────────────────────────────────────────────
+  // Get solved tickets for the period, then fetch their metrics in batches
+  zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`) + '&per_page=100&sort_by=solved_at&sort_order=desc').then(async r => {
+    const el = document.getElementById('zd-mttr-body'); if (!el) return;
+    const tickets = r.results || [];
+    if (!tickets.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No solved tickets in period</div>'; return; }
+
+    // Fetch metrics in batches of 25
+    const ids = tickets.map(t => t.id);
+    let allMetrics = [];
+    for (let i = 0; i < Math.min(ids.length, 75); i += 25) {
+      try {
+        const batch = ids.slice(i, i+25);
+        const mr = await zdFetch('/tickets/show_many.json?ids=' + batch.join(',') + '&include=metric_sets');
+        (mr.tickets || []).forEach(t => { if (t.metric_sets) allMetrics.push(t.metric_sets); });
+      } catch(e) {}
+    }
+
+    el.innerHTML = '';
+
+    if (!allMetrics.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Metric data not available</div>'; return; }
+
+    // Full resolution time
+    const resolved = allMetrics.filter(m => m.full_resolution_time_in_minutes?.calendar > 0);
+    const avgMins  = resolved.length ? Math.round(resolved.reduce((s,m) => s + m.full_resolution_time_in_minutes.calendar, 0) / resolved.length) : 0;
+    const frtMins  = allMetrics.filter(m => m.reply_time_in_minutes?.calendar > 0);
+    const avgFrt   = frtMins.length ? Math.round(frtMins.reduce((s,m) => s + m.reply_time_in_minutes.calendar, 0) / frtMins.length) : 0;
+
+    const fmtDur = (mins) => {
+      if (!mins) return '—';
+      const h = Math.floor(mins/60), m = mins%60, d = Math.floor(h/24);
+      if (d > 0) return d + 'd ' + (h%24) + 'h';
+      if (h > 0) return h + 'h ' + (m > 0 ? m + 'm' : '');
+      return m + 'm';
+    };
+
+    // Big MTTR number
+    const bigRow2 = document.createElement('div'); bigRow2.style.cssText = 'display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;';
+    const bigVal2 = document.createElement('div'); bigVal2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);"; bigVal2.textContent = fmtDur(avgMins);
+    const bigSub2 = document.createElement('div'); bigSub2.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;'; bigSub2.textContent = 'avg resolution\n' + resolved.length + ' tickets';
+    bigSub2.style.whiteSpace = 'pre';
+    bigRow2.appendChild(bigVal2); bigRow2.appendChild(bigSub2); el.appendChild(bigRow2);
+
+    // Supporting metrics
+    const suppRow = document.createElement('div'); suppRow.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;';
+    const mkSupp = (val, label) => {
+      const s = document.createElement('div'); s.style.cssText = 'display:flex;flex-direction:column;gap:1px;';
+      const v = document.createElement('div'); v.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.03em;"; v.textContent = val;
+      const l = document.createElement('div'); l.style.cssText = 'font-size:10px;color:var(--text3);'; l.textContent = label;
+      s.appendChild(v); s.appendChild(l); return s;
+    };
+    suppRow.appendChild(mkSupp(fmtDur(avgFrt), 'Avg first reply'));
+    // One-touch rate (reply_count === 1)
+    const oneTouchCount = allMetrics.filter(m => m.replies === 1 || m.reply_count === 1).length;
+    const oneTouchPct = allMetrics.length ? Math.round(oneTouchCount/allMetrics.length*100) : 0;
+    suppRow.appendChild(mkSupp(oneTouchPct + '%', 'One-touch rate'));
+    suppRow.appendChild(mkSupp(tickets.length, 'Tickets sampled'));
+    el.appendChild(suppRow);
+
+    // Agent MTTR breakdown
+    const agentMetrics = {};
+    tickets.forEach((t, i) => {
+      const m = allMetrics[i]; if (!m) return;
+      const aid = t.assignee_id; if (!aid) return;
+      if (!agentMetrics[aid]) agentMetrics[aid] = { total: 0, count: 0 };
+      if (m.full_resolution_time_in_minutes?.calendar > 0) {
+        agentMetrics[aid].total += m.full_resolution_time_in_minutes.calendar;
+        agentMetrics[aid].count++;
+      }
+    });
+    const agentMttrList = Object.entries(agentMetrics).filter(([,v]) => v.count >= 3).map(([id,v]) => {
+      const agent = zdAgents.find(a => a.id === +id);
+      return { name: agent?.name?.split(' ')[0] || '?', avg: Math.round(v.total/v.count), count: v.count };
+    }).sort((a,b) => a.avg - b.avg); // fastest first
+
+    if (agentMttrList.length) {
+      const maxAvg = Math.max(...agentMttrList.map(a => a.avg), 1);
+      const sep2 = document.createElement('div'); sep2.style.cssText = 'margin-top:4px;padding-top:10px;border-top:1px solid var(--border);';
+      const sepLbl2 = document.createElement('div'); sepLbl2.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; sepLbl2.textContent = 'By agent (fastest first)';
+      sep2.appendChild(sepLbl2);
+      agentMttrList.slice(0,5).forEach(a => {
+        const aRow = document.createElement('div'); aRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;';
+        const nm = document.createElement('div'); nm.style.cssText = 'font-size:11px;color:var(--text2);width:60px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'; nm.textContent = a.name;
+        const bg = document.createElement('div'); bg.style.cssText = 'flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;';
+        const fill = document.createElement('div'); fill.style.cssText = 'height:100%;border-radius:2px;background:var(--cal-text);width:0;transition:width 0.6s;';
+        bg.appendChild(fill);
+        const durEl = document.createElement('div'); durEl.style.cssText = 'font-size:10px;font-weight:600;color:var(--text2);width:40px;text-align:right;flex-shrink:0;'; durEl.textContent = fmtDur(a.avg);
+        aRow.appendChild(nm); aRow.appendChild(bg); aRow.appendChild(durEl); sep2.appendChild(aRow);
+        setTimeout(() => { fill.style.width = (a.avg / maxAvg * 100) + '%'; }, 150);
+      });
+      el.appendChild(sep2);
+    }
+  }).catch(e => {
+    const el = document.getElementById('zd-mttr-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
+  });
 }
 
 function zdShowSetup() {
