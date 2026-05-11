@@ -632,11 +632,11 @@
   "wtp_unifon_calls": [
     {
       "date": "2026-05-11",
-      "offered": 101,
-      "answered": 87,
-      "missed": 14,
+      "offered": 117,
+      "answered": 101,
+      "missed": 15,
       "avgWaitSec": 290,
-      "savedAt": "2026-05-11T14:57:13.020Z"
+      "savedAt": "2026-05-11T14:57:52.861Z"
     }
   ],
   "wtp_mood_vetle.bengtson@munu.cloud": [
