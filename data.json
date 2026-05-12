@@ -1,223 +1,24 @@
 {
-  "wtp_tasks_kate.rooke@munu.cloud": [
+  "wtp_fb_vetle.bengtson@munu.cloud": [
     {
-      "id": "1778342571989",
-      "day": "Wednesday",
-      "title": "Test",
-      "priority": "",
-      "due": "8 May",
-      "note": "Test",
-      "people": [
-        "Marie"
-      ],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-05-04",
-      "done": false
-    }
-  ],
-  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
-  "wtp_profile_bernadett": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_agenda_vetle.bengtson@munu.cloud": [
-    {
-      "id": "1778577610987",
-      "text": "Test",
-      "ts": "2026-05-12T09:20:10.987Z"
-    }
-  ],
-  "wtp_mood_vetle.bengtson@munu.cloud": [
-    {
-      "week": "2026-W19",
-      "emoji": "\ud83d\ude0a",
-      "ts": "2026-05-09T16:17:23.255Z"
-    }
-  ],
-  "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n01.Juni\nPiazza \n\n\n\n\n\n\n\n\n\n\n\n\n",
-  "wtp_users": [
-    {
-      "name": "Mathias",
-      "hash": "c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414",
-      "isAdmin": true
-    },
-    {
-      "name": "kate.rooke@munu.cloud",
-      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false,
-      "privileges": [
-        "zendesk",
-        "manager_view"
+      "id": "1778577613388",
+      "text": "Blahblah",
+      "ts": "2026-05-12T09:20:13.388Z",
+      "comments": [
+        {
+          "id": "1778577744364",
+          "text": "yo bro",
+          "ts": "2026-05-12T09:22:24.364Z"
+        },
+        {
+          "id": "1778577958094",
+          "text": "l\u00f8k",
+          "ts": "2026-05-12T09:25:58.094Z"
+        }
       ]
-    },
-    {
-      "name": "vetle.bengtson@munu.cloud",
-      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false,
-      "displayName": "Vetle"
-    },
-    {
-      "name": "Dashboard",
-      "displayName": "TV Dashboard",
-      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false,
-      "privileges": [
-        "zendesk"
-      ],
-      "tvOnly": true
     }
   ],
-  "wtp_profile_marie": {
-    "log": [
-      {
-        "tag": "win",
-        "text": "Has an amazing ability to be calm and make the customers feel calm.",
-        "ts": "2026-05-08T10:51:00.547Z"
-      }
-    ],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_handover_2026-05-12": {
-    "text": "What has been done: \n- SLA\n- Opening hours\n- Any ticket that could",
-    "author": "Mathias",
-    "ts": "2026-05-12T08:58:56.097Z"
-  },
-  "wtp_oto_mathias": {
-    "people": [
-      {
-        "name": "Jonas",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Thomas",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Maylen",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Bernadett",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Benjamin",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Cecilie",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Tord",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Marie",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Andreas",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Vetle",
-        "addedAt": "2026-05-04"
-      },
-      {
-        "name": "Julie",
-        "addedAt": "2026-05-04"
-      }
-    ],
-    "sessions": []
-  },
-  "wtp_fb_kate.rooke@munu.cloud": [],
-  "wtp_profile_andreas": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_notepad_persistent": "Test",
-  "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
-  "wtp_wingman": [
-    {
-      "dates": "27/4 - 28/4",
-      "days": "Mon-Tue",
-      "person": "Maylen",
-      "from": "2026-04-27",
-      "to": "2026-04-28"
-    },
-    {
-      "dates": "29/4 - 30/4",
-      "days": "Wed-Thu",
-      "person": "Benjamin",
-      "from": "2026-04-29",
-      "to": "2026-04-30"
-    },
-    {
-      "dates": "4/5 - 5/5",
-      "days": "Mon-Tue",
-      "person": "Cecilie",
-      "from": "2026-05-04",
-      "to": "2026-05-05"
-    },
-    {
-      "dates": "6/5 - 7/5",
-      "days": "Wed-Thu",
-      "person": "Marie",
-      "from": "2026-05-06",
-      "to": "2026-05-07"
-    },
-    {
-      "person": "Thomas",
-      "days": "Mon-Tue",
-      "dates": "11/5 - 12/5",
-      "from": "2026-05-11",
-      "to": "2026-05-12"
-    },
-    {
-      "person": "Andreas",
-      "days": "Mon-Tue",
-      "dates": "18/5 - 19/5",
-      "from": "2026-05-18",
-      "to": "2026-05-19"
-    },
-    {
-      "dates": "1/6 - 2/6",
-      "days": "Mon-Tue",
-      "person": "Jonas",
-      "from": "2026-06-01",
-      "to": "2026-06-02"
-    },
-    {
-      "dates": "15/6 - 16/6",
-      "days": "Mon-Tue",
-      "person": "Vetle",
-      "from": "2026-06-15",
-      "to": "2026-06-16"
-    },
-    {
-      "dates": "22/6 - 23/6",
-      "days": "Mon-Tue",
-      "person": "Julie",
-      "from": "2026-06-22",
-      "to": "2026-06-23"
-    }
-  ],
+  "wtp_outlook_synced": "2026-05-12T19:51:19.450Z",
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -500,93 +301,12 @@
       "done": false
     }
   ],
-  "wtp_profile_jonas": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
+  "wtp_handover_2026-05-12": {
+    "text": "What has been done: \n- SLA\n- Opening hours\n- Any ticket that could",
+    "author": "Mathias",
+    "ts": "2026-05-12T08:58:56.097Z"
   },
-  "wtp_fb_vetle.bengtson@munu.cloud": [
-    {
-      "id": "1778577613388",
-      "text": "Blahblah",
-      "ts": "2026-05-12T09:20:13.388Z",
-      "comments": [
-        {
-          "id": "1778577744364",
-          "text": "yo bro",
-          "ts": "2026-05-12T09:22:24.364Z"
-        },
-        {
-          "id": "1778577958094",
-          "text": "l\u00f8k",
-          "ts": "2026-05-12T09:25:58.094Z"
-        }
-      ]
-    }
-  ],
   "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
-  "wtp_profile_cecilie": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": false
-  },
-  "wtp_profile_vetle": {
-    "log": [
-      {
-        "tag": "win",
-        "text": "Calm in situation that can be stressful when you dont know how to solve what the customer wants.",
-        "ts": "2026-05-08T10:50:29.042Z"
-      }
-    ],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": false,
-    "internalNotes": ""
-  },
-  "wtp_unifon_calls": [
-    {
-      "date": "2026-05-11",
-      "offered": 117,
-      "answered": 101,
-      "missed": 15,
-      "avgWaitSec": 290,
-      "savedAt": "2026-05-11T14:57:52.861Z"
-    }
-  ],
-  "wtp_outlook_synced": "2026-05-12T09:25:59.930Z",
-  "wtp_tasks_michael": [
-    {
-      "id": "1777319031387",
-      "day": "Monday",
-      "title": "testing",
-      "priority": "medium",
-      "due": "27 Apr",
-      "note": "test",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "09:45",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-04-26",
-      "done": false
-    }
-  ],
-  "wtp_profile_maylen": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_profile_thomas": {
     "log": [
       {
@@ -600,8 +320,200 @@
     "focus": "",
     "_open": true
   },
+  "wtp_profile_marie": {
+    "log": [
+      {
+        "tag": "win",
+        "text": "Has an amazing ability to be calm and make the customers feel calm.",
+        "ts": "2026-05-08T10:51:00.547Z"
+      }
+    ],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": true
+  },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\n\n\n\n\n",
+  "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n01.Juni\nPiazza \n\n\n\n\n\n\n\n\n\n\n\n\n",
+  "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json",
+  "wtp_announcements": [
+    {
+      "id": "1778615495674",
+      "text": "THIS IS A TEST!",
+      "ts": "2026-05-12T19:51:35.674Z",
+      "author": "Mathias"
+    }
+  ],
+  "wtp_oto_mathias": {
+    "people": [
+      {
+        "name": "Jonas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Thomas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Maylen",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Bernadett",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Benjamin",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Cecilie",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Tord",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Marie",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Andreas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Vetle",
+        "addedAt": "2026-05-04"
+      },
+      {
+        "name": "Julie",
+        "addedAt": "2026-05-04"
+      }
+    ],
+    "sessions": []
+  },
+  "wtp_tasks_kate.rooke@munu.cloud": [
+    {
+      "id": "1778342571989",
+      "day": "Wednesday",
+      "title": "Test",
+      "priority": "",
+      "due": "8 May",
+      "note": "Test",
+      "people": [
+        "Marie"
+      ],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-05-04",
+      "done": false
+    }
+  ],
+  "wtp_wingman": [
+    {
+      "dates": "27/4 - 28/4",
+      "days": "Mon-Tue",
+      "person": "Maylen",
+      "from": "2026-04-27",
+      "to": "2026-04-28"
+    },
+    {
+      "dates": "29/4 - 30/4",
+      "days": "Wed-Thu",
+      "person": "Benjamin",
+      "from": "2026-04-29",
+      "to": "2026-04-30"
+    },
+    {
+      "dates": "4/5 - 5/5",
+      "days": "Mon-Tue",
+      "person": "Cecilie",
+      "from": "2026-05-04",
+      "to": "2026-05-05"
+    },
+    {
+      "dates": "6/5 - 7/5",
+      "days": "Wed-Thu",
+      "person": "Marie",
+      "from": "2026-05-06",
+      "to": "2026-05-07"
+    },
+    {
+      "person": "Thomas",
+      "days": "Mon-Tue",
+      "dates": "11/5 - 12/5",
+      "from": "2026-05-11",
+      "to": "2026-05-12"
+    },
+    {
+      "person": "Andreas",
+      "days": "Mon-Tue",
+      "dates": "18/5 - 19/5",
+      "from": "2026-05-18",
+      "to": "2026-05-19"
+    },
+    {
+      "dates": "1/6 - 2/6",
+      "days": "Mon-Tue",
+      "person": "Jonas",
+      "from": "2026-06-01",
+      "to": "2026-06-02"
+    },
+    {
+      "dates": "15/6 - 16/6",
+      "days": "Mon-Tue",
+      "person": "Vetle",
+      "from": "2026-06-15",
+      "to": "2026-06-16"
+    },
+    {
+      "dates": "22/6 - 23/6",
+      "days": "Mon-Tue",
+      "person": "Julie",
+      "from": "2026-06-22",
+      "to": "2026-06-23"
+    }
+  ],
+  "wtp_fb_kate.rooke@munu.cloud": [],
   "wtp_outlook_events": [
+    {
+      "subject": "Feedback from Furset Kantine - Support",
+      "start": "2026-05-21T10:30:00.0000000",
+      "end": "2026-05-21T11:00:00.0000000",
+      "startWithTimeZone": "2026-05-21T10:30:00+00:00",
+      "endWithTimeZone": "2026-05-21T11:00:00+00:00",
+      "body": "<html>\r\n<head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta name=\"Generator\" content=\"Microsoft Word 15 (filtered medium)\">\r\n<style>\r\n<!--\r\n@font-face\r\n\t{font-family:Wingdings}\r\n@font-face\r\n\t{font-family:\"Cambria Math\"}\r\n@font-face\r\n\t{font-family:Aptos}\r\n@font-face\r\n\t{font-family:\"Segoe UI\"}\r\np.MsoNormal, li.MsoNormal, div.MsoNormal\r\n\t{margin:0cm;\r\n\tfont-size:12.0pt;\r\n\tfont-family:\"Aptos\",sans-serif}\r\na:link, span.MsoHyperlink\r\n\t{color:#467886;\r\n\ttext-decoration:underline}\r\np.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph\r\n\t{margin-top:0cm;\r\n\tmargin-right:0cm;\r\n\tmargin-bottom:0cm;\r\n\tmargin-left:36.0pt;\r\n\tfont-size:12.0pt;\r\n\tfont-family:\"Aptos\",sans-serif}\r\nspan.me-email-text\r\n\t{}\r\nspan.me-email-text-secondary\r\n\t{}\r\nspan.EpostStil21\r\n\t{}\r\n.MsoChpDefault\r\n\t{font-size:10.0pt}\r\n@page WordSection1\r\n\t{margin:70.85pt 70.85pt 70.85pt 70.85pt}\r\ndiv.WordSection1\r\n\t{}\r\nol\r\n\t{margin-bottom:0cm}\r\nul\r\n\t{margin-bottom:0cm}\r\n-->\r\n</style>\r\n</head>\r\n<body lang=\"NO-BOK\" link=\"#467886\" vlink=\"#96607D\" style=\"word-wrap:break-word\">\r\n<div class=\"WordSection1\">\r\n<p class=\"MsoNormal\">Hi,</p>\r\n<p class=\"MsoNormal\">&nbsp;</p>\r\n<p class=\"MsoNormal\"><span lang=\"EN-US\">We got some feedback on support from our half-day session in Stavanger last week.<br>\r\nThis is summarized as below \u2013 We have not looked into if SLA is broken or not, this is either way what the customer has of feedback to us.</span></p>\r\n<p class=\"MsoNormal\" style=\"margin-bottom:12.0pt\"><span lang=\"EN-US\">We didn\u2019t have \u201cSupport\u201d on the agenda, but this feedback came in the section \u201copen mic\u201d, how is it going at your canteens</span></p>\r\n<ul type=\"circle\" style=\"margin-top:0cm\">\r\n<li class=\"MsoListParagraph\" style=\"margin-left:0cm\"><span lang=\"EN-US\">Longer response times on the phone.</span></li><li class=\"MsoNormal\" style=\"\"><span lang=\"EN-US\">Longer response times on email.</span></li><li class=\"MsoNormal\" style=\"\"><span lang=\"EN-US\">Several cases of no response or follow-up at all \u2013 they solve it themselves (which is a bit of luck, I assume).</span></li><li class=\"MsoNormal\" style=\"\"><span lang=\"EN-US\">That they often experience knowing more than the people on support, and having to go through many &quot;standard questions&quot; they have already checked themselves.</span></li><li class=\"MsoNormal\" style=\"\"><span lang=\"EN-US\">Declining quality and competence in support. (that was very clear feedback in to dialogue)</span></li><li class=\"MsoNormal\" style=\"\"><span lang=\"EN-US\">That they meet a lot of different people during a single case.</span></li><li class=\"MsoNormal\" style=\"\"><span lang=\"EN-US\">That they don't understand why they have to call back to follow up cases themselves, instead of being called back (which results in multiple points of contact).</span></li></ul>\r\n<p class=\"MsoNormal\"><span lang=\"EN-US\">&nbsp;</span></p>\r\n<p class=\"MsoNormal\"><span lang=\"EN-US\">Lets go together the feedback, and if we can have a plan for them as a feedback.</span></p>\r\n<div>\r\n<div style=\"margin-bottom:18.0pt; overflow:hidden\">\r\n<p class=\"MsoNormal\"><span lang=\"EN-US\" style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">________________________________________________________________________________</span><span lang=\"EN-US\" style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\"></span></p>\r\n</div>\r\n<div style=\"margin-bottom:9.0pt\">\r\n<p class=\"MsoNormal\"><span class=\"me-email-text\"><b><span style=\"font-size:15.0pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">Microsoft Teams-m\u00f8te</span></b></span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">\r\n</span></p>\r\n</div>\r\n<div style=\"margin-bottom:4.5pt\">\r\n<p class=\"MsoNormal\"><span class=\"me-email-text\"><b><span style=\"font-size:15.0pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">Bli med:\r\n</span></b></span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\"><a href=\"https://teams.microsoft.com/meet/312703243840110?p=JmcLn3t5QVJ5RUMVqo\" title=\"Meeting join\"><span style=\"font-size:15.0pt; color:#5B5FC7\">https://teams.microsoft.com/meet/312703243840110?p=JmcLn3t5QVJ5RUMVqo</span></a>\r\n</span></p>\r\n</div>\r\n<div style=\"margin-bottom:4.5pt\">\r\n<p class=\"MsoNormal\"><span class=\"me-email-text-secondary\"><span style=\"font-size:10.5pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#616161\">M\u00f8te-ID:\r\n</span></span><span class=\"me-email-text\"><span style=\"font-size:10.5pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">312 703 243 840 110</span></span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">\r\n</span></p>\r\n</div>\r\n<div style=\"margin-bottom:24.0pt\">\r\n<p class=\"MsoNormal\"><span class=\"me-email-text-secondary\"><span style=\"font-size:10.5pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#616161\">Passord:\r\n</span></span><span class=\"me-email-text\"><span style=\"font-size:10.5pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">8NJ7kD2D</span></span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">\r\n</span></p>\r\n</div>\r\n<div style=\"margin-bottom:9.0pt\">\r\n<div class=\"MsoNormal\" align=\"center\" style=\"text-align:center\"><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">\r\n<hr size=\"1\" width=\"100%\" align=\"center\">\r\n</span></div>\r\n</div>\r\n<div style=\"margin-bottom:18.0pt\">\r\n<p class=\"MsoNormal\"><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\"><a href=\"https://aka.ms/JoinTeamsMeeting?omkt=nb-NO\"><span style=\"font-size:10.5pt; color:#5B5FC7\">Trenger du hjelp?</span></a>\r\n</span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#616161\">|</span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">\r\n<a href=\"https://teams.microsoft.com/l/meetup-join/19%3ameeting_NmI3ZmYxM2QtMTgyNS00Yzk4LTljOWYtNDI5ZmRiZDRmMzY2%40thread.v2/0?context=%7b%22Tid%22%3a%2289e9a5a7-9e0c-4046-bb29-7ab62c55ca57%22%2c%22Oid%22%3a%22c177ca0d-1215-4803-8e75-80e7cb44df21%22%7d\">\r\n<span style=\"font-size:10.5pt; color:#5B5FC7\">Systemreferanse</span></a> </span></p>\r\n</div>\r\n<div>\r\n<p class=\"MsoNormal\"><span class=\"me-email-text-secondary\"><span style=\"font-size:10.5pt; font-family:&quot;Segoe UI&quot;,sans-serif; color:#616161\">For arrang\u00f8rer:\r\n</span></span><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\"><a href=\"https://teams.microsoft.com/meetingOptions/?organizerId=c177ca0d-1215-4803-8e75-80e7cb44df21&amp;tenantId=89e9a5a7-9e0c-4046-bb29-7ab62c55ca57&amp;threadId=19_meeting_NmI3ZmYxM2QtMTgyNS00Yzk4LTljOWYtNDI5ZmRiZDRmMzY2@thread.v2&amp;messageId=0&amp;language=nb-NO\"><span style=\"font-size:10.5pt; color:#5B5FC7\">M\u00f8tealternativer</span></a>\r\n</span></p>\r\n</div>\r\n<div style=\"margin-bottom:18.0pt; overflow:hidden\">\r\n<p class=\"MsoNormal\"><span style=\"font-family:&quot;Segoe UI&quot;,sans-serif; color:#242424\">________________________________________________________________________________</span></p>\r\n</div>\r\n</div>\r\n<p class=\"MsoNormal\">&nbsp;</p>\r\n</div>\r\n</body>\r\n</html>\r\n",
+      "isHtml": true,
+      "responseType": "notResponded",
+      "responseTime": "0001-01-01T00:00:00+00:00",
+      "id": "AAMkAGE1ZjI3NzE0LWFhOWQtNDM5NS1iZDM2LTc1ZmY1ZjNmNDNlNABGAAAAAAAwH2VLPDTKQp7mc3PrLWX4BwACGIufJ68qRJJUX0ibsFohAAAAAAENAAACGIufJ68qRJJUX0ibsFohAAFbzfUsAAA=",
+      "createdDateTime": "2026-05-12T13:38:54.7842717+00:00",
+      "lastModifiedDateTime": "2026-05-12T17:55:05.6980041+00:00",
+      "organizer": "joar@munu.cloud",
+      "timeZone": "UTC",
+      "iCalUId": "040000008200E00074C5B7101A82E00800000000D070CE4C24E2DC01000000000000000010000000A8F23B0AF94CF64B9ED0C2F6B8958C31",
+      "categories": [],
+      "webLink": "https://outlook.office365.com/owa/?itemid=AAMkAGE1ZjI3NzE0LWFhOWQtNDM5NS1iZDM2LTc1ZmY1ZjNmNDNlNABGAAAAAAAwH2VLPDTKQp7mc3PrLWX4BwACGIufJ68qRJJUX0ibsFohAAAAAAENAAACGIufJ68qRJJUX0ibsFohAAFbzfUsAAA%3D&exvsurl=1&path=/calendar/item",
+      "requiredAttendees": "joar@munu.cloud;kate.rooke@munu.cloud;mathias.ullenes@munu.cloud;tom@munu.cloud;constance.thorkildsen@munu.cloud;",
+      "optionalAttendees": "",
+      "resourceAttendees": "room_svg-01@munu.cloud;",
+      "location": "Microsoft Teams-m\u00f8te; Meetingroom - Room 1 (video 10 persons)",
+      "importance": "normal",
+      "isAllDay": false,
+      "recurrence": "none",
+      "reminderMinutesBeforeStart": 15,
+      "isReminderOn": true,
+      "showAs": "tentative",
+      "responseRequested": true,
+      "sensitivity": "normal",
+      "title": "Feedback from Furset Kantine - Support"
+    },
     {
       "subject": "COO Mgmt. Meeting Weekly",
       "start": "2026-05-18T11:00:00.0000000",
@@ -735,5 +647,106 @@
       "title": "Weekly customer support meeting"
     }
   ],
-  "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json"
+  "wtp_profile_jonas": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_profile_cecilie": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": false
+  },
+  "wtp_unifon_calls": [
+    {
+      "date": "2026-05-11",
+      "offered": 117,
+      "answered": 101,
+      "missed": 15,
+      "avgWaitSec": 290,
+      "savedAt": "2026-05-11T14:57:52.861Z"
+    }
+  ],
+  "wtp_mood_vetle.bengtson@munu.cloud": [
+    {
+      "week": "2026-W19",
+      "emoji": "\ud83d\ude0a",
+      "ts": "2026-05-09T16:17:23.255Z"
+    }
+  ],
+  "wtp_notepad_persistent": "Test",
+  "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
+  "wtp_users": [
+    {
+      "name": "Mathias",
+      "hash": "c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414",
+      "isAdmin": true
+    },
+    {
+      "name": "kate.rooke@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk",
+        "manager_view"
+      ]
+    },
+    {
+      "name": "vetle.bengtson@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "displayName": "Vetle"
+    },
+    {
+      "name": "Dashboard",
+      "displayName": "TV Dashboard",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk"
+      ],
+      "tvOnly": true
+    }
+  ],
+  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
+  "wtp_profile_andreas": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_profile_maylen": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
+  "wtp_profile_bernadett": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_profile_vetle": {
+    "log": [
+      {
+        "tag": "win",
+        "text": "Calm in situation that can be stressful when you dont know how to solve what the customer wants.",
+        "ts": "2026-05-08T10:50:29.042Z"
+      }
+    ],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": false,
+    "internalNotes": ""
+  }
 }
