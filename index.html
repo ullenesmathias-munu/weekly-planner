@@ -4948,14 +4948,14 @@ function renderAdminDashboard(root, viewerMode=false) {
       if(!times.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
       const median=times[Math.floor(times.length/2)];
       const mean=Math.round(times.reduce((a,b)=>a+b,0)/times.length);
-      const fmtD2=(mins)=>{if(!mins)return'—';const h=Math.floor(mins/60),m=mins%60,d=Math.floor(h/24);return d>0?d+'d '+(h%24)+'h':h>0?h+'h'+(m>0?' '+m+'m':''):m+'m';};
+      const fmtD2=(mins)=>{if(!mins)return'—';const m=Math.round(mins),h=Math.floor(m/60),rm=m%60,d=Math.floor(h/24);return d>0?d+'d '+(h%24)+'h':h>0?h+'h'+(rm>0?' '+rm+'m':''):m+'m';};
       el.innerHTML='';
       const bigRow=document.createElement('div');bigRow.style.cssText='display:flex;align-items:flex-end;gap:10px;margin-bottom:8px;';
-      const bigVal=document.createElement('div');bigVal.style.cssText="font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);";bigVal.textContent=fmtD2(median);
-      const bigSub=document.createElement('div');bigSub.style.cssText='font-size:10px;color:var(--text3);padding-bottom:4px;line-height:1.5;';bigSub.textContent='median · '+tickets2.length+' tickets';
+      const bigVal=document.createElement('div');bigVal.style.cssText="font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);";bigVal.textContent=fmtD2(mean);
+      const bigSub=document.createElement('div');bigSub.style.cssText='font-size:10px;color:var(--text3);padding-bottom:4px;line-height:1.5;';bigSub.textContent='mean · '+tickets2.length+' tickets';
       bigRow.appendChild(bigVal);bigRow.appendChild(bigSub);el.appendChild(bigRow);
       const mkMR=(v,l)=>{const d2=document.createElement('div');d2.className='db-row';const l2=document.createElement('div');l2.className='db-row-label';l2.textContent=l;const v2=document.createElement('div');v2.className='db-row-meta';v2.textContent=v;d2.appendChild(l2);d2.appendChild(v2);return d2;};
-      el.appendChild(mkMR(fmtD2(mean),'Mean'));
+      el.appendChild(mkMR(fmtD2(median),'Median'));
     }).catch(e=>{const el=document.getElementById('db-mttr-mini');if(el)el.innerHTML='<div class="db-empty">'+e.message+'</div>';});
   }
 
@@ -8888,17 +8888,18 @@ async function zdRenderInsights(body, fromDate, toDate) {
 
     const fmtDur = (mins) => {
       if (!mins) return '—';
-      const h = Math.floor(mins/60), m = mins%60, d = Math.floor(h/24);
+      const m = Math.round(mins); // always round to whole minutes
+      const h = Math.floor(m/60), rm = m%60, d = Math.floor(h/24);
       if (d > 0) return d + 'd ' + (h%24) + 'h';
-      if (h > 0) return h + 'h ' + (m > 0 ? m + 'm' : '');
+      if (h > 0) return h + 'h ' + (rm > 0 ? rm + 'm' : '');
       return m + 'm';
     };
 
-    // Big MTTR number — median matches Zendesk Explore
+    // Big number = MEAN (closest to Zendesk Explore's figure)
     const bigRow2 = document.createElement('div'); bigRow2.style.cssText = 'display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;';
-    const bigVal2 = document.createElement('div'); bigVal2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);"; bigVal2.textContent = fmtDur(medianMins);
+    const bigVal2 = document.createElement('div'); bigVal2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);"; bigVal2.textContent = fmtDur(avgMins);
     const bigSub2 = document.createElement('div'); bigSub2.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;';
-    bigSub2.textContent = 'median resolution\n' + resolutionTimes.length + ' tickets';
+    bigSub2.textContent = 'mean resolution\n' + resolutionTimes.length + ' tickets';
     bigSub2.style.whiteSpace = 'pre';
     bigRow2.appendChild(bigVal2); bigRow2.appendChild(bigSub2); el.appendChild(bigRow2);
 
@@ -8910,7 +8911,7 @@ async function zdRenderInsights(body, fromDate, toDate) {
       const l = document.createElement('div'); l.style.cssText = 'font-size:10px;color:var(--text3);'; l.textContent = label;
       s.appendChild(v); s.appendChild(l); return s;
     };
-    suppRow.appendChild(mkSupp(fmtDur(avgMins), 'Mean'));
+    suppRow.appendChild(mkSupp(fmtDur(medianMins), 'Median'));
     if (avgFrt) suppRow.appendChild(mkSupp(fmtDur(avgFrt), 'Avg first reply'));
     if (allMetrics.length) {
       const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
