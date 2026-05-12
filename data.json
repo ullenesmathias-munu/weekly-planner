@@ -1,29 +1,223 @@
 {
-  "wtp_fb_vetle.bengtson@munu.cloud": [
+  "wtp_tasks_kate.rooke@munu.cloud": [
     {
-      "id": "1778577613388",
-      "text": "Blahblah",
-      "ts": "2026-05-12T09:20:13.388Z",
-      "comments": [
-        {
-          "id": "1778577744364",
-          "text": "yo bro",
-          "ts": "2026-05-12T09:22:24.364Z"
-        },
-        {
-          "id": "1778577958094",
-          "text": "l\u00f8k",
-          "ts": "2026-05-12T09:25:58.094Z"
-        }
-      ]
+      "id": "1778342571989",
+      "day": "Wednesday",
+      "title": "Test",
+      "priority": "",
+      "due": "8 May",
+      "note": "Test",
+      "people": [
+        "Marie"
+      ],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-05-04",
+      "done": false
     }
   ],
+  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
+  "wtp_profile_bernadett": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_agenda_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577610987",
+      "text": "Test",
+      "ts": "2026-05-12T09:20:10.987Z"
+    }
+  ],
+  "wtp_mood_vetle.bengtson@munu.cloud": [
+    {
+      "week": "2026-W19",
+      "emoji": "\ud83d\ude0a",
+      "ts": "2026-05-09T16:17:23.255Z"
+    }
+  ],
+  "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+  "wtp_users": [
+    {
+      "name": "Mathias",
+      "hash": "c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414",
+      "isAdmin": true
+    },
+    {
+      "name": "kate.rooke@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk",
+        "manager_view"
+      ]
+    },
+    {
+      "name": "vetle.bengtson@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "displayName": "Vetle"
+    },
+    {
+      "name": "Dashboard",
+      "displayName": "TV Dashboard",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk"
+      ],
+      "tvOnly": true
+    }
+  ],
+  "wtp_profile_marie": {
+    "log": [
+      {
+        "tag": "win",
+        "text": "Has an amazing ability to be calm and make the customers feel calm.",
+        "ts": "2026-05-08T10:51:00.547Z"
+      }
+    ],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": true
+  },
   "wtp_handover_2026-05-12": {
     "text": "What has been done: \n- SLA\n- Opening hours\n- Any ticket that could",
     "author": "Mathias",
     "ts": "2026-05-12T08:58:56.097Z"
   },
-  "wtp_outlook_synced": "2026-05-12T09:25:59.930Z",
+  "wtp_oto_mathias": {
+    "people": [
+      {
+        "name": "Jonas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Thomas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Maylen",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Bernadett",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Benjamin",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Cecilie",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Tord",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Marie",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Andreas",
+        "addedAt": "2026-01-01"
+      },
+      {
+        "name": "Vetle",
+        "addedAt": "2026-05-04"
+      },
+      {
+        "name": "Julie",
+        "addedAt": "2026-05-04"
+      }
+    ],
+    "sessions": []
+  },
+  "wtp_fb_kate.rooke@munu.cloud": [],
+  "wtp_profile_andreas": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_notepad_persistent": "Test",
+  "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
+  "wtp_wingman": [
+    {
+      "dates": "27/4 - 28/4",
+      "days": "Mon-Tue",
+      "person": "Maylen",
+      "from": "2026-04-27",
+      "to": "2026-04-28"
+    },
+    {
+      "dates": "29/4 - 30/4",
+      "days": "Wed-Thu",
+      "person": "Benjamin",
+      "from": "2026-04-29",
+      "to": "2026-04-30"
+    },
+    {
+      "dates": "4/5 - 5/5",
+      "days": "Mon-Tue",
+      "person": "Cecilie",
+      "from": "2026-05-04",
+      "to": "2026-05-05"
+    },
+    {
+      "dates": "6/5 - 7/5",
+      "days": "Wed-Thu",
+      "person": "Marie",
+      "from": "2026-05-06",
+      "to": "2026-05-07"
+    },
+    {
+      "person": "Thomas",
+      "days": "Mon-Tue",
+      "dates": "11/5 - 12/5",
+      "from": "2026-05-11",
+      "to": "2026-05-12"
+    },
+    {
+      "person": "Andreas",
+      "days": "Mon-Tue",
+      "dates": "18/5 - 19/5",
+      "from": "2026-05-18",
+      "to": "2026-05-19"
+    },
+    {
+      "dates": "1/6 - 2/6",
+      "days": "Mon-Tue",
+      "person": "Jonas",
+      "from": "2026-06-01",
+      "to": "2026-06-02"
+    },
+    {
+      "dates": "15/6 - 16/6",
+      "days": "Mon-Tue",
+      "person": "Vetle",
+      "from": "2026-06-15",
+      "to": "2026-06-16"
+    },
+    {
+      "dates": "22/6 - 23/6",
+      "days": "Mon-Tue",
+      "person": "Julie",
+      "from": "2026-06-22",
+      "to": "2026-06-23"
+    }
+  ],
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -306,7 +500,93 @@
       "done": false
     }
   ],
+  "wtp_profile_jonas": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_fb_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577613388",
+      "text": "Blahblah",
+      "ts": "2026-05-12T09:20:13.388Z",
+      "comments": [
+        {
+          "id": "1778577744364",
+          "text": "yo bro",
+          "ts": "2026-05-12T09:22:24.364Z"
+        },
+        {
+          "id": "1778577958094",
+          "text": "l\u00f8k",
+          "ts": "2026-05-12T09:25:58.094Z"
+        }
+      ]
+    }
+  ],
   "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
+  "wtp_profile_cecilie": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": false
+  },
+  "wtp_profile_vetle": {
+    "log": [
+      {
+        "tag": "win",
+        "text": "Calm in situation that can be stressful when you dont know how to solve what the customer wants.",
+        "ts": "2026-05-08T10:50:29.042Z"
+      }
+    ],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": false,
+    "internalNotes": ""
+  },
+  "wtp_unifon_calls": [
+    {
+      "date": "2026-05-11",
+      "offered": 117,
+      "answered": 101,
+      "missed": 15,
+      "avgWaitSec": 290,
+      "savedAt": "2026-05-11T14:57:52.861Z"
+    }
+  ],
+  "wtp_outlook_synced": "2026-05-12T09:25:59.930Z",
+  "wtp_tasks_michael": [
+    {
+      "id": "1777319031387",
+      "day": "Monday",
+      "title": "testing",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "test",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "09:45",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    }
+  ],
+  "wtp_profile_maylen": {
+    "log": [],
+    "goals": [],
+    "rag": "none",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_profile_thomas": {
     "log": [
       {
@@ -320,159 +600,7 @@
     "focus": "",
     "_open": true
   },
-  "wtp_profile_marie": {
-    "log": [
-      {
-        "tag": "win",
-        "text": "Has an amazing ability to be calm and make the customers feel calm.",
-        "ts": "2026-05-08T10:51:00.547Z"
-      }
-    ],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": true
-  },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\n\n\n\n\n",
-  "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n\n\n\n\n\n\n\n\n\n",
-  "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json",
-  "wtp_oto_mathias": {
-    "people": [
-      {
-        "name": "Jonas",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Thomas",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Maylen",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Bernadett",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Benjamin",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Cecilie",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Tord",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Marie",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Andreas",
-        "addedAt": "2026-01-01"
-      },
-      {
-        "name": "Vetle",
-        "addedAt": "2026-05-04"
-      },
-      {
-        "name": "Julie",
-        "addedAt": "2026-05-04"
-      }
-    ],
-    "sessions": []
-  },
-  "wtp_tasks_kate.rooke@munu.cloud": [
-    {
-      "id": "1778342571989",
-      "day": "Wednesday",
-      "title": "Test",
-      "priority": "",
-      "due": "8 May",
-      "note": "Test",
-      "people": [
-        "Marie"
-      ],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-05-04",
-      "done": false
-    }
-  ],
-  "wtp_wingman": [
-    {
-      "dates": "27/4 - 28/4",
-      "days": "Mon-Tue",
-      "person": "Maylen",
-      "from": "2026-04-27",
-      "to": "2026-04-28"
-    },
-    {
-      "dates": "29/4 - 30/4",
-      "days": "Wed-Thu",
-      "person": "Benjamin",
-      "from": "2026-04-29",
-      "to": "2026-04-30"
-    },
-    {
-      "dates": "4/5 - 5/5",
-      "days": "Mon-Tue",
-      "person": "Cecilie",
-      "from": "2026-05-04",
-      "to": "2026-05-05"
-    },
-    {
-      "dates": "6/5 - 7/5",
-      "days": "Wed-Thu",
-      "person": "Marie",
-      "from": "2026-05-06",
-      "to": "2026-05-07"
-    },
-    {
-      "person": "Thomas",
-      "days": "Mon-Tue",
-      "dates": "11/5 - 12/5",
-      "from": "2026-05-11",
-      "to": "2026-05-12"
-    },
-    {
-      "person": "Andreas",
-      "days": "Mon-Tue",
-      "dates": "18/5 - 19/5",
-      "from": "2026-05-18",
-      "to": "2026-05-19"
-    },
-    {
-      "dates": "1/6 - 2/6",
-      "days": "Mon-Tue",
-      "person": "Jonas",
-      "from": "2026-06-01",
-      "to": "2026-06-02"
-    },
-    {
-      "dates": "15/6 - 16/6",
-      "days": "Mon-Tue",
-      "person": "Vetle",
-      "from": "2026-06-15",
-      "to": "2026-06-16"
-    },
-    {
-      "dates": "22/6 - 23/6",
-      "days": "Mon-Tue",
-      "person": "Julie",
-      "from": "2026-06-22",
-      "to": "2026-06-23"
-    }
-  ],
-  "wtp_fb_kate.rooke@munu.cloud": [],
   "wtp_outlook_events": [
     {
       "subject": "COO Mgmt. Meeting Weekly",
@@ -607,133 +735,5 @@
       "title": "Weekly customer support meeting"
     }
   ],
-  "wtp_profile_jonas": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_profile_cecilie": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": false
-  },
-  "wtp_unifon_calls": [
-    {
-      "date": "2026-05-11",
-      "offered": 117,
-      "answered": 101,
-      "missed": 15,
-      "avgWaitSec": 290,
-      "savedAt": "2026-05-11T14:57:52.861Z"
-    }
-  ],
-  "wtp_mood_vetle.bengtson@munu.cloud": [
-    {
-      "week": "2026-W19",
-      "emoji": "\ud83d\ude0a",
-      "ts": "2026-05-09T16:17:23.255Z"
-    }
-  ],
-  "wtp_notepad_persistent": "Test",
-  "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
-  "wtp_users": [
-    {
-      "name": "Mathias",
-      "hash": "c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414",
-      "isAdmin": true
-    },
-    {
-      "name": "kate.rooke@munu.cloud",
-      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false,
-      "privileges": [
-        "zendesk",
-        "manager_view"
-      ]
-    },
-    {
-      "name": "vetle.bengtson@munu.cloud",
-      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false,
-      "displayName": "Vetle"
-    },
-    {
-      "name": "Dashboard",
-      "displayName": "TV Dashboard",
-      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
-      "isAdmin": false,
-      "privileges": [
-        "zendesk"
-      ],
-      "tvOnly": true
-    }
-  ],
-  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
-  "wtp_profile_andreas": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_profile_maylen": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
-  "wtp_tasks_michael": [
-    {
-      "id": "1777319031387",
-      "day": "Monday",
-      "title": "testing",
-      "priority": "medium",
-      "due": "27 Apr",
-      "note": "test",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "09:45",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-04-26",
-      "done": false
-    }
-  ],
-  "wtp_profile_bernadett": {
-    "log": [],
-    "goals": [],
-    "rag": "none",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_agenda_vetle.bengtson@munu.cloud": [
-    {
-      "id": "1778577610987",
-      "text": "Test",
-      "ts": "2026-05-12T09:20:10.987Z"
-    }
-  ],
-  "wtp_profile_vetle": {
-    "log": [
-      {
-        "tag": "win",
-        "text": "Calm in situation that can be stressful when you dont know how to solve what the customer wants.",
-        "ts": "2026-05-08T10:50:29.042Z"
-      }
-    ],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": false,
-    "internalNotes": ""
-  }
+  "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json"
 }
