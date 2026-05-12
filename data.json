@@ -670,6 +670,38 @@
   ],
   "wtp_notepad_persistent": "Test",
   "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
+  "wtp_users": [
+    {
+      "name": "Mathias",
+      "hash": "c6a2a8146b0dcdb839583a07e95e7795742672466c659f169c77a0c82ded6414",
+      "isAdmin": true
+    },
+    {
+      "name": "kate.rooke@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk",
+        "manager_view"
+      ]
+    },
+    {
+      "name": "vetle.bengtson@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "displayName": "Vetle"
+    },
+    {
+      "name": "Dashboard",
+      "displayName": "TV Dashboard",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "privileges": [
+        "zendesk"
+      ],
+      "tvOnly": true
+    }
+  ],
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_profile_andreas": {
     "log": [],
@@ -1850,7 +1882,7 @@
           "name": "Andreas",
           "shifts": [
             "D3 (9-17)",
-            "D3 (9-17)",
+            "ABS",
             "D3 (9-17)",
             "H",
             "D3 (9-17)",
@@ -3383,6 +3415,26 @@
     }
   ],
   "wtp_ann_read_vetle.bengtson@munu.cloud": [],
+  "wtp_tasks_michael": [
+    {
+      "id": "1777319031387",
+      "day": "Monday",
+      "title": "testing",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "test",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "09:45",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    }
+  ],
   "wtp_profile_bernadett": {
     "log": [],
     "goals": [],
@@ -3390,6 +3442,13 @@
     "focus": "",
     "_open": true
   },
+  "wtp_agenda_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577610987",
+      "text": "Test",
+      "ts": "2026-05-12T09:20:10.987Z"
+    }
+  ],
   "wtp_profile_vetle": {
     "log": [
       {
