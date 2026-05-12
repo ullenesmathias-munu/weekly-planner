@@ -669,6 +669,14 @@
       "missed": 15,
       "avgWaitSec": 290,
       "savedAt": "2026-05-11T14:57:52.861Z"
+    },
+    {
+      "date": "2026-05-12",
+      "offered": 120,
+      "answered": 102,
+      "missed": 17,
+      "avgWaitSec": 162,
+      "savedAt": "2026-05-12T19:52:42.915Z"
     }
   ],
   "wtp_mood_vetle.bengtson@munu.cloud": [
@@ -728,6 +736,26 @@
     "_open": true
   },
   "wtp_ann_read_vetle.bengtson@munu.cloud": [],
+  "wtp_tasks_michael": [
+    {
+      "id": "1777319031387",
+      "day": "Monday",
+      "title": "testing",
+      "priority": "medium",
+      "due": "27 Apr",
+      "note": "test",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "09:45",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-04-26",
+      "done": false
+    }
+  ],
   "wtp_profile_bernadett": {
     "log": [],
     "goals": [],
@@ -735,6 +763,13 @@
     "focus": "",
     "_open": true
   },
+  "wtp_agenda_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577610987",
+      "text": "Test",
+      "ts": "2026-05-12T09:20:10.987Z"
+    }
+  ],
   "wtp_profile_vetle": {
     "log": [
       {
