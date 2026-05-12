@@ -1,4 +1,11 @@
 {
+  "wtp_fb_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577613388",
+      "text": "Blahblah",
+      "ts": "2026-05-12T09:20:13.388Z"
+    }
+  ],
   "wtp_handover_2026-05-12": {
     "text": "What has been done: \n- SLA\n- Opening hours\n- Any ticket that could",
     "author": "Mathias",
@@ -666,6 +673,7 @@
     "focus": "",
     "_open": true
   },
+  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
   "wtp_tasks_michael": [
     {
       "id": "1777319031387",
@@ -693,6 +701,13 @@
     "focus": "",
     "_open": true
   },
+  "wtp_agenda_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577610987",
+      "text": "Test",
+      "ts": "2026-05-12T09:20:10.987Z"
+    }
+  ],
   "wtp_profile_vetle": {
     "log": [
       {
@@ -704,21 +719,7 @@
     "goals": [],
     "rag": "green",
     "focus": "",
-    "_open": true
-  },
-  "wtp_agenda_vetle.bengtson@munu.cloud": [
-    {
-      "id": "1778577610987",
-      "text": "Test",
-      "ts": "2026-05-12T09:20:10.987Z"
-    }
-  ],
-  "wtp_fb_vetle.bengtson@munu.cloud": [
-    {
-      "id": "1778577613388",
-      "text": "Blahblah",
-      "ts": "2026-05-12T09:20:13.388Z"
-    }
-  ],
-  "wtp_ann_read_vetle.bengtson@munu.cloud": []
+    "_open": false,
+    "internalNotes": ""
+  }
 }
