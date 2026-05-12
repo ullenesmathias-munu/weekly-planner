@@ -705,5 +705,12 @@
     "rag": "green",
     "focus": "",
     "_open": true
-  }
+  },
+  "wtp_agenda_vetle.bengtson@munu.cloud": [
+    {
+      "id": "1778577610987",
+      "text": "Test",
+      "ts": "2026-05-12T09:20:10.987Z"
+    }
+  ]
 }
