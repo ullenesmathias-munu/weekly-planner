@@ -1470,8 +1470,12 @@
   .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
   .oto-add-person-btn:hover { color: var(--cal-text); }
   .settings-card:hover { border-color: var(--border2); }
-  .settings-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-  .settings-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .settings-card-title { font-family: 'Fira Sans', sans-serif; font-size: 13px; font-weight: 900; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
+  .settings-card-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
+  /* Settings layout */
+  .settings-layout { max-width: 560px; display: flex; flex-direction: column; gap: 28px; padding-top: 4px; }
+  .sgroup { display: flex; flex-direction: column; gap: 12px; }
+  .sgroup-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); padding-bottom: 4px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
   .settings-upload-btn { font-size: 12px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border-radius: var(--radius-md); padding: 6px 14px; cursor: pointer; display: inline-block; transition: opacity 0.15s; }
   .lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
   .lock-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 36px 40px; width: 90%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
@@ -1892,190 +1896,203 @@ window.tryUnlock = async function() {
 
 <!-- SETTINGS TAB -->
 <div id="tab-settings" class="tab-content">
-  <div style="max-width:520px; display:flex; flex-direction:column; gap:24px; padding-top:4px;">
+  <div class="settings-layout">
 
-    <!-- Non-admin sync card — shown to non-admins only -->
-    <div class="settings-card" id="nonadmin-sync-card" style="display:none;">
-      <div class="settings-card-title">☁ Sync</div>
-      <div class="settings-card-desc">Enter the sync passphrase to keep your notes and feedback in sync across devices.</div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
-        <input type="password" id="user-passphrase-input" placeholder="Enter sync passphrase…"
-          style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-        <button class="btn-save" onclick="unlockWithPassphrase()" style="font-size:12px;white-space:nowrap;">Unlock sync</button>
-      </div>
-      <div id="user-passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
-    </div>
+    <!-- ── ACCOUNT ─────────────────────────────────────────────── -->
+    <div class="sgroup">
+      <div class="sgroup-label">Account</div>
 
-    <!-- Advanced settings toggle -->
-    <div>
-      <div class="settings-advanced-toggle" id="adv-toggle" onclick="toggleAdvanced()">Advanced settings</div>
-      <div class="settings-advanced-body" id="adv-body">
-
-    <!-- ICS Calendar import -->
-    <div class="settings-card">
-      <div class="settings-card-title">📅 Outlook Calendar</div>
-      <div class="settings-card-desc">Import your calendar from Outlook as an .ics file. Events will appear as blue cards in your planner for the matching week.</div>
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-        <label class="settings-upload-btn" for="ics-input-settings">Choose .ics file</label>
-        <input type="file" id="ics-input-settings" accept=".ics" style="display:none" onchange="handleIcsFile(this.files[0], true)">
-        <span id="ics-status" style="font-size:12px; color:var(--text3);"></span>
-        <button class="btn-cancel" id="ics-clear-btn" onclick="clearCal()" style="display:none; margin-left:auto;">✕ Clear calendar</button>
-      </div>
-      <div style="font-size:11px; color:var(--text3); margin-top:10px; line-height:1.6;">
-        <strong style="color:var(--text2);">How to export from Outlook:</strong><br>
-        Web: Settings → View all Outlook settings → Calendar → Shared calendars → export<br>
-        Desktop: File → Open &amp; Export → Import/Export → Export to iCalendar (.ics)
+      <div class="settings-card" id="users-card">
+        <div class="settings-card-title">Profile &amp; password</div>
+        <div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text);">Signed in as <span id="settings-username" style="color:var(--cal-text);"></span></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <input type="password" id="pw-current" placeholder="Current password" autocomplete="current-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
+            <input type="password" id="pw-new" placeholder="New password" autocomplete="new-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
+            <input type="password" id="pw-confirm" placeholder="Confirm new" autocomplete="new-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+            <button class="btn-save" onclick="changePassword()" style="font-size:12px;white-space:nowrap;">Change password</button>
+          </div>
+          <span id="pw-msg" style="font-size:11px;color:var(--text3);"></span>
+        </div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px;">
+          <button class="btn-cancel" onclick="signOut()">Sign out</button>
+          <span style="font-size:11px;color:var(--text3);">Locks the planner and requires sign in again</span>
+        </div>
       </div>
     </div>
 
-    <!-- Excel schedule import -->
-    <div class="settings-card">
-      <div class="settings-card-title">📊 Team Schedule (Excel)</div>
-      <div class="settings-card-desc">Upload a new shift schedule Excel file to update the Team Schedule tab. The file must follow the same format as the original.</div>
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-        <label class="settings-upload-btn" for="xlsx-input-settings">Choose .xlsx file</label>
-        <input type="file" id="xlsx-input-settings" accept=".xlsx" style="display:none" onchange="handleXlsxUpload(this.files[0])">
-        <span id="xlsx-status" style="font-size:12px; color:var(--text3);"></span>
-      </div>
-      <div id="xlsx-preview" style="margin-top:10px; font-size:11px; color:var(--text3); display:none;"></div>
-      <div style="font-size:11px; color:var(--text3); margin-top:10px; line-height:1.6;">
-        Note: The schedule is saved in your browser. After uploading, switch to the Team Schedule tab to verify it loaded correctly.
-      </div>
-    </div>
+    <!-- ── SYNC ──────────────────────────────────────────────────── -->
+    <div class="sgroup">
+      <div class="sgroup-label">Sync</div>
 
-    <!-- GitHub Sync -->
-    <div class="settings-card" id="gh-sync-card">
-      <div class="settings-card-title">☁ GitHub Sync</div>
-      <div class="settings-card-desc">Sync your tasks, notes and schedule across devices via your GitHub repo. Paste your token once - it saves to this browser only and is never stored in the code.</div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
-        <input type="password" id="gh-token-input" placeholder="Paste GitHub token (ghp_...)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-        <button class="btn-save" onclick="saveGhToken()" style="font-size:12px;white-space:nowrap;">Connect</button>
-        <button class="btn-cancel" onclick="removeGhToken()" style="font-size:12px;">Disconnect</button>
-      </div>
-      <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;align-items:center;gap:12px;flex-wrap:wrap;">
-        <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
-        <button onclick="ghLoad()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Pull now</button>
-        <button onclick="ghSave()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Push now</button>
-      </div>
-      <!-- Read-only token for non-admin users -->
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">Read-only token <span style="font-weight:400;color:var(--text3);">— allows other users to pull data without write access</span></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <input type="password" id="gh-readonly-input" placeholder="Paste read-only GitHub token…"
+      <!-- Non-admin: passphrase sync -->
+      <div class="settings-card" id="nonadmin-sync-card" style="display:none;">
+        <div class="settings-card-title">Sync passphrase</div>
+        <div class="settings-card-desc">Enter the sync passphrase to keep your notes and feedback in sync across devices.</div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+          <input type="password" id="user-passphrase-input" placeholder="Enter sync passphrase…"
             style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-          <button class="btn-save" onclick="saveReadonlyToken()" style="font-size:12px;white-space:nowrap;">Save</button>
+          <button class="btn-save" onclick="unlockWithPassphrase()" style="font-size:12px;white-space:nowrap;">Unlock sync</button>
         </div>
-      <!-- Passphrase-protected sync for non-admin users -->
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;">Shared sync passphrase <span style="font-weight:400;color:var(--text3);">— lets non-admin users sync using your token, without seeing it</span></div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Set a passphrase (e.g. <code style="background:var(--surface2);padding:1px 5px;border-radius:4px;">munu2026</code>). Non-admin users enter this in their Settings to unlock sync. Your real token stays hidden.</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <input type="text" id="sync-passphrase-input" placeholder="Set passphrase (e.g. munu2026)"
-            style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-          <button class="btn-save" onclick="saveSyncPassphrase()" style="font-size:12px;white-space:nowrap;">Encrypt & Save</button>
+        <div id="user-passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+      </div>
+
+      <!-- Admin: GitHub sync token -->
+      <div class="settings-card" id="gh-sync-card">
+        <div class="settings-card-title">GitHub sync</div>
+        <div class="settings-card-desc">Syncs tasks, notes and schedule across all devices via your GitHub repo. Your token is saved to this browser only.</div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+          <input type="password" id="gh-token-input" placeholder="Paste GitHub token (ghp_...)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+          <button class="btn-save" onclick="saveGhToken()" style="font-size:12px;white-space:nowrap;">Connect</button>
+          <button class="btn-cancel" onclick="removeGhToken()" style="font-size:12px;">Disconnect</button>
         </div>
-        <div id="passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+        <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
+          <button onclick="ghLoad()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Pull now</button>
+          <button onclick="ghSave()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Push now</button>
+        </div>
+        <!-- Sub-section: read-only token -->
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">Read-only token <span style="font-weight:400;color:var(--text3);">— lets team members pull without write access</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <input type="password" id="gh-readonly-input" placeholder="Paste read-only GitHub token…"
+              style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+            <button class="btn-save" onclick="saveReadonlyToken()" style="font-size:12px;white-space:nowrap;">Save</button>
+          </div>
+        </div>
+        <!-- Sub-section: shared passphrase -->
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;">Shared sync passphrase <span style="font-weight:400;color:var(--text3);">— team members use this instead of the raw token</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;">
+            <input type="text" id="sync-passphrase-input" placeholder="Set passphrase"
+              style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
+            <button class="btn-save" onclick="saveSyncPassphrase()" style="font-size:12px;white-space:nowrap;">Encrypt &amp; Save</button>
+          </div>
+          <div id="passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Users & Password -->
-    <div class="settings-card" id="users-card">
-      <div class="settings-card-title">👤 Users</div>
-      <div class="settings-card-desc">Manage who can access this planner. Each user has their own tasks and notes. The schedule is shared.</div>
+    <!-- ── TEAM (admin only) ──────────────────────────────────────── -->
+    <div class="sgroup" id="sgroup-team" style="display:none;">
+      <div class="sgroup-label">Team</div>
 
-      <!-- Current user / change own password -->
-      <div style="margin-top:12px; padding:10px 12px; background:var(--surface2); border-radius:var(--radius-md); display:flex; flex-direction:column; gap:8px;">
-        <div style="font-size:12px; font-weight:600; color:var(--text);">Signed in as <span id="settings-username" style="color:var(--cal-text);"></span></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <input type="password" id="pw-current" placeholder="Current password" autocomplete="current-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
-          <input type="password" id="pw-new" placeholder="New password" autocomplete="new-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
-          <input type="password" id="pw-confirm" placeholder="Confirm new" autocomplete="new-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-          <button class="btn-save" onclick="changePassword()" style="font-size:12px;white-space:nowrap;">Change password</button>
+      <!-- Users -->
+      <div class="settings-card">
+        <div class="settings-card-title">Users</div>
+        <div class="settings-card-desc">Manage who can access this planner and what they can see.</div>
+        <div id="user-list-wrap" style="display:none;margin-top:14px;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">All users</div>
+          <div id="user-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">Add user</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+            <input type="text" id="new-username" placeholder="Username or email" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
+            <input type="text" id="new-displayname" placeholder="Display name (e.g. Kate)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+            <input type="password" id="new-password" placeholder="Password" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
+            <input type="text" id="new-schedulename" placeholder="Schedule name (e.g. Vetle)" list="schedule-names-list" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;width:140px;">
+            <datalist id="schedule-names-list"></datalist>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
+              <input type="checkbox" id="new-isadmin" style="accent-color:var(--cal-text);"> Admin
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
+              <input type="checkbox" id="new-priv-zendesk" style="accent-color:var(--cal-text);"> Tickets (Zendesk)
+            </label>
+            <button class="btn-save" onclick="addUser()" style="font-size:12px;margin-left:auto;">Add user</button>
+          </div>
+          <span id="user-add-msg" style="font-size:11px;color:var(--text3);display:block;margin-top:4px;"></span>
         </div>
-        <span id="pw-msg" style="font-size:11px;color:var(--text3);"></span>
       </div>
 
-      <!-- User list (admin only) -->
-      <div id="user-list-wrap" style="display:none; margin-top:14px;">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">All users</div>
-        <div id="user-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">Add user</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-          <input type="text" id="new-username" placeholder="Username or email" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
-          <input type="text" id="new-displayname" placeholder="Display name (e.g. Kate)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-          <input type="password" id="new-password" placeholder="Password" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-          <input type="text" id="new-schedulename" placeholder="Schedule name (e.g. Vetle)" list="schedule-names-list" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;width:140px;">
-          <datalist id="schedule-names-list"></datalist>
+      <!-- Announcements -->
+      <div class="settings-card" id="announcements-settings-card" style="display:none;">
+        <div class="settings-card-title">Team announcements</div>
+        <div class="settings-card-desc">Post updates visible to all team members. Each person sees a notification until they mark it read.</div>
+        <div id="announcements-settings-body" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="settings-card" id="ql-settings-card" style="display:none;">
+        <div class="settings-card-title">Quick links</div>
+        <div class="settings-card-desc">Manage shared links visible to all users, and your personal links.</div>
+        <div id="ql-settings-body" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- Unifon -->
+      <div class="settings-card" id="unifon-settings-card" style="display:none;">
+        <div class="settings-card-title">Unifon call data</div>
+        <div class="settings-card-desc">Log incoming call volumes manually. Data appears in the Tickets tab and your dashboard.</div>
+        <div id="unifon-settings-body" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- ── DATA ──────────────────────────────────────────────────── -->
+    <div class="sgroup">
+      <div class="sgroup-label">Data</div>
+
+      <!-- Calendar import -->
+      <div class="settings-card">
+        <div class="settings-card-title">Outlook calendar import</div>
+        <div class="settings-card-desc">Import your calendar as an .ics file. Events appear as blue cards in your planner.</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <label class="settings-upload-btn" for="ics-input-settings">Choose .ics file</label>
+          <input type="file" id="ics-input-settings" accept=".ics" style="display:none" onchange="handleIcsFile(this.files[0], true)">
+          <span id="ics-status" style="font-size:12px;color:var(--text3);"></span>
+          <button class="btn-cancel" id="ics-clear-btn" onclick="clearCal()" style="display:none;margin-left:auto;">✕ Clear</button>
         </div>
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
-          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
-            <input type="checkbox" id="new-isadmin" style="accent-color:var(--cal-text);"> Admin
-          </label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
-            <input type="checkbox" id="new-priv-zendesk" style="accent-color:var(--cal-text);"> Tickets (Zendesk)
-          </label>
-          <button class="btn-save" onclick="addUser()" style="font-size:12px;margin-left:auto;">Add user</button>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6;">
+          <strong style="color:var(--text2);">Export from Outlook:</strong> Web → Settings → Calendar → Shared calendars → Export &nbsp;|&nbsp; Desktop → File → Open &amp; Export → Import/Export → Export to iCalendar
         </div>
-        <span id="user-add-msg" style="font-size:11px;color:var(--text3);display:block;margin-top:4px;"></span>
       </div>
 
-      <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border);display:flex;align-items:center;gap:10px;">
-        <button class="btn-cancel" onclick="signOut()">Sign out</button>
-        <span style="font-size:11px;color:var(--text3);">Locks the planner and requires sign in again</span>
+      <!-- Schedule upload (admin only) -->
+      <div class="settings-card" id="schedule-upload-card" style="display:none;">
+        <div class="settings-card-title">Team schedule upload</div>
+        <div class="settings-card-desc">Upload a new shift schedule Excel file. Must follow the same format as the original.</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          <label class="settings-upload-btn" for="xlsx-input-settings">Choose .xlsx file</label>
+          <input type="file" id="xlsx-input-settings" accept=".xlsx" style="display:none" onchange="handleXlsxUpload(this.files[0])">
+          <span id="xlsx-status" style="font-size:12px;color:var(--text3);"></span>
+        </div>
+        <div id="xlsx-preview" style="margin-top:10px;font-size:11px;color:var(--text3);display:none;"></div>
+      </div>
+
+      <!-- Backup & Restore -->
+      <div class="settings-card">
+        <div class="settings-card-title">Backup &amp; restore</div>
+        <div class="settings-card-desc">Export all your data as a JSON file. Restore it any time on any device.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+          <button class="btn-save" onclick="exportBackup()" style="font-size:12px;">⬇ Export backup</button>
+          <label class="btn-cancel" for="restore-input" style="cursor:pointer;display:inline-flex;align-items:center;">⬆ Restore from backup</label>
+          <input type="file" id="restore-input" accept=".json" style="display:none" onchange="importBackup(this.files[0])">
+        </div>
+        <div id="backup-msg" style="font-size:11px;color:var(--text3);margin-top:8px;"></div>
+      </div>
+
+      <!-- Clear tasks (destructive — at bottom, subtle) -->
+      <div class="settings-card" style="border-color:rgba(255,107,107,0.15);">
+        <div class="settings-card-title" style="color:var(--high-text);font-size:13px;">Clear all tasks</div>
+        <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
+        <button class="btn-cancel" style="margin-top:10px;color:#A32D2D;border-color:#f09595;" onclick="confirmDialog('Delete all tasks? This cannot be undone.', () => { tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }, 'Delete all')">Clear all tasks</button>
+        <span id="clear-tasks-msg" style="font-size:11px;color:var(--text3);margin-left:10px;"></span>
       </div>
     </div>
 
-    <!-- Quick Links (admin only) -->
-    <div class="settings-card" id="ql-settings-card" style="display:none;">
-      <div class="settings-card-title">🔗 Quick links</div>
-      <div class="settings-card-desc">Manage shared links visible to all users, and your personal links. These appear on everyone's dashboard.</div>
-      <div id="ql-settings-body" style="margin-top:12px;"></div>
-    </div>
-
-    <!-- Team Announcements (admin only) -->
-    <div class="settings-card" id="announcements-settings-card" style="display:none;">
-      <div class="settings-card-title">📣 Team announcements</div>
-      <div class="settings-card-desc">Post updates and procedure changes visible to all team members. Each person sees a notification until they mark it read.</div>
-      <div id="announcements-settings-body" style="margin-top:12px;"></div>
-    </div>
-
-    <!-- Unifon call data (admin only) -->
-    <div class="settings-card" id="unifon-settings-card" style="display:none;">
-      <div class="settings-card-title">📞 Unifon call data</div>
-      <div class="settings-card-desc">Log incoming call volumes manually. Data appears in the Tickets tab summary bar and your dashboard.</div>
-      <div id="unifon-settings-body" style="margin-top:12px;"></div>
-    </div>
-
-    <!-- Backup & Restore -->
-    <div class="settings-card">
-      <div class="settings-card-title">💾 Backup & Restore</div>
-      <div class="settings-card-desc">Export all your data (tasks, notes, calendar) to a file you can keep as a backup. Restore it any time - on any device or browser.</div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-        <button class="btn-save" onclick="exportBackup()" style="font-size:12px;">⬇ Export backup</button>
-        <label class="btn-cancel" for="restore-input" style="cursor:pointer; display:inline-flex; align-items:center;">⬆ Restore from backup</label>
-        <input type="file" id="restore-input" accept=".json" style="display:none" onchange="importBackup(this.files[0])">
+    <!-- ── HISTORY (collapsed by default) ───────────────────────── -->
+    <div class="sgroup">
+      <div class="sgroup-label" style="cursor:pointer;user-select:none;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none';this.querySelector('.sgroup-toggle').textContent=this.nextElementSibling.style.display===''?'▾':'▸';">
+        Incomplete tasks <span class="sgroup-toggle" style="font-size:10px;color:var(--text3);margin-left:6px;font-weight:400;">▸</span>
       </div>
-      <div id="backup-msg" style="font-size:11px; color:var(--text3); margin-top:8px;"></div>
+      <div style="display:none;">
+        <div class="settings-card" id="history-card">
+          <div class="settings-card-desc">Tasks from previous weeks that were not completed. Mark them done or reschedule to this week.</div>
+          <div id="history-list" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Clear all tasks -->
-    <div class="settings-card">
-      <div class="settings-card-title">🗑 Clear all tasks</div>
-      <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
-      <button class="btn-cancel" style="margin-top:10px; color:#A32D2D; border-color:#f09595;" onclick="confirmDialog('Delete all tasks? This cannot be undone.', () => { tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }, 'Delete all')">Clear all tasks</button>
-      <span id="clear-tasks-msg" style="font-size:11px; color:var(--text3); margin-left:10px;"></span>
-    </div> <!-- end clear all tasks card -->
-
-      </div> <!-- end adv-body -->
-    </div> <!-- end advanced section -->
-
-    <!-- Incomplete task history -->
-    <div class="settings-card" id="history-card">
-      <div class="settings-card-title">📋 Incomplete tasks</div>
-      <div class="settings-card-desc">Tasks from previous weeks that were not completed. Mark them done or reschedule to this week.</div>
-      <div id="history-list" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;"></div>
-    </div>
-
+  </div>
   </div>
 </div>
 
@@ -2150,29 +2167,26 @@ function switchTab(name, btn) {
     renderHistory();
     renderUserList();
     const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name;
-    const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = (currentUser && currentUser.isAdmin) ? '' : 'none';
-    const adv = document.getElementById('adv-toggle'); if (adv) adv.style.display = isAdmin() ? '' : 'none';
-    const advBody = document.getElementById('adv-body'); if (advBody) advBody.style.display = isAdmin() ? '' : 'none';
-    const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = isAdmin() ? '' : 'none';
+    // Account section: show user list only for admin
+    const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = isAdmin() ? '' : 'none';
+    // Sync section: show correct card
     const ghCard = document.getElementById('gh-sync-card'); if (ghCard) ghCard.style.display = isAdmin() ? '' : 'none';
+    const nonadminSyncCard = document.getElementById('nonadmin-sync-card'); if (nonadminSyncCard) nonadminSyncCard.style.display = (!isAdmin()) ? '' : 'none';
+    // Team section: show for admins only
+    const sgroupTeam = document.getElementById('sgroup-team'); if (sgroupTeam) sgroupTeam.style.display = isAdmin() ? '' : 'none';
+    const schedUploadCard = document.getElementById('schedule-upload-card'); if (schedUploadCard) schedUploadCard.style.display = isAdmin() ? '' : 'none';
+    // Render admin-only sub-cards
     const qlCard = document.getElementById('ql-settings-card');
     if (qlCard) {
       qlCard.style.display = isAdmin() ? '' : 'none';
-      if (isAdmin()) {
-        const body = document.getElementById('ql-settings-body');
-        if (body) { body.innerHTML = ''; renderQuickLinks(body, currentUser.name, true); }
-      }
+      if (isAdmin()) { const body = document.getElementById('ql-settings-body'); if (body) { body.innerHTML = ''; renderQuickLinks(body, currentUser.name, true); } }
     }
     const annCard = document.getElementById('announcements-settings-card');
-    if (annCard) {
-      annCard.style.display = isAdmin() ? '' : 'none';
-      if (isAdmin()) renderAnnouncementsSettings();
-    }
+    if (annCard) { annCard.style.display = isAdmin() ? '' : 'none'; if (isAdmin()) renderAnnouncementsSettings(); }
     const unifonCard = document.getElementById('unifon-settings-card');
-    if (unifonCard) {
-      unifonCard.style.display = isAdmin() ? '' : 'none';
-      if (isAdmin()) { const b = document.getElementById('unifon-settings-body'); if (b) renderUnifonSettings(b); }
-    }
+    if (unifonCard) { unifonCard.style.display = isAdmin() ? '' : 'none'; if (isAdmin()) { const b = document.getElementById('unifon-settings-body'); if (b) renderUnifonSettings(b); } }
+    // History card always visible
+    const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = '';
   }
   if (name === 'schedule') { renderSchedule(); }
   if (name === 'dashboard') { renderDashboard(); }
@@ -5848,12 +5862,6 @@ function showKeyboardShortcuts() {
   document.addEventListener('keydown', function h(e) { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', h); } });
 }
 
-function toggleAdvanced() {
-  const toggle = document.getElementById('adv-toggle');
-  const body = document.getElementById('adv-body');
-  toggle.classList.toggle('open');
-  body.classList.toggle('open');
-}
 
 // ─── Confirm dialog (replaces browser confirm()) ──────────────────
 function confirmDialog(msg, onConfirm, confirmLabel = 'Delete', danger = true) {
