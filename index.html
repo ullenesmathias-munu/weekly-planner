@@ -4911,13 +4911,32 @@ function renderAdminDashboard(root, viewerMode=false) {
   // CSAT — mini donut, prominent position
   if(zdReady()){
     const csatSec=dbSection('Satisfaction (30d)','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+    const csatPeriodEl=document.createElement('div');csatPeriodEl.style.cssText='font-size:10px;color:var(--text3);margin-bottom:8px;';
+    const d30Label=new Date();d30Label.setDate(d30Label.getDate()-30);
+    csatPeriodEl.textContent=d30Label.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' – today';
+    csatSec.appendChild(csatPeriodEl);
     const csatEl=document.createElement('div');csatEl.id='db-csat-mini';csatEl.innerHTML='<div class="db-empty">Loading…</div>';
     csatSec.appendChild(csatEl);col3.appendChild(csatSec);
     const d30=new Date();d30.setDate(d30.getDate()-30);
-    zdFetch(`/satisfaction_ratings.json?start_time=${Math.floor(d30.getTime()/1000)}&end_time=${Math.floor(Date.now()/1000)-3600}&per_page=100`).then(r=>{
+    const fromTs30=Math.floor(d30.getTime()/1000);
+    const toTs30=Math.floor(Date.now()/1000)-3600;
+
+    // Paginate through all ratings — not just first 100
+    const fetchAllRatings = async () => {
+      let all=[], url=`/satisfaction_ratings.json?start_time=${fromTs30}&end_time=${toTs30}&per_page=100&sort_by=id&sort_order=asc`;
+      for(let p=0;p<15&&url;p++){
+        const r=await zdFetch(url);
+        all=all.concat(r.satisfaction_ratings||[]);
+        url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
+      }
+      return all;
+    };
+    fetchAllRatings().then(ratings=>{
       const el=document.getElementById('db-csat-mini');if(!el)return;
-      const ratings=r.satisfaction_ratings||[];
-      const good=ratings.filter(r2=>r2.score==='good').length,bad=ratings.filter(r2=>r2.score==='bad').length,total=good+bad;
+      // Only explicit good/bad — exclude unoffered/offered/pending
+      const good=ratings.filter(r2=>r2.score==='good').length;
+      const bad=ratings.filter(r2=>r2.score==='bad').length;
+      const total=good+bad;
       el.innerHTML='';
       if(!total){el.innerHTML='<div class="db-empty">No ratings yet</div>';return;}
       const pct=Math.round(good/total*100);
@@ -4936,27 +4955,35 @@ function renderAdminDashboard(root, viewerMode=false) {
     }).catch(e=>{const el=document.getElementById('db-csat-mini');if(el)el.innerHTML='<div class="db-empty">'+e.message+'</div>';});
 
     // MTTR
-    const mttrSec=dbSection('Median resolution (30d)');
+    const mttrSec=dbSection('Avg resolution (30d)');
+    const mttrPeriodEl=document.createElement('div');mttrPeriodEl.style.cssText='font-size:10px;color:var(--text3);margin-bottom:8px;';
+    const d30b=new Date();d30b.setDate(d30b.getDate()-30);
+    mttrPeriodEl.textContent=d30b.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' – today';
+    mttrSec.appendChild(mttrPeriodEl);
     const mttrEl=document.createElement('div');mttrEl.id='db-mttr-mini';mttrEl.innerHTML='<div class="db-empty">Loading…</div>';
     mttrSec.appendChild(mttrEl);col3.appendChild(mttrSec);
-    const d30b=new Date();d30b.setDate(d30b.getDate()-30);
-    zdFetch('/search.json?query='+encodeURIComponent(`type:ticket status>=solved solved>=${d30b.toISOString().slice(0,10)} solved<=${todayStr}`)+'&per_page=100&sort_by=solved_at&sort_order=desc').then(r2=>{
-      const el=document.getElementById('db-mttr-mini');if(!el)return;
-      const tickets2=r2.results||[];
-      if(!tickets2.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
-      const times=tickets2.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
-      if(!times.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
-      const median=times[Math.floor(times.length/2)];
-      const mean=Math.round(times.reduce((a,b)=>a+b,0)/times.length);
-      const fmtD2=(mins)=>{if(!mins)return'—';const m=Math.round(mins),h=Math.floor(m/60),rm=m%60,d=Math.floor(h/24);return d>0?d+'d '+(h%24)+'h':h>0?h+'h'+(rm>0?' '+rm+'m':''):m+'m';};
-      el.innerHTML='';
-      const bigRow=document.createElement('div');bigRow.style.cssText='display:flex;align-items:flex-end;gap:10px;margin-bottom:8px;';
-      const bigVal=document.createElement('div');bigVal.style.cssText="font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);";bigVal.textContent=fmtD2(mean);
-      const bigSub=document.createElement('div');bigSub.style.cssText='font-size:10px;color:var(--text3);padding-bottom:4px;line-height:1.5;';bigSub.textContent='mean · '+tickets2.length+' tickets';
-      bigRow.appendChild(bigVal);bigRow.appendChild(bigSub);el.appendChild(bigRow);
-      const mkMR=(v,l)=>{const d2=document.createElement('div');d2.className='db-row';const l2=document.createElement('div');l2.className='db-row-label';l2.textContent=l;const v2=document.createElement('div');v2.className='db-row-meta';v2.textContent=v;d2.appendChild(l2);d2.appendChild(v2);return d2;};
-      el.appendChild(mkMR(fmtD2(median),'Median'));
-    }).catch(e=>{const el=document.getElementById('db-mttr-mini');if(el)el.innerHTML='<div class="db-empty">'+e.message+'</div>';});
+    // Fetch all solved tickets for last 30 days with pagination (max 10 pages = 1000 tickets)
+    (async () => {
+      try {
+        let allTickets2=[],url='/search.json?query='+encodeURIComponent(`type:ticket status>=solved solved>=${d30b.toISOString().slice(0,10)} solved<=${todayStr}`)+'&per_page=100&sort_by=solved_at&sort_order=desc';
+        for(let p=0;p<10&&url;p++){const r2=await zdFetch(url);allTickets2=allTickets2.concat(r2.results||[]);url=r2.next_page?r2.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
+        const el=document.getElementById('db-mttr-mini');if(!el)return;
+        if(!allTickets2.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
+        const times=allTickets2.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
+        if(!times.length){el.innerHTML='<div class="db-empty">No data</div>';return;}
+        const median=times[Math.floor(times.length/2)];
+        const mean=Math.round(times.reduce((a,b)=>a+b,0)/times.length);
+        const fmtD2=(mins)=>{if(!mins)return'—';const m=Math.round(mins),h=Math.floor(m/60),rm=m%60,d=Math.floor(h/24);return d>0?d+'d '+(h%24)+'h':h>0?h+'h'+(rm>0?' '+rm+'m':''):m+'m';};
+        el.innerHTML='';
+        const bigRow=document.createElement('div');bigRow.style.cssText='display:flex;align-items:flex-end;gap:10px;margin-bottom:8px;';
+        const bigVal=document.createElement('div');bigVal.style.cssText="font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);";bigVal.textContent=fmtD2(mean);
+        const bigSub=document.createElement('div');bigSub.style.cssText='font-size:10px;color:var(--text3);padding-bottom:4px;line-height:1.5;';bigSub.textContent='mean · '+allTickets2.length+' tickets';
+        bigRow.appendChild(bigVal);bigRow.appendChild(bigSub);el.appendChild(bigRow);
+        const mkMR=(v,l)=>{const d2=document.createElement('div');d2.className='db-row';const l2=document.createElement('div');l2.className='db-row-label';l2.textContent=l;const v2=document.createElement('div');v2.className='db-row-meta';v2.textContent=v;d2.appendChild(l2);d2.appendChild(v2);return d2;};
+        el.appendChild(mkMR(fmtD2(median),'Median'));
+        el.appendChild(mkMR(allTickets2.length,'Tickets'));
+      } catch(e){const el=document.getElementById('db-mttr-mini');if(el)el.innerHTML='<div class="db-empty">'+e.message+'</div>';}
+    })();
   }
 
   // Backlog trend — daily avg comparison
@@ -8693,16 +8720,20 @@ async function zdRenderInsights(body, fromDate, toDate) {
   // ── CSAT card ─────────────────────────────────────────────────
   const csatCard = document.createElement('div');
   csatCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;';
-  const csatTitle = document.createElement('div'); csatTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-bottom:12px;"; csatTitle.textContent = 'Customer satisfaction';
-  csatCard.appendChild(csatTitle);
+  const csatTitle = document.createElement('div'); csatTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px;"; csatTitle.textContent = 'Customer satisfaction';
+  const csatPeriod = document.createElement('div'); csatPeriod.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:12px;';
+  csatPeriod.textContent = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' – ' + new Date(toDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  csatCard.appendChild(csatTitle); csatCard.appendChild(csatPeriod);
   const csatBody = document.createElement('div'); csatBody.id = 'zd-csat-body'; csatBody.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Loading…</div>';
   csatCard.appendChild(csatBody);
 
   // ── MTTR card ─────────────────────────────────────────────────
   const mttrCard = document.createElement('div');
   mttrCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;';
-  const mttrTitle = document.createElement('div'); mttrTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-bottom:12px;"; mttrTitle.textContent = 'Mean time to resolve';
-  mttrCard.appendChild(mttrTitle);
+  const mttrTitle = document.createElement('div'); mttrTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px;"; mttrTitle.textContent = 'Mean time to resolve';
+  const mttrPeriod = document.createElement('div'); mttrPeriod.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:12px;';
+  mttrPeriod.textContent = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' – ' + new Date(toDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  mttrCard.appendChild(mttrTitle); mttrCard.appendChild(mttrPeriod);
   const mttrBody = document.createElement('div'); mttrBody.id = 'zd-mttr-body'; mttrBody.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Loading…</div>';
   mttrCard.appendChild(mttrBody);
 
@@ -8710,28 +8741,36 @@ async function zdRenderInsights(body, fromDate, toDate) {
   insightRow.appendChild(mttrCard);
   body.insertBefore(insightRow, body.querySelector('.zd-agent-grid') || body.firstChild);
 
-  // ── Fetch CSAT ────────────────────────────────────────────────
   const fromTs = Math.floor(new Date(fromDate + 'T00:00:00').getTime() / 1000);
-  // Cap toTs at 1 hour ago — Zendesk rejects end times that are too recent
-  const toTs = Math.min(
-    Math.floor(new Date(toDate + 'T23:59:59').getTime() / 1000),
-    Math.floor(Date.now() / 1000) - 3600
-  );
+  const toTs   = Math.min(Math.floor(new Date(toDate + 'T23:59:59').getTime() / 1000), Math.floor(Date.now() / 1000) - 3600);
 
-  zdFetch(`/satisfaction_ratings.json?start_time=${fromTs}&end_time=${toTs}&per_page=100`).then(r => {
+  // ── Helper: fetch all pages of a ZD endpoint ──────────────────
+  async function zdFetchAll(path, key, maxPages=10) {
+    let results = [], url = path, page = 0;
+    while (url && page < maxPages) {
+      const r = await zdFetch(url);
+      results = results.concat(r[key] || []);
+      // Zendesk cursor-based pagination
+      url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+      page++;
+    }
+    return results;
+  }
+
+  // ── Fetch CSAT — all pages ────────────────────────────────────
+  zdFetchAll(`/satisfaction_ratings.json?start_time=${fromTs}&end_time=${toTs}&per_page=100&sort_by=id&sort_order=asc`, 'satisfaction_ratings').then(ratings => {
     const el = document.getElementById('zd-csat-body'); if (!el) return;
-    const ratings = r.satisfaction_ratings || [];
-    const good = ratings.filter(r2 => r2.score === 'good').length;
-    const bad  = ratings.filter(r2 => r2.score === 'bad').length;
+    // Only count explicit good/bad — exclude 'unoffered' and 'offered' (not yet rated)
+    const good = ratings.filter(r => r.score === 'good').length;
+    const bad  = ratings.filter(r => r.score === 'bad').length;
     const total = good + bad;
 
     el.innerHTML = '';
     if (!total) {
-      el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No ratings for this period</div>';
+      el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No rated tickets in this period</div>';
       return;
     }
 
-    // SVG donut chart — matches Zendesk Explore style
     const goodPct2 = Math.round(good / total * 100);
     const radius = 52, cx = 72, cy = 72, stroke = 18;
     const circumference = 2 * Math.PI * radius;
@@ -8741,35 +8780,25 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const chartWrap = document.createElement('div'); chartWrap.style.cssText = 'display:flex;align-items:center;gap:16px;';
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.setAttribute('viewBox','0 0 144 144'); svg.setAttribute('width','120'); svg.setAttribute('height','120');
-
-    // Background circle
     const bgCircle = document.createElementNS('http://www.w3.org/2000/svg','circle');
     bgCircle.setAttribute('cx',cx); bgCircle.setAttribute('cy',cy); bgCircle.setAttribute('r',radius);
     bgCircle.setAttribute('fill','none'); bgCircle.setAttribute('stroke','rgba(255,107,107,0.25)'); bgCircle.setAttribute('stroke-width',stroke);
     svg.appendChild(bgCircle);
-
-    // Good arc (green) — starts at top (-90deg = -PI/2)
     const goodArc = document.createElementNS('http://www.w3.org/2000/svg','circle');
     goodArc.setAttribute('cx',cx); goodArc.setAttribute('cy',cy); goodArc.setAttribute('r',radius);
     goodArc.setAttribute('fill','none'); goodArc.setAttribute('stroke','#4ade80'); goodArc.setAttribute('stroke-width',stroke);
     goodArc.setAttribute('stroke-dasharray', goodDash + ' ' + badDash);
-    goodArc.setAttribute('stroke-dashoffset', circumference * 0.25); // rotate to start at top
-    goodArc.setAttribute('stroke-linecap','butt');
-    goodArc.style.transition = 'stroke-dasharray 0.8s cubic-bezier(0.5,0,0,1)';
+    goodArc.setAttribute('stroke-dashoffset', circumference * 0.25);
     svg.appendChild(goodArc);
-
-    // Centre label
-    const centreG = document.createElementNS('http://www.w3.org/2000/svg','g');
     const centreVal = document.createElementNS('http://www.w3.org/2000/svg','text');
     centreVal.setAttribute('x',cx); centreVal.setAttribute('y',cy+2);
     centreVal.setAttribute('text-anchor','middle'); centreVal.setAttribute('dominant-baseline','middle');
     centreVal.setAttribute('font-family','Fira Sans, sans-serif'); centreVal.setAttribute('font-size','22');
     centreVal.setAttribute('font-weight','900'); centreVal.setAttribute('fill', goodPct2>=90?'#4ade80':goodPct2>=75?'#fbbf24':'#ff6b6b');
     centreVal.textContent = goodPct2 + '%';
-    centreG.appendChild(centreVal); svg.appendChild(centreG);
+    svg.appendChild(centreVal);
     chartWrap.appendChild(svg);
 
-    // Legend
     const legend = document.createElement('div'); legend.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
     const mkLegItem = (color, label, count, pct) => {
       const item = document.createElement('div'); item.style.cssText = 'display:flex;align-items:center;gap:6px;';
@@ -8782,12 +8811,13 @@ async function zdRenderInsights(body, fromDate, toDate) {
     };
     legend.appendChild(mkLegItem('#4ade80', 'Good', good, goodPct2));
     legend.appendChild(mkLegItem('#ff6b6b', 'Bad',  bad,  100-goodPct2));
-    const totalEl = document.createElement('div'); totalEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;border-top:1px solid var(--border);padding-top:6px;'; totalEl.textContent = total + ' total ratings';
+    const totalEl = document.createElement('div'); totalEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;border-top:1px solid var(--border);padding-top:6px;';
+    totalEl.textContent = total + ' rated · ' + ratings.filter(r=>r.score==='offered').length + ' pending';
     legend.appendChild(totalEl);
     chartWrap.appendChild(legend);
     el.appendChild(chartWrap);
 
-    // Agent breakdown — top 5 by CSAT
+    // Agent breakdown — lowest CSAT first
     const agentRatings = {};
     ratings.forEach(r2 => {
       const aid = r2.assignee_id; if (!aid) return;
@@ -8799,11 +8829,11 @@ async function zdRenderInsights(body, fromDate, toDate) {
       const agent = zdAgents.find(a => a.id === +id);
       const t = v.good + v.bad;
       return { name: agent?.name?.split(' ')[0] || '?', good: v.good, bad: v.bad, total: t, pct: t > 0 ? Math.round(v.good/t*100) : 0 };
-    }).filter(a => a.total >= 3).sort((a,b) => a.pct - b.pct); // lowest CSAT first
+    }).filter(a => a.total >= 3).sort((a,b) => a.pct - b.pct);
 
     if (agentList.length) {
       const sep = document.createElement('div'); sep.style.cssText = 'margin-top:12px;padding-top:10px;border-top:1px solid var(--border);';
-      const sepLbl = document.createElement('div'); sepLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; sepLbl.textContent = 'By agent';
+      const sepLbl = document.createElement('div'); sepLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; sepLbl.textContent = 'By agent (lowest first)';
       sep.appendChild(sepLbl);
       agentList.slice(0,5).forEach(a => {
         const aRow = document.createElement('div'); aRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;';
@@ -8821,89 +8851,54 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const el = document.getElementById('zd-csat-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
   });
 
-  // ── Fetch MTTR ────────────────────────────────────────────────
-  // Get solved tickets for the period, then fetch their metrics in batches
-  zdFetch('/search.json?query=' + encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`) + '&per_page=100&sort_by=solved_at&sort_order=desc').then(async r => {
+  // ── Fetch MTTR — all pages ────────────────────────────────────
+  zdFetchAll(`/search.json?query=${encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100&sort_by=solved_at&sort_order=desc`, 'results', 20).then(async tickets => {
     const el = document.getElementById('zd-mttr-body'); if (!el) return;
-    const tickets = r.results || [];
     if (!tickets.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No solved tickets in period</div>'; return; }
 
-    // Fetch metrics via ticket_metrics endpoint — more reliable than show_many include
-    const ids = tickets.map(t => t.id);
+    // Fetch metrics for up to 100 tickets (representative sample for large periods)
+    const sample = tickets.slice(0, 100);
+    const ids = sample.map(t => t.id);
     let allMetrics = [];
-    // Use the bulk metrics endpoint
-    for (let i = 0; i < Math.min(ids.length, 75); i += 25) {
+    for (let i = 0; i < ids.length; i += 25) {
       try {
         const batch = ids.slice(i, i+25);
-        // Try bulk first
         const mr = await zdFetch('/ticket_metrics.json?ticket_ids=' + batch.join(','));
-        if (mr.ticket_metrics?.length) {
-          allMetrics = allMetrics.concat(mr.ticket_metrics);
-        } else {
-          // Fallback: fetch individually for this batch
-          for (const id of batch) {
-            try {
-              const tm = await zdFetch(`/tickets/${id}/metrics.json`);
-              if (tm.ticket_metric) allMetrics.push(tm.ticket_metric);
-            } catch(e2) {}
-          }
-        }
-      } catch(e) {
-        // Fallback per-ticket for this batch
-        const batch = ids.slice(i, i+25);
-        for (const id of batch) {
-          try {
-            const tm = await zdFetch(`/tickets/${id}/metrics.json`);
-            if (tm.ticket_metric) allMetrics.push(tm.ticket_metric);
-          } catch(e2) {}
-        }
-      }
+        if (mr.ticket_metrics?.length) allMetrics = allMetrics.concat(mr.ticket_metrics);
+        else for (const id of batch) { try { const tm = await zdFetch(`/tickets/${id}/metrics.json`); if (tm.ticket_metric) allMetrics.push(tm.ticket_metric); } catch {} }
+      } catch { for (const id of ids.slice(i,i+25)) { try { const tm = await zdFetch(`/tickets/${id}/metrics.json`); if (tm.ticket_metric) allMetrics.push(tm.ticket_metric); } catch {} } }
     }
 
     el.innerHTML = '';
 
-    if (!tickets.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No solved tickets in period</div>'; return; }
-
-    // Calculate MTTR directly from ticket timestamps (created_at → solved_at)
-    // This matches what Zendesk Explore shows as "Mean time to resolve"
-    const resolutionTimes = tickets
-      .filter(t => t.created_at && t.updated_at)
-      .map(t => {
-        // Use solved_at if available, else updated_at for solved tickets
-        const solvedAt = t.solved_at || t.updated_at;
-        return (new Date(solvedAt) - new Date(t.created_at)) / 60000; // minutes
-      })
-      .filter(m => m > 0);
-
-    // Also get first reply from metrics if available
-    const frtMins  = allMetrics.filter(m => m.reply_time_in_minutes?.calendar > 0);
-    const avgFrt   = frtMins.length ? Math.round(frtMins.reduce((s,m) => s + m.reply_time_in_minutes.calendar, 0) / frtMins.length) : 0;
-    const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
-    const oneTouchPct = allMetrics.length ? Math.round(oneTouchCount/allMetrics.length*100) : 0;
-
-    // Use median (more robust than mean for skewed distributions — matches Explore)
-    const sorted = [...resolutionTimes].sort((a,b)=>a-b);
-    const medianMins = sorted.length ? sorted[Math.floor(sorted.length/2)] : 0;
-    const avgMins    = resolutionTimes.length ? Math.round(resolutionTimes.reduce((a,b)=>a+b,0)/resolutionTimes.length) : 0;
-
     const fmtDur = (mins) => {
       if (!mins) return '—';
-      const m = Math.round(mins); // always round to whole minutes
-      const h = Math.floor(m/60), rm = m%60, d = Math.floor(h/24);
+      const m = Math.round(mins), h = Math.floor(m/60), rm = m%60, d = Math.floor(h/24);
       if (d > 0) return d + 'd ' + (h%24) + 'h';
       if (h > 0) return h + 'h ' + (rm > 0 ? rm + 'm' : '');
       return m + 'm';
     };
 
-    // Big number = MEAN (closest to Zendesk Explore's figure)
+    // Use all fetched tickets for resolution time (ticket timestamps are more reliable)
+    const resolutionTimes = tickets.map(t => {
+      const solved = t.solved_at || t.updated_at;
+      return (new Date(solved) - new Date(t.created_at)) / 60000;
+    }).filter(m => m > 0).sort((a,b) => a-b);
+
+    const medianMins = resolutionTimes.length ? resolutionTimes[Math.floor(resolutionTimes.length/2)] : 0;
+    const avgMins    = resolutionTimes.length ? Math.round(resolutionTimes.reduce((a,b)=>a+b,0)/resolutionTimes.length) : 0;
+    const frtMins    = allMetrics.filter(m => m.reply_time_in_minutes?.calendar > 0);
+    const avgFrt     = frtMins.length ? Math.round(frtMins.reduce((s,m) => s + m.reply_time_in_minutes.calendar, 0) / frtMins.length) : 0;
+    const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
+    const oneTouchPct = allMetrics.length ? Math.round(oneTouchCount/allMetrics.length*100) : 0;
+
     const bigRow2 = document.createElement('div'); bigRow2.style.cssText = 'display:flex;align-items:flex-end;gap:16px;margin-bottom:14px;';
     const bigVal2 = document.createElement('div'); bigVal2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:40px;font-weight:900;letter-spacing:-0.04em;line-height:1;color:var(--cal-text);"; bigVal2.textContent = fmtDur(avgMins);
     const bigSub2 = document.createElement('div'); bigSub2.style.cssText = 'font-size:11px;color:var(--text3);padding-bottom:6px;line-height:1.4;';
-    bigSub2.textContent = 'mean resolution\n' + resolutionTimes.length + ' tickets';
+    bigSub2.textContent = 'mean · ' + tickets.length + ' tickets' + (tickets.length > 100 ? ' (sample: 100)' : '');
     bigSub2.style.whiteSpace = 'pre';
     bigRow2.appendChild(bigVal2); bigRow2.appendChild(bigSub2); el.appendChild(bigRow2);
 
-    // Supporting metrics
     const suppRow = document.createElement('div'); suppRow.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;';
     const mkSupp = (val, label) => {
       const s = document.createElement('div'); s.style.cssText = 'display:flex;flex-direction:column;gap:1px;';
@@ -8913,31 +8908,28 @@ async function zdRenderInsights(body, fromDate, toDate) {
     };
     suppRow.appendChild(mkSupp(fmtDur(medianMins), 'Median'));
     if (avgFrt) suppRow.appendChild(mkSupp(fmtDur(avgFrt), 'Avg first reply'));
-    if (allMetrics.length) {
-      const oneTouchCount = allMetrics.filter(m => (m.replies ?? m.reply_count ?? 999) <= 1).length;
-      const oneTouchPct = Math.round(oneTouchCount/allMetrics.length*100);
-      suppRow.appendChild(mkSupp(oneTouchPct + '%', 'One-touch'));
-    }
+    if (allMetrics.length) suppRow.appendChild(mkSupp(oneTouchPct + '%', 'One-touch'));
     suppRow.appendChild(mkSupp(tickets.length, 'Tickets'));
     el.appendChild(suppRow);
 
-    // Agent MTTR breakdown — match metrics by ticket_id
+    // Agent MTTR breakdown
     const metricsById = {};
     allMetrics.forEach(m => { if (m.ticket_id) metricsById[m.ticket_id] = m; });
     const agentMetrics = {};
-    tickets.forEach(t => {
-      const m = metricsById[t.id]; if (!m) return;
+    sample.forEach(t => {
       const aid = t.assignee_id; if (!aid) return;
-      if (!agentMetrics[aid]) agentMetrics[aid] = { total: 0, count: 0 };
-      if (m.full_resolution_time_in_minutes?.calendar > 0) {
-        agentMetrics[aid].total += m.full_resolution_time_in_minutes.calendar;
+      const solved2 = t.solved_at || t.updated_at;
+      const mins2 = (new Date(solved2) - new Date(t.created_at)) / 60000;
+      if (mins2 > 0) {
+        if (!agentMetrics[aid]) agentMetrics[aid] = { total: 0, count: 0 };
+        agentMetrics[aid].total += mins2;
         agentMetrics[aid].count++;
       }
     });
     const agentMttrList = Object.entries(agentMetrics).filter(([,v]) => v.count >= 3).map(([id,v]) => {
       const agent = zdAgents.find(a => a.id === +id);
       return { name: agent?.name?.split(' ')[0] || '?', avg: Math.round(v.total/v.count), count: v.count };
-    }).sort((a,b) => a.avg - b.avg); // fastest first
+    }).sort((a,b) => a.avg - b.avg);
 
     if (agentMttrList.length) {
       const maxAvg = Math.max(...agentMttrList.map(a => a.avg), 1);
@@ -8960,7 +8952,6 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const el = document.getElementById('zd-mttr-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
   });
 }
-
 function zdShowSetup() {
   const body = document.getElementById('zd-body');
   if (!body) return;
