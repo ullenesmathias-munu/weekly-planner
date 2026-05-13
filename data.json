@@ -707,6 +707,14 @@
       "missed": 17,
       "avgWaitSec": 162,
       "savedAt": "2026-05-12T19:52:42.915Z"
+    },
+    {
+      "date": "2026-05-13",
+      "offered": 187,
+      "answered": 137,
+      "missed": 48,
+      "avgWaitSec": 567,
+      "savedAt": "2026-05-13T20:30:54.281Z"
     }
   ],
   "wtp_mood_vetle.bengtson@munu.cloud": [
