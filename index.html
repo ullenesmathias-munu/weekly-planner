@@ -731,10 +731,7 @@
   .db-rag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   /* SLA badges */
-  .db-sla-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
-  .db-sla-badge.breached { background: var(--high-bg); color: var(--high-text); }
-  .db-sla-badge.warn     { background: var(--med-bg); color: var(--med-text); }
-  .db-sla-badge.ok       { background: var(--low-bg); color: var(--low-text); }
+
 
   /* Feedback from label */
   .db-feedback-from { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--cal-text); flex-shrink: 0; min-width: 56px; }
@@ -1131,7 +1128,13 @@
   .sched-coverage-bar { display: grid; gap: 0; margin-bottom: 0; }
   .sched-coverage-row { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-bottom: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 10px 0 10px 12px; gap: 0; overflow: hidden; }
   .sched-today-banner { background: var(--cal); border: 1px solid var(--cal-border); border-bottom: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 8px 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .sched-today-title { font-size: 11px; font-weight: 700; color: var(--cal-text); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+  .s-hd  { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; } /* Public holiday */
+  .light-mode .s-hd { background: #f3e8ff; color: #7e22ce; }
+  .sched-holiday-col { background: rgba(243,232,255,0.08) !important; }
+  .light-mode .sched-holiday-col { background: rgba(243,232,255,0.25) !important; }
+  .role-row td { border-top: none !important; background: transparent; }
+  .role-row .role-none { color: var(--text3); font-size: 10px; opacity: 0.4; }
+  .role-row .role-cell:hover { background: var(--surface3); }
   .sched-today-chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .sched-coverage-cell { flex: 1; text-align: center; padding: 6px 4px; min-width: 0; border-right: 0.5px solid var(--border); }
   .sched-coverage-cell:last-child { border-right: none; }
@@ -1709,6 +1712,10 @@ window.tryUnlock = async function() {
   <button class="tab-btn" onclick="switchTab('settings', this)">Settings</button>
   <div class="clock-wrap">
     <span id="user-display" style="font-size:12px;color:var(--text2);margin-right:2px;"></span>
+    <div id="sync-indicator" class="sync-indicator notoken" onclick="onSyncIndicatorClick()" title="Click to sync now">
+      <span class="sync-dot"></span>
+      <span id="sync-indicator-text">Not connected</span>
+    </div>
     <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;transition:border-color 0.15s,color 0.15s;" title="Toggle light/dark mode">🌙</button>
     <button onclick="signOut()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 10px;cursor:pointer;transition:color 0.15s,border-color 0.15s;" title="Sign out (Q)">Sign out</button>
     <button onclick="showKeyboardShortcuts()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;" title="Keyboard shortcuts">?</button>
@@ -1734,10 +1741,6 @@ window.tryUnlock = async function() {
     </div>
     <div class="topbar-right">
       <span id="status-msg"></span>
-      <div id="sync-indicator" class="sync-indicator notoken" onclick="onSyncIndicatorClick()" title="Click to sync now">
-        <span class="sync-dot"></span>
-        <span id="sync-indicator-text">Not connected</span>
-      </div>
       <div class="search-wrap">
         <input type="text" id="task-search" placeholder="🔍 Search tasks…" oninput="searchTasks(this.value)" autocomplete="off">
         <div id="search-results" class="search-results"></div>
@@ -1746,8 +1749,6 @@ window.tryUnlock = async function() {
       <button class="btn-nav" onclick="toggleWeeklyReview()" id="weekly-review-btn" style="font-size:11px;">📋 Review</button>
     </div>
   </div>
-  <!-- Daily quote strip -->
-  <div class="quote-strip" id="quote-strip"><span id="quote-text"></span></div>
   <!-- Week progress bar -->
   <div class="week-progress-wrap" id="week-progress-wrap">
     <div class="week-progress-bar"><div class="week-progress-fill" id="week-progress-fill" style="width:0%"></div></div>
@@ -2133,6 +2134,7 @@ function shiftClass(shift) {
   if (up.startsWith('W2') || up.startsWith('H2')) return 's-w2';
   if (up.startsWith('W3')) return 's-w3';
   if (up === 'H' || up.startsWith('H ')) return 's-h';
+  if (up === 'HD') return 's-hd'; // public holiday
   if (up === 'SO') return 's-so';
   if (up === 'OS') return 's-os';
   if (up === 'OL') return 's-ol';
@@ -2347,7 +2349,7 @@ function renderSchedule() {
 
   const todayStr = localToday();
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
-  const OFF_SHIFTS = new Set(['so','h','abs','']);
+  const OFF_SHIFTS = new Set(['so','h','hd','abs','']);
 
   // ── Week meta stats ───────────────────────────────────────────
   const metaWrap = document.getElementById('sched-week-meta');
@@ -2388,25 +2390,7 @@ function renderSchedule() {
         return !OFF_SHIFTS.has(s);
       });
       const todayOff = myTeam.filter(p => OFF_SHIFTS.has((p.shifts[todayIdx]||'').toLowerCase()));
-      const banner = document.createElement('div'); banner.className = 'sched-today-banner';
-      const title = document.createElement('span'); title.className = 'sched-today-title';
-      title.textContent = '● Today — ' + new Date(todayStr+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-      banner.appendChild(title);
-      const chips = document.createElement('div'); chips.className = 'sched-today-chips';
-      todayPeople.forEach(p => {
-        const chip = document.createElement('span');
-        chip.className = 'shift-pill ' + shiftClass(p.shifts[todayIdx]);
-        chip.style.cssText = 'font-size:11px;font-weight:600;';
-        chip.textContent = p.name + ' · ' + p.shifts[todayIdx];
-        chips.appendChild(chip);
-      });
-      if (todayOff.length) {
-        const offChip = document.createElement('span');
-        offChip.style.cssText = 'font-size:11px;color:var(--text3);align-self:center;';
-        offChip.textContent = todayOff.map(p=>p.name).join(', ') + ' off';
-        chips.appendChild(offChip);
-      }
-      banner.appendChild(chips); coverageWrap.appendChild(banner);
+      // Today strip removed — team info is on the dashboard instead
     }
 
     // ── Coverage bar ──────────────────────────────────────────────
@@ -2476,7 +2460,7 @@ function renderSchedule() {
   thead.appendChild(hrow); table.appendChild(thead);
 
   const ALL_SHIFTS = ['', 'D1 (7-15)', 'D2 (8-16)', 'D3 (9-17)', 'E (17-6)', 'E2 (16-21)',
-    'W1 (7-17)', 'W2 (17-6)', 'W3 (15-19)', 'H', 'SO', 'OS', 'ABS'];
+    'W1 (7-17)', 'W2 (17-6)', 'W3 (15-19)', 'H', 'SO', 'OS', 'ABS', 'HD'];
 
   function saveSchedule() { localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE)); scheduleSyncSave(); }
 
@@ -2519,6 +2503,15 @@ function renderSchedule() {
         dd.appendChild(item);
       });
       td.style.position = 'relative'; td.appendChild(dd);
+      // Flip upward if clipped
+      const rect = dd.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight - 16) {
+        dd.style.top = 'auto';
+        dd.style.bottom = '100%';
+      }
+      const rect2 = dd.getBoundingClientRect();
+      if (rect2.left < 8) { dd.style.left = '0'; dd.style.transform = 'none'; }
+      else if (rect2.right > window.innerWidth - 8) { dd.style.left = 'auto'; dd.style.right = '0'; dd.style.transform = 'none'; }
       setTimeout(() => document.addEventListener('click', () => dd.remove(), { once: true }), 0);
     });
     return td;
@@ -2580,6 +2573,16 @@ function renderSchedule() {
       });
 
       td.appendChild(dd);
+      // Flip upward if dropdown would be clipped by viewport bottom
+      const rect = dd.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight - 16) {
+        dd.style.top = 'auto';
+        dd.style.bottom = '100%';
+      }
+      // Also clamp horizontal position to stay within viewport
+      const rect2 = dd.getBoundingClientRect();
+      if (rect2.left < 8) { dd.style.left = '0'; dd.style.transform = 'none'; }
+      else if (rect2.right > window.innerWidth - 8) { dd.style.left = 'auto'; dd.style.right = '0'; dd.style.transform = 'none'; }
       setTimeout(() => document.addEventListener('click', () => dd.remove(), { once: true }), 0);
     });
 
@@ -2648,8 +2651,41 @@ function renderSchedule() {
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
+
+    // Role row — editable per day, shown below shift row
+    const roleRow = document.createElement('tr'); roleRow.className = 'role-row';
+    const roleNameTd = document.createElement('td');
+    roleNameTd.style.cssText = 'padding:0 8px 4px 8px;font-size:10px;color:var(--text3);vertical-align:top;';
+    roleNameTd.textContent = ''; // empty — role name shown in role cells
+    roleRow.appendChild(roleNameTd);
+    p.shifts.forEach((shift, i) => {
+      const isOff = new Set(['so','h','hd','os','abs','ol','']).has((shift||'').toLowerCase());
+      const td2 = makeRoleCell(p, i);
+      td2.style.paddingBottom = '6px';
+      if (isOff) { td2.innerHTML = ''; td2.style.cursor = 'default'; } // no role for off days
+      if (w.dates[i] === todayStr) td2.classList.add('today-col');
+      roleRow.appendChild(td2);
+    });
+    tbody.appendChild(roleRow);
   });
   table.appendChild(tbody);
+
+  // Mark holiday columns — if all (or most) team members have HD on a day, it's a public holiday
+  w.dates.forEach((date, di) => {
+    const hdCount = myTeam.filter(p => (p.shifts[di]||'').toUpperCase() === 'HD').length;
+    if (hdCount >= Math.max(2, myTeam.length * 0.5)) {
+      // Mark all cells in this column
+      table.querySelectorAll(`td[data-day="${di}"]`).forEach(td => td.classList.add('sched-holiday-col'));
+      // Add holiday label to header
+      const headerCells = table.querySelectorAll('thead th');
+      if (headerCells[di + 1]) {
+        const hdBadge = document.createElement('div');
+        hdBadge.style.cssText = 'font-size:8px;font-weight:700;color:#7e22ce;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;';
+        hdBadge.textContent = 'Holiday';
+        headerCells[di + 1].appendChild(hdBadge);
+      }
+    }
+  });
 
   // Apply swap highlight if set
   if (swapHighlight) {
@@ -3534,7 +3570,7 @@ function get1on1OverduePeople(thresholdDays = 21) {
   });
   return overdue.sort((a,b) => (b.daysSince||999) - (a.daysSince||999));
 }
-const ABSENT_SHIFTS = new Set(['so','h','os','abs','ol']);
+const ABSENT_SHIFTS = new Set(['so','h','hd','os','abs','ol']);
 function isPersonOff(person, dayIndices) {
   // Returns true if person is off/absent/sick on ALL of the given days
   return dayIndices.every(di => {
@@ -3623,10 +3659,12 @@ function renderRoleSummary(w) {
     const alertsWrap = document.createElement('div'); alertsWrap.style.marginBottom = '12px';
     const seen = new Set();
     conflicts.forEach(c => {
-      const key = c.role + c.block + (c.person||'');
+      const key = c.role + '|' + (c.person||'NONE') + '|' + c.reason;
       if (seen.has(key)) return; seen.add(key);
-      // Check if dismissed for this week
-      const weekKey = 'wtp_conflict_dismissed_' + mondayStamp(0) + '_' + key.replace(/\s+/g,'_');
+      // Dismissed key: scoped to this week AND current schedule fingerprint
+      // Re-appears if schedule changes (fingerprint changes) or new week starts
+      const schedFingerprint = btoa(JSON.stringify(SCHEDULE)).slice(-8); // last 8 chars of schedule hash
+      const weekKey = 'wtp_conflict_dismissed_' + mondayStamp(0) + '_' + schedFingerprint + '_' + key.replace(/[\s|]+/g,'_');
       if (localStorage.getItem(weekKey)) return;
       const banner = document.createElement('div');
       banner.className = 'role-conflict-banner' + (c.severity === 'warn' ? ' warn' : '');
@@ -4520,9 +4558,9 @@ function renderQuickLinks(container, username, editable) {
 
   if (editable) {
     const addRow = document.createElement('div'); addRow.className = 'ql-add-row';
-    const iconIn = document.createElement('input'); iconIn.className = 'ql-input'; iconIn.placeholder = '🔗'; iconIn.style.width = '42px'; iconIn.style.flex = 'none'; iconIn.maxLength = 2;
-    const labelIn = document.createElement('input'); labelIn.className = 'ql-input'; labelIn.placeholder = 'Label';
-    const urlIn = document.createElement('input'); urlIn.className = 'ql-input'; urlIn.placeholder = 'https://…'; urlIn.type = 'url';
+    const iconIn = document.createElement('input'); iconIn.className = 'ql-input'; iconIn.placeholder = '🔗'; iconIn.style.width = '42px'; iconIn.style.flex = 'none'; iconIn.maxLength = 2; iconIn.title = 'Emoji icon (optional)';
+    const labelIn = document.createElement('input'); labelIn.className = 'ql-input'; labelIn.placeholder = 'Name (e.g. Zendesk)';
+    const urlIn = document.createElement('input'); urlIn.className = 'ql-input'; urlIn.placeholder = 'URL (https://…)'; urlIn.type = 'url';
     const addBtn = document.createElement('button'); addBtn.className = 'ql-add-btn'; addBtn.textContent = 'Add';
 
     const doAdd = (shared) => {
@@ -4608,7 +4646,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   const todayStr = localToday();
   const hr = new Date().getHours();
   const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  const OFF = new Set(['so','h','os','abs','ol','']);
+  const OFF = new Set(['so','h','hd','os','abs','ol','']);
   const todayWeek = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
   const di = todayWeek ? todayWeek.dates.indexOf(todayStr) : -1;
   const inToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&!OFF.has((p.shifts[di]||'').toLowerCase())) : [];
@@ -4756,13 +4794,24 @@ function renderAdminDashboard(root, viewerMode=false) {
     const dStr=d.toISOString().slice(0,10); const isToday2=dStr===todayStr;
     const week=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
     const present=week?week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&!OFF.has((p.shifts[idx]||'').toLowerCase());}).length:null;
+    // Check if this is a public holiday (majority of team has HD)
+    const hdCount=week?week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&(p.shifts[idx]||'').toUpperCase()==='HD';}).length:0;
+    const isHoliday=hdCount>=Math.max(2,totalTeam*0.5);
     const cell=document.createElement('div');
-    cell.style.cssText=`flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--radius-md);border:1px solid ${isToday2?'rgba(214,243,255,0.35)':'var(--border)'};background:${isToday2?'#000743':'var(--surface2)'};`;
-    const dayEl=document.createElement('div');dayEl.style.cssText=`font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${isToday2?'#D6F3FF':'var(--text3)'};`;dayEl.textContent=['Mon','Tue','Wed','Thu','Fri'][i];
-    const numEl=document.createElement('div');numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;color:${present===null?'var(--text3)':present<totalTeam*0.5?'var(--high-text)':present<totalTeam*0.8?'var(--med-text)':'var(--low-text)'};`;numEl.textContent=present===null?'—':present;
-    const totEl=document.createElement('div');totEl.style.cssText='font-size:8px;color:var(--text3);font-weight:600;';totEl.textContent='/'+totalTeam;
+    cell.style.cssText=`flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:var(--radius-md);border:1px solid ${isHoliday?'rgba(167,139,250,0.4)':isToday2?'rgba(214,243,255,0.35)':'var(--border)'};background:${isHoliday?'rgba(243,232,255,0.06)':isToday2?'#000743':'var(--surface2)'};`;
+    const dayEl=document.createElement('div');dayEl.style.cssText=`font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:${isHoliday?'#a78bfa':isToday2?'#D6F3FF':'var(--text3)'};`;dayEl.textContent=['Mon','Tue','Wed','Thu','Fri'][i];
+    const numEl=document.createElement('div');
+    if(isHoliday){
+      numEl.style.cssText='font-size:11px;font-weight:700;line-height:1;color:#a78bfa;';
+      numEl.textContent='PH';
+      cell.title='Public holiday';
+    } else {
+      numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;color:${present===null?'var(--text3)':present<totalTeam*0.5?'var(--high-text)':present<totalTeam*0.8?'var(--med-text)':'var(--low-text)'};`;
+      numEl.textContent=present===null?'—':present;
+    }
+    const totEl=document.createElement('div');totEl.style.cssText='font-size:8px;color:var(--text3);font-weight:600;';totEl.textContent=isHoliday?'hol':'/'+totalTeam;
     cell.appendChild(dayEl);cell.appendChild(numEl);cell.appendChild(totEl);
-    if(week){const offP=week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&OFF.has((p.shifts[idx]||'').toLowerCase());});if(offP.length)cell.title='Off: '+offP.map(p=>p.name).join(', ');}
+    if(week&&!isHoliday){const offP=week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&OFF.has((p.shifts[idx]||'').toLowerCase());});if(offP.length)cell.title='Off: '+offP.map(p=>p.name).join(', ');}
     weekStrip.appendChild(cell);
   }
   weekSec.appendChild(weekStrip);
@@ -4825,7 +4874,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   [5,6].forEach(i=>{
     const d=new Date(mon);d.setDate(mon.getDate()+i);
     const dStr=d.toISOString().slice(0,10);
-    const OFF2=new Set(['so','h','os','abs','ol','']);
+    const OFF2=new Set(['so','h','hd','os','abs','ol','']);
     const week2=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
     if(week2){const idx2=week2.dates.indexOf(dStr);const present=week2.people.filter(p=>MY_TEAM.includes(p.name)&&idx2>=0&&!OFF2.has((p.shifts[idx2]||'').toLowerCase()));weStaff.push({day:['Saturday','Sunday'][i-5],people:present});}
   });
@@ -4985,6 +5034,109 @@ function renderAdminDashboard(root, viewerMode=false) {
     });
   } else {backlogEl.innerHTML='<div class="db-empty">ZD not configured</div>';}
   col3.appendChild(backlogSec);
+
+  // ── Weekly overview ───────────────────────────────────────────
+  // Per-day breakdown: solved tickets + calls — shows peaks and patterns
+  const weekOverviewSec = dbSection('This week');
+  const weekOverviewEl = document.createElement('div'); weekOverviewEl.id = 'db-week-overview';
+
+  const mon7 = getMonday(0);
+  const days7 = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon7); d.setDate(mon7.getDate()+i);
+    days7.push({
+      date: d.toISOString().slice(0,10),
+      label: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i],
+      isToday: d.toISOString().slice(0,10) === todayStr,
+      isPast:  d <= new Date()
+    });
+  }
+
+  const allUnifonDays = loadUnifonData();
+  const unifonByDay = {};
+  days7.forEach(({date}) => {
+    const u = allUnifonDays.find(d => d.date === date);
+    unifonByDay[date] = u || null;
+  });
+
+  // Build table immediately with Unifon data; ZD solved fills in async
+  const tbl = document.createElement('table');
+  tbl.style.cssText = 'width:100%;border-collapse:collapse;font-size:11px;';
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+  ['','Solved','Offered','Missed','Miss%'].forEach((h,i) => {
+    const th = document.createElement('th');
+    th.style.cssText = `font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);padding:3px ${i===0?'0':'6px'} 6px ${i===0?'0':'6px'};text-align:${i===0?'left':'right'};border-bottom:1px solid var(--border);`;
+    th.textContent = h; headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow); tbl.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  const solvedCells = {};
+  days7.forEach(({date, label, isToday, isPast}) => {
+    const u = unifonByDay[date];
+    const pct = u && u.offered > 0 ? Math.round((u.missed||0)/u.offered*100) : null;
+    // Check if public holiday
+    const weekHd = SCHEDULE.find(w=>w.dates&&w.dates.includes(date));
+    const hdCnt = weekHd ? weekHd.people.filter(p=>{const di=weekHd.dates.indexOf(date);return MY_TEAM.includes(p.name)&&di>=0&&(p.shifts[di]||'').toUpperCase()==='HD';}).length : 0;
+    const isHol = hdCnt >= Math.max(2, totalTeam*0.5);
+    const tr = document.createElement('tr');
+    if (isToday) tr.style.background = 'rgba(0,7,67,0.3)';
+    if (isHol) tr.style.background = 'rgba(243,232,255,0.05)';
+
+    const dayTd = document.createElement('td');
+    dayTd.style.cssText = `padding:5px 0;font-weight:${isToday?700:500};color:${isHol?'#a78bfa':isToday?'var(--cal-text)':'var(--text2)'};white-space:nowrap;`;
+    dayTd.textContent = label + (isHol ? ' 🏖' : isToday ? ' ·' : '');
+
+    const solvedTd = document.createElement('td');
+    solvedTd.style.cssText = 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--text3);';
+    solvedTd.textContent = isPast ? '…' : '—';
+    if (isPast) solvedCells[date] = solvedTd;
+
+    const offeredTd = document.createElement('td');
+    offeredTd.style.cssText = 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;';
+    offeredTd.textContent = u ? u.offered||0 : '—';
+    offeredTd.style.color = u ? 'var(--text2)' : 'var(--text3)';
+
+    const missedTd = document.createElement('td');
+    missedTd.style.cssText = 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;';
+    missedTd.textContent = u ? (u.missed||0) : '—';
+    missedTd.style.color = u && (u.missed||0) > 0 ? 'var(--high-text)' : 'var(--text3)';
+
+    const pctTd = document.createElement('td');
+    pctTd.style.cssText = 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;';
+    pctTd.textContent = pct !== null ? pct + '%' : '—';
+    pctTd.style.color = pct === null ? 'var(--text3)' : pct > 15 ? 'var(--high-text)' : pct > 8 ? 'var(--med-text)' : 'var(--text3)';
+
+    tr.appendChild(dayTd); tr.appendChild(solvedTd);
+    tr.appendChild(offeredTd); tr.appendChild(missedTd); tr.appendChild(pctTd);
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+  weekOverviewEl.appendChild(tbl);
+  weekOverviewSec.appendChild(weekOverviewEl);
+  col3.appendChild(weekOverviewSec);
+
+  // Fill in ZD solved-per-day async
+  if (zdReady()) {
+    Promise.all(
+      days7.filter(d => d.isPast && solvedCells[d.date]).map(({date}) =>
+        zdCount(`type:ticket status>=solved solved>=${date} solved<=${date}`).then(n => ({date, n})).catch(() => ({date, n: '?'}))
+      )
+    ).then(results => {
+      let maxSolved = 0;
+      results.forEach(({date, n}) => { if (+n > maxSolved) maxSolved = +n; });
+      results.forEach(({date, n}) => {
+        const td = solvedCells[date]; if (!td) return;
+        td.textContent = n;
+        td.style.color = +n === maxSolved && +n > 0 ? 'var(--low-text)' : 'var(--text2)';
+        if (+n === maxSolved && +n > 0) td.title = 'Peak day';
+      });
+    });
+  } else {
+    Object.values(solvedCells).forEach(td => { td.textContent = '—'; td.style.color = 'var(--text3)'; });
+  }
+
   body.appendChild(col3);
 
   // ═══════════════════════════════════════════════════════════════
@@ -4992,30 +5144,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   // ═══════════════════════════════════════════════════════════════
   const col4=document.createElement('div'); col4.className='db-col';
 
-  // SLA risk — top tickets approaching breach
-  const slaSec=dbSection('SLA risk');
-  const slaRiskEl=document.createElement('div');slaRiskEl.id='db-sla-risk2';slaRiskEl.innerHTML='<div class="db-empty">Loading…</div>';
-  slaSec.appendChild(slaRiskEl);
-  if(zdReady()){
-    zdFetch('/search.json?query='+encodeURIComponent('type:ticket (status:open OR status:pending OR status:hold)')+'&per_page=50&sort_by=created_at&sort_order=asc').then(r=>{
-      const el=document.getElementById('db-sla-risk2');if(!el)return;
-      const now=new Date();
-      const withRisk=(r.results||[]).map(t=>{const res=zdCalcSlaBreached(t);const ageH=(now-new Date(t.created_at))/3600000;const pct=ageH/res.targetHours;return{t,res,pct};}).filter(x=>x.pct>=0.7).sort((a,b)=>b.pct-a.pct);
-      el.innerHTML='';
-      if(!withRisk.length){el.innerHTML='<div class="db-empty" style="color:var(--low-text);">✓ No tickets near SLA limit</div>';return;}
-      withRisk.slice(0,6).forEach(({t,res,pct})=>{
-        const a=document.createElement('a');const isBreached=res.breached,isClose=pct>=0.9;
-        a.style.cssText=`display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--radius-md);text-decoration:none;margin-bottom:3px;border:1px solid;${isBreached?'background:rgba(255,107,107,0.07);border-color:rgba(255,107,107,0.2);':isClose?'background:rgba(252,211,77,0.07);border-color:rgba(252,211,77,0.2);':'background:var(--surface2);border-color:var(--border);'}`;
-        a.href=zdSubdomain?`https://${zdSubdomain}.zendesk.com/agent/tickets/${t.id}`:'#';a.target='_blank';a.rel='noopener';
-        const id=document.createElement('span');id.style.cssText=`font-size:10px;font-weight:700;flex-shrink:0;color:${isBreached?'var(--high-text)':isClose?'var(--med-text)':'var(--text3)'}`;id.textContent='#'+t.id;
-        const subj=document.createElement('span');subj.style.cssText='flex:1;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';subj.textContent=t.subject||'(no subject)';
-        const pctEl=document.createElement('span');pctEl.style.cssText=`font-size:10px;font-weight:700;flex-shrink:0;color:${isBreached?'var(--high-text)':isClose?'var(--med-text)':'var(--text3)'}`;pctEl.textContent=isBreached?zdFormatOverBy(res.overByMs):Math.round(pct*100)+'%';
-        a.appendChild(id);a.appendChild(subj);a.appendChild(pctEl);el.appendChild(a);
-      });
-      if(withRisk.length>6){const m=document.createElement('div');m.style.cssText='font-size:11px;color:var(--text3);padding:3px 0;text-align:center;';m.textContent='+'+(withRisk.length-6)+' more';el.appendChild(m);}
-    }).catch(()=>{const el=document.getElementById('db-sla-risk2');if(el)el.innerHTML='<div class="db-empty">Could not load</div>';});
-  } else {slaRiskEl.innerHTML='<div class="db-empty">ZD not configured</div>';}
-  col4.appendChild(slaSec);
+
 
   // Staffing vs load
   const staffSec=dbSection('Staffing vs load');
@@ -5117,21 +5246,6 @@ function renderAdminDashboard(root, viewerMode=false) {
   col5.appendChild(healthSec);
 
   if(!viewerMode){
-    const moodSec=dbSection('Team pulse');
-    const allNonAdmin=getUsers().filter(u=>!u.isAdmin&&!u.tvOnly);
-    const submitted=[],pendingMood=[];
-    allNonAdmin.forEach(u=>{const display=u.scheduleName||getScheduleName(u)||getUserDisplayName(u);const history=loadMoodHistory(u.name);const current=getCurrentMood(u.name);if(current)submitted.push({name:display,emoji:current.emoji,history});else pendingMood.push(display);});
-    submitted.forEach(s=>{
-      const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
-      const em=document.createElement('span');em.style.cssText='font-size:16px;line-height:1;flex-shrink:0;';em.textContent=s.emoji;
-      const nameEl=document.createElement('span');nameEl.style.cssText='font-size:12px;font-weight:600;color:var(--text);flex:1;';nameEl.textContent=s.name;
-      const spark=document.createElement('div');spark.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
-      s.history.slice(-4).forEach((h,i,arr)=>{const d2=document.createElement('span');d2.style.cssText=`font-size:${i===arr.length-1?'13px':'10px'};opacity:${0.35+i*0.22};line-height:1;`;d2.textContent=h.emoji;spark.appendChild(d2);});
-      row.appendChild(em);row.appendChild(nameEl);row.appendChild(spark);moodSec.appendChild(row);
-    });
-    if(pendingMood.length){const p=document.createElement('div');p.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';p.textContent='Pending: '+pendingMood.join(', ');moodSec.appendChild(p);}
-    if(!submitted.length&&!pendingMood.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No team members yet';moodSec.appendChild(e);}
-    col5.appendChild(moodSec);
 
     const handoverSec=dbSection('Handover notes');
     renderHandoverWidget(handoverSec,currentUser.name,true);
@@ -5151,7 +5265,7 @@ async function renderTeamMemberDashboard(root) {
   const todayStr = localToday();
   const hr = new Date().getHours();
   const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  const OFF = new Set(['so','h','os','abs','ol','']);
+  const OFF = new Set(['so','h','hd','os','abs','ol','']);
   const dayInfo = getPersonDayInfo(scheduleName, todayStr);
   const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
   const weekStamp = mondayStamp(0);
@@ -5519,7 +5633,7 @@ function renderNonAdminBriefing(panel) {
   const greeting = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
   const scheduleName = getScheduleName();
   const dayInfo = getPersonDayInfo(scheduleName, todayStr);
-  const OFF = new Set(['so','h','os','abs','ol','']);
+  const OFF = new Set(['so','h','hd','os','abs','ol','']);
   const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
 
   panel.style.display = '';
@@ -5633,7 +5747,7 @@ function renderMorningBriefing() {
 
   // Who's in today from schedule
   const todayWeek = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
-  const OFF = new Set(['so','h','os','abs','ol','']);
+  const OFF = new Set(['so','h','hd','os','abs','ol','']);
   const inToday = todayWeek ? todayWeek.people.filter(p => {
     const di = todayWeek.dates.indexOf(todayStr);
     return MY_TEAM.includes(p.name) && di >= 0 && !OFF.has((p.shifts[di]||'').toLowerCase());
@@ -5654,18 +5768,11 @@ function renderMorningBriefing() {
   panel.style.display = '';
   panel.innerHTML = '';
 
-  // Greeting + date
+  // Who's in today — compact, no greeting or quote
   const left = document.createElement('div'); left.style.cssText = 'flex:1;min-width:200px;';
-  const greetEl = document.createElement('div'); greetEl.className = 'briefing-greeting';
-  greetEl.textContent = greeting + ', ' + getUserDisplayName() + ' 👋';
-  const dateEl = document.createElement('div'); dateEl.style.cssText = 'font-size:11px;color:var(--text3);margin-bottom:8px;';
-  dateEl.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  left.appendChild(greetEl); left.appendChild(dateEl);
-
-  // Who's in today
   if (inToday.length) {
     const whoEl = document.createElement('div'); whoEl.style.cssText = 'font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
-    const lbl = document.createElement('span'); lbl.style.cssText = 'color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;';
+    const lbl = document.createElement('span'); lbl.style.cssText = 'color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;';
     lbl.textContent = 'In today:';
     whoEl.appendChild(lbl);
     inToday.slice(0,8).forEach(p => {
@@ -8584,14 +8691,14 @@ function zdRender(agents, fromDate, toDate) {
     const l2 = document.createElement('div'); l2.className = 'zd-summary-pill-label'; l2.textContent = label;
     pill.appendChild(v2); pill.appendChild(l2); return pill;
   };
-  // Unifon pills — from locally stored data, no API needed
-  const unifonWeek = getUnifonWeek();
-  if (unifonWeek.length) {
-    const uOffered  = unifonWeek.reduce((s,d)=>s+(d.offered||0),0);
-    const uAnswered = unifonWeek.reduce((s,d)=>s+(d.answered||0),0);
-    const uMissed   = unifonWeek.reduce((s,d)=>s+(d.missed||0),0);
+  // Unifon pills — filtered to the selected date range, not just this week
+  const allUnifonData = loadUnifonData();
+  const unifonInRange = allUnifonData.filter(d => d.date >= fromDate && d.date <= toDate);
+  if (unifonInRange.length) {
+    const uOffered  = unifonInRange.reduce((s,d)=>s+(d.offered||0),0);
+    const uAnswered = unifonInRange.reduce((s,d)=>s+(d.answered||0),0);
+    const uMissed   = unifonInRange.reduce((s,d)=>s+(d.missed||0),0);
     const uPct      = uOffered > 0 ? Math.round(uMissed/uOffered*100) : 0;
-    // Divider pill
     const divPill = document.createElement('div'); divPill.style.cssText='width:1px;background:var(--border);align-self:stretch;flex-shrink:0;margin:0 2px;'; bar.appendChild(divPill);
     bar.appendChild(mkPill(uOffered,  '📞 Calls offered', 'var(--text)'));
     bar.appendChild(mkPill(uAnswered, 'Answered',          'var(--low-text)'));
