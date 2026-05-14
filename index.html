@@ -2039,6 +2039,30 @@ window.tryUnlock = async function() {
     <div class="sgroup">
       <div class="sgroup-label">Data</div>
 
+      <!-- Unifon API -->
+      <div class="settings-card">
+        <div class="settings-card-title">Unifon API</div>
+        <div class="settings-card-desc">Connect the Unifon API for live call data. Credentials stay on this device only — never synced.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;">API Base URL</div>
+            <input type="text" id="unifon-api-base" placeholder="https://api.unifon.no/v1" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;width:100%;box-sizing:border-box;">
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;">API Key</div>
+            <div style="display:flex;gap:8px;">
+              <input type="password" id="unifon-api-key" placeholder="Paste API key…" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;flex:1;">
+              <button class="btn-save" onclick="saveUnifonApiKey()" style="font-size:12px;white-space:nowrap;">Save</button>
+              <button class="btn-cancel" onclick="clearUnifonApiKey()" style="font-size:12px;">Clear</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+            <button class="btn-nav" onclick="testUnifonApi()" style="font-size:11px;">Test connection</button>
+            <span id="unifon-api-status" style="font-size:11px;color:var(--text3);"></span>
+          </div>
+        </div>
+      </div>
+
       <!-- Calendar import -->
       <div class="settings-card">
         <div class="settings-card-title">Outlook calendar import</div>
@@ -2196,6 +2220,7 @@ function switchTab(name, btn) {
     if (unifonCard) { unifonCard.style.display = isAdmin() ? '' : 'none'; if (isAdmin()) { const b = document.getElementById('unifon-settings-body'); if (b) renderUnifonSettings(b); } }
     // History card always visible
     const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = '';
+    initUnifonApiSettings();
   }
   if (name === 'schedule') { renderSchedule(); }
   if (name === 'dashboard') { renderDashboard(); }
@@ -4070,7 +4095,133 @@ function toggleNotepadMode() {
   }
 }
 
-// ─── Unifon call data ─────────────────────────────────────────────
+// ─── Unifon API ───────────────────────────────────────────────────
+const UNIFON_API_KEY_KEY  = 'wtp_unifon_api_key';
+const UNIFON_API_BASE_KEY = 'wtp_unifon_api_base';
+const UNIFON_API_CACHE_KEY = 'wtp_unifon_api_cache'; // {date, data, ts}
+
+function getUnifonApiKey()  { return localStorage.getItem(UNIFON_API_KEY_KEY)  || ''; }
+function getUnifonApiBase() { return localStorage.getItem(UNIFON_API_BASE_KEY) || ''; }
+function hasUnifonApi()     { return !!(getUnifonApiKey() && getUnifonApiBase()); }
+
+function saveUnifonApiKey() {
+  const key  = document.getElementById('unifon-api-key')?.value?.trim();
+  const base = document.getElementById('unifon-api-base')?.value?.trim();
+  if (!key || !base) { showUnifonApiStatus('Enter both URL and key', 'var(--high-text)'); return; }
+  localStorage.setItem(UNIFON_API_KEY_KEY,  key);
+  localStorage.setItem(UNIFON_API_BASE_KEY, base.replace(/\/$/, ''));
+  showUnifonApiStatus('✓ Saved', 'var(--low-text)');
+}
+
+function clearUnifonApiKey() {
+  localStorage.removeItem(UNIFON_API_KEY_KEY);
+  localStorage.removeItem(UNIFON_API_BASE_KEY);
+  localStorage.removeItem(UNIFON_API_CACHE_KEY);
+  const ki = document.getElementById('unifon-api-key');   if (ki) ki.value = '';
+  const bi = document.getElementById('unifon-api-base');  if (bi) bi.value = '';
+  showUnifonApiStatus('Cleared', 'var(--text3)');
+}
+
+function showUnifonApiStatus(msg, color) {
+  const el = document.getElementById('unifon-api-status');
+  if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
+}
+
+// Called when settings tab opens — populate saved values
+function initUnifonApiSettings() {
+  const ki = document.getElementById('unifon-api-key');   if (ki && getUnifonApiKey())  ki.value = '••••••••';
+  const bi = document.getElementById('unifon-api-base');  if (bi && getUnifonApiBase()) bi.value = getUnifonApiBase();
+  if (hasUnifonApi()) showUnifonApiStatus('API key configured', 'var(--low-text)');
+}
+
+async function unifonApiFetch(path) {
+  const base = getUnifonApiBase();
+  const key  = getUnifonApiKey();
+  if (!base || !key) throw new Error('Unifon API not configured');
+  const res = await fetch(base + path, {
+    headers: { 'Authorization': 'Bearer ' + key, 'Accept': 'application/json' }
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.message || json.error || 'HTTP ' + res.status);
+  return json;
+}
+
+async function testUnifonApi() {
+  showUnifonApiStatus('Testing…', 'var(--text3)');
+  try {
+    // Try a lightweight endpoint — adjust path to match actual Unifon API
+    const data = await unifonApiFetch('/calls/summary?date=' + localToday());
+    showUnifonApiStatus('✓ Connected — ' + JSON.stringify(data).slice(0,60), 'var(--low-text)');
+  } catch(e) {
+    showUnifonApiStatus('✗ ' + e.message, 'var(--high-text)');
+  }
+}
+
+// Fetch today's call data from Unifon API and merge into local storage
+// Returns { offered, answered, missed, avgHandleSec, avgWaitSec } or null
+async function fetchUnifonApiToday() {
+  if (!hasUnifonApi()) return null;
+  try {
+    // Check cache — valid for 10 minutes
+    const cached = JSON.parse(localStorage.getItem(UNIFON_API_CACHE_KEY) || '{}');
+    if (cached.date === localToday() && cached.ts && Date.now() - cached.ts < 10 * 60 * 1000) {
+      return cached.data;
+    }
+    // Fetch from API — adjust endpoint/field names to match actual Unifon API response
+    const data = await unifonApiFetch('/calls/summary?date=' + localToday());
+    // Normalise response — common field name patterns for Unifon/telephony APIs:
+    const normalised = {
+      offered:      data.total_calls      ?? data.offered      ?? data.calls       ?? 0,
+      answered:     data.answered_calls   ?? data.answered     ?? data.connected   ?? 0,
+      missed:       data.missed_calls     ?? data.missed       ?? data.abandoned   ?? 0,
+      avgHandleSec: data.avg_handle_time  ?? data.avg_duration ?? data.aht         ?? 0, // in seconds
+      avgWaitSec:   data.avg_wait_time    ?? data.avg_queue    ?? data.avg_wait    ?? 0,
+    };
+    // Also save into the manual log so it appears in weekly views
+    const existing = loadUnifonData();
+    const idx = existing.findIndex(d => d.date === localToday());
+    const entry = { date: localToday(), ...normalised, avgWaitSec: normalised.avgWaitSec, savedAt: new Date().toISOString(), source: 'api' };
+    if (idx >= 0) existing[idx] = entry; else existing.push(entry);
+    saveUnifonData(existing);
+    // Cache
+    localStorage.setItem(UNIFON_API_CACHE_KEY, JSON.stringify({ date: localToday(), data: normalised, ts: Date.now() }));
+    return normalised;
+  } catch(e) {
+    console.warn('Unifon API fetch failed:', e.message);
+    return null;
+  }
+}
+
+// Fetch call data for a date range from Unifon API (for Tickets tab agent cards)
+// Returns array of daily records or null
+async function fetchUnifonApiRange(fromDate, toDate) {
+  if (!hasUnifonApi()) return null;
+  try {
+    const data = await unifonApiFetch(`/calls/summary?from=${fromDate}&to=${toDate}`);
+    // Handle both single summary and array of daily records
+    if (Array.isArray(data)) {
+      return data.map(d => ({
+        date:         d.date ?? d.day ?? fromDate,
+        offered:      d.total_calls    ?? d.offered    ?? d.calls      ?? 0,
+        answered:     d.answered_calls ?? d.answered   ?? d.connected  ?? 0,
+        missed:       d.missed_calls   ?? d.missed     ?? d.abandoned  ?? 0,
+        avgHandleSec: d.avg_handle_time ?? d.avg_duration ?? d.aht      ?? 0,
+        avgWaitSec:   d.avg_wait_time  ?? d.avg_queue  ?? d.avg_wait   ?? 0,
+      }));
+    }
+    // Single summary for range
+    return [{
+      date:         fromDate,
+      offered:      data.total_calls    ?? data.offered    ?? data.calls      ?? 0,
+      answered:     data.answered_calls ?? data.answered   ?? data.connected  ?? 0,
+      missed:       data.missed_calls   ?? data.missed     ?? data.abandoned  ?? 0,
+      avgHandleSec: data.avg_handle_time ?? data.avg_duration ?? data.aht      ?? 0,
+      avgWaitSec:   data.avg_wait_time  ?? data.avg_queue  ?? data.avg_wait   ?? 0,
+    }];
+  } catch(e) {
+    return null; // silently fall back to manual data
+  }
+}
 const UNIFON_KEY = 'wtp_unifon_calls';
 function loadUnifonData() { try { return JSON.parse(localStorage.getItem(UNIFON_KEY)||'[]'); } catch { return []; } }
 function saveUnifonData(data) {
@@ -6129,26 +6280,32 @@ async function generateReport(fromDate, toDate, container) {
   let zdData = {};
   if (zdReady()) {
     try {
-      const gId = zdGroupId || await zdGetGroupId().catch(()=>null);
+      // Ensure group and agents are loaded (may not be if Tickets tab hasn't been opened)
+      let gId = zdGroupId;
+      if (!gId) { try { gId = await zdGetGroupId(); } catch(e) { gId = null; } }
+      if (!zdAgents || !zdAgents.length) {
+        try { if (gId) { zdAgents = await zdGetAgents(gId); } } catch(e) {}
+      }
       const gf = gId ? ` group:${gId}` : '';
-      const fmtD = d => d.toISOString().slice(0,10);
+      const l1Ids = new Set((zdAgents||[]).map(a=>a.id));
 
       // Parallel ZD fetches
       const [totalSolved, totalOpen, csatRatings, solvedTickets] = await Promise.all([
         zdCount(`type:ticket${gf} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>0),
         zdCount('type:ticket status:open').catch(()=>0),
-        // CSAT
+        // CSAT — paginate all pages, filter to L1 agents client-side
         (async () => {
           const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
           const toTs   = Math.min(Math.floor(new Date(toDate+'T23:59:59').getTime()/1000), Math.floor(Date.now()/1000)-3600);
-          const l1Ids  = new Set((zdAgents||[]).map(a=>a.id));
+          if (toTs <= fromTs) return [];
           let all=[], url=`/satisfaction_ratings.json?start_time=${fromTs}&end_time=${toTs}&per_page=100&sort_by=id&sort_order=asc`;
           for(let p=0;p<15&&url;p++){const r=await zdFetch(url);all=all.concat(r.satisfaction_ratings||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
           return l1Ids.size > 0 ? all.filter(r=>l1Ids.has(r.assignee_id)) : all;
         })(),
-        // Solved tickets with agent breakdown
+        // Solved tickets — paginate, with group filter
         (async () => {
-          let all=[], url=`/search.json?query=${encodeURIComponent(`type:ticket${gf} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`;
+          const query = `type:ticket${gf} status>=solved solved>=${fromDate} solved<=${toDate}`;
+          let all=[], url=`/search.json?query=${encodeURIComponent(query)}&per_page=100&sort_by=solved_at&sort_order=desc`;
           for(let p=0;p<20&&url;p++){const r=await zdFetch(url);all=all.concat(r.results||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
           return all;
         })(),
@@ -9152,6 +9309,23 @@ function zdRender(agents, fromDate, toDate) {
 
     // Stats
     const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
+
+    // Get Unifon data for this period — API if available, else manual log
+    const unifonPeriodData = (() => {
+      const manual = loadUnifonData().filter(d => d.date >= fromDate && d.date <= toDate);
+      if (!manual.length) return null;
+      const offered      = manual.reduce((s,d)=>s+(d.offered||0),0);
+      const answered     = manual.reduce((s,d)=>s+(d.answered||0),0);
+      const missed       = manual.reduce((s,d)=>s+(d.missed||0),0);
+      const handleEntries = manual.filter(d=>d.avgHandleSec>0);
+      const avgHandleSec = handleEntries.length ? Math.round(handleEntries.reduce((s,d)=>s+(d.avgHandleSec||0),0)/handleEntries.length) : null;
+      const waitEntries  = manual.filter(d=>d.avgWaitSec>0);
+      const avgWaitSec   = waitEntries.length ? Math.round(waitEntries.reduce((s,d)=>s+(d.avgWaitSec||0),0)/waitEntries.length) : null;
+      return { offered, answered, missed, avgHandleSec, avgWaitSec, source: 'manual' };
+    })();
+
+    const fmtDurShort = (secs) => { if(!secs)return'—'; const m=Math.floor(secs/60),s=secs%60; return m>0?m+'m '+(s>0?s+'s':''):s+'s'; };
+
     const rows = [
       { dot: 'var(--low-text)',  label: 'Solved',    val: d.solved||0, bold: true },
       ...(d.email !== null ? [{ dot: 'var(--cal-text)',  label: 'Email',        val: d.email||0 }] : []),
@@ -9170,6 +9344,15 @@ function zdRender(agents, fromDate, toDate) {
       { dot: 'var(--high-text)', label: 'Open now',      val: d.open||0 },
       { dot: 'var(--med-text)',  label: 'Pending now',   val: d.pending||0 },
       { dot: 'var(--text3)',     label: 'On hold now',   val: d.onhold||0 },
+      ...(unifonPeriodData ? [
+        { dividerLabel: 'Calls' + (unifonPeriodData.source === 'api' ? ' (live)' : '') },
+        { dot: 'var(--text2)',     label: 'Offered',        val: unifonPeriodData.offered },
+        { dot: 'var(--low-text)',  label: 'Answered',       val: unifonPeriodData.answered },
+        { dot: unifonPeriodData.missed > 0 ? 'var(--high-text)' : 'var(--text3)', label: 'Missed', val: unifonPeriodData.missed,
+          subval: unifonPeriodData.offered > 0 ? Math.round(unifonPeriodData.missed/unifonPeriodData.offered*100)+'%' : null },
+        ...(unifonPeriodData.avgHandleSec ? [{ dot: 'var(--cal-text)', label: 'Avg handle time', val: fmtDurShort(unifonPeriodData.avgHandleSec) }] : []),
+        ...(unifonPeriodData.avgWaitSec   ? [{ dot: 'var(--text3)',    label: 'Avg wait time',   val: fmtDurShort(unifonPeriodData.avgWaitSec) }] : []),
+      ] : []),
     ];
     rows.forEach(r => {
       if (!r) { const div2 = document.createElement('div'); div2.className = 'zd-divider'; bdy.appendChild(div2); return; }
@@ -9188,6 +9371,10 @@ function zdRender(agents, fromDate, toDate) {
       lbl.appendChild(dot); lbl.appendChild(document.createTextNode(r.label));
       const val = document.createElement('div'); val.className = 'zd-stat-val' + (r.bold ? ' highlight' : ''); val.textContent = r.val;
       if (r.ratio) val.style.cssText = 'font-size:11px;color:var(--text3);';
+      if (r.subval) {
+        const sub = document.createElement('span'); sub.style.cssText = 'font-size:10px;color:var(--text3);margin-left:4px;';
+        sub.textContent = r.subval; val.appendChild(sub);
+      }
       row.appendChild(lbl); row.appendChild(val); bdy.appendChild(row);
     });
     card.appendChild(bdy); grid.appendChild(card);
@@ -9420,6 +9607,8 @@ function initZendeskTab() {
   zdInitDates();
   const btn = document.getElementById('tab-btn-zendesk');
   if (btn && hasPrivilege('zendesk')) btn.style.display = '';
+  // Auto-fetch today's Unifon data from API if key is configured
+  if (hasUnifonApi()) fetchUnifonApiToday().catch(()=>{});
 }
 
 // ─── GitHub Sync ──────────────────────────────────────────────────
