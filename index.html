@@ -4822,6 +4822,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   const roleColors={'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
   const agentsIn=inToday.length, totalTeam=MY_TEAM.length;
   const mon=getMonday(0);
+  const isWeekdayNow = ![0,6].includes(new Date().getDay());
 
   // Notifications
   const notifItems=[];
@@ -4893,8 +4894,10 @@ function renderAdminDashboard(root, viewerMode=false) {
   const fireEl=document.createElement('div'); fireEl.id='db-fire-banner';
   root.appendChild(fireEl);
   const syncAlerts=[];
-  if(agentsIn<totalTeam*0.5) syncAlerts.push({level:'danger',msg:'Critical understaffing — '+agentsIn+'/'+totalTeam+' agents in'});
-  else if(agentsIn<totalTeam*0.7) syncAlerts.push({level:'warn',msg:'Low staffing — '+agentsIn+'/'+totalTeam+' agents in'});
+  // Staffing alerts — use absolute minimums (weekend vs weekday)
+  const minExpected = isWeekdayNow ? 5 : 2; // weekday min 5, weekend min 2
+  if(agentsIn<minExpected-1) syncAlerts.push({level:'danger',msg:'Critical understaffing — only '+agentsIn+' agents in today'});
+  else if(agentsIn<minExpected) syncAlerts.push({level:'warn',msg:'Low staffing — '+agentsIn+'/'+totalTeam+' agents in'});
   if(absPeople.length>=3) syncAlerts.push({level:'warn',msg:absPeople.length+' agents absent simultaneously'});
   if(redCount>0) syncAlerts.push({level:'danger',msg:redCount+' team member'+(redCount>1?'s':'')+' on Red RAG'});
   if(overdue1on1.length>=5) syncAlerts.push({level:'warn',msg:overdue1on1.length+' overdue 1:1s'});
@@ -4966,7 +4969,7 @@ function renderAdminDashboard(root, viewerMode=false) {
       numEl.textContent='PH';
       cell.title='Public holiday';
     } else {
-      numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;color:${present===null?'var(--text3)':present<totalTeam*0.5?'var(--high-text)':present<totalTeam*0.8?'var(--med-text)':'var(--low-text)'};`;
+      numEl.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;line-height:1;color:${present===null?'var(--text3)':present<=2?'var(--high-text)':present<=5?'var(--med-text)':'var(--low-text)'};`;
       numEl.textContent=present===null?'—':present;
     }
     const totEl=document.createElement('div');totEl.style.cssText='font-size:8px;color:var(--text3);font-weight:600;';totEl.textContent=isHoliday?'hol':'/'+totalTeam;
@@ -5336,7 +5339,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   const bwEl=document.createElement('div');bwEl.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:10px;';
   const blEl=document.createElement('div');blEl.style.cssText='font-size:12px;color:var(--text2);flex-shrink:0;width:56px;';blEl.textContent=agentsIn+'/'+totalTeam;
   const bbEl=document.createElement('div');bbEl.style.cssText='flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;';
-  const bfEl=document.createElement('div');bfEl.style.cssText=`height:100%;border-radius:3px;width:${staffPct}%;background:${staffPct<60?'var(--high-text)':staffPct<80?'var(--med-text)':'var(--low-text)'};transition:width 0.8s;`;
+  const bfEl=document.createElement('div');bfEl.style.cssText=`height:100%;border-radius:3px;width:${staffPct}%;background:${agentsIn<(isWeekdayNow?4:1)?'var(--high-text)':agentsIn<(isWeekdayNow?6:2)?'var(--med-text)':'var(--low-text)'};transition:width 0.8s;`;
   bbEl.appendChild(bfEl);bwEl.appendChild(blEl);bwEl.appendChild(bbEl);staffSec.appendChild(bwEl);
   const roleCount2={},roleNames2={};
   inToday.forEach(p=>{if(di<0)return;const r2=p.roles[di]||'Unassigned';roleCount2[r2]=(roleCount2[r2]||0)+1;if(!roleNames2[r2])roleNames2[r2]=[];roleNames2[r2].push(p.name.split(' ')[0]);});
@@ -9063,10 +9066,24 @@ async function zdRefresh() {
     let groupId;
     try { groupId = await zdGetGroupId(); } catch(e) { throw new Error('Group lookup failed: ' + e.message); }
     loadMsg.textContent = '⟳ Step 2: Got group ' + groupId + ' — fetching agents…';
-    // Init SLA panel at top (runs independently, doesn't block agent stats)
-    // SLA panel removed
     let agents;
     try { agents = await zdGetAgents(groupId); } catch(e) { throw new Error('Agent lookup failed: ' + e.message); }
+
+    // Also discover agents who solved tickets in this period but may not be in the group list
+    // (agents who left the group, transferred, etc.)
+    try {
+      loadMsg.textContent = '⟳ Step 2b: Finding all active agents for period…';
+      const gf = groupId ? ` group:${groupId}` : '';
+      const solvedSearch = await zdFetch(`/search.json?query=${encodeURIComponent(`type:ticket${gf} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`);
+      const solvedTickets = solvedSearch.results || [];
+      const missingIds = [...new Set(solvedTickets.map(t=>t.assignee_id).filter(id=>id&&!agents.find(a=>a.id===id)))];
+      if (missingIds.length) {
+        const missing = await zdFetch('/users/show_many.json?ids=' + missingIds.slice(0,50).join(','));
+        const extraAgents = (missing.users||[]).filter(u=>(u.role==='agent'||u.role==='admin')&&!u.suspended).map(u=>({id:u.id,name:u.name,email:u.email}));
+        agents = [...agents, ...extraAgents];
+      }
+    } catch(e) { /* non-fatal — continue with group agents */ }
+
     loadMsg.textContent = '⟳ Step 3: Found ' + agents.length + ' agents — fetching stats…';
     zdAgents = agents; zdData = {};
     for (let i = 0; i < agents.length; i++) {
@@ -9310,8 +9327,9 @@ function zdRender(agents, fromDate, toDate) {
     // Stats
     const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
 
-    // Get Unifon data for this period — API if available, else manual log
-    const unifonPeriodData = (() => {
+    // Get Unifon data for this period — only show if API is configured
+    // Until Unifon API is integrated, show N/A
+    const unifonPeriodData = hasUnifonApi() ? (() => {
       const manual = loadUnifonData().filter(d => d.date >= fromDate && d.date <= toDate);
       if (!manual.length) return null;
       const offered      = manual.reduce((s,d)=>s+(d.offered||0),0);
@@ -9322,7 +9340,7 @@ function zdRender(agents, fromDate, toDate) {
       const waitEntries  = manual.filter(d=>d.avgWaitSec>0);
       const avgWaitSec   = waitEntries.length ? Math.round(waitEntries.reduce((s,d)=>s+(d.avgWaitSec||0),0)/waitEntries.length) : null;
       return { offered, answered, missed, avgHandleSec, avgWaitSec, source: 'manual' };
-    })();
+    })() : null;
 
     const fmtDurShort = (secs) => { if(!secs)return'—'; const m=Math.floor(secs/60),s=secs%60; return m>0?m+'m '+(s>0?s+'s':''):s+'s'; };
 
