@@ -5276,6 +5276,12 @@ function mkLineSparkline(vals, w, h, color='var(--low-text)', fillOpacity=0.12) 
   return svg;
 }
 
+// ─── Missing function stubs ───────────────────────────────────────
+function showSyncSkeleton() { /* no-op — skeleton UI was removed */ }
+function buildMobileNav() { /* no-op — mobile nav not implemented */ }
+function openMobileNotes() { /* no-op */ }
+function isMobile() { return window.innerWidth < 600; }
+
 // ── Admin dashboard ───────────────────────────────────────────────
 function renderAdminDashboard(root, viewerMode=false) {
   // viewerMode=true: operational view only, no personal sections (1:1s, team pulse, tasks, handover)
@@ -7788,7 +7794,6 @@ function onSyncIndicatorClick() {
 async function ghLoad() {
   if (!ghToken) return;
   setSyncStatus('⟳ Syncing…', 'var(--text3)');
-  showSyncSkeleton();
   try {
     // Add 15-second timeout to catch hanging fetches
     const controller = new AbortController();
