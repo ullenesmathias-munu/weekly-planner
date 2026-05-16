@@ -8000,8 +8000,10 @@ async function ghLoad() {
         calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
         const ta = document.getElementById('notepad-text');
         if (ta) ta.value = localStorage.getItem(userNoteKey(currentUser.name)) || '';
-        // Re-run full loadUserData to ensure tabs and renders are correct
-        loadUserData();
+        renderDashboard();
+        renderPlanner();
+        renderSchedule();
+        scheduleAllReminders();
       }
     }
     setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
@@ -8283,11 +8285,8 @@ function initGitHubSync() {
     const wrap = document.getElementById('gh-sync-status-wrap');
     if (inp) inp.value = '••••••••••••••••';
     if (wrap) wrap.style.display = 'flex';
-    setSyncStatus('⟳ Syncing…', 'var(--text3)');
-    ghLoad();
-    setInterval(ghLoad, 60 * 1000);
   } else {
-    setSyncStatus('No token', '');
+    setSyncStatus('Not connected', '');
   }
 }
 
@@ -8313,8 +8312,10 @@ function saveGhToken() {
   const wrap = document.getElementById('gh-sync-status-wrap');
   if (wrap) wrap.style.display = 'flex';
   setSyncStatus('⟳ Connecting…', 'var(--text3)');
-  ghLoad();
-  setInterval(ghLoad, 60 * 1000);
+  ghLoad().then(() => {
+    renderDashboard(); renderPlanner(); renderSchedule();
+    setInterval(ghLoad, 60 * 1000);
+  }).catch(() => setInterval(ghLoad, 60 * 1000));
 }
 
 function removeGhToken() {
@@ -8384,11 +8385,8 @@ function userTaskKey(username) { return 'wtp_tasks_' + username.toLowerCase(); }
 function userNoteKey(username) { return 'wtp_notepad_' + username.toLowerCase(); }
 function userCalKey(username) { return 'wtp_cal_' + username.toLowerCase(); }
 
-let _loadUserDataRunning = false;
 function loadUserData() {
   if (!currentUser) return;
-  if (_loadUserDataRunning) return; // prevent re-entrancy from ghLoad → loadUserData loop
-  _loadUserDataRunning = true;
   const freshUsers = getUsers();
   const fresh = freshUsers.find(u => u.name === currentUser.name && u.hash === currentUser.hash);
   if (fresh) currentUser = fresh;
@@ -8441,15 +8439,9 @@ function loadUserData() {
       history.replaceState({ tab: 'dashboard' }, '', '#dashboard');
     }
   }
-  // Auto-pull from GitHub on every login if token is set
-  if (ghToken) {
-    // ghLoad already fired from initGitHubSync — don't double-trigger
-    // renderDashboard is called inside ghLoad after data restores
-  } else if (localStorage.getItem('wtp_gh_token')) {
-    ghToken = localStorage.getItem('wtp_gh_token');
-    setTimeout(() => ghLoad().catch(()=>{}), 300);
-  } else if (!currentUser?.isAdmin) {
-    // Non-admin: pull shared data (schedule, roles, wingman) using read-only token
+  // Auto-pull from GitHub — handled by startup sequence, not here
+  // Non-admins without a token: pull shared data via read-only token
+  if (!ghToken && !currentUser?.isAdmin) {
     setTimeout(() => ghReadOnlyLoad(), 500);
   }
   requestNotificationPermission();
@@ -8459,7 +8451,6 @@ function loadUserData() {
   const wrap = document.getElementById('user-list-wrap');
   if (wrap) wrap.style.display = currentUser.isAdmin ? '' : 'none';
   renderUserList();
-  _loadUserDataRunning = false;
 }
 
 function save() { if (currentUser) { localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); scheduleSyncSave(); schedulePersonalSync(); } }
@@ -9814,8 +9805,23 @@ if (savedSched) {
 runMigrations();
 initScheduleSelect();
 renderSchedule();
-initGitHubSync(); // Must run before loadUserData so ghToken is set
-loadUserData();
+// Init sync first — if token exists, pull latest data before rendering
+const _ghToken = localStorage.getItem('wtp_gh_token');
+if (_ghToken) {
+  ghToken = _ghToken;
+  const _syncWrap = document.getElementById('gh-sync-status-wrap');
+  if (_syncWrap) _syncWrap.style.display = 'flex';
+  setSyncStatus('⟳ Syncing…', 'var(--text3)');
+  ghLoad().then(() => {
+    loadUserData();
+    setInterval(ghLoad, 60 * 1000);
+  }).catch(() => {
+    loadUserData(); // render even if sync fails
+    setInterval(ghLoad, 60 * 1000);
+  });
+} else {
+  loadUserData();
+}
 
 // ─── Keyboard shortcuts ───────────────────────────────────────────
 document.addEventListener('keydown', e => {
