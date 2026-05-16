@@ -7805,6 +7805,66 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const el = document.getElementById('zd-mttr-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
   });
 }
+function loadProfile(name) {
+  try { return JSON.parse(localStorage.getItem('wtp_profile_' + normalizeKey(name)) || '{}'); } catch { return {}; }
+}
+function saveProfile(name, data) {
+  localStorage.setItem('wtp_profile_' + normalizeKey(name), JSON.stringify(data)); scheduleSyncSave();
+}
+
+function loadAgenda(username) {
+  try { return JSON.parse(localStorage.getItem('wtp_agenda_' + normalizeKey(username)) || '[]'); } catch { return []; }
+}
+function saveAgenda(username, items) {
+  localStorage.setItem('wtp_agenda_' + normalizeKey(username), JSON.stringify(items)); scheduleSyncSave();
+}
+function loadAnnouncements() {
+  try { return JSON.parse(localStorage.getItem('wtp_announcements') || '[]'); } catch { return []; }
+}
+function getUnreadAnnouncements(username) {
+  const all = loadAnnouncements();
+  const seenKey = 'wtp_ann_read_' + normalizeKey(username);
+  const seen = (() => { try { return JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch { return []; } })();
+  return all.filter(a => !seen.includes(a.id));
+}
+function markAnnouncementRead(username, id) {
+  const seenKey = 'wtp_ann_read_' + normalizeKey(username);
+  const seen = (() => { try { return JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch { return []; } })();
+  if (!seen.includes(id)) { seen.push(id); localStorage.setItem(seenKey, JSON.stringify(seen)); }
+}
+function loadHandoverNotes(username) {
+  try { return JSON.parse(localStorage.getItem('wtp_handover_' + normalizeKey(username)) || '[]'); } catch { return []; }
+}
+function saveHandoverNotes(username, notes) {
+  localStorage.setItem('wtp_handover_' + normalizeKey(username), JSON.stringify(notes)); scheduleSyncSave();
+}
+function renderAnnouncementsSettings() {
+  const body = document.getElementById('announcements-settings-body'); if (!body) return;
+  body.innerHTML = '';
+  const all = loadAnnouncements();
+  if (!all.length) { const empty = document.createElement('div'); empty.style.cssText='font-size:12px;color:var(--text3);margin-bottom:10px;'; empty.textContent='No announcements yet.'; body.appendChild(empty); }
+  all.slice().reverse().forEach((a,i) => {
+    const row = document.createElement('div'); row.style.cssText='display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);';
+    const txt = document.createElement('div'); txt.style.cssText='flex:1;font-size:12px;color:var(--text2);'; txt.textContent=a.text||a.message||'';
+    const del = document.createElement('button'); del.className='btn-cancel'; del.style.cssText='font-size:11px;padding:2px 8px;'; del.textContent='✕';
+    del.onclick = () => {
+      const updated = loadAnnouncements(); updated.splice(updated.length-1-i, 1);
+      localStorage.setItem('wtp_announcements', JSON.stringify(updated)); scheduleSyncSave(); renderAnnouncementsSettings();
+    };
+    row.appendChild(txt); row.appendChild(del); body.appendChild(row);
+  });
+  const addRow = document.createElement('div'); addRow.style.cssText='display:flex;gap:8px;margin-top:10px;';
+  const inp = document.createElement('input'); inp.type='text'; inp.placeholder='New announcement…'; inp.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;';
+  const add = document.createElement('button'); add.className='btn-save'; add.style.fontSize='12px'; add.textContent='Post';
+  add.onclick = () => {
+    const text = inp.value.trim(); if (!text) return;
+    const all2 = loadAnnouncements(); all2.push({ id: Date.now()+'', text, ts: new Date().toISOString() });
+    localStorage.setItem('wtp_announcements', JSON.stringify(all2)); scheduleSyncSave(); inp.value=''; renderAnnouncementsSettings();
+  };
+  inp.addEventListener('keydown', e => { if (e.key==='Enter') add.click(); });
+  addRow.appendChild(inp); addRow.appendChild(add); body.appendChild(addRow);
+}
+
 // ─── Core utility functions ───────────────────────────────────────
 function normalizeKey(str) { return (str||'').toLowerCase().replace(/[^a-z0-9]/g,'_'); }
 
