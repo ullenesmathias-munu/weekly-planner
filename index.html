@@ -1519,6 +1519,7 @@
     .lock-field-label { color: rgba(214,243,255,0.3) !important; }
   }
 </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -4314,11 +4315,29 @@ async function handleUnifonCallsImport(file) {
   const status = document.getElementById('unifon-calls-status');
   if (status) { status.textContent = '⟳ Parsing…'; status.style.color = 'var(--text3)'; }
   try {
-    const text = await file.text();
+    let text;
+    if (file.name.endsWith('.csv')) {
+      text = await file.text();
+    } else {
+      // XLSX — convert to TSV using SheetJS
+      text = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            if (typeof XLSX === 'undefined') { reject(new Error('XLSX library not available — export as CSV instead')); return; }
+            const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', raw: false });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+            resolve(rows.map(r => r.join('\t')).join('\n'));
+          } catch(err) { reject(new Error('Could not parse XLSX: ' + err.message)); }
+        };
+        reader.onerror = () => reject(new Error('Could not read file'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
     const result = parseUnifonCallsReport(text);
-    if (!result.rowCount) throw new Error('No call rows found. Try exporting as CSV.');
+    if (!result.rowCount) throw new Error('No call rows found.');
 
-    // Overwrite data for imported dates
     const existing = loadUnifonAgentCalls();
     Object.entries(result.byDate).forEach(([date, agents]) => { existing[date] = agents; });
     saveUnifonAgentCalls(existing);
@@ -4455,13 +4474,24 @@ async function handleUnifonImport(file) {
       const text = await file.text();
       result = parseUnifonRows(parseUnifonCsvText(text));
     } else {
-      // XLSX: read as text and try to parse tab-separated (Unifon exports tab-delimited xlsx content)
-      const text = await file.text().catch(() => null);
-      if (!text) throw new Error('Could not read .xlsx as text. Please export as CSV from Unifon instead.');
-      result = parseUnifonRows(parseUnifonCsvText(text));
+      // XLSX — parse as ArrayBuffer using SheetJS
+      result = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            if (typeof XLSX === 'undefined') { reject(new Error('XLSX library not available — please export as CSV from Unifon instead')); return; }
+            const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', raw: false });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows2d = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+            resolve(parseUnifonRows(rows2d));
+          } catch(err) { reject(new Error('Could not parse XLSX: ' + err.message)); }
+        };
+        reader.onerror = () => reject(new Error('Could not read file'));
+        reader.readAsArrayBuffer(file);
+      });
     }
     const { daily, hourly, daysCount } = result;
-    if (!daysCount) throw new Error('No daily data found. Try exporting as CSV from Unifon.');
+    if (!daysCount) throw new Error('No daily data found — make sure this is a Unifon queue/main-number report.');
 
     // Overwrite existing data for imported dates
     const existing = loadUnifonData();
