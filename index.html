@@ -7962,12 +7962,22 @@ function zdHeaders() {
   return { 'Authorization': 'Basic ' + btoa(email + '/token:' + token), 'Content-Type': 'application/json' };
 }
 
+const ZD_PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev';
+
 async function zdFetch(path) {
-  const sub = localStorage.getItem(ZD_SUBDOMAIN_KEY);
-  if (!sub) throw new Error('Zendesk not configured');
-  const base = `https://${sub}.zendesk.com/api/v2`;
-  const url = path.startsWith('http') ? path : base + path;
-  const res = await fetch(url, { headers: zdHeaders() });
+  if (!zdReady()) throw new Error('Zendesk not configured');
+  const sub  = localStorage.getItem(ZD_SUBDOMAIN_KEY) || '';
+  const email= localStorage.getItem(ZD_EMAIL_KEY)     || '';
+  const token= localStorage.getItem(ZD_TOKEN_KEY)     || '';
+  // Route through CORS proxy
+  const url = path.startsWith('http') ? path : ZD_PROXY + path;
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': 'Basic ' + btoa(email + '/token:' + token),
+      'X-Zendesk-Subdomain': sub,
+      'Content-Type': 'application/json',
+    }
+  });
   const json = await res.json().catch(()=>({}));
   if (!res.ok) {
     const msg = json.description || json.error || json.message || ('HTTP ' + res.status);
