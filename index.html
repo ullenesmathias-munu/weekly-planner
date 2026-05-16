@@ -7790,7 +7790,15 @@ async function ghLoad() {
   setSyncStatus('⟳ Syncing…', 'var(--text3)');
   showSyncSkeleton();
   try {
-    const res = await fetch(GH_API, { method: 'GET', mode: 'cors', headers: ghHeaders() });
+    // Add 15-second timeout to catch hanging fetches
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(GH_API, {
+      method: 'GET', mode: 'cors',
+      headers: ghHeaders(),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
     if (res.status === 401 || res.status === 403) {
       setSyncStatus('✗ Token rejected - re-enter in Settings', 'var(--high-text)');
       return;
@@ -7840,7 +7848,13 @@ async function ghLoad() {
     }
     setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
   } catch(e) {
-    setSyncStatus('✗ ' + e.message, 'var(--med-text)');
+    if (e.name === 'AbortError') {
+      setSyncStatus('✗ Timeout — GitHub unreachable', 'var(--high-text)');
+    } else if (!navigator.onLine) {
+      setSyncStatus('Offline', 'var(--text3)');
+    } else {
+      setSyncStatus('✗ ' + e.message, 'var(--med-text)');
+    }
     console.warn('ghLoad error:', e);
   }
 }
@@ -8123,7 +8137,15 @@ function saveGhToken() {
   const inp = document.getElementById('gh-token-input');
   if (!inp) return;
   const val = inp.value.trim();
+  // If field shows masked token, use the stored one
   if (!val || val.includes('•')) {
+    const stored = localStorage.getItem('wtp_gh_token');
+    if (stored) {
+      ghToken = stored;
+      setSyncStatus('⟳ Connecting…', 'var(--text3)');
+      ghLoad();
+      return;
+    }
     setSyncStatus('✗ Paste a valid token first', 'var(--high-text)');
     return;
   }
