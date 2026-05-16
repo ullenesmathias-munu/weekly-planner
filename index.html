@@ -4607,6 +4607,7 @@ function renderUnifonHeatmap(container, fromDate, toDate) {
 }
 
 // ─── Unifon call data ──────────────────────────────────────────────
+const UNIFON_KEY = 'wtp_unifon_calls';
 function loadUnifonData() { try { return JSON.parse(localStorage.getItem(UNIFON_KEY)||'[]'); } catch { return []; } }
 function saveUnifonData(data) {
   const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-90);
