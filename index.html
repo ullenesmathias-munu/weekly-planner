@@ -8279,9 +8279,12 @@ function loadUserData() {
     }
   }
   // Auto-pull from GitHub on every login if token is set
-  if (localStorage.getItem('wtp_gh_token')) {
+  if (ghToken) {
+    setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }).catch(()=>{}), 500);
+  } else if (localStorage.getItem('wtp_gh_token')) {
+    // Token in storage but not yet in memory — shouldn't happen but handle it
     ghToken = localStorage.getItem('wtp_gh_token');
-    setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }), 500);
+    setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }).catch(()=>{}), 500);
   } else if (!currentUser?.isAdmin) {
     // Non-admin: pull shared data (schedule, roles, wingman) using read-only token
     setTimeout(() => ghReadOnlyLoad(), 500);
@@ -9647,8 +9650,8 @@ if (savedSched) {
 runMigrations();
 initScheduleSelect();
 renderSchedule();
+initGitHubSync(); // Must run before loadUserData so ghToken is set
 loadUserData();
-initGitHubSync();
 
 // ─── Keyboard shortcuts ───────────────────────────────────────────
 document.addEventListener('keydown', e => {
