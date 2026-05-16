@@ -315,6 +315,672 @@
     "focus": "",
     "_open": true
   },
+  "wtp_unifon_hourly": {
+    "2026-05-10T00": {
+      "date": "2026-05-10",
+      "hour": 0,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 17,
+      "avgHandleSec": 487
+    },
+    "2026-05-10T10": {
+      "date": "2026-05-10",
+      "hour": 10,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 21,
+      "avgHandleSec": 246
+    },
+    "2026-05-10T11": {
+      "date": "2026-05-10",
+      "hour": 11,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 58,
+      "avgHandleSec": 704
+    },
+    "2026-05-10T12": {
+      "date": "2026-05-10",
+      "hour": 12,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 13,
+      "avgHandleSec": 135
+    },
+    "2026-05-10T13": {
+      "date": "2026-05-10",
+      "hour": 13,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 20,
+      "avgHandleSec": 260
+    },
+    "2026-05-10T14": {
+      "date": "2026-05-10",
+      "hour": 14,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 102,
+      "avgHandleSec": 459
+    },
+    "2026-05-10T15": {
+      "date": "2026-05-10",
+      "hour": 15,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 49,
+      "avgHandleSec": 178
+    },
+    "2026-05-10T16": {
+      "date": "2026-05-10",
+      "hour": 16,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 10,
+      "avgHandleSec": 81
+    },
+    "2026-05-10T20": {
+      "date": "2026-05-10",
+      "hour": 20,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 21,
+      "avgHandleSec": 352
+    },
+    "2026-05-10T21": {
+      "date": "2026-05-10",
+      "hour": 21,
+      "answered": 3,
+      "missed": 1,
+      "avgWaitSec": 386,
+      "avgHandleSec": 539
+    },
+    "2026-05-10T22": {
+      "date": "2026-05-10",
+      "hour": 22,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 22,
+      "avgHandleSec": 104
+    },
+    "2026-05-11T07": {
+      "date": "2026-05-11",
+      "hour": 7,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 10,
+      "avgHandleSec": 97
+    },
+    "2026-05-11T08": {
+      "date": "2026-05-11",
+      "hour": 8,
+      "answered": 10,
+      "missed": 1,
+      "avgWaitSec": 80,
+      "avgHandleSec": 178
+    },
+    "2026-05-11T09": {
+      "date": "2026-05-11",
+      "hour": 9,
+      "answered": 6,
+      "missed": 0,
+      "avgWaitSec": 43,
+      "avgHandleSec": 236
+    },
+    "2026-05-11T10": {
+      "date": "2026-05-11",
+      "hour": 10,
+      "answered": 17,
+      "missed": 5,
+      "avgWaitSec": 406,
+      "avgHandleSec": 413
+    },
+    "2026-05-11T11": {
+      "date": "2026-05-11",
+      "hour": 11,
+      "answered": 16,
+      "missed": 1,
+      "avgWaitSec": 206,
+      "avgHandleSec": 405
+    },
+    "2026-05-11T12": {
+      "date": "2026-05-11",
+      "hour": 12,
+      "answered": 13,
+      "missed": 1,
+      "avgWaitSec": 95,
+      "avgHandleSec": 388
+    },
+    "2026-05-11T13": {
+      "date": "2026-05-11",
+      "hour": 13,
+      "answered": 9,
+      "missed": 3,
+      "avgWaitSec": 207,
+      "avgHandleSec": 576
+    },
+    "2026-05-11T14": {
+      "date": "2026-05-11",
+      "hour": 14,
+      "answered": 13,
+      "missed": 3,
+      "avgWaitSec": 617,
+      "avgHandleSec": 436
+    },
+    "2026-05-11T15": {
+      "date": "2026-05-11",
+      "hour": 15,
+      "answered": 9,
+      "missed": 0,
+      "avgWaitSec": 656,
+      "avgHandleSec": 295
+    },
+    "2026-05-11T16": {
+      "date": "2026-05-11",
+      "hour": 16,
+      "answered": 8,
+      "missed": 1,
+      "avgWaitSec": 15,
+      "avgHandleSec": 490
+    },
+    "2026-05-11T17": {
+      "date": "2026-05-11",
+      "hour": 17,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 5,
+      "avgHandleSec": 569
+    },
+    "2026-05-11T18": {
+      "date": "2026-05-11",
+      "hour": 18,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 26,
+      "avgHandleSec": 111
+    },
+    "2026-05-11T20": {
+      "date": "2026-05-11",
+      "hour": 20,
+      "answered": 1,
+      "missed": 1,
+      "avgWaitSec": 22,
+      "avgHandleSec": 85
+    },
+    "2026-05-11T21": {
+      "date": "2026-05-11",
+      "hour": 21,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 39,
+      "avgHandleSec": 368
+    },
+    "2026-05-12T07": {
+      "date": "2026-05-12",
+      "hour": 7,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 10,
+      "avgHandleSec": 447
+    },
+    "2026-05-12T08": {
+      "date": "2026-05-12",
+      "hour": 8,
+      "answered": 5,
+      "missed": 0,
+      "avgWaitSec": 20,
+      "avgHandleSec": 410
+    },
+    "2026-05-12T09": {
+      "date": "2026-05-12",
+      "hour": 9,
+      "answered": 10,
+      "missed": 1,
+      "avgWaitSec": 232,
+      "avgHandleSec": 470
+    },
+    "2026-05-12T10": {
+      "date": "2026-05-12",
+      "hour": 10,
+      "answered": 9,
+      "missed": 1,
+      "avgWaitSec": 66,
+      "avgHandleSec": 382
+    },
+    "2026-05-12T11": {
+      "date": "2026-05-12",
+      "hour": 11,
+      "answered": 13,
+      "missed": 2,
+      "avgWaitSec": 61,
+      "avgHandleSec": 364
+    },
+    "2026-05-12T12": {
+      "date": "2026-05-12",
+      "hour": 12,
+      "answered": 10,
+      "missed": 1,
+      "avgWaitSec": 150,
+      "avgHandleSec": 581
+    },
+    "2026-05-12T13": {
+      "date": "2026-05-12",
+      "hour": 13,
+      "answered": 11,
+      "missed": 3,
+      "avgWaitSec": 71,
+      "avgHandleSec": 434
+    },
+    "2026-05-12T14": {
+      "date": "2026-05-12",
+      "hour": 14,
+      "answered": 10,
+      "missed": 1,
+      "avgWaitSec": 15,
+      "avgHandleSec": 558
+    },
+    "2026-05-12T15": {
+      "date": "2026-05-12",
+      "hour": 15,
+      "answered": 14,
+      "missed": 1,
+      "avgWaitSec": 482,
+      "avgHandleSec": 633
+    },
+    "2026-05-12T16": {
+      "date": "2026-05-12",
+      "hour": 16,
+      "answered": 8,
+      "missed": 4,
+      "avgWaitSec": 69,
+      "avgHandleSec": 407
+    },
+    "2026-05-12T17": {
+      "date": "2026-05-12",
+      "hour": 17,
+      "answered": 6,
+      "missed": 3,
+      "avgWaitSec": 419,
+      "avgHandleSec": 725
+    },
+    "2026-05-12T18": {
+      "date": "2026-05-12",
+      "hour": 18,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 16,
+      "avgHandleSec": 445
+    },
+    "2026-05-12T20": {
+      "date": "2026-05-12",
+      "hour": 20,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 21,
+      "avgHandleSec": 60
+    },
+    "2026-05-12T21": {
+      "date": "2026-05-12",
+      "hour": 21,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 9,
+      "avgHandleSec": 68
+    },
+    "2026-05-13T08": {
+      "date": "2026-05-13",
+      "hour": 8,
+      "answered": 10,
+      "missed": 0,
+      "avgWaitSec": 332,
+      "avgHandleSec": 412
+    },
+    "2026-05-13T09": {
+      "date": "2026-05-13",
+      "hour": 9,
+      "answered": 9,
+      "missed": 0,
+      "avgWaitSec": 23,
+      "avgHandleSec": 218
+    },
+    "2026-05-13T10": {
+      "date": "2026-05-13",
+      "hour": 10,
+      "answered": 9,
+      "missed": 0,
+      "avgWaitSec": 67,
+      "avgHandleSec": 518
+    },
+    "2026-05-13T11": {
+      "date": "2026-05-13",
+      "hour": 11,
+      "answered": 14,
+      "missed": 7,
+      "avgWaitSec": 259,
+      "avgHandleSec": 675
+    },
+    "2026-05-13T12": {
+      "date": "2026-05-13",
+      "hour": 12,
+      "answered": 23,
+      "missed": 11,
+      "avgWaitSec": 593,
+      "avgHandleSec": 528
+    },
+    "2026-05-13T13": {
+      "date": "2026-05-13",
+      "hour": 13,
+      "answered": 18,
+      "missed": 12,
+      "avgWaitSec": 836,
+      "avgHandleSec": 700
+    },
+    "2026-05-13T14": {
+      "date": "2026-05-13",
+      "hour": 14,
+      "answered": 19,
+      "missed": 4,
+      "avgWaitSec": 732,
+      "avgHandleSec": 344
+    },
+    "2026-05-13T15": {
+      "date": "2026-05-13",
+      "hour": 15,
+      "answered": 24,
+      "missed": 12,
+      "avgWaitSec": 875,
+      "avgHandleSec": 541
+    },
+    "2026-05-13T16": {
+      "date": "2026-05-13",
+      "hour": 16,
+      "answered": 11,
+      "missed": 2,
+      "avgWaitSec": 112,
+      "avgHandleSec": 407
+    },
+    "2026-05-13T17": {
+      "date": "2026-05-13",
+      "hour": 17,
+      "answered": 4,
+      "missed": 1,
+      "avgWaitSec": 30,
+      "avgHandleSec": 670
+    },
+    "2026-05-13T18": {
+      "date": "2026-05-13",
+      "hour": 18,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 31,
+      "avgHandleSec": 231
+    },
+    "2026-05-13T19": {
+      "date": "2026-05-13",
+      "hour": 19,
+      "answered": 1,
+      "missed": 1,
+      "avgWaitSec": 25,
+      "avgHandleSec": 626
+    },
+    "2026-05-13T20": {
+      "date": "2026-05-13",
+      "hour": 20,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 50,
+      "avgHandleSec": 415
+    },
+    "2026-05-13T21": {
+      "date": "2026-05-13",
+      "hour": 21,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 286,
+      "avgHandleSec": 266
+    },
+    "2026-05-14T00": {
+      "date": "2026-05-14",
+      "hour": 0,
+      "answered": 1,
+      "missed": 1,
+      "avgWaitSec": 36,
+      "avgHandleSec": 285
+    },
+    "2026-05-14T09": {
+      "date": "2026-05-14",
+      "hour": 9,
+      "answered": 1,
+      "missed": 1,
+      "avgWaitSec": 25,
+      "avgHandleSec": 164
+    },
+    "2026-05-14T11": {
+      "date": "2026-05-14",
+      "hour": 11,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 85,
+      "avgHandleSec": 108
+    },
+    "2026-05-14T12": {
+      "date": "2026-05-14",
+      "hour": 12,
+      "answered": 0,
+      "missed": 1,
+      "avgWaitSec": 31,
+      "avgHandleSec": 0
+    },
+    "2026-05-14T13": {
+      "date": "2026-05-14",
+      "hour": 13,
+      "answered": 6,
+      "missed": 1,
+      "avgWaitSec": 83,
+      "avgHandleSec": 238
+    },
+    "2026-05-14T14": {
+      "date": "2026-05-14",
+      "hour": 14,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 376,
+      "avgHandleSec": 404
+    },
+    "2026-05-14T15": {
+      "date": "2026-05-14",
+      "hour": 15,
+      "answered": 2,
+      "missed": 2,
+      "avgWaitSec": 43,
+      "avgHandleSec": 84
+    },
+    "2026-05-14T16": {
+      "date": "2026-05-14",
+      "hour": 16,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 18,
+      "avgHandleSec": 228
+    },
+    "2026-05-14T17": {
+      "date": "2026-05-14",
+      "hour": 17,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 20,
+      "avgHandleSec": 264
+    },
+    "2026-05-14T18": {
+      "date": "2026-05-14",
+      "hour": 18,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 21,
+      "avgHandleSec": 164
+    },
+    "2026-05-14T19": {
+      "date": "2026-05-14",
+      "hour": 19,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 31,
+      "avgHandleSec": 591
+    },
+    "2026-05-14T20": {
+      "date": "2026-05-14",
+      "hour": 20,
+      "answered": 5,
+      "missed": 1,
+      "avgWaitSec": 23,
+      "avgHandleSec": 301
+    },
+    "2026-05-15T08": {
+      "date": "2026-05-15",
+      "hour": 8,
+      "answered": 6,
+      "missed": 0,
+      "avgWaitSec": 28,
+      "avgHandleSec": 336
+    },
+    "2026-05-15T09": {
+      "date": "2026-05-15",
+      "hour": 9,
+      "answered": 10,
+      "missed": 0,
+      "avgWaitSec": 64,
+      "avgHandleSec": 486
+    },
+    "2026-05-15T10": {
+      "date": "2026-05-15",
+      "hour": 10,
+      "answered": 12,
+      "missed": 0,
+      "avgWaitSec": 85,
+      "avgHandleSec": 504
+    },
+    "2026-05-15T11": {
+      "date": "2026-05-15",
+      "hour": 11,
+      "answered": 11,
+      "missed": 1,
+      "avgWaitSec": 306,
+      "avgHandleSec": 705
+    },
+    "2026-05-15T12": {
+      "date": "2026-05-15",
+      "hour": 12,
+      "answered": 14,
+      "missed": 3,
+      "avgWaitSec": 146,
+      "avgHandleSec": 523
+    },
+    "2026-05-15T13": {
+      "date": "2026-05-15",
+      "hour": 13,
+      "answered": 14,
+      "missed": 6,
+      "avgWaitSec": 441,
+      "avgHandleSec": 425
+    },
+    "2026-05-15T14": {
+      "date": "2026-05-15",
+      "hour": 14,
+      "answered": 23,
+      "missed": 8,
+      "avgWaitSec": 456,
+      "avgHandleSec": 396
+    },
+    "2026-05-15T15": {
+      "date": "2026-05-15",
+      "hour": 15,
+      "answered": 25,
+      "missed": 8,
+      "avgWaitSec": 658,
+      "avgHandleSec": 586
+    },
+    "2026-05-15T16": {
+      "date": "2026-05-15",
+      "hour": 16,
+      "answered": 13,
+      "missed": 2,
+      "avgWaitSec": 349,
+      "avgHandleSec": 523
+    },
+    "2026-05-15T17": {
+      "date": "2026-05-15",
+      "hour": 17,
+      "answered": 12,
+      "missed": 4,
+      "avgWaitSec": 249,
+      "avgHandleSec": 263
+    },
+    "2026-05-15T18": {
+      "date": "2026-05-15",
+      "hour": 18,
+      "answered": 14,
+      "missed": 7,
+      "avgWaitSec": 1037,
+      "avgHandleSec": 220
+    },
+    "2026-05-15T19": {
+      "date": "2026-05-15",
+      "hour": 19,
+      "answered": 11,
+      "missed": 6,
+      "avgWaitSec": 444,
+      "avgHandleSec": 212
+    },
+    "2026-05-15T20": {
+      "date": "2026-05-15",
+      "hour": 20,
+      "answered": 7,
+      "missed": 2,
+      "avgWaitSec": 552,
+      "avgHandleSec": 333
+    },
+    "2026-05-15T21": {
+      "date": "2026-05-15",
+      "hour": 21,
+      "answered": 7,
+      "missed": 1,
+      "avgWaitSec": 515,
+      "avgHandleSec": 280
+    },
+    "2026-05-15T22": {
+      "date": "2026-05-15",
+      "hour": 22,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 23,
+      "avgHandleSec": 132
+    },
+    "2026-05-16T00": {
+      "date": "2026-05-16",
+      "hour": 0,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 26,
+      "avgHandleSec": 230
+    },
+    "2026-05-16T03": {
+      "date": "2026-05-16",
+      "hour": 3,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 27,
+      "avgHandleSec": 268
+    },
+    "2026-05-16T09": {
+      "date": "2026-05-16",
+      "hour": 9,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 15,
+      "avgHandleSec": 127
+    }
+  },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\nMarvin, does it fetch Slack.\n\n\n\n",
   "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n01.Juni\nPiazza \n\n\n\n\n\n\n\n\n\n\n\n\n",
   "wtp_cal_gist_url": "ullenesmathias-munu/outlook-calendar.json",
@@ -760,27 +1426,101 @@
   "wtp_unifon_calls": [
     {
       "date": "2026-05-11",
-      "offered": 118,
-      "answered": 102,
-      "missed": 15,
-      "avgWaitSec": 288,
-      "savedAt": "2026-05-13T20:53:12.548Z"
+      "offered": 124,
+      "answered": 108,
+      "missed": 16,
+      "avgWaitSec": 273,
+      "avgHandleSec": 379,
+      "avgWaitAnsweredSec": 288,
+      "avgWaitMissedSec": 179,
+      "callbackRequests": 1,
+      "overKpi": 73,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
     },
     {
       "date": "2026-05-12",
-      "offered": 120,
+      "offered": 119,
       "answered": 102,
       "missed": 17,
       "avgWaitSec": 162,
-      "savedAt": "2026-05-12T19:52:42.915Z"
+      "avgHandleSec": 481,
+      "avgWaitAnsweredSec": 175,
+      "avgWaitMissedSec": 87,
+      "callbackRequests": 1,
+      "overKpi": 62,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
     },
     {
       "date": "2026-05-13",
-      "offered": 187,
-      "answered": 137,
+      "offered": 199,
+      "answered": 149,
+      "missed": 50,
+      "avgWaitSec": 535,
+      "avgHandleSec": 499,
+      "avgWaitAnsweredSec": 630,
+      "avgWaitMissedSec": 263,
+      "callbackRequests": 2,
+      "overKpi": 170,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-05-10",
+      "offered": 23,
+      "answered": 22,
+      "missed": 1,
+      "avgWaitSec": 103,
+      "avgHandleSec": 350,
+      "avgWaitAnsweredSec": 105,
+      "avgWaitMissedSec": 66,
+      "callbackRequests": 0,
+      "overKpi": 7,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-05-14",
+      "offered": 34,
+      "answered": 27,
+      "missed": 7,
+      "avgWaitSec": 82,
+      "avgHandleSec": 264,
+      "avgWaitAnsweredSec": 87,
+      "avgWaitMissedSec": 61,
+      "callbackRequests": 0,
+      "overKpi": 18,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-05-15",
+      "offered": 230,
+      "answered": 182,
       "missed": 48,
-      "avgWaitSec": 567,
-      "savedAt": "2026-05-13T20:30:54.281Z"
+      "avgWaitSec": 439,
+      "avgHandleSec": 432,
+      "avgWaitAnsweredSec": 495,
+      "avgWaitMissedSec": 241,
+      "callbackRequests": 4,
+      "overKpi": 189,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-05-16",
+      "offered": 4,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 24,
+      "avgHandleSec": 223,
+      "avgWaitAnsweredSec": 24,
+      "avgWaitMissedSec": 0,
+      "callbackRequests": 0,
+      "overKpi": 1,
+      "savedAt": "2026-05-16T08:07:10.424Z",
+      "source": "import"
     }
   ],
   "wtp_mood_vetle.bengtson@munu.cloud": [
