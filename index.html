@@ -7837,7 +7837,15 @@ function loadMoodHistory(username) {
 }
 
 function getOtoData() {
-  try { return JSON.parse(localStorage.getItem('wtp_oto_data') || '{"sessions":[],"notes":{}}'); } catch { return {sessions:[],notes:{}}; }
+  try {
+    const data = JSON.parse(localStorage.getItem('wtp_oto_data') || '{}');
+    // Ensure all expected fields exist
+    if (!data.sessions) data.sessions = [];
+    if (!data.notes) data.notes = {};
+    // people array — derived from MY_TEAM if not stored
+    if (!data.people) data.people = MY_TEAM.map(name => ({ name }));
+    return data;
+  } catch { return { sessions: [], notes: {}, people: MY_TEAM.map(name => ({ name })) }; }
 }
 
 function saveOtoData(data) {
