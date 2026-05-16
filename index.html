@@ -6972,6 +6972,143 @@ function showKeyboardShortcuts() {
 }
 
 
+// ─── Feedback tab ─────────────────────────────────────────────────
+const loadFbPosts  = (name) => { try { return JSON.parse(localStorage.getItem('wtp_fb_' + normalizeKey(name)) || '[]'); } catch { return []; } };
+const saveFbPosts  = (name, posts) => { localStorage.setItem('wtp_fb_' + normalizeKey(name), JSON.stringify(posts)); scheduleSyncSave(); };
+const fbLastSeenKey = (name) => 'wtp_fb_seen_' + normalizeKey(name);
+const fbGetLastSeen = (name) => parseInt(localStorage.getItem(fbLastSeenKey(name)) || '0');
+function fbMarkSeen(name) {
+  const posts = loadFbPosts(name);
+  if (posts.length) localStorage.setItem(fbLastSeenKey(name), String(new Date(posts[posts.length-1].ts).getTime() || Date.now()));
+}
+function fbHasNew(name) {
+  const posts = loadFbPosts(name);
+  if (!posts.length) return false;
+  const lastSeen = fbGetLastSeen(name);
+  return posts.some(p => new Date(p.ts).getTime() > lastSeen);
+}
+
+let fbSelectedUser = null;
+
+function renderFeedbackTab() {
+  const body = document.getElementById('feedback-body');
+  const topRight = document.getElementById('feedback-topbar-right');
+  if (!body) return;
+  body.innerHTML = '';
+  if (topRight) topRight.innerHTML = '';
+
+  if (isAdmin()) {
+    renderFeedbackAdmin(body, topRight);
+  } else {
+    renderFeedbackUser(body, topRight, currentUser ? (getScheduleName(currentUser) || getUserDisplayName(currentUser)) : '');
+  }
+}
+
+function renderFeedbackAdmin(body, topRight) {
+  const allUsers = getUsers().filter(u => !u.isAdmin && !u.tvOnly);
+  if (!fbSelectedUser && allUsers.length) fbSelectedUser = getScheduleName(allUsers[0]) || getUserDisplayName(allUsers[0]);
+
+  const layout = document.createElement('div'); layout.style.cssText = 'display:flex;gap:16px;height:100%;';
+
+  // Sidebar
+  const sidebar = document.createElement('div'); sidebar.style.cssText = 'width:180px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;';
+  allUsers.forEach(u => {
+    const name = getScheduleName(u) || getUserDisplayName(u);
+    const posts = loadFbPosts(name);
+    const hasNew = fbHasNew(name);
+    const btn = document.createElement('button');
+    btn.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-md);border:none;cursor:pointer;background:${fbSelectedUser===name?'var(--surface2)':'none'};text-align:left;width:100%;`;
+    const av = document.createElement('div'); av.style.cssText = 'width:28px;height:28px;border-radius:50%;background:var(--cal-text);color:#000743;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;'; av.textContent = name.slice(0,2).toUpperCase();
+    const info = document.createElement('div'); info.style.flex = '1';
+    const nm = document.createElement('div'); nm.style.cssText = 'font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:4px;'; nm.textContent = name;
+    if (hasNew) { const badge = document.createElement('span'); badge.style.cssText = 'font-size:9px;font-weight:700;background:var(--low-text);color:#0f0f11;border-radius:8px;padding:1px 5px;'; badge.textContent = 'NEW'; nm.appendChild(badge); }
+    const cnt = document.createElement('div'); cnt.style.cssText = 'font-size:10px;color:var(--text3);'; cnt.textContent = posts.length + ' post' + (posts.length !== 1 ? 's' : '');
+    info.appendChild(nm); info.appendChild(cnt);
+    btn.appendChild(av); btn.appendChild(info);
+    btn.onclick = () => { fbSelectedUser = name; renderFeedbackTab(); };
+    sidebar.appendChild(btn);
+  });
+  layout.appendChild(sidebar);
+
+  // Main
+  const main = document.createElement('div'); main.style.cssText = 'flex:1;overflow-y:auto;';
+  if (fbSelectedUser) {
+    const posts = loadFbPosts(fbSelectedUser).reverse();
+    const hdr = document.createElement('div'); hdr.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:15px;font-weight:900;color:var(--text);margin-bottom:12px;letter-spacing:-0.02em;";
+    hdr.textContent = fbSelectedUser + '\u2019s feedback';
+    main.appendChild(hdr);
+    fbMarkSeen(fbSelectedUser);
+    if (!posts.length) {
+      const empty = document.createElement('div'); empty.style.cssText = 'color:var(--text3);font-size:13px;padding:24px 0;'; empty.textContent = 'Nothing shared yet.';
+      main.appendChild(empty);
+    } else {
+      posts.forEach((p, i) => {
+        const card = fbMakeCard(p, true, () => {
+          confirmDialog('Delete this post?', () => {
+            const all = loadFbPosts(fbSelectedUser);
+            all.splice(all.length - 1 - i, 1);
+            saveFbPosts(fbSelectedUser, all);
+            renderFeedbackTab();
+          }, 'Delete');
+        });
+        main.appendChild(card);
+      });
+    }
+  }
+  layout.appendChild(main);
+  body.appendChild(layout);
+}
+
+function renderFeedbackUser(body, topRight, username) {
+  body.innerHTML = '';
+  if (topRight) topRight.innerHTML = '';
+
+  const compose = document.createElement('div'); compose.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:14px;';
+  const compLabel = document.createElement('div'); compLabel.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px;'; compLabel.textContent = 'Share a thought, idea or feedback';
+  const ta = document.createElement('textarea'); ta.style.cssText = 'width:100%;min-height:80px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;font-family:inherit;font-size:13px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;'; ta.placeholder = 'What\'s on your mind? Share ideas, suggestions, or feedback — goes directly to your manager.';
+  const submitBtn = document.createElement('button'); submitBtn.className = 'btn-save'; submitBtn.style.cssText = 'margin-top:8px;font-size:12px;'; submitBtn.textContent = 'Post';
+  submitBtn.onclick = () => {
+    const text = ta.value.trim(); if (!text) return;
+    const all = loadFbPosts(username);
+    all.push({ id: String(Date.now()), text, ts: new Date().toISOString() });
+    saveFbPosts(username, all);
+    ta.value = ''; renderFeedbackTab(); showToast('✓ Posted!');
+  };
+  ta.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) submitBtn.click(); });
+  compose.appendChild(compLabel); compose.appendChild(ta); compose.appendChild(submitBtn);
+  body.appendChild(compose);
+
+  const posts = loadFbPosts(username).reverse();
+  if (!posts.length) {
+    const empty = document.createElement('div'); empty.style.cssText = 'color:var(--text3);font-size:13px;padding:12px 0;'; empty.textContent = 'Nothing shared yet. Ctrl+Enter to post quickly.';
+    body.appendChild(empty);
+  } else {
+    posts.forEach((p, i) => {
+      const card = fbMakeCard(p, false, () => {
+        confirmDialog('Delete this post?', () => {
+          const all = loadFbPosts(username);
+          all.splice(all.length - 1 - i, 1);
+          saveFbPosts(username, all);
+          renderFeedbackTab();
+        }, 'Delete');
+      });
+      body.appendChild(card);
+    });
+  }
+}
+
+function fbMakeCard(post, isAdmin2, onDelete) {
+  const card = document.createElement('div'); card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:8px;';
+  const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;';
+  const ts = new Date(post.ts);
+  const meta = document.createElement('div'); meta.style.cssText = 'font-size:10px;color:var(--text3);'; meta.textContent = ts.toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'short'}) + ' · ' + ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const del = document.createElement('button'); del.style.cssText = 'background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0;'; del.textContent = '✕'; del.onclick = onDelete;
+  hdr.appendChild(meta); hdr.appendChild(del);
+  const txt = document.createElement('div'); txt.style.cssText = 'font-size:13px;color:var(--text2);line-height:1.5;'; txt.textContent = post.text;
+  card.appendChild(hdr); card.appendChild(txt);
+  return card;
+}
+
 // ─── Reports tab ──────────────────────────────────────────────────
 function renderReportsTab() {
   const root = document.getElementById('reports-root');
@@ -7848,7 +7985,9 @@ async function ghLoad() {
         calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
         const ta = document.getElementById('notepad-text');
         if (ta) ta.value = localStorage.getItem(userNoteKey(currentUser.name)) || '';
+        renderDashboard();
         renderPlanner();
+        renderSchedule();
       }
     }
     setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
