@@ -4050,12 +4050,6 @@ function processXlsx(buffer, fileName, st, preview) {
     }, 600);
   });
 })();
-function clearNotepad() {
-  confirmDialog('Clear all notes?', () => {
-    const ta = document.getElementById('notepad-text');
-    if (ta) { ta.value = ''; if (currentUser) localStorage.removeItem(userNoteKey(currentUser.name)); }
-  }, 'Clear');
-}
 
 function clearNotepad() {
   const isPersistent = document.getElementById('notepad-persistent')?.style.display !== 'none';
