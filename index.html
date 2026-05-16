@@ -1638,10 +1638,13 @@ function getUsers() {
   try {
     const stored = JSON.parse(localStorage.getItem('wtp_users'));
     if (!stored) return DEFAULT_USERS;
-    // Always ensure DEFAULT_USERS entries are present (e.g. Dashboard TV user)
     const merged = [...stored];
     DEFAULT_USERS.forEach(def => {
-      if (!merged.find(u => u.name.toLowerCase() === def.name.toLowerCase())) {
+      const existing = merged.find(u => u.name.toLowerCase() === def.name.toLowerCase());
+      if (existing) {
+        // Always enforce isAdmin from DEFAULT_USERS — prevents stored data from demoting admins
+        if (def.isAdmin) existing.isAdmin = true;
+      } else {
         merged.push(def);
       }
     });
@@ -1664,7 +1667,15 @@ let currentUser = null;
       } else {
         const users = getUsers();
         const u = users.find(u => u.name === s.name && u.hash === s.hash);
-        if (u) { currentUser = u; localStorage.setItem('wtp_last_active', Date.now().toString()); document.getElementById('lock-screen').style.display = 'none'; return; }
+        if (u) {
+          currentUser = u;
+          localStorage.setItem('wtp_last_active', Date.now().toString());
+          document.getElementById('lock-screen').style.display = 'none';
+          // loadUserData() will be called by the main script startup
+          // but mark that we need it to run fully
+          window._sessionRestored = true;
+          return;
+        }
       }
     } catch {}
   }
@@ -7965,7 +7976,11 @@ async function ghLoad() {
         localStorage.setItem(k, sanitizeStoredData(typeof v === 'string' ? v : JSON.stringify(v)));
       });
       runMigrations();
-      // Reload SCHEDULE from localStorage if admin has pushed an updated schedule
+      // Re-validate currentUser in case wtp_users was updated by sync
+      if (currentUser) {
+        const freshU = getUsers().find(u => u.name === currentUser.name && u.hash === currentUser.hash);
+        if (freshU) currentUser = freshU;
+      }
       const savedSched2 = localStorage.getItem('wtp_schedule');
       if (savedSched2) {
         try {
@@ -8372,6 +8387,14 @@ function userCalKey(username) { return 'wtp_cal_' + username.toLowerCase(); }
 
 function loadUserData() {
   if (!currentUser) return;
+  // Re-validate currentUser from the current user list to ensure isAdmin and privileges are up to date
+  const freshUsers = getUsers();
+  const fresh = freshUsers.find(u => u.name === currentUser.name && u.hash === currentUser.hash);
+  if (fresh) currentUser = fresh;
+  else if (!freshUsers.find(u => u.name === currentUser.name)) {
+    // User no longer exists — sign out
+    currentUser = null; localStorage.removeItem('wtp_session'); location.reload(); return;
+  }
   const u = currentUser.name;
   tasks = JSON.parse(localStorage.getItem(userTaskKey(u)) || '[]');
   calEvents = JSON.parse(localStorage.getItem(userCalKey(u)) || '[]');
