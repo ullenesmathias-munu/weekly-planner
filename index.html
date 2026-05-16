@@ -7805,6 +7805,65 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const el = document.getElementById('zd-mttr-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
   });
 }
+
+function handoverKey(dateStr) { return 'wtp_handover_' + dateStr; }
+function loadHandover(dateStr) {
+  try { return JSON.parse(localStorage.getItem(handoverKey(dateStr)) || '{}'); } catch { return {}; }
+}
+function saveHandover(dateStr, data) {
+  localStorage.setItem(handoverKey(dateStr), JSON.stringify(data)); scheduleSyncSave();
+}
+function getActiveHandovers() {
+  const results = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !k.startsWith('wtp_handover_')) continue;
+    try {
+      const d = JSON.parse(localStorage.getItem(k));
+      if (d && d.text) results.push({ date: k.replace('wtp_handover_',''), ...d });
+    } catch {}
+  }
+  return results.sort((a,b) => b.date.localeCompare(a.date)).slice(0,14);
+}
+function getAllQuickLinks() {
+  try { return JSON.parse(localStorage.getItem('wtp_ql_shared') || '[]'); } catch { return []; }
+}
+function getCurrentMood(username) {
+  const week = getISOWeek(new Date());
+  try { return JSON.parse(localStorage.getItem(moodKey(username, week)) || 'null'); } catch { return null; }
+}
+function getISOWeek(date) {
+  const d = new Date(date); d.setHours(0,0,0,0); d.setDate(d.getDate()+4-(d.getDay()||7));
+  const yearStart = new Date(d.getFullYear(),0,1);
+  return d.getFullYear()+'-W'+String(Math.ceil((((d-yearStart)/86400000)+1)/7)).padStart(2,'0');
+}
+function moodKey(username, week) { return 'wtp_mood_' + normalizeKey(username) + '_' + week; }
+function saveMoodEntry(username, mood) {
+  const week = getISOWeek(new Date());
+  const history = loadMoodHistory(username);
+  const existing = history.findIndex(h => h.week === week);
+  const entry = { week, mood, ts: new Date().toISOString() };
+  if (existing >= 0) history[existing] = entry; else history.push(entry);
+  localStorage.setItem('wtp_mood_' + normalizeKey(username), JSON.stringify(history));
+  localStorage.setItem(moodKey(username, week), JSON.stringify(mood));
+  scheduleSyncSave();
+}
+function sparkline(vals, w, h, color) {
+  // Simple inline sparkline — returns an SVG element
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`); svg.setAttribute('width',w); svg.setAttribute('height',h);
+  if (!vals || vals.length < 2) return svg;
+  const nums = vals.filter(v=>v!=null);
+  if (!nums.length) return svg;
+  const mn = Math.min(...nums), mx = Math.max(...nums,mn+1);
+  const pts = vals.map((v,i)=>`${(i/(vals.length-1))*w},${h-2-((v??mn)-mn)/(mx-mn)*(h-4)}`).join(' ');
+  const pl = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  pl.setAttribute('points',pts); pl.setAttribute('fill','none');
+  pl.setAttribute('stroke',color||'var(--cal-text)'); pl.setAttribute('stroke-width','1.5');
+  pl.setAttribute('stroke-linecap','round'); pl.setAttribute('stroke-linejoin','round');
+  svg.appendChild(pl); return svg;
+}
+
 function loadProfile(name) {
   try { return JSON.parse(localStorage.getItem('wtp_profile_' + normalizeKey(name)) || '{}'); } catch { return {}; }
 }
@@ -7966,15 +8025,18 @@ const ZD_PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev';
 
 async function zdFetch(path) {
   if (!zdReady()) throw new Error('Zendesk not configured');
-  const sub  = localStorage.getItem(ZD_SUBDOMAIN_KEY) || '';
-  const email= localStorage.getItem(ZD_EMAIL_KEY)     || '';
-  const token= localStorage.getItem(ZD_TOKEN_KEY)     || '';
-  // Route through CORS proxy
-  const url = path.startsWith('http') ? path : ZD_PROXY + path;
+  const sub   = localStorage.getItem(ZD_SUBDOMAIN_KEY) || '';
+  const email = localStorage.getItem(ZD_EMAIL_KEY)     || '';
+  const token = localStorage.getItem(ZD_TOKEN_KEY)     || '';
+  const url = path.startsWith('http')
+    ? path.replace(/^https:\/\/[^/]+\.zendesk\.com\/api\/v2/, ZD_PROXY)
+    : ZD_PROXY + path;
   const res = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
     headers: {
       'Authorization': 'Basic ' + btoa(email + '/token:' + token),
-      'X-Zendesk-Subdomain': sub,
+      'X-ZD-Subdomain': sub,
       'Content-Type': 'application/json',
     }
   });
