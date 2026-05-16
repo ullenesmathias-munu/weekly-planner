@@ -8000,9 +8000,8 @@ async function ghLoad() {
         calEvents = JSON.parse(localStorage.getItem(userCalKey(currentUser.name)) || '[]');
         const ta = document.getElementById('notepad-text');
         if (ta) ta.value = localStorage.getItem(userNoteKey(currentUser.name)) || '';
-        renderDashboard();
-        renderPlanner();
-        renderSchedule();
+        // Re-run full loadUserData to ensure tabs and renders are correct
+        loadUserData();
       }
     }
     setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), 'var(--low-text)');
@@ -8385,9 +8384,11 @@ function userTaskKey(username) { return 'wtp_tasks_' + username.toLowerCase(); }
 function userNoteKey(username) { return 'wtp_notepad_' + username.toLowerCase(); }
 function userCalKey(username) { return 'wtp_cal_' + username.toLowerCase(); }
 
+let _loadUserDataRunning = false;
 function loadUserData() {
   if (!currentUser) return;
-  // Re-validate currentUser from the current user list to ensure isAdmin and privileges are up to date
+  if (_loadUserDataRunning) return; // prevent re-entrancy from ghLoad → loadUserData loop
+  _loadUserDataRunning = true;
   const freshUsers = getUsers();
   const fresh = freshUsers.find(u => u.name === currentUser.name && u.hash === currentUser.hash);
   if (fresh) currentUser = fresh;
@@ -8442,11 +8443,11 @@ function loadUserData() {
   }
   // Auto-pull from GitHub on every login if token is set
   if (ghToken) {
-    setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }).catch(()=>{}), 500);
+    // ghLoad already fired from initGitHubSync — don't double-trigger
+    // renderDashboard is called inside ghLoad after data restores
   } else if (localStorage.getItem('wtp_gh_token')) {
-    // Token in storage but not yet in memory — shouldn't happen but handle it
     ghToken = localStorage.getItem('wtp_gh_token');
-    setTimeout(() => ghLoad().then(() => { scheduleAllReminders(); }).catch(()=>{}), 500);
+    setTimeout(() => ghLoad().catch(()=>{}), 300);
   } else if (!currentUser?.isAdmin) {
     // Non-admin: pull shared data (schedule, roles, wingman) using read-only token
     setTimeout(() => ghReadOnlyLoad(), 500);
@@ -8458,6 +8459,7 @@ function loadUserData() {
   const wrap = document.getElementById('user-list-wrap');
   if (wrap) wrap.style.display = currentUser.isAdmin ? '' : 'none';
   renderUserList();
+  _loadUserDataRunning = false;
 }
 
 function save() { if (currentUser) { localStorage.setItem(userTaskKey(currentUser.name), JSON.stringify(tasks)); scheduleSyncSave(); schedulePersonalSync(); } }
