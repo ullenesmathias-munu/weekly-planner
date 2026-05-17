@@ -7966,16 +7966,12 @@ const ZD_PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev';
 
 async function zdFetch(path) {
   if (!zdReady()) throw new Error('Zendesk not configured');
-  const sub  = localStorage.getItem(ZD_SUBDOMAIN_KEY) || '';
-  const email= localStorage.getItem(ZD_EMAIL_KEY)     || '';
-  const token= localStorage.getItem(ZD_TOKEN_KEY)     || '';
-  // Route through CORS proxy — subdomain encoded in path, no custom headers
+  const email= localStorage.getItem(ZD_EMAIL_KEY) || '';
+  const token= localStorage.getItem(ZD_TOKEN_KEY) || '';
   const cleanPath = path.startsWith('http') ? '/' + path.split('/api/v2/').slice(1).join('/api/v2/') : path;
-  const url = ZD_PROXY + '/' + sub + cleanPath;
+  const url = ZD_PROXY + cleanPath;
   const res = await fetch(url, {
-    headers: {
-      'Authorization': 'Basic ' + btoa(email + '/token:' + token),
-    }
+    headers: { 'Authorization': 'Basic ' + btoa(email + '/token:' + token) }
   });
   const json = await res.json().catch(()=>({}));
   if (!res.ok) {
