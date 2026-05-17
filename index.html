@@ -17,7 +17,7 @@
     --munu-light:  #D6F3FF;
     --munu-white:  #F9FBFF;
     --munu-pink:   #F1B7F2;
-    /* Dark mode — original dark theme */
+    /* Dark mode â original dark theme */
     --bg:      #0f0f11;
     --surface: #1a1a1f;
     --surface2: #222228;
@@ -91,7 +91,7 @@
   h1, h2, h3, .munu-heading, .lock-title, .oto-person-title { font-family: 'Fira Sans', sans-serif; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
   .munu-subheading, .tab-btn, .topbar-left span, .sched-week-label { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.02em; }
 
-  /* Munu button styles — original dark theme */
+  /* Munu button styles â original dark theme */
   .btn-save { background: var(--surface3); color: var(--text); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
   .btn-save:hover { background: var(--cal); color: var(--cal-text); border-color: var(--cal-border); }
   .btn-cancel { background: transparent; color: var(--text2); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s; }
@@ -122,15 +122,15 @@
   /* âââ Mobile responsive ââââââââââââââââââââââââââââ */
   @media (max-width: 768px) {
     body { padding: 0 0 60px 0; background: var(--bg); }
-    /* Hide top tabs nav — replaced by bottom nav */
+    /* Hide top tabs nav â replaced by bottom nav */
     .tabs { display: none; }
-    /* Hide everything below the tab bar — notes panel sits on top */
+    /* Hide everything below the tab bar â notes panel sits on top */
     #tab-planner > *, #tab-schedule, #tab-onetoone,
     #tab-zendesk, #tab-feedback, #tab-settings { display: none !important; }
     #tab-planner { min-height: 0 !important; padding: 0 !important; }
     /* Bottom nav */
     .mobile-nav { display: flex !important; }
-    /* Shortcut hint — hide on mobile */
+    /* Shortcut hint â hide on mobile */
     body > div[style*="position:fixed"][style*="bottom:12px"] { display: none !important; }
   }
   @media (max-width: 480px) {
@@ -183,7 +183,7 @@
   .light-mode .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  /* Card entrance animation — Munu smooth easing */
+  /* Card entrance animation â Munu smooth easing */
   @keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .card { animation: cardIn 0.3s cubic-bezier(0.5,0,0,1) both; }
   /* Focus rings */
@@ -519,7 +519,7 @@
     flex-direction: column;
   }
 
-  /* Staggered entrance — brand motion spec: smooth ease, mask-in */
+  /* Staggered entrance â brand motion spec: smooth ease, mask-in */
   @keyframes dbFadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   @keyframes dbSlideIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
 
@@ -565,7 +565,7 @@
     z-index: 1;
   }
 
-  /* KPI tiles — glass on dark blue */
+  /* KPI tiles â glass on dark blue */
   .db-kpi {
     display: flex;
     flex-direction: column;
@@ -624,7 +624,7 @@
   .db-notif-pill:hover { background: rgba(241,183,242,0.13); }
   .db-notif-dot { width: 5px; height: 5px; border-radius: 50%; background: #F1B7F2; flex-shrink: 0; }
 
-  /* Column layout — column accent colors create visual scannability */
+  /* Column layout â column accent colors create visual scannability */
   .db-body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -778,7 +778,7 @@
       radial-gradient(ellipse at 80% 100%, rgba(241,183,242,0.04) 0%, transparent 50%);
   }
 
-  /* Header — generous, readable from across the room */
+  /* Header â generous, readable from across the room */
   .tv-header {
     display: flex;
     align-items: center;
@@ -849,7 +849,7 @@
   }
   .tv-exit:hover { background: rgba(214,243,255,0.12); color: #D6F3FF; }
 
-  /* KPI strip — full width, prominent numbers */
+  /* KPI strip â full width, prominent numbers */
   .tv-kpi-strip {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -937,7 +937,7 @@
     margin-bottom: 4px;
   }
 
-  /* Agent cards — readable at 3m */
+  /* Agent cards â readable at 3m */
   .tv-agent-card {
     background: rgba(214,243,255,0.03);
     border: 1px solid rgba(214,243,255,0.08);
@@ -995,7 +995,7 @@
   .tv-stat-chip.open    { background: rgba(252,165,165,0.12); color: #fca5a5; border: 1px solid rgba(252,165,165,0.2); }
   .tv-stat-chip.pending { background: rgba(252,211,77,0.12);  color: #fcd34d; border: 1px solid rgba(252,211,77,0.2);  }
 
-  /* Ticket rows — big enough to read from a TV */
+  /* Ticket rows â big enough to read from a TV */
   .tv-ticket-row {
     display: flex;
     align-items: center;
@@ -1533,12 +1533,12 @@
     <div class="lock-wordmark">munu<span class="lock-wordmark-dot">.</span></div>
     <div class="lock-title">Team Planner</div>
 
-    <!-- First-time sync — shown when no users loaded yet -->
+    <!-- First-time sync â shown when no users loaded yet -->
     <div id="lock-sync-first" style="display:none;width:100%;margin-bottom:20px;padding:14px;background:rgba(214,243,255,0.06);border:1px solid rgba(214,243,255,0.12);border-radius:10px;box-sizing:border-box;">
       <div style="font-size:11px;font-weight:700;color:rgba(214,243,255,0.6);margin-bottom:4px;letter-spacing:0.04em;">First time here?</div>
       <div style="font-size:11px;color:rgba(214,243,255,0.35);margin-bottom:10px;line-height:1.5;">Enter the sync passphrase to load your account from the team planner.</div>
       <div style="display:flex;gap:6px;">
-        <input type="password" id="lock-passphrase-input" placeholder="Sync passphrase…" autocomplete="off"
+        <input type="password" id="lock-passphrase-input" placeholder="Sync passphraseâ¦" autocomplete="off"
           style="flex:1;font-family:'Inter',sans-serif;font-size:12px;background:rgba(214,243,255,0.06);color:#F9FBFF;border:1px solid rgba(214,243,255,0.12);border-radius:8px;padding:9px 12px;outline:none;"
           onkeydown="if(event.key==='Enter')lockSyncPassphrase()">
         <button onclick="lockSyncPassphrase()" style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;background:rgba(214,243,255,0.10);color:#D6F3FF;border:1px solid rgba(214,243,255,0.18);border-radius:8px;padding:9px 14px;cursor:pointer;white-space:nowrap;transition:background 0.2s;">Sync</button>
@@ -1755,7 +1755,7 @@ window.tryUnlock = async function() {
     <div class="topbar-right">
       <span id="status-msg"></span>
       <div class="search-wrap">
-        <input type="text" id="task-search" placeholder="ð Search tasks…" oninput="searchTasks(this.value)" autocomplete="off">
+        <input type="text" id="task-search" placeholder="ð Search tasksâ¦" oninput="searchTasks(this.value)" autocomplete="off">
         <div id="search-results" class="search-results"></div>
       </div>
       <button class="btn-today-view" onclick="toggleTodayPanel()" id="today-panel-btn">â Today</button>
@@ -1789,13 +1789,13 @@ window.tryUnlock = async function() {
         <div style="display:flex;gap:6px;align-items:center;">
           <button onclick="toggleNotepadMode()" id="notepad-mode-btn" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--cal-text);cursor:pointer;" title="Toggle persistent notes">ð Sticky</button>
           <button onclick="togglePhoneNotes()" id="notepad-phone-btn" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--med-text);cursor:pointer;" title="Phone notes">ð± Phone</button>
-          <button class="notepad-clear" onclick="clearNotepad()" title="Clear notes">✕ clear</button>
+          <button class="notepad-clear" onclick="clearNotepad()" title="Clear notes">â clear</button>
         </div>
       </div>
       <div class="notepad-body">
-        <textarea class="notepad-textarea" id="notepad-text" placeholder="Jot anything down…&#10;Phone numbers, quick thoughts,&#10;things mentioned in passing…"></textarea>
-        <textarea class="notepad-textarea" id="notepad-persistent" style="display:none;" placeholder="Persistent notes — stays across all weeks…&#10;Phone numbers, ongoing reminders, key info…"></textarea>
-        <textarea class="notepad-textarea" id="notepad-phone" style="display:none;" placeholder="Notes from your phone appear here…&#10;Pull from GitHub to refresh."></textarea>
+        <textarea class="notepad-textarea" id="notepad-text" placeholder="Jot anything downâ¦&#10;Phone numbers, quick thoughts,&#10;things mentioned in passingâ¦"></textarea>
+        <textarea class="notepad-textarea" id="notepad-persistent" style="display:none;" placeholder="Persistent notes â stays across all weeksâ¦&#10;Phone numbers, ongoing reminders, key infoâ¦"></textarea>
+        <textarea class="notepad-textarea" id="notepad-phone" style="display:none;" placeholder="Notes from your phone appear hereâ¦&#10;Pull from GitHub to refresh."></textarea>
         <div class="notepad-saved" id="notepad-saved"></div>
       </div>
     </div>
@@ -1950,7 +1950,7 @@ window.tryUnlock = async function() {
         <div class="settings-card-title">Sync passphrase</div>
         <div class="settings-card-desc">Enter the sync passphrase to keep your notes and feedback in sync across devices.</div>
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
-          <input type="password" id="user-passphrase-input" placeholder="Enter sync passphrase…"
+          <input type="password" id="user-passphrase-input" placeholder="Enter sync passphraseâ¦"
             style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
           <button class="btn-save" onclick="unlockWithPassphrase()" style="font-size:12px;white-space:nowrap;">Unlock sync</button>
         </div>
@@ -1973,16 +1973,16 @@ window.tryUnlock = async function() {
         </div>
         <!-- Sub-section: read-only token -->
         <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">Read-only token <span style="font-weight:400;color:var(--text3);">— lets team members pull without write access</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">Read-only token <span style="font-weight:400;color:var(--text3);">â lets team members pull without write access</span></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <input type="password" id="gh-readonly-input" placeholder="Paste read-only GitHub token…"
+            <input type="password" id="gh-readonly-input" placeholder="Paste read-only GitHub tokenâ¦"
               style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
             <button class="btn-save" onclick="saveReadonlyToken()" style="font-size:12px;white-space:nowrap;">Save</button>
           </div>
         </div>
         <!-- Sub-section: shared passphrase -->
         <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;">Shared sync passphrase <span style="font-weight:400;color:var(--text3);">— team members use this instead of the raw token</span></div>
+          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;">Shared sync passphrase <span style="font-weight:400;color:var(--text3);">â team members use this instead of the raw token</span></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;">
             <input type="text" id="sync-passphrase-input" placeholder="Set passphrase"
               style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
@@ -2054,7 +2054,7 @@ window.tryUnlock = async function() {
             <input type="file" id="unifon-calls-input" accept=".xlsx,.csv" style="display:none" onchange="handleUnifonCallsImport(this.files[0])">
             <span id="unifon-calls-status" style="font-size:11px;color:var(--text3);"></span>
           </div>
-          <div style="font-size:10px;color:var(--text3);line-height:1.5;">Queue report = daily/hourly totals &nbsp;·&nbsp; Calls report = per-agent individual calls</div>
+          <div style="font-size:10px;color:var(--text3);line-height:1.5;">Queue report = daily/hourly totals &nbsp;Â·&nbsp; Calls report = per-agent individual calls</div>
         </div>
         <div id="unifon-settings-body" style="margin-top:12px;"></div>
       </div>
@@ -2067,7 +2067,7 @@ window.tryUnlock = async function() {
       <!-- Unifon API -->
       <div class="settings-card">
         <div class="settings-card-title">Unifon API</div>
-        <div class="settings-card-desc">Connect the Unifon API for live call data. Credentials stay on this device only — never synced.</div>
+        <div class="settings-card-desc">Connect the Unifon API for live call data. Credentials stay on this device only â never synced.</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;">API Base URL</div>
@@ -2076,7 +2076,7 @@ window.tryUnlock = async function() {
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;">API Key</div>
             <div style="display:flex;gap:8px;">
-              <input type="password" id="unifon-api-key" placeholder="Paste API key…" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;flex:1;">
+              <input type="password" id="unifon-api-key" placeholder="Paste API keyâ¦" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;flex:1;">
               <button class="btn-save" onclick="saveUnifonApiKey()" style="font-size:12px;white-space:nowrap;">Save</button>
               <button class="btn-cancel" onclick="clearUnifonApiKey()" style="font-size:12px;">Clear</button>
             </div>
@@ -2101,7 +2101,7 @@ window.tryUnlock = async function() {
           <label class="settings-upload-btn" for="ics-input-settings">Choose .ics file</label>
           <input type="file" id="ics-input-settings" accept=".ics" style="display:none" onchange="handleIcsFile(this.files[0], true)">
           <span id="ics-status" style="font-size:12px;color:var(--text3);"></span>
-          <button class="btn-cancel" id="ics-clear-btn" onclick="clearCal()" style="display:none;margin-left:auto;">✕ Clear</button>
+          <button class="btn-cancel" id="ics-clear-btn" onclick="clearCal()" style="display:none;margin-left:auto;">â Clear</button>
         </div>
         <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6;">
           <strong style="color:var(--text2);">Export from Outlook:</strong> Web â Settings â Calendar â Shared calendars â Export &nbsp;|&nbsp; Desktop â File â Open &amp; Export â Import/Export â Export to iCalendar
@@ -2132,7 +2132,7 @@ window.tryUnlock = async function() {
         <div id="backup-msg" style="font-size:11px;color:var(--text3);margin-top:8px;"></div>
       </div>
 
-      <!-- Clear tasks (destructive — at bottom, subtle) -->
+      <!-- Clear tasks (destructive â at bottom, subtle) -->
       <div class="settings-card" style="border-color:rgba(255,107,107,0.15);">
         <div class="settings-card-title" style="color:var(--high-text);font-size:13px;">Clear all tasks</div>
         <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
