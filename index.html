@@ -1385,6 +1385,7 @@
   .zd-bar:hover { filter: brightness(1.2); }
   .zd-bar-label { font-size: 10px; font-weight: 600; color: var(--text3); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .zd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .zd-agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 14px; }
   .zd-agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s; }
   .zd-agent-card:hover { border-color: var(--border2); }
   .zd-agent-header { padding: 12px 16px 10px; display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid var(--border); }
@@ -5999,10 +6000,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   chart2.appendChild(c2Title); chart2.appendChild(c2Sub); chart2.appendChild(c2Body);
   chartRow.appendChild(chart2);
 
-  root.appendChild(body);
   root.appendChild(chartRow);
-
-  // ── Render Chart 1: Daily volume ─────────────────────────────
   const renderChart1 = async (fromDate, toDate) => {
     const el = document.getElementById('db-chart1-body'); if (!el) return;
     const startD = new Date(fromDate+'T00:00:00'), endD = new Date(toDate+'T00:00:00');
@@ -8124,7 +8122,15 @@ function zdRender(agents, fromDate, toDate) {
 
   // Filter absent agents
   const absentNames = zdGetAbsentNames(fromDate, toDate);
-  const presentAgents = agents.filter(a => !absentNames.has(a.name.toLowerCase()) && !absentNames.has(a.name.split(' ')[0].toLowerCase()));
+  // Only show agents who are in MY_TEAM (by first name match) and not absent the whole period
+  const teamFirstNames = new Set(MY_TEAM.map(n => n.split(' ')[0].toLowerCase()));
+  const presentAgents = agents.filter(a => {
+    const firstName = a.name.split(' ')[0].toLowerCase();
+    const fullLower = a.name.toLowerCase();
+    const isTeam = teamFirstNames.has(firstName) || MY_TEAM.some(n => n.toLowerCase() === fullLower);
+    const isAbsent = absentNames.has(fullLower) || absentNames.has(firstName);
+    return isTeam && !isAbsent;
+  });
   if (agents.length !== presentAgents.length) {
     const info = document.createElement('div');
     info.style.cssText = 'font-size:11px;color:var(--text3);padding:4px 0 10px;';
