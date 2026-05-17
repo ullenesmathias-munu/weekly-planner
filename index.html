@@ -7969,19 +7969,18 @@ async function zdFetch(path) {
   const sub  = localStorage.getItem(ZD_SUBDOMAIN_KEY) || '';
   const email= localStorage.getItem(ZD_EMAIL_KEY)     || '';
   const token= localStorage.getItem(ZD_TOKEN_KEY)     || '';
-  // Route through CORS proxy
-  const url = path.startsWith('http') ? path : ZD_PROXY + path;
+  // Route through CORS proxy — subdomain encoded in path, no custom headers
+  const cleanPath = path.startsWith('http') ? '/' + path.split('/api/v2/').slice(1).join('/api/v2/') : path;
+  const url = ZD_PROXY + '/' + sub + cleanPath;
   const res = await fetch(url, {
     headers: {
       'Authorization': 'Basic ' + btoa(email + '/token:' + token),
-      'X-Zendesk-Subdomain': sub,
-      'Content-Type': 'application/json',
     }
   });
   const json = await res.json().catch(()=>({}));
   if (!res.ok) {
     const msg = json.description || json.error || json.message || ('HTTP ' + res.status);
-    throw new Error(msg + ' - ' + path.split('?')[0]);
+    throw new Error(msg + ' - ' + cleanPath.split('?')[0]);
   }
   return json;
 }
