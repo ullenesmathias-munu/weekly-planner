@@ -494,10 +494,64 @@
   .action-check:hover { border-color: var(--low-text); color: var(--low-text); }
   .action-check.done { background: var(--low-bg); border-color: var(--low-text); color: var(--low-text); }
   /* ─── ZD trend ───────────────────────────────────── */
-  .zd-trend { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 4px; flex-shrink: 0; }
-  .zd-trend.up   { background: var(--low-bg); color: var(--low-text); }
-  .zd-trend.down { background: var(--high-bg); color: var(--high-text); }
+  /* ── Ticket view ──────────────────────────────────────────── */
+  .zd-trend { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; letter-spacing: 0.04em; }
+  .zd-trend.up   { background: rgba(52,211,153,0.15); color: var(--low-text); }
+  .zd-trend.down { background: rgba(252,165,165,0.15); color: var(--high-text); }
   .zd-trend.flat { background: var(--surface2); color: var(--text3); }
+  .zd-unassigned-panel { background: var(--surface); border: 1px solid rgba(255,183,77,0.3); border-radius: var(--radius-lg); padding: 12px 14px; }
+  .zd-unassigned-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #ffb74d; margin-bottom: 8px; }
+  .zd-unassigned-count { font-size: 10px; font-weight: 700; color: #ffb74d; background: rgba(255,183,77,0.12); padding: 1px 6px; border-radius: 10px; }
+  .zd-unassigned-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 4px; transition: border-color 0.15s; }
+  .zd-unassigned-row:hover { border-color: #ffb74d; }
+  .zd-chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
+  .zd-chart-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); margin-bottom: 14px; }
+  .zd-chart { display: flex; align-items: flex-end; gap: 6px; height: 160px; padding: 0 4px; }
+  .zd-bar-col { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; min-width: 0; }
+  .zd-bar-val { font-size: 11px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+  .zd-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.6s cubic-bezier(0.34,1.4,0.64,1); min-height: 3px; }
+  .zd-bar:hover { filter: brightness(1.25); }
+  .zd-bar-label { font-size: 9px; font-weight: 600; color: var(--text3); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+  .zd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .zd-agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 14px; }
+  .zd-agent-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s; position: relative; }
+  .zd-agent-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--cal-text); opacity: 0; transition: opacity 0.2s; }
+  .zd-agent-card:hover { border-color: var(--border2); box-shadow: 0 4px 24px rgba(0,0,0,0.18); }
+  .zd-agent-card:hover::before { opacity: 1; }
+  .zd-agent-header { padding: 14px 16px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+  .zd-agent-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.9); flex-shrink: 0; letter-spacing: 0.02em; }
+  .zd-agent-name { font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .zd-agent-sub { font-size: 11px; color: var(--text3); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+  .zd-agent-body { padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 0; }
+  .zd-stat-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .zd-stat-row:last-child { border-bottom: none; }
+  .zd-stat-label { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 7px; }
+  .zd-stat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .zd-stat-val { font-size: 12px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+  .zd-stat-val.highlight { color: var(--cal-text); font-size: 14px; }
+  .zd-stat-divider { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); padding: 8px 0 4px; opacity: 0.6; }
+  .zd-trend-badge { font-size: 9px; font-weight: 700; color: var(--low-text); background: rgba(52,211,153,0.12); padding: 1px 5px; border-radius: 10px; letter-spacing: 0.03em; }
+  .zd-divider { height: 1px; background: var(--border); margin: 2px 0; opacity: 0.5; }
+  .zd-summary-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .zd-summary-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 80px; transition: border-color 0.15s; }
+  .zd-summary-pill:hover { border-color: var(--border2); }
+  .zd-summary-pill-val { font-family: 'Fira Sans', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .zd-summary-pill-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); }
+  .zd-error { padding: 14px 16px; background: rgba(239,83,80,0.08); border: 1px solid rgba(239,83,80,0.3); border-radius: 10px; color: var(--high-text); font-size: 12px; }
+  .zd-inbox-wrap { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .zd-inbox-card { flex: 1; min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; position: relative; overflow: hidden; transition: border-color 0.15s; }
+  .zd-inbox-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .zd-inbox-card.neutral::before { background: var(--border2); }
+  .zd-inbox-card.warning::before { background: #ffb74d; }
+  .zd-inbox-card.danger::before  { background: #ef5350; }
+  .zd-inbox-val { font-family: 'Fira Sans', sans-serif; font-size: 30px; font-weight: 900; line-height: 1; letter-spacing: -0.04em; }
+  .zd-inbox-card.neutral .zd-inbox-val { color: var(--text); }
+  .zd-inbox-card.warning .zd-inbox-val { color: #ffb74d; }
+  .zd-inbox-card.danger  .zd-inbox-val { color: #ef5350; }
+  .zd-inbox-label { font-size: 11px; font-weight: 600; color: var(--text2); margin-top: 4px; }
+  .zd-inbox-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .zd-skel-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .zd-empty { text-align: center; padding: 48px; color: var(--text3); font-size: 13px; }
   /* ─── Keyboard shortcuts ─────────────────────────── */
   .kbd-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 800; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.15s; }
   .kbd-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 20px 24px; width: 90%; max-width: 460px; max-height: 80vh; overflow-y: auto; }
@@ -2055,7 +2109,7 @@ window.tryUnlock = async function() {
             <input type="file" id="unifon-calls-input" accept=".xlsx,.csv" style="display:none" onchange="handleUnifonCallsImport(this.files[0])">
             <span id="unifon-calls-status" style="font-size:11px;color:var(--text3);"></span>
           </div>
-          <div style="font-size:10px;color:var(--text3);line-height:1.5;">Queue report = daily/hourly totals &nbsp;Â·&nbsp; Calls report = per-agent individual calls</div>
+          <div style="font-size:10px;color:var(--text3);line-height:1.5;">Queue report = daily/hourly totals &nbsp;·&nbsp; Calls report = per-agent individual calls</div>
         </div>
         <div id="unifon-settings-body" style="margin-top:12px;"></div>
       </div>
@@ -8196,9 +8250,67 @@ function zdRender(agents, fromDate, toDate) {
   // Insights (CSAT + MTTR)
   zdRenderInsights(body, fromDate, toDate);
 
-  // Agent cards grid
+  // ── Leaderboard bar chart — sorted by solved desc ─────────────
+  const sortedAgents = [...presentAgents].sort((a, b) => {
+    const aSolved = zdData[a.id]?.solved || 0;
+    const bSolved = zdData[b.id]?.solved || 0;
+    return bSolved - aSolved;
+  });
+  const maxSolved = Math.max(...sortedAgents.map(a => zdData[a.id]?.solved || 0), 1);
+
+  if (sortedAgents.some(a => (zdData[a.id]?.solved||0) > 0)) {
+    const chartCard = document.createElement('div');
+    chartCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:14px;';
+    const chartHdr = document.createElement('div');
+    chartHdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;';
+    const chartTitle = document.createElement('div');
+    chartTitle.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text3);';
+    chartTitle.textContent = 'Tickets solved — ranked';
+    const chartPeriod = document.createElement('div');
+    chartPeriod.style.cssText = 'font-size:10px;color:var(--text3);';
+    chartPeriod.textContent = fromDate + ' – ' + toDate;
+    chartHdr.appendChild(chartTitle); chartHdr.appendChild(chartPeriod);
+    chartCard.appendChild(chartHdr);
+
+    sortedAgents.forEach((agent, rank) => {
+      const solved = zdData[agent.id]?.solved || 0;
+      if (!solved) return;
+      const d2 = zdData[agent.id] || {};
+      const csatPct2 = d2.good!=null && (d2.good+d2.bad)>0 ? Math.round(d2.good/(d2.good+d2.bad)*100) : null;
+      const pct = Math.round(solved / maxSolved * 100);
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px;';
+      const rankEl = document.createElement('div');
+      rankEl.style.cssText = `font-size:10px;font-weight:700;color:${rank===0?'var(--cal-text)':rank===1?'var(--text2)':'var(--text3)'};width:18px;text-align:center;flex-shrink:0;`;
+      rankEl.textContent = rank+1;
+      const name = document.createElement('div');
+      name.style.cssText = 'font-size:12px;font-weight:600;color:var(--text2);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      name.textContent = agent.name.split(' ')[0];
+      const barWrap = document.createElement('div');
+      barWrap.style.cssText = 'flex:1;height:20px;background:var(--surface2);border-radius:4px;overflow:hidden;position:relative;';
+      const fill = document.createElement('div');
+      fill.style.cssText = `height:100%;width:0;border-radius:4px;background:${rank===0?'var(--cal-text)':'rgba(214,243,255,0.2)'};transition:width 0.7s cubic-bezier(0.4,0,0.2,1);`;
+      const barLabel = document.createElement('div');
+      barLabel.style.cssText = 'position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;';
+      barLabel.textContent = solved;
+      barWrap.appendChild(fill); barWrap.appendChild(barLabel);
+      const csatEl = document.createElement('div');
+      csatEl.style.cssText = `font-size:10px;font-weight:700;width:36px;text-align:right;flex-shrink:0;color:${csatPct2===null?'var(--text3)':csatPct2>=90?'var(--low-text)':csatPct2>=75?'var(--med-text)':'var(--high-text)'};`;
+      csatEl.textContent = csatPct2 !== null ? csatPct2+'%' : '—';
+      row.appendChild(rankEl); row.appendChild(name); row.appendChild(barWrap); row.appendChild(csatEl);
+      chartCard.appendChild(row);
+      setTimeout(() => { fill.style.width = pct + '%'; }, 80);
+    });
+    const legend = document.createElement('div');
+    legend.style.cssText = 'display:flex;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:9px;color:var(--text3);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;';
+    legend.innerHTML = '<span>Bar = tickets solved</span><span style="margin-left:auto">Right = CSAT %</span>';
+    chartCard.appendChild(legend);
+    body.appendChild(chartCard);
+  }
+
+  // Agent cards grid — sorted by solved desc
   const grid = document.createElement('div'); grid.className = 'zd-agent-grid';
-  presentAgents.forEach(agent => {
+  sortedAgents.forEach(agent => {
     const d = zdData[agent.id] || {};
     const card = document.createElement('div'); card.className = 'zd-agent-card';
     // Header
