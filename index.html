@@ -2395,7 +2395,7 @@ function renderHistory() {
   if (!container) return;
   const todayStr = localToday();
   const mon = getMonday(weekOffset);
-  const thisWeekDays = DAYS.map((d, i) => { const dt = new Date(mon); dt.setDate(mon.getDate()+i); return dt.toISOString().slice(0,10); });
+  const thisWeekDays = DAYS.map((d, i) => { const dt = new Date(mon); dt.setDate(mon.getDate()+i); return fmtLocal(dt); });
 
   // Tasks from past weeks that are not done
   // "Past" = task day is in a week before current weekOffset week
@@ -3998,6 +3998,9 @@ function localToday() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
+function fmtLocal(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 
 function getMonday(offset) {
   const d = new Date(), day = d.getDay();
@@ -4118,7 +4121,7 @@ function processXlsx(buffer, fileName, st, preview) {
       const dates = [];
       for (let j = 1; j <= 7; j++) {
         const v = dateRow[j];
-        try { const d = v instanceof Date ? v : new Date(v); dates.push(isNaN(d) ? '' : d.toISOString().slice(0,10)); }
+        try { const d = v instanceof Date ? v : new Date(v); dates.push(isNaN(d) ? '' : fmtLocal(d)); }
         catch { dates.push(''); }
       }
       const people = [];
@@ -4731,9 +4734,9 @@ function saveUnifonData(data) {
 }
 function getUnifonToday() { const t=localToday(); return loadUnifonData().find(d=>d.date===t)||null; }
 function getUnifonWeek() {
-  const mon=getMonday(0).toISOString().slice(0,10);
+  const mon=fmtLocal(getMonday(0));
   const sun=new Date(getMonday(0)); sun.setDate(sun.getDate()+6);
-  return loadUnifonData().filter(d=>d.date>=mon&&d.date<=sun.toISOString().slice(0,10));
+  return loadUnifonData().filter(d=>d.date>=mon&&d.date<=fmtLocal(sun));
 }
 
 function getUnifonWeekByDays(weekendOnly) {
@@ -4745,7 +4748,7 @@ function getUnifonWeekByDays(weekendOnly) {
     const dow = d.getDay(); // 0=Sun,6=Sat
     const isWeekend = dow === 0 || dow === 6;
     if (isWeekend !== weekendOnly) continue;
-    const dStr = d.toISOString().slice(0,10);
+    const dStr = fmtLocal(d);
     const entry = loadUnifonData().find(e => e.date === dStr);
     if (entry) entries.push(entry);
   }
@@ -4785,7 +4788,7 @@ function renderUnifonPanel(container) {
   card.appendChild(summary);
 
   // 7-day bar chart
-  const last7=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push({date:d.toISOString().slice(0,10),dow:['M','T','W','T','F','S','S'][d.getDay()===0?6:d.getDay()-1]});}
+  const last7=[]; for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push({date:fmtLocal(d),dow:['M','T','W','T','F','S','S'][d.getDay()===0?6:d.getDay()-1]});}
   const maxO=Math.max(...last7.map(d=>(allData.find(a=>a.date===d.date)||{}).offered||0),1);
   const chartEl=document.createElement('div'); chartEl.style.cssText='display:flex;align-items:flex-end;gap:6px;height:64px;margin-bottom:12px;';
   last7.forEach(({date,dow})=>{
@@ -4950,7 +4953,7 @@ function renderUnifonSettings(container) {
   const wkLabel = document.createElement('div'); wkLabel.style.cssText='font-size:11px;color:var(--text3);font-weight:600;'; wkLabel.textContent='Week starting:';
   const wkPicker = document.createElement('input'); wkPicker.className='unifon-input'; wkPicker.type='date'; wkPicker.style.cssText='width:160px;';
   // Default to Monday of current week
-  wkPicker.value = getMonday(0).toISOString().slice(0,10);
+  wkPicker.value = fmtLocal(getMonday(0));
   wkRow.appendChild(wkLabel); wkRow.appendChild(wkPicker);
   weekPanel.appendChild(wkRow);
 
@@ -4974,7 +4977,7 @@ function renderUnifonSettings(container) {
     const monDate = new Date(wkPicker.value+'T00:00:00');
     for (let i=0;i<5;i++){
       const d=new Date(monDate); d.setDate(monDate.getDate()+i);
-      const dateStr=d.toISOString().slice(0,10);
+      const dateStr=fmtLocal(d);
       const existing=loadUnifonData().find(e=>e.date===dateStr)||{};
       const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:80px 1fr 1fr 1fr 80px;gap:8px;align-items:center;';
       const dayLbl=document.createElement('div');dayLbl.style.cssText='font-size:12px;font-weight:600;color:var(--text2);';dayLbl.textContent=DOWS[i].slice(0,3)+' '+d.getDate();
@@ -5557,7 +5560,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   const weekStrip=document.createElement('div'); weekStrip.style.cssText='display:flex;gap:4px;';
   for(let i=0;i<5;i++){
     const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const dStr=d.toISOString().slice(0,10); const isToday2=dStr===todayStr;
+    const dStr=fmtLocal(d); const isToday2=dStr===todayStr;
     const week=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
     const present=week?week.people.filter(p=>{const idx=week.dates.indexOf(dStr);return MY_TEAM.includes(p.name)&&idx>=0&&!OFF.has((p.shifts[idx]||'').toLowerCase());}).length:null;
     // Check if this is a public holiday (majority of team has HD)
@@ -5609,9 +5612,9 @@ function renderAdminDashboard(root, viewerMode=false) {
   function getQueueDates(key){
     const t=localToday();
     if(key==='today')  return{from:t,to:t,label:'Today'};
-    if(key==='week')   return{from:getMonday(0).toISOString().slice(0,10),to:t,label:'This week'};
-    if(key==='7d')     {const d=new Date();d.setDate(d.getDate()-6);return{from:d.toISOString().slice(0,10),to:t,label:'Last 7 days'};}
-    if(key==='30d')    {const d=new Date();d.setDate(d.getDate()-29);return{from:d.toISOString().slice(0,10),to:t,label:'Last 30 days'};}
+    if(key==='week')   return{from:fmtLocal(getMonday(0)),to:t,label:'This week'};
+    if(key==='7d')     {const d=new Date();d.setDate(d.getDate()-6);return{from:fmtLocal(d),to:t,label:'Last 7 days'};}
+    if(key==='30d')    {const d=new Date();d.setDate(d.getDate()-29);return{from:fmtLocal(d),to:t,label:'Last 30 days'};}
     return{from:t,to:t,label:'Today'};
   }
 
@@ -5637,7 +5640,7 @@ function renderAdminDashboard(root, viewerMode=false) {
       const showIdxs = key==='week' ? [5,6] : [schedIdx]; // week shows both, today shows just today
       showIdxs.forEach(i=>{
         const d=new Date(mon);d.setDate(mon.getDate()+i);
-        const dStr=d.toISOString().slice(0,10);
+        const dStr=fmtLocal(d);
         const OFF2=new Set(['so','h','hd','os','abs','ol','']);
         const week2=SCHEDULE.find(w=>w.dates&&w.dates.includes(dStr));
         if(week2){
@@ -5688,7 +5691,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   const days7 = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(mon7); d.setDate(mon7.getDate()+i);
-    days7.push({date:d.toISOString().slice(0,10),label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i],isToday:d.toISOString().slice(0,10)===todayStr,isPast:d<=new Date()});
+    days7.push({date:fmtLocal(d),label:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i],isToday:fmtLocal(d)===todayStr,isPast:d<=new Date()});
   }
   const allUnifonDays7 = loadUnifonData();
   const tbl7 = document.createElement('table'); tbl7.style.cssText='width:100%;border-collapse:collapse;font-size:11px;';
@@ -5741,11 +5744,12 @@ function renderAdminDashboard(root, viewerMode=false) {
 
   const getPerfDates = (key) => {
     const today = localToday();
+    const fmtLocal = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
     let from;
-    if (key === 'week')      { from = getMonday(0).toISOString().slice(0,10); }
-    else if (key === '7d')   { const d=new Date(); d.setDate(d.getDate()-7);  from = d.toISOString().slice(0,10); }
-    else if (key === '14d')  { const d=new Date(); d.setDate(d.getDate()-14); from = d.toISOString().slice(0,10); }
-    else /* 30d */           { const d=new Date(); d.setDate(d.getDate()-30); from = d.toISOString().slice(0,10); }
+    if (key === 'week')      { from = fmtLocal(getMonday(0)); }
+    else if (key === '7d')   { const d=new Date(); d.setDate(d.getDate()-7);  from = fmtLocal(d); }
+    else if (key === '14d')  { const d=new Date(); d.setDate(d.getDate()-14); from = fmtLocal(d); }
+    else /* 30d */           { const d=new Date(); d.setDate(d.getDate()-30); from = fmtLocal(d); }
     return { from, to: today };
   };
 
@@ -5844,9 +5848,9 @@ function renderAdminDashboard(root, viewerMode=false) {
     const backlogSec=dbSection('Volume trend');
     const backlogEl=document.createElement('div');backlogEl.id='db-backlog2';backlogEl.innerHTML='<div class="db-empty">Loading…</div>';
     backlogSec.appendChild(backlogEl);
-    const thisMonStr=getMonday(0).toISOString().slice(0,10);
-    const lastMonStr=getMonday(-1).toISOString().slice(0,10);
-    const lastSunStr=new Date(new Date(thisMonStr).getTime()-86400000).toISOString().slice(0,10);
+    const thisMonStr=fmtLocal(getMonday(0));
+    const lastMonStr=fmtLocal(getMonday(-1));
+    const lastSunStr=fmtLocal(new Date(new Date(thisMonStr).getTime()-86400000));
     const dayOfWeek=new Date().getDay()||7;
     const daysThisWeek=Math.max(dayOfWeek-1,1);
     Promise.all([
@@ -6007,9 +6011,9 @@ function renderAdminDashboard(root, viewerMode=false) {
     callPerfEl.innerHTML='';
     const t2=localToday();
     let cpFrom=t2,cpTo=t2;
-    if(key==='week'){cpFrom=getMonday(0).toISOString().slice(0,10);}
-    else if(key==='7d'){const d=new Date();d.setDate(d.getDate()-6);cpFrom=d.toISOString().slice(0,10);}
-    else if(key==='30d'){const d=new Date();d.setDate(d.getDate()-29);cpFrom=d.toISOString().slice(0,10);}
+    if(key==='week'){cpFrom=fmtLocal(getMonday(0));}
+    else if(key==='7d'){const d=new Date();d.setDate(d.getDate()-6);cpFrom=fmtLocal(d);}
+    else if(key==='30d'){const d=new Date();d.setDate(d.getDate()-29);cpFrom=fmtLocal(d);}
     const callsIP=loadUnifonData().filter(d=>d.date>=cpFrom&&d.date<=cpTo);
     const agentCalls=getAgentCallStats(cpFrom,cpTo);
     if(!callsIP.length&&!Object.keys(agentCalls).length){const nd=document.createElement('div');nd.className='db-empty';nd.textContent='Import Unifon data in Settings';callPerfEl.appendChild(nd);return;}
@@ -6115,7 +6119,7 @@ function renderAdminDashboard(root, viewerMode=false) {
     const startD = new Date(fromDate+'T00:00:00'), endD = new Date(toDate+'T00:00:00');
     const dayCount = Math.min(Math.round((endD-startD)/86400000)+1, 35);
     const days = [];
-    for (let i=0; i<dayCount; i++) { const d=new Date(startD); d.setDate(startD.getDate()+i); days.push(d.toISOString().slice(0,10)); }
+    for (let i=0; i<dayCount; i++) { const d=new Date(startD); d.setDate(startD.getDate()+i); days.push(fmtLocal(d)); }
 
     // Unifon data — immediate
     const unifonAll = loadUnifonData();
@@ -6245,7 +6249,7 @@ function renderAdminDashboard(root, viewerMode=false) {
       const mon = new Date(getMonday(0)); mon.setDate(mon.getDate() - i*7);
       const sun = new Date(mon); sun.setDate(mon.getDate()+6);
       const to2 = new Date(Math.min(sun, new Date()));
-      weeks.push({ mon: mon.toISOString().slice(0,10), sun: to2.toISOString().slice(0,10), label: mon.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) });
+      weeks.push({ mon: fmtLocal(mon), sun: fmtLocal(to2), label: mon.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) });
     }
 
     try {
@@ -6351,9 +6355,9 @@ function renderAdminDashboard(root, viewerMode=false) {
   // Initial render with active period
   const { from: initFrom, to: initTo } = (() => {
     const t=localToday();
-    if(activePeriod==='week') return{from:getMonday(0).toISOString().slice(0,10),to:t};
-    if(activePeriod==='7d'){const d=new Date();d.setDate(d.getDate()-6);return{from:d.toISOString().slice(0,10),to:t};}
-    if(activePeriod==='30d'){const d=new Date();d.setDate(d.getDate()-29);return{from:d.toISOString().slice(0,10),to:t};}
+    if(activePeriod==='week') return{from:fmtLocal(getMonday(0)),to:t};
+    if(activePeriod==='7d'){const d=new Date();d.setDate(d.getDate()-6);return{from:fmtLocal(d),to:t};}
+    if(activePeriod==='30d'){const d=new Date();d.setDate(d.getDate()-29);return{from:fmtLocal(d),to:t};}
     return{from:t,to:t};
   })();
   renderChart1(initFrom, initTo);
@@ -6369,9 +6373,9 @@ function renderAdminDashboard(root, viewerMode=false) {
       if (typeof renderCallPerf === 'function') renderCallPerf(key);
       const t3=localToday();
       let f,t2;
-      if(key==='week'){f=getMonday(0).toISOString().slice(0,10);t2=t3;}
-      else if(key==='7d'){const d=new Date();d.setDate(d.getDate()-6);f=d.toISOString().slice(0,10);t2=t3;}
-      else if(key==='30d'){const d=new Date();d.setDate(d.getDate()-29);f=d.toISOString().slice(0,10);t2=t3;}
+      if(key==='week'){f=fmtLocal(getMonday(0));t2=t3;}
+      else if(key==='7d'){const d=new Date();d.setDate(d.getDate()-6);f=fmtLocal(d);t2=t3;}
+      else if(key==='30d'){const d=new Date();d.setDate(d.getDate()-29);f=fmtLocal(d);t2=t3;}
       else{f=t3;t2=t3;}
       renderChart1(f,t2);
     };
@@ -6415,7 +6419,7 @@ async function renderTeamMemberDashboard(root) {
   // ── Upcoming 1:1 check ────────────────────────────────────────
   const otoData = getOtoData();
   const in7Days = new Date(); in7Days.setDate(in7Days.getDate()+7);
-  const in7Str = in7Days.toISOString().slice(0,10);
+  const in7Str = fmtLocal(in7Days);
   const upcomingSession = (otoData.sessions||[])
     .filter(s=>s.person===currentUser.name&&s.date>=todayStr&&s.date<=in7Str)
     .sort((a,b)=>a.date.localeCompare(b.date))[0]||null;
@@ -6591,7 +6595,7 @@ async function renderTeamMemberDashboard(root) {
   const strip = document.createElement('div'); strip.style.cssText='display:flex;flex-direction:column;gap:4px;';
   for (let i=0;i<7;i++) {
     const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const dStr=d.toISOString().slice(0,10);
+    const dStr=fmtLocal(d);
     const info=getPersonDayInfo(scheduleName,dStr);
     const isToday2=dStr===todayStr;
     const dayOff=!info||!info.shift||OFF.has(info.shift.toLowerCase());
@@ -7244,9 +7248,9 @@ function renderReportsTab() {
   // Month picker — default to previous month
   const prevMonth = new Date(); prevMonth.setDate(1); prevMonth.setMonth(prevMonth.getMonth()-1);
   const fromInput = document.createElement('input'); fromInput.type='date'; fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 10px;outline:none;';
-  fromInput.value = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1).toISOString().slice(0,10);
+  fromInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
   const toInput = document.createElement('input'); toInput.type='date'; toInput.style.cssText=fromInput.style.cssText;
-  toInput.value = new Date(prevMonth.getFullYear(), prevMonth.getMonth()+1, 0).toISOString().slice(0,10);
+  toInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth()+1, 0));
 
   const toLabel = document.createElement('span'); toLabel.style.cssText='font-size:12px;color:var(--text3);'; toLabel.textContent='to';
 
@@ -7258,8 +7262,8 @@ function renderReportsTab() {
     btn.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:4px 10px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;transition:all 0.15s;';
     btn.textContent = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
     btn.onclick = () => {
-      fromInput.value = new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0,10);
-      toInput.value = new Date(d.getFullYear(), d.getMonth()+1, 0).toISOString().slice(0,10);
+      fromInput.value = fmtLocal(new Date(d.getFullYear(), d.getMonth(), 1));
+      toInput.value = fmtLocal(new Date(d.getFullYear(), d.getMonth()+1, 0));
     };
     quickBtns.appendChild(btn);
   }
@@ -7394,7 +7398,7 @@ async function generateReport(fromDate, toDate, container) {
         solvedByDay[sv]=(solvedByDay[sv]||0)+1;
         const svD=new Date(sv+'T00:00:00');
         const mon=new Date(svD);mon.setDate(svD.getDate()-((svD.getDay()+6)%7));
-        const monStr=mon.toISOString().slice(0,10);
+        const monStr=fmtLocal(mon);
         solvedByWeek[monStr]=(solvedByWeek[monStr]||0)+1;
       });
 
@@ -7538,9 +7542,9 @@ async function generateReport(fromDate, toDate, container) {
     const weeks2=[]; const sd=new Date(fromDate+'T00:00:00');
     const wd=new Date(sd); wd.setDate(sd.getDate()-((sd.getDay()+6)%7)); // start from Monday
     while(wd<=toD){
-      const monStr=wd.toISOString().slice(0,10);
+      const monStr=fmtLocal(wd);
       const sun=new Date(wd);sun.setDate(wd.getDate()+6);
-      const sunStr=new Date(Math.min(sun,toD)).toISOString().slice(0,10);
+      const sunStr=fmtLocal(new Date(Math.min(sun,toD)));
       weeks2.push({mon:monStr,sun:sunStr});wd.setDate(wd.getDate()+7);
     }
     const wkRows=weeks2.map(w=>{
@@ -7656,7 +7660,7 @@ async function generateReport(fromDate, toDate, container) {
   const s5=mkSection('5','Daily breakdown','Tickets + calls per day');
   // Build all dates
   const allDates=[]; const dCur=new Date(fromDate+'T00:00:00');
-  while(dCur<=toD){allDates.push(dCur.toISOString().slice(0,10));dCur.setDate(dCur.getDate()+1);}
+  while(dCur<=toD){allDates.push(fmtLocal(dCur));dCur.setDate(dCur.getDate()+1);}
   const dailyRows=allDates.map(date=>{
     const solved=zd.solvedByDay?.[date]??'—';
     const u=unifonData.find(d=>d.date===date);
@@ -8833,7 +8837,7 @@ async function ghReadOnlyLoad() {
       // Pull last 14 days of handover notes
       for (let i = 0; i < 14; i++) {
         const d = new Date(); d.setDate(d.getDate() - i);
-        sharedKeys.push('wtp_handover_' + d.toISOString().slice(0,10));
+        sharedKeys.push('wtp_handover_' + fmtLocal(d));
       }
     }
     sharedKeys.forEach(k => {
@@ -9536,7 +9540,7 @@ function getMeetingConflicts(t) {
   const idx = DAYS.indexOf(t.day);
   if (idx < 0) return [];
   const colDate = new Date(mon); colDate.setDate(mon.getDate() + idx);
-  const dateStr = colDate.toISOString().slice(0,10);
+  const dateStr = fmtLocal(colDate);
   return checkAvailability(t.people, dateStr, t.timeStart);
 }
 
@@ -9792,10 +9796,10 @@ function renderAddForm(day, colBody, addBtn) {
   const today = new Date(); today.setHours(0,0,0,0);
   for (let i = 0; i <= 30; i++) {
     const d = new Date(today); d.setDate(today.getDate() + i);
-    const val = d.toISOString().slice(0,10);
+    const val = fmtLocal(d);
     const o = document.createElement('option'); o.value = val;
     o.textContent = d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-    if (val === colD.toISOString().slice(0,10)) o.selected = true;
+    if (val === fmtLocal(colD)) o.selected = true;
     dInput.appendChild(o);
   }
   dInput.style.cssText = 'background:var(--cal);color:var(--cal-text);border-color:var(--cal-border);font-weight:500;';
@@ -9814,7 +9818,7 @@ function renderAddForm(day, colBody, addBtn) {
   let invited = [];
   const allNames = MY_TEAM;
 
-  function getColDate() { return dInput.value || colD.toISOString().slice(0,10); }
+  function getColDate() { return dInput.value || fmtLocal(colD); }
 
   function refreshWarnings() {
     if (!invited.length) { warningDiv.style.display = 'none'; return; }
@@ -10171,7 +10175,7 @@ function checkCarryForward() {
   wrap.innerHTML = '';
   const today = new Date();
   if (today.getDay() !== 1) return;
-  const dismissKey = 'wtp_carry_' + today.toISOString().slice(0,10);
+  const dismissKey = 'wtp_carry_' + fmtLocal(today);
   if (localStorage.getItem(dismissKey)) return;
   const thisWeekStamp = mondayStamp(0);
   const lastWeekStamp = mondayStamp(-1);
@@ -10470,7 +10474,7 @@ function weekDragDrop(dir, e) {
   // We do this by changing weekOffset temporarily to find the new week, then assigning
   const targetOffset = weekOffset + dir;
   const targetMon = getMonday(targetOffset);
-  t.weekStamp = targetMon.toISOString().slice(0,10);
+  t.weekStamp = fmtLocal(targetMon);
   dragCard = null;
   save();
   weekOffset = targetOffset;
@@ -10485,7 +10489,7 @@ function getActiveHandovers() {
   const today = localToday();
   const yesterday = new Date(today+'T00:00:00');
   yesterday.setDate(yesterday.getDate()-1);
-  const yStr = yesterday.toISOString().slice(0,10);
+  const yStr = fmtLocal(yesterday);
   [today, yStr].forEach(date => {
     const d = loadHandover(date);
     if (d && d.text) results.push({ date, ...d });
