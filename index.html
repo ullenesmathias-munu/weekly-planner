@@ -8258,67 +8258,52 @@ function zdRender(agents, fromDate, toDate) {
   });
   const maxSolved = Math.max(...sortedAgents.map(a => zdData[a.id]?.solved || 0), 1);
 
-  if (sortedAgents.some(a => (zdData[a.id]?.solved||0) > 0)) {
-    const chartCard = document.createElement('div');
-    chartCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:14px;';
-    const chartHdr = document.createElement('div');
-    chartHdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;';
-    const chartTitle = document.createElement('div');
-    chartTitle.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text3);';
-    chartTitle.textContent = 'Tickets solved — ranked';
-    const chartPeriod = document.createElement('div');
-    chartPeriod.style.cssText = 'font-size:10px;color:var(--text3);';
-    chartPeriod.textContent = fromDate + ' – ' + toDate;
-    chartHdr.appendChild(chartTitle); chartHdr.appendChild(chartPeriod);
-    chartCard.appendChild(chartHdr);
+  // ── Coloured bar chart — one bar per agent, sorted by solved desc ──
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  const fromFmt = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const toFmt   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
 
-    sortedAgents.forEach((agent, rank) => {
+  if (sortedAgents.some(a => (zdData[a.id]?.solved||0) > 0)) {
+    const chartWrap = document.createElement('div'); chartWrap.className = 'zd-chart-wrap';
+    const chartTitle = document.createElement('div'); chartTitle.className = 'zd-chart-title';
+    chartTitle.textContent = 'Tickets solved per agent — ' + fromFmt + ' to ' + toFmt;
+    chartWrap.appendChild(chartTitle);
+    const chart = document.createElement('div'); chart.className = 'zd-chart';
+
+    sortedAgents.forEach((agent, idx) => {
       const solved = zdData[agent.id]?.solved || 0;
-      if (!solved) return;
-      const d2 = zdData[agent.id] || {};
-      const csatPct2 = d2.good!=null && (d2.good+d2.bad)>0 ? Math.round(d2.good/(d2.good+d2.bad)*100) : null;
-      const pct = Math.round(solved / maxSolved * 100);
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px;';
-      const rankEl = document.createElement('div');
-      rankEl.style.cssText = `font-size:10px;font-weight:700;color:${rank===0?'var(--cal-text)':rank===1?'var(--text2)':'var(--text3)'};width:18px;text-align:center;flex-shrink:0;`;
-      rankEl.textContent = rank+1;
-      const name = document.createElement('div');
-      name.style.cssText = 'font-size:12px;font-weight:600;color:var(--text2);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-      name.textContent = agent.name.split(' ')[0];
-      const barWrap = document.createElement('div');
-      barWrap.style.cssText = 'flex:1;height:20px;background:var(--surface2);border-radius:4px;overflow:hidden;position:relative;';
-      const fill = document.createElement('div');
-      fill.style.cssText = `height:100%;width:0;border-radius:4px;background:${rank===0?'var(--cal-text)':'rgba(214,243,255,0.2)'};transition:width 0.7s cubic-bezier(0.4,0,0.2,1);`;
-      const barLabel = document.createElement('div');
-      barLabel.style.cssText = 'position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;';
-      barLabel.textContent = solved;
-      barWrap.appendChild(fill); barWrap.appendChild(barLabel);
-      const csatEl = document.createElement('div');
-      csatEl.style.cssText = `font-size:10px;font-weight:700;width:36px;text-align:right;flex-shrink:0;color:${csatPct2===null?'var(--text3)':csatPct2>=90?'var(--low-text)':csatPct2>=75?'var(--med-text)':'var(--high-text)'};`;
-      csatEl.textContent = csatPct2 !== null ? csatPct2+'%' : '—';
-      row.appendChild(rankEl); row.appendChild(name); row.appendChild(barWrap); row.appendChild(csatEl);
-      chartCard.appendChild(row);
-      setTimeout(() => { fill.style.width = pct + '%'; }, 80);
+      const pct = solved / maxSolved;
+      const color = barColors[idx % barColors.length];
+      const firstName = agent.name.split(' ')[0];
+      const col = document.createElement('div'); col.className = 'zd-bar-col';
+      const val = document.createElement('div'); val.className = 'zd-bar-val'; val.textContent = solved || '';
+      const bar = document.createElement('div'); bar.className = 'zd-bar';
+      bar.style.cssText = 'background:' + color + ';height:0;';
+      bar.title = agent.name + ': ' + solved + ' solved';
+      const lbl = document.createElement('div'); lbl.className = 'zd-bar-label'; lbl.textContent = firstName;
+      col.appendChild(val); col.appendChild(bar); col.appendChild(lbl);
+      chart.appendChild(col);
+      setTimeout(() => { bar.style.height = Math.max(pct * 120, solved > 0 ? 3 : 0) + 'px'; }, 50 + idx * 30);
     });
-    const legend = document.createElement('div');
-    legend.style.cssText = 'display:flex;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:9px;color:var(--text3);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;';
-    legend.innerHTML = '<span>Bar = tickets solved</span><span style="margin-left:auto">Right = CSAT %</span>';
-    chartCard.appendChild(legend);
-    body.appendChild(chartCard);
+
+    chartWrap.appendChild(chart);
+    body.appendChild(chartWrap);
   }
 
   // Agent cards grid — sorted by solved desc
   const grid = document.createElement('div'); grid.className = 'zd-agent-grid';
-  sortedAgents.forEach(agent => {
+  sortedAgents.forEach((agent, idx) => {
     const d = zdData[agent.id] || {};
+    const agentColor = barColors[idx % barColors.length];
     const card = document.createElement('div'); card.className = 'zd-agent-card';
+    card.style.borderTop = '3px solid ' + agentColor;
     // Header
     const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
     const av = document.createElement('div'); av.className = 'zd-agent-avatar';
     const parts = agent.name.split(' ');
     av.textContent = (parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
-    av.style.background = `hsl(${(agent.name.charCodeAt(0)*47)%360},50%,35%)`;
+    av.style.background = agentColor;
+    av.style.color = '#0f0f11';
     const info = document.createElement('div');
     const nm = document.createElement('div'); nm.className = 'zd-agent-name'; nm.textContent = agent.name;
     const sub = document.createElement('div'); sub.className = 'zd-agent-sub';
