@@ -2205,7 +2205,7 @@
   "wtp_profile_maylen": {
     "log": [],
     "goals": [],
-    "rag": "none",
+    "rag": "green",
     "focus": "",
     "_open": true
   },
