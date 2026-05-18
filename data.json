@@ -2200,6 +2200,9 @@
       "tvOnly": true
     }
   ],
+  "wtp_profile_julie": {
+    "rag": "green"
+  },
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_profile_andreas": {
     "log": [],
