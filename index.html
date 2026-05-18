@@ -494,6 +494,61 @@
   .action-check:hover { border-color: var(--low-text); color: var(--low-text); }
   .action-check.done { background: var(--low-bg); border-color: var(--low-text); color: var(--low-text); }
   /* ─── ZD trend ───────────────────────────────────── */
+  .oto-sidebar { width: 220px; flex-shrink: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  .oto-sidebar-header { padding: 12px 14px 10px; border-bottom: 0.5px solid var(--border); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); }
+  .oto-person-btn { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; text-align: left; transition: background 0.12s; border-bottom: 0.5px solid var(--border); }
+  .oto-person-btn:hover { background: var(--surface2); }
+  .oto-person-btn.active { background: var(--cal); border-left: 2.5px solid var(--cal-text); }
+  .oto-person-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
+  .oto-person-btn.active .oto-person-avatar { background: var(--cal-text); color: #0f0f11; }
+  .oto-person-info { flex: 1; min-width: 0; }
+  .oto-person-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .oto-person-meta { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .oto-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .oto-empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text3); padding: 40px; }
+  .oto-person-header { padding: 16px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .oto-person-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .oto-person-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .oto-sessions { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .oto-session-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.15s; }
+  .oto-session-card:hover { border-color: var(--border2); }
+  .oto-session-card.upcoming { border-left: 3px solid var(--cal-text); }
+  .oto-session-card.past { opacity: 0.75; }
+  .oto-session-header { padding: 12px 14px 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .oto-session-date { font-size: 13px; font-weight: 600; color: var(--text); }
+  .oto-session-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px; }
+  .oto-session-badge.upcoming { background: var(--cal); color: var(--cal-text); }
+  .oto-session-badge.past { background: var(--surface3); color: var(--text3); }
+  .oto-session-badge.today { background: var(--low-bg); color: var(--low-text); }
+  .oto-session-body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .oto-field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 4px; }
+  .oto-notes-area { width: 100%; font-family: inherit; font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; outline: none; resize: vertical; min-height: 80px; line-height: 1.6; transition: border-color 0.15s; }
+  .oto-notes-area:focus { border-color: var(--cal-text); }
+  .oto-action-row { display: flex; gap: 6px; align-items: center; }
+  .oto-action-input { flex: 1; font-family: inherit; font-size: 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 8px; outline: none; }
+  .oto-action-input:focus { border-color: var(--cal-text); }
+  .oto-action-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 0.5px solid var(--border); }
+  .oto-action-item:last-child { border-bottom: none; }
+  .oto-action-check { accent-color: var(--cal-text); width: 13px; height: 13px; cursor: pointer; flex-shrink: 0; }
+  .oto-action-text { font-size: 12px; color: var(--text); flex: 1; }
+  .oto-action-text.done { text-decoration: line-through; color: var(--text3); }
+  .oto-action-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 0 4px; }
+  .oto-action-del:hover { color: var(--high-text); }
+  .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+  .oto-session-toggle { font-size: 12px; color: var(--text3); transition: transform 0.2s; display: inline-block; }
+  .oto-feedback-section { border-top: 1px solid var(--border); padding: 14px 20px; flex-shrink: 0; background: var(--surface); }
+  .oto-feedback-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .oto-feedback-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+  .oto-feedback-link { font-size: 11px; color: var(--cal-text); cursor: pointer; background: none; border: none; }
+  .oto-feedback-link:hover { text-decoration: underline; }
+  .oto-feedback-post { background: var(--surface2); border-radius: var(--radius-md); padding: 8px 10px; margin-bottom: 6px; }
+  .oto-feedback-post-meta { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
+  .oto-feedback-post-text { font-size: 12px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
+  .oto-feedback-none { font-size: 12px; color: var(--text3); font-style: italic; }
+  .oto-new-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 9px; font-weight: 700; background: var(--low-text); color: #0f0f11; border-radius: 8px; padding: 0 4px; margin-left: 5px; }
+  .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
+  .oto-add-person-btn:hover { color: var(--cal-text); }
+
   /* ── Ticket view ──────────────────────────────────────────── */
   .zd-trend { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; letter-spacing: 0.04em; }
   .zd-trend.up   { background: rgba(52,211,153,0.15); color: var(--low-text); }
@@ -7995,6 +8050,112 @@ function renderOtoTab() {
   root.appendChild(body);
 }
 
+function renderPrepBrief(personName, container) {
+  const profile = loadProfile(personName);
+  const d = getOtoData();
+  const sessions = (d.sessions||[]).filter(s => s.person === personName).sort((a,b) => b.date.localeCompare(a.date));
+  const recentLog = (profile.log||[]).slice(-3).reverse();
+  const openGoals = (profile.goals||[]).filter(g => g.status !== 'done');
+  const actions = [];
+  sessions.slice(0,3).forEach(s => {
+    (s.actions||[]).filter(a => !a.done).forEach(a => actions.push(a.text));
+  });
+
+  if (!recentLog.length && !openGoals.length && !actions.length) return;
+
+  const brief = document.createElement('div'); brief.className = 'prep-brief';
+  const title = document.createElement('div'); title.className = 'prep-brief-title';
+  title.textContent = 'ð 1:1 prep brief';
+  const toggle = document.createElement('span'); toggle.style.cssText = 'cursor:pointer;color:var(--cal-text);font-size:11px;'; toggle.textContent = 'â¾';
+  title.appendChild(toggle); brief.appendChild(title);
+
+  const body = document.createElement('div');
+  const addItem = (text) => {
+    const item = document.createElement('div'); item.className = 'prep-brief-item';
+    const bullet = document.createElement('span'); bullet.className = 'prep-brief-bullet'; bullet.textContent = '·';
+    item.appendChild(bullet); item.appendChild(document.createTextNode(text)); body.appendChild(item);
+  };
+  if (actions.length) { addItem('Open actions: ' + actions.slice(0,3).join('; ')); }
+  if (openGoals.length) { addItem('Goals in progress: ' + openGoals.map(g=>g.text).slice(0,2).join('; ')); }
+  if (recentLog.length) { addItem('Recent: ' + recentLog[0].text.slice(0,80) + (recentLog[0].text.length>80?'…':'')); }
+  if (profile.rag && profile.rag !== 'none') { addItem('Status: ' + profile.rag.toUpperCase() + (profile.focus ? ' — ' + profile.focus : '')); }
+  brief.appendChild(body);
+
+  toggle.onclick = () => { body.style.display = body.style.display === 'none' ? '' : 'none'; toggle.textContent = body.style.display === 'none' ? 'â¸' : 'â¾'; };
+  container.insertBefore(brief, container.firstChild);
+}
+
+function renderActionsOverview(container) {
+  if (!container) return;
+  const d = getOtoData();
+  const allActions = [];
+  (d.sessions||[]).forEach(s => {
+    (s.actions||[]).filter(a => !a.done).forEach(a => {
+      allActions.push({ person: s.person, text: a.text, sessionId: s.id, actionIdx: (s.actions||[]).indexOf(a) });
+    });
+  });
+  if (!allActions.length) return;
+
+  const section = document.createElement('div'); section.style.cssText = 'padding:12px 16px;border-top:1px solid var(--border);';
+  const title = document.createElement('div'); title.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:6px;';
+  title.textContent = 'â Open action items';
+  const badge = document.createElement('span'); badge.style.cssText = 'background:var(--med-bg);color:var(--med-text);border-radius:8px;padding:1px 6px;font-size:10px;'; badge.textContent = allActions.length;
+  title.appendChild(badge); section.appendChild(title);
+
+  allActions.slice(0,12).forEach(action => {
+    const row = document.createElement('div'); row.className = 'action-row';
+    const person = document.createElement('span'); person.className = 'action-row-person'; person.textContent = action.person.split(' ')[0];
+    const text = document.createElement('span'); text.className = 'action-row-text'; text.textContent = action.text;
+    const check = document.createElement('div'); check.className = 'action-check'; check.textContent = '✓';
+    check.onclick = () => {
+      const data = getOtoData();
+      const sess = (data.sessions||[]).find(s => s.id === action.sessionId);
+      if (sess && sess.actions && sess.actions[action.actionIdx]) {
+        sess.actions[action.actionIdx].done = true; saveOto(data); renderActionsOverview(container);
+        row.style.opacity = '0.4'; row.style.textDecoration = 'line-through'; check.classList.add('done');
+      }
+    };
+    row.appendChild(person); row.appendChild(text); row.appendChild(check); section.appendChild(row);
+  });
+  if (allActions.length > 12) {
+    const more = document.createElement('div'); more.style.cssText = 'font-size:11px;color:var(--text3);padding:4px 0;'; more.textContent = `+${allActions.length-12} more — view in individual 1:1s`; section.appendChild(more);
+  }
+  container.appendChild(section);
+}
+
+function renderTeamHealthBar() {
+  const bar = document.getElementById('team-health-bar');
+  if (!bar) return;
+  let red=[], amber=[], green=[], none=[];
+  MY_TEAM.forEach(name => {
+    const profile = loadProfile(name);
+    if (profile.rag === 'red') red.push(name);
+    else if (profile.rag === 'amber') amber.push(name);
+    else if (profile.rag === 'green') green.push(name);
+    else none.push(name);
+  });
+  bar.style.display = '';
+  bar.innerHTML = '';
+  const lbl = document.createElement('span'); lbl.className = 'team-health-label'; lbl.textContent = 'Team health:';
+  bar.appendChild(lbl);
+  const chips = document.createElement('div'); chips.className = 'team-health-chips';
+  const mkChip = (names, cls, emoji) => {
+    if (!names.length) return;
+    const c = document.createElement('span'); c.className = 'team-health-chip ' + cls;
+    c.textContent = emoji + ' ' + names.length + ' ' + cls + (names.length>1?'':'');
+    c.title = names.join(', ');
+    c.onclick = () => { otoPerson = names[0]; renderOtoTab(); };
+    chips.appendChild(c);
+  };
+  mkChip(red, 'red', 'ð´');
+  mkChip(amber, 'amber', 'ð¡');
+  mkChip(green, 'green', 'ð¢');
+  if (!red.length && !amber.length) {
+    const ok = document.createElement('span'); ok.className = 'team-health-chip green'; ok.textContent = '✓ All green'; chips.appendChild(ok);
+  }
+  bar.appendChild(chips);
+}
+
 // ─── Zendesk API core ─────────────────────────────────────────────
 const ZD_SUBDOMAIN_KEY = 'wtp_zd_subdomain';
 const ZD_EMAIL_KEY     = 'wtp_zd_email';
@@ -8086,13 +8247,13 @@ async function zdGetAgents(groupId) {
 
 async function zdGetStats(agentId, fromDate, toDate) {
   try {
+    // Search without group filter — we want all tickets this agent solved
     const [solved, open, pending, hold] = await Promise.all([
       zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:open`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:pending`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:hold`).catch(()=>0),
     ]);
-    // Channel breakdown
     const [email, web] = await Promise.all([
       zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate} channel:email`).catch(()=>null),
       zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate} channel:web`).catch(()=>null),
@@ -8135,10 +8296,9 @@ async function zdRefresh() {
     let groupId; try { groupId = await zdGetGroupId(); } catch(e) { throw new Error('Group lookup failed: ' + e.message); }
     if (loadMsg) loadMsg.textContent = '⟳ Step 2: Fetching agents…';
     let agents; try { agents = await zdGetAgents(groupId); } catch(e) { throw new Error('Agent lookup failed: ' + e.message); }
-    // Also find agents from solved tickets in period
+    // Also find agents from solved tickets in period — no group filter to catch all assignees
     try {
-      const gf = groupId ? ` group:${groupId}` : '';
-      const solvedSearch = await zdFetch(`/search.json?query=${encodeURIComponent(`type:ticket${gf} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`);
+      const solvedSearch = await zdFetch(`/search.json?query=${encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`);
       const solvedTickets = solvedSearch.results || [];
       const missingIds = [...new Set(solvedTickets.map(t=>t.assignee_id).filter(id=>id&&!agents.find(a=>a.id===id)))];
       if (missingIds.length) {
