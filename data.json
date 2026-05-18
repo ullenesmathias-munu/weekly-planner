@@ -913,7 +913,7 @@
       "hour": 17,
       "answered": 12,
       "missed": 4,
-      "avgWaitSec": 249,
+      "avgWaitSec": 261,
       "avgHandleSec": 263
     },
     "2026-05-15T18": {
@@ -979,6 +979,238 @@
       "missed": 0,
       "avgWaitSec": 15,
       "avgHandleSec": 127
+    },
+    "2026-05-16T11": {
+      "date": "2026-05-16",
+      "hour": 11,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 16,
+      "avgHandleSec": 223
+    },
+    "2026-05-16T12": {
+      "date": "2026-05-16",
+      "hour": 12,
+      "answered": 6,
+      "missed": 0,
+      "avgWaitSec": 20,
+      "avgHandleSec": 324
+    },
+    "2026-05-16T13": {
+      "date": "2026-05-16",
+      "hour": 13,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 67,
+      "avgHandleSec": 666
+    },
+    "2026-05-16T14": {
+      "date": "2026-05-16",
+      "hour": 14,
+      "answered": 5,
+      "missed": 0,
+      "avgWaitSec": 75,
+      "avgHandleSec": 466
+    },
+    "2026-05-16T15": {
+      "date": "2026-05-16",
+      "hour": 15,
+      "answered": 7,
+      "missed": 0,
+      "avgWaitSec": 29,
+      "avgHandleSec": 501
+    },
+    "2026-05-16T16": {
+      "date": "2026-05-16",
+      "hour": 16,
+      "answered": 8,
+      "missed": 0,
+      "avgWaitSec": 67,
+      "avgHandleSec": 486
+    },
+    "2026-05-16T17": {
+      "date": "2026-05-16",
+      "hour": 17,
+      "answered": 5,
+      "missed": 1,
+      "avgWaitSec": 35,
+      "avgHandleSec": 677
+    },
+    "2026-05-16T18": {
+      "date": "2026-05-16",
+      "hour": 18,
+      "answered": 8,
+      "missed": 4,
+      "avgWaitSec": 891,
+      "avgHandleSec": 610
+    },
+    "2026-05-16T19": {
+      "date": "2026-05-16",
+      "hour": 19,
+      "answered": 6,
+      "missed": 1,
+      "avgWaitSec": 189,
+      "avgHandleSec": 236
+    },
+    "2026-05-16T20": {
+      "date": "2026-05-16",
+      "hour": 20,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 143,
+      "avgHandleSec": 437
+    },
+    "2026-05-16T21": {
+      "date": "2026-05-16",
+      "hour": 21,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 43,
+      "avgHandleSec": 487
+    },
+    "2026-05-16T22": {
+      "date": "2026-05-16",
+      "hour": 22,
+      "answered": 4,
+      "missed": 3,
+      "avgWaitSec": 111,
+      "avgHandleSec": 231
+    },
+    "2026-05-17T01": {
+      "date": "2026-05-17",
+      "hour": 1,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 19,
+      "avgHandleSec": 887
+    },
+    "2026-05-17T07": {
+      "date": "2026-05-17",
+      "hour": 7,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 18,
+      "avgHandleSec": 464
+    },
+    "2026-05-17T08": {
+      "date": "2026-05-17",
+      "hour": 8,
+      "answered": 5,
+      "missed": 1,
+      "avgWaitSec": 133,
+      "avgHandleSec": 419
+    },
+    "2026-05-17T09": {
+      "date": "2026-05-17",
+      "hour": 9,
+      "answered": 2,
+      "missed": 7,
+      "avgWaitSec": 136,
+      "avgHandleSec": 1182
+    },
+    "2026-05-17T10": {
+      "date": "2026-05-17",
+      "hour": 10,
+      "answered": 5,
+      "missed": 3,
+      "avgWaitSec": 81,
+      "avgHandleSec": 351
+    },
+    "2026-05-17T11": {
+      "date": "2026-05-17",
+      "hour": 11,
+      "answered": 8,
+      "missed": 10,
+      "avgWaitSec": 319,
+      "avgHandleSec": 439
+    },
+    "2026-05-17T12": {
+      "date": "2026-05-17",
+      "hour": 12,
+      "answered": 12,
+      "missed": 18,
+      "avgWaitSec": 774,
+      "avgHandleSec": 264
+    },
+    "2026-05-17T13": {
+      "date": "2026-05-17",
+      "hour": 13,
+      "answered": 11,
+      "missed": 7,
+      "avgWaitSec": 581,
+      "avgHandleSec": 319
+    },
+    "2026-05-17T14": {
+      "date": "2026-05-17",
+      "hour": 14,
+      "answered": 5,
+      "missed": 0,
+      "avgWaitSec": 329,
+      "avgHandleSec": 324
+    },
+    "2026-05-17T15": {
+      "date": "2026-05-17",
+      "hour": 15,
+      "answered": 3,
+      "missed": 1,
+      "avgWaitSec": 796,
+      "avgHandleSec": 646
+    },
+    "2026-05-17T16": {
+      "date": "2026-05-17",
+      "hour": 16,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 11,
+      "avgHandleSec": 538
+    },
+    "2026-05-17T17": {
+      "date": "2026-05-17",
+      "hour": 17,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 693,
+      "avgHandleSec": 926
+    },
+    "2026-05-17T18": {
+      "date": "2026-05-17",
+      "hour": 18,
+      "answered": 4,
+      "missed": 0,
+      "avgWaitSec": 439,
+      "avgHandleSec": 205
+    },
+    "2026-05-17T19": {
+      "date": "2026-05-17",
+      "hour": 19,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 8,
+      "avgHandleSec": 308
+    },
+    "2026-05-17T20": {
+      "date": "2026-05-17",
+      "hour": 20,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 11,
+      "avgHandleSec": 673
+    },
+    "2026-05-17T21": {
+      "date": "2026-05-17",
+      "hour": 21,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 11,
+      "avgHandleSec": 141
+    },
+    "2026-05-17T22": {
+      "date": "2026-05-17",
+      "hour": 22,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 7,
+      "avgHandleSec": 209
     }
   },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\nMarvin, does it fetch Slack.\n\n\n\n",
@@ -1845,27 +2077,41 @@
       "offered": 230,
       "answered": 182,
       "missed": 48,
-      "avgWaitSec": 439,
+      "avgWaitSec": 440,
       "avgHandleSec": 432,
       "avgWaitAnsweredSec": 495,
-      "avgWaitMissedSec": 241,
-      "callbackRequests": 4,
-      "overKpi": 189,
-      "savedAt": "2026-05-16T08:07:10.424Z",
+      "avgWaitMissedSec": 245,
+      "callbackRequests": 3,
+      "overKpi": 188,
+      "savedAt": "2026-05-18T08:19:35.280Z",
       "source": "import"
     },
     {
       "date": "2026-05-16",
-      "offered": 4,
-      "answered": 4,
-      "missed": 0,
-      "avgWaitSec": 24,
-      "avgHandleSec": 223,
-      "avgWaitAnsweredSec": 24,
-      "avgWaitMissedSec": 0,
+      "offered": 81,
+      "answered": 72,
+      "missed": 9,
+      "avgWaitSec": 191,
+      "avgHandleSec": 433,
+      "avgWaitAnsweredSec": 205,
+      "avgWaitMissedSec": 75,
       "callbackRequests": 0,
-      "overKpi": 1,
-      "savedAt": "2026-05-16T08:07:10.424Z",
+      "overKpi": 43,
+      "savedAt": "2026-05-18T08:19:35.280Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-05-17",
+      "offered": 115,
+      "answered": 68,
+      "missed": 47,
+      "avgWaitSec": 445,
+      "avgHandleSec": 407,
+      "avgWaitAnsweredSec": 613,
+      "avgWaitMissedSec": 208,
+      "callbackRequests": 1,
+      "overKpi": 86,
+      "savedAt": "2026-05-18T08:19:35.280Z",
       "source": "import"
     }
   ],
