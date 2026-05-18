@@ -2165,6 +2165,9 @@
   ],
   "wtp_notepad_persistent": "Test",
   "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
+  "wtp_profile_tord": {
+    "rag": "green"
+  },
   "wtp_users": [
     {
       "name": "Mathias",
@@ -2201,7 +2204,7 @@
   "wtp_profile_andreas": {
     "log": [],
     "goals": [],
-    "rag": "none",
+    "rag": "green",
     "focus": "",
     "_open": true
   },
