@@ -2093,11 +2093,16 @@ window.tryUnlock = async function() {
         <div class="settings-card-desc">Manage shared links visible to all users, and your personal links.</div>
         <div id="ql-settings-body" style="margin-top:12px;"></div>
       </div>
+    </div>
 
-      <!-- Unifon -->
+    <!-- ── DATA ──────────────────────────────────────────────────── -->
+    <div class="sgroup">
+      <div class="sgroup-label">Data</div>
+
+      <!-- Unifon call data import -->
       <div class="settings-card" id="unifon-settings-card" style="display:none;">
         <div class="settings-card-title">Unifon call data</div>
-        <div class="settings-card-desc">Log calls manually, or import directly from a Unifon report. Imported data overwrites manual entries for the same dates.</div>
+        <div class="settings-card-desc">Import directly from a Unifon report. Imported data overwrites manual entries for the same dates.</div>
         <div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <label class="settings-upload-btn" for="unifon-import-input" style="cursor:pointer;">⬆ Import queue report (.xlsx / .csv)</label>
@@ -2113,11 +2118,6 @@ window.tryUnlock = async function() {
         </div>
         <div id="unifon-settings-body" style="margin-top:12px;"></div>
       </div>
-    </div>
-
-    <!-- ── DATA ──────────────────────────────────────────────────── -->
-    <div class="sgroup">
-      <div class="sgroup-label">Data</div>
 
       <!-- Unifon API -->
       <div class="settings-card">
