@@ -10337,6 +10337,51 @@ function weekDragDrop(dir, e) {
 }
 
 // ─── Utility stubs (required before startup) ─────────────────────
+function getActiveHandovers() {
+  const results = [];
+  const today = localToday();
+  const yesterday = new Date(today+'T00:00:00');
+  yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().slice(0,10);
+  [today, yStr].forEach(date => {
+    const d = loadHandover(date);
+    if (d && d.text) results.push({ date, ...d });
+  });
+  return results;
+}
+
+function getAllQuickLinks(username) {
+  const shared = (() => { try { return JSON.parse(localStorage.getItem('wtp_ql_shared') || '[]'); } catch { return []; } })();
+  const personal = (() => { try { return JSON.parse(localStorage.getItem('wtp_ql_' + normalizeKey(username||'')) || '[]'); } catch { return []; } })();
+  return [...shared, ...personal];
+}
+
+function zdStopAutoRefresh() {
+  // No-op — auto-refresh not implemented
+}
+
+function updateTabBadges() {
+  if (!currentUser) return;
+  // Feedback badge
+  const fbBtn = document.getElementById('tab-btn-feedback');
+  if (fbBtn && isAdmin()) {
+    const hasNew = typeof fbHasNew === 'function' && getUsers().some(u => {
+      const name = getScheduleName(u) || getUserDisplayName(u);
+      return fbHasNew(name);
+    });
+    fbBtn.style.position = 'relative';
+    let badge = fbBtn.querySelector('.tab-badge');
+    if (hasNew && !badge) {
+      badge = document.createElement('span');
+      badge.className = 'tab-badge';
+      badge.style.cssText = 'position:absolute;top:2px;right:2px;width:6px;height:6px;background:var(--high-text);border-radius:50%;';
+      fbBtn.appendChild(badge);
+    } else if (!hasNew && badge) {
+      badge.remove();
+    }
+  }
+}
+
 function sanitizeStoredData(str) {
   if (typeof str !== 'string') return str;
   return str.replace(/\x00/g, '');
