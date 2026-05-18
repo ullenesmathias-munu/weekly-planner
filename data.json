@@ -1709,16 +1709,28 @@
   },
   "wtp_unifon_agent_calls": {
     "2026-05-16": {
-      "Marie Gjengedal": {
-        "answered": 1,
-        "totalTalkSec": 127,
-        "totalWaitSec": 15,
-        "missed": 0
+      "Andreas Bergevik": {
+        "answered": 32,
+        "totalTalkSec": 13036,
+        "totalWaitSec": 445,
+        "missed": 2
       },
       "Benjamin \u00d8deg\u00e5rd": {
-        "answered": 3,
-        "totalTalkSec": 766,
-        "totalWaitSec": 80,
+        "answered": 15,
+        "totalTalkSec": 5666,
+        "totalWaitSec": 1834,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 19,
+        "totalTalkSec": 9775,
+        "totalWaitSec": 532,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 6,
+        "totalTalkSec": 2679,
+        "totalWaitSec": 222,
         "missed": 0
       }
     },
@@ -1771,7 +1783,7 @@
         "totalWaitSec": 771,
         "missed": 0
       },
-      "Maylen Milson": {
+      "Mayl\u00e9n Milson": {
         "answered": 31,
         "totalTalkSec": 9643,
         "totalWaitSec": 7052,
@@ -1983,6 +1995,32 @@
         "answered": 16,
         "totalTalkSec": 5137,
         "totalWaitSec": 424,
+        "missed": 0
+      }
+    },
+    "2026-05-17": {
+      "Andreas Bergevik": {
+        "answered": 15,
+        "totalTalkSec": 6729,
+        "totalWaitSec": 135,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 41,
+        "totalTalkSec": 18336,
+        "totalWaitSec": 14534,
+        "missed": 4
+      },
+      "Kristian Johannessen": {
+        "answered": 3,
+        "totalTalkSec": 938,
+        "totalWaitSec": 2907,
+        "missed": 0
+      },
+      "Andrea Torland": {
+        "answered": 9,
+        "totalTalkSec": 1686,
+        "totalWaitSec": 6429,
         "missed": 0
       }
     }
