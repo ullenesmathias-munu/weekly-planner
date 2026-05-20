@@ -5594,6 +5594,1122 @@
         "totalWaitSec": 72,
         "missed": 1
       }
+    },
+    "2026-04-30": {
+      "Marie Gjengedal": {
+        "answered": 9,
+        "totalTalkSec": 4635,
+        "totalWaitSec": 3324,
+        "missed": 3
+      },
+      "Mads Iversen": {
+        "answered": 6,
+        "totalTalkSec": 6009,
+        "totalWaitSec": 9226,
+        "missed": 4
+      },
+      "Bernadett Costea": {
+        "answered": 26,
+        "totalTalkSec": 8914,
+        "totalWaitSec": 4016,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 32,
+        "totalTalkSec": 7468,
+        "totalWaitSec": 2132,
+        "missed": 3
+      },
+      "Cecilie Steinkopf": {
+        "answered": 17,
+        "totalTalkSec": 19263,
+        "totalWaitSec": 1952,
+        "missed": 0
+      },
+      "Stian Winum": {
+        "answered": 30,
+        "totalTalkSec": 7932,
+        "totalWaitSec": 1265,
+        "missed": 4
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 21,
+        "totalTalkSec": 8792,
+        "totalWaitSec": 2201,
+        "missed": 2
+      },
+      "Mathias Ullenes": {
+        "answered": 3,
+        "totalTalkSec": 681,
+        "totalWaitSec": 90,
+        "missed": 0
+      }
+    },
+    "2026-04-29": {
+      "Marie Gjengedal": {
+        "answered": 11,
+        "totalTalkSec": 3037,
+        "totalWaitSec": 874,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 21,
+        "totalTalkSec": 14052,
+        "totalWaitSec": 5205,
+        "missed": 1
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 26,
+        "totalTalkSec": 14524,
+        "totalWaitSec": 2611,
+        "missed": 2
+      },
+      "Jonas Johannes": {
+        "answered": 4,
+        "totalTalkSec": 2546,
+        "totalWaitSec": 904,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 18,
+        "totalTalkSec": 8198,
+        "totalWaitSec": 4062,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 23,
+        "totalTalkSec": 13018,
+        "totalWaitSec": 774,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 1,
+        "totalTalkSec": 169,
+        "totalWaitSec": 19,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 16,
+        "totalTalkSec": 6280,
+        "totalWaitSec": 2883,
+        "missed": 2
+      },
+      "Johan Herman \u00d8rbeck Falck": {
+        "answered": 5,
+        "totalTalkSec": 663,
+        "totalWaitSec": 113,
+        "missed": 0
+      },
+      "Stian Winum": {
+        "answered": 5,
+        "totalTalkSec": 975,
+        "totalWaitSec": 30,
+        "missed": 0
+      }
+    },
+    "2026-04-28": {
+      "Marie Gjengedal": {
+        "answered": 10,
+        "totalTalkSec": 3936,
+        "totalWaitSec": 617,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 7,
+        "totalTalkSec": 3155,
+        "totalWaitSec": 1971,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 18,
+        "totalTalkSec": 8684,
+        "totalWaitSec": 1577,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 11,
+        "totalTalkSec": 5096,
+        "totalWaitSec": 1362,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 27,
+        "totalTalkSec": 10188,
+        "totalWaitSec": 3453,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 22,
+        "totalTalkSec": 14170,
+        "totalWaitSec": 1801,
+        "missed": 2
+      },
+      "Vetle Bengtson": {
+        "answered": 1,
+        "totalTalkSec": 461,
+        "totalWaitSec": 16,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 14,
+        "totalTalkSec": 4450,
+        "totalWaitSec": 441,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 2,
+        "totalTalkSec": 355,
+        "totalWaitSec": 15,
+        "missed": 0
+      }
+    },
+    "2026-04-27": {
+      "Marie Gjengedal": {
+        "answered": 14,
+        "totalTalkSec": 4784,
+        "totalWaitSec": 176,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 20,
+        "totalTalkSec": 7385,
+        "totalWaitSec": 858,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 14,
+        "totalTalkSec": 10814,
+        "totalWaitSec": 632,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 2,
+        "totalTalkSec": 491,
+        "totalWaitSec": 28,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 22,
+        "totalTalkSec": 9997,
+        "totalWaitSec": 673,
+        "missed": 1
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 14,
+        "totalTalkSec": 3755,
+        "totalWaitSec": 274,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 2,
+        "totalTalkSec": 332,
+        "totalWaitSec": 102,
+        "missed": 0
+      }
+    },
+    "2026-04-26": {
+      "Thomas Hildre": {
+        "answered": 8,
+        "totalTalkSec": 2815,
+        "totalWaitSec": 191,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 11,
+        "totalTalkSec": 2671,
+        "totalWaitSec": 1270,
+        "missed": 2
+      }
+    },
+    "2026-04-25": {
+      "Thomas Hildre": {
+        "answered": 14,
+        "totalTalkSec": 5895,
+        "totalWaitSec": 1381,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 29,
+        "totalTalkSec": 6650,
+        "totalWaitSec": 1776,
+        "missed": 1
+      }
+    },
+    "2026-04-24": {
+      "Jonas Johannes": {
+        "answered": 26,
+        "totalTalkSec": 8541,
+        "totalWaitSec": 4827,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 14,
+        "totalTalkSec": 6984,
+        "totalWaitSec": 613,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 17,
+        "totalTalkSec": 8363,
+        "totalWaitSec": 3124,
+        "missed": 2
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 36,
+        "totalTalkSec": 13725,
+        "totalWaitSec": 2117,
+        "missed": 1
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 15,
+        "totalTalkSec": 6805,
+        "totalWaitSec": 352,
+        "missed": 2
+      },
+      "Marie Gjengedal": {
+        "answered": 21,
+        "totalTalkSec": 14143,
+        "totalWaitSec": 984,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 17,
+        "totalTalkSec": 8321,
+        "totalWaitSec": 543,
+        "missed": 1
+      },
+      "Andreas Bergevik": {
+        "answered": 2,
+        "totalTalkSec": 1378,
+        "totalWaitSec": 22,
+        "missed": 0
+      }
+    },
+    "2026-04-23": {
+      "Jonas Johannes": {
+        "answered": 16,
+        "totalTalkSec": 7084,
+        "totalWaitSec": 3884,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 16,
+        "totalTalkSec": 8988,
+        "totalWaitSec": 1521,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 20,
+        "totalTalkSec": 7359,
+        "totalWaitSec": 2071,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 17,
+        "totalTalkSec": 4734,
+        "totalWaitSec": 961,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 22,
+        "totalTalkSec": 9800,
+        "totalWaitSec": 1068,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 22,
+        "totalTalkSec": 12627,
+        "totalWaitSec": 1300,
+        "missed": 1
+      },
+      "Andreas Bergevik": {
+        "answered": 6,
+        "totalTalkSec": 1649,
+        "totalWaitSec": 21,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 14,
+        "totalTalkSec": 7532,
+        "totalWaitSec": 1565,
+        "missed": 0
+      },
+      "Kristian Johannessen": {
+        "answered": 2,
+        "totalTalkSec": 320,
+        "totalWaitSec": 34,
+        "missed": 0
+      },
+      "Markus Dalsb\u00f8e": {
+        "answered": 2,
+        "totalTalkSec": 1525,
+        "totalWaitSec": 78,
+        "missed": 0
+      },
+      "Ulrik Rosenberg": {
+        "answered": 1,
+        "totalTalkSec": 16,
+        "totalWaitSec": 163,
+        "missed": 0
+      }
+    },
+    "2026-04-22": {
+      "Jonas Johannes": {
+        "answered": 8,
+        "totalTalkSec": 2892,
+        "totalWaitSec": 604,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 20,
+        "totalTalkSec": 7178,
+        "totalWaitSec": 1368,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 16,
+        "totalTalkSec": 5757,
+        "totalWaitSec": 1385,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 8,
+        "totalTalkSec": 5525,
+        "totalWaitSec": 1573,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 17,
+        "totalTalkSec": 9818,
+        "totalWaitSec": 1567,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 8,
+        "totalTalkSec": 3144,
+        "totalWaitSec": 688,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 8,
+        "totalTalkSec": 3684,
+        "totalWaitSec": 63,
+        "missed": 0
+      },
+      "Stian Winum": {
+        "answered": 6,
+        "totalTalkSec": 1916,
+        "totalWaitSec": 602,
+        "missed": 0
+      },
+      "Andrea Torland": {
+        "answered": 4,
+        "totalTalkSec": 1628,
+        "totalWaitSec": 137,
+        "missed": 0
+      }
+    },
+    "2026-04-21": {
+      "Jonas Johannes": {
+        "answered": 9,
+        "totalTalkSec": 4018,
+        "totalWaitSec": 294,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 22,
+        "totalTalkSec": 6175,
+        "totalWaitSec": 1283,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 23,
+        "totalTalkSec": 16787,
+        "totalWaitSec": 1575,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 29,
+        "totalTalkSec": 15436,
+        "totalWaitSec": 1886,
+        "missed": 1
+      },
+      "Marie Gjengedal": {
+        "answered": 18,
+        "totalTalkSec": 12548,
+        "totalWaitSec": 624,
+        "missed": 0
+      },
+      "Julie Hanssen": {
+        "answered": 3,
+        "totalTalkSec": 597,
+        "totalWaitSec": 803,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 5,
+        "totalTalkSec": 6236,
+        "totalWaitSec": 425,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 2,
+        "totalTalkSec": 541,
+        "totalWaitSec": 35,
+        "missed": 0
+      }
+    },
+    "2026-04-20": {
+      "Jonas Johannes": {
+        "answered": 8,
+        "totalTalkSec": 3608,
+        "totalWaitSec": 451,
+        "missed": 1
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 32,
+        "totalTalkSec": 7795,
+        "totalWaitSec": 1136,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 18,
+        "totalTalkSec": 12770,
+        "totalWaitSec": 460,
+        "missed": 1
+      },
+      "Marie Gjengedal": {
+        "answered": 23,
+        "totalTalkSec": 10666,
+        "totalWaitSec": 340,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 3,
+        "totalTalkSec": 2306,
+        "totalWaitSec": 39,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 1,
+        "totalTalkSec": 178,
+        "totalWaitSec": 13,
+        "missed": 0
+      }
+    },
+    "2026-04-19": {
+      "Andreas Bergevik": {
+        "answered": 8,
+        "totalTalkSec": 3063,
+        "totalWaitSec": 96,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 5,
+        "totalTalkSec": 2571,
+        "totalWaitSec": 167,
+        "missed": 0
+      }
+    },
+    "2026-04-18": {
+      "Andreas Bergevik": {
+        "answered": 18,
+        "totalTalkSec": 8111,
+        "totalWaitSec": 448,
+        "missed": 2
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 21,
+        "totalTalkSec": 10755,
+        "totalWaitSec": 3750,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 1,
+        "totalTalkSec": 125,
+        "totalWaitSec": 77,
+        "missed": 0
+      }
+    },
+    "2026-04-17": {
+      "Thomas Hildre": {
+        "answered": 19,
+        "totalTalkSec": 9932,
+        "totalWaitSec": 3736,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 7,
+        "totalTalkSec": 5257,
+        "totalWaitSec": 283,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 16,
+        "totalTalkSec": 9154,
+        "totalWaitSec": 1348,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 28,
+        "totalTalkSec": 13160,
+        "totalWaitSec": 2792,
+        "missed": 2
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 17,
+        "totalTalkSec": 5747,
+        "totalWaitSec": 1946,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 14,
+        "totalTalkSec": 3886,
+        "totalWaitSec": 333,
+        "missed": 0
+      }
+    },
+    "2026-04-16": {
+      "Thomas Hildre": {
+        "answered": 16,
+        "totalTalkSec": 9682,
+        "totalWaitSec": 2120,
+        "missed": 3
+      },
+      "Marie Gjengedal": {
+        "answered": 23,
+        "totalTalkSec": 11067,
+        "totalWaitSec": 1192,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 21,
+        "totalTalkSec": 11432,
+        "totalWaitSec": 773,
+        "missed": 2
+      },
+      "Cecilie Steinkopf": {
+        "answered": 21,
+        "totalTalkSec": 11168,
+        "totalWaitSec": 1241,
+        "missed": 1
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 21,
+        "totalTalkSec": 7048,
+        "totalWaitSec": 903,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 3,
+        "totalTalkSec": 1655,
+        "totalWaitSec": 341,
+        "missed": 1
+      },
+      "Markus Dalsb\u00f8e": {
+        "answered": 1,
+        "totalTalkSec": 173,
+        "totalWaitSec": 14,
+        "missed": 0
+      },
+      "Kristian Johannessen": {
+        "answered": 1,
+        "totalTalkSec": 58,
+        "totalWaitSec": 17,
+        "missed": 0
+      }
+    },
+    "2026-04-15": {
+      "Thomas Hildre": {
+        "answered": 9,
+        "totalTalkSec": 5151,
+        "totalWaitSec": 344,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 6,
+        "totalTalkSec": 4671,
+        "totalWaitSec": 152,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 20,
+        "totalTalkSec": 7279,
+        "totalWaitSec": 2664,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 16,
+        "totalTalkSec": 6107,
+        "totalWaitSec": 1084,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 22,
+        "totalTalkSec": 7751,
+        "totalWaitSec": 502,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 1,
+        "totalTalkSec": 435,
+        "totalWaitSec": 398,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 8,
+        "totalTalkSec": 1731,
+        "totalWaitSec": 114,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 4,
+        "totalTalkSec": 710,
+        "totalWaitSec": 38,
+        "missed": 0
+      },
+      "Constance Thorkildsen": {
+        "answered": 5,
+        "totalTalkSec": 1349,
+        "totalWaitSec": 131,
+        "missed": 0
+      },
+      "Tor Erik Sk\u00e5rdal": {
+        "answered": 4,
+        "totalTalkSec": 1045,
+        "totalWaitSec": 86,
+        "missed": 0
+      }
+    },
+    "2026-04-14": {
+      "Thomas Hildre": {
+        "answered": 17,
+        "totalTalkSec": 9833,
+        "totalWaitSec": 4426,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 6,
+        "totalTalkSec": 2595,
+        "totalWaitSec": 79,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 9,
+        "totalTalkSec": 7813,
+        "totalWaitSec": 264,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 14,
+        "totalTalkSec": 7792,
+        "totalWaitSec": 431,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 25,
+        "totalTalkSec": 8199,
+        "totalWaitSec": 1352,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 4,
+        "totalTalkSec": 2749,
+        "totalWaitSec": 265,
+        "missed": 1
+      },
+      "Stian Winum": {
+        "answered": 1,
+        "totalTalkSec": 143,
+        "totalWaitSec": 14,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 15,
+        "totalTalkSec": 6178,
+        "totalWaitSec": 590,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 12,
+        "totalTalkSec": 2837,
+        "totalWaitSec": 449,
+        "missed": 0
+      }
+    },
+    "2026-04-13": {
+      "Thomas Hildre": {
+        "answered": 7,
+        "totalTalkSec": 1901,
+        "totalWaitSec": 391,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 21,
+        "totalTalkSec": 11526,
+        "totalWaitSec": 3649,
+        "missed": 3
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 29,
+        "totalTalkSec": 13455,
+        "totalWaitSec": 2733,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 13,
+        "totalTalkSec": 9507,
+        "totalWaitSec": 1467,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 18,
+        "totalTalkSec": 6157,
+        "totalWaitSec": 3094,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 1,
+        "totalTalkSec": 374,
+        "totalWaitSec": 16,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 14,
+        "totalTalkSec": 8418,
+        "totalWaitSec": 1801,
+        "missed": 0
+      }
+    },
+    "2026-04-12": {
+      "Jonas Johannes": {
+        "answered": 4,
+        "totalTalkSec": 1392,
+        "totalWaitSec": 106,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 9,
+        "totalTalkSec": 4960,
+        "totalWaitSec": 180,
+        "missed": 0
+      }
+    },
+    "2026-04-11": {
+      "Jonas Johannes": {
+        "answered": 17,
+        "totalTalkSec": 5197,
+        "totalWaitSec": 1010,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 21,
+        "totalTalkSec": 7242,
+        "totalWaitSec": 1232,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 3,
+        "totalTalkSec": 961,
+        "totalWaitSec": 20,
+        "missed": 0
+      }
+    },
+    "2026-04-10": {
+      "Mayl\u00e9n Milson": {
+        "answered": 17,
+        "totalTalkSec": 5493,
+        "totalWaitSec": 289,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 16,
+        "totalTalkSec": 10759,
+        "totalWaitSec": 2793,
+        "missed": 0
+      },
+      "Stian Winum": {
+        "answered": 1,
+        "totalTalkSec": 401,
+        "totalWaitSec": 18,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 20,
+        "totalTalkSec": 16601,
+        "totalWaitSec": 1326,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 8,
+        "totalTalkSec": 5057,
+        "totalWaitSec": 1949,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 12,
+        "totalTalkSec": 5459,
+        "totalWaitSec": 2305,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 16,
+        "totalTalkSec": 5577,
+        "totalWaitSec": 1327,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 12,
+        "totalTalkSec": 9008,
+        "totalWaitSec": 657,
+        "missed": 0
+      }
+    },
+    "2026-04-09": {
+      "Mayl\u00e9n Milson": {
+        "answered": 9,
+        "totalTalkSec": 2972,
+        "totalWaitSec": 2616,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 9,
+        "totalTalkSec": 10541,
+        "totalWaitSec": 4084,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 19,
+        "totalTalkSec": 6509,
+        "totalWaitSec": 9532,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 8,
+        "totalTalkSec": 6010,
+        "totalWaitSec": 1475,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 16,
+        "totalTalkSec": 8136,
+        "totalWaitSec": 5813,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 19,
+        "totalTalkSec": 11022,
+        "totalWaitSec": 3181,
+        "missed": 0
+      },
+      "Ulrik Rosenberg": {
+        "answered": 13,
+        "totalTalkSec": 2828,
+        "totalWaitSec": 833,
+        "missed": 0
+      }
+    },
+    "2026-04-08": {
+      "Mayl\u00e9n Milson": {
+        "answered": 8,
+        "totalTalkSec": 3624,
+        "totalWaitSec": 434,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 16,
+        "totalTalkSec": 8786,
+        "totalWaitSec": 2428,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 24,
+        "totalTalkSec": 15858,
+        "totalWaitSec": 7276,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 18,
+        "totalTalkSec": 9395,
+        "totalWaitSec": 4700,
+        "missed": 1
+      },
+      "Mathias Ullenes": {
+        "answered": 3,
+        "totalTalkSec": 1199,
+        "totalWaitSec": 767,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 24,
+        "totalTalkSec": 9171,
+        "totalWaitSec": 5901,
+        "missed": 3
+      },
+      "Marie Gjengedal": {
+        "answered": 5,
+        "totalTalkSec": 3560,
+        "totalWaitSec": 1542,
+        "missed": 0
+      },
+      "Walter Kousa": {
+        "answered": 7,
+        "totalTalkSec": 1259,
+        "totalWaitSec": 514,
+        "missed": 0
+      },
+      "Mads Iversen": {
+        "answered": 2,
+        "totalTalkSec": 2802,
+        "totalWaitSec": 23,
+        "missed": 0
+      }
+    },
+    "2026-04-07": {
+      "Mayl\u00e9n Milson": {
+        "answered": 11,
+        "totalTalkSec": 4297,
+        "totalWaitSec": 926,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 25,
+        "totalTalkSec": 8709,
+        "totalWaitSec": 2455,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 30,
+        "totalTalkSec": 14477,
+        "totalWaitSec": 3691,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 16,
+        "totalTalkSec": 8889,
+        "totalWaitSec": 610,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 8,
+        "totalTalkSec": 2232,
+        "totalWaitSec": 987,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 21,
+        "totalTalkSec": 7792,
+        "totalWaitSec": 1659,
+        "missed": 3
+      }
+    },
+    "2026-04-06": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 4,
+        "totalTalkSec": 1710,
+        "totalWaitSec": 139,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 12,
+        "totalTalkSec": 4422,
+        "totalWaitSec": 1651,
+        "missed": 0
+      }
+    },
+    "2026-04-05": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 6,
+        "totalTalkSec": 2338,
+        "totalWaitSec": 402,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 6,
+        "totalTalkSec": 4882,
+        "totalWaitSec": 115,
+        "missed": 0
+      }
+    },
+    "2026-04-04": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 8,
+        "totalTalkSec": 2696,
+        "totalWaitSec": 1135,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 22,
+        "totalTalkSec": 7859,
+        "totalWaitSec": 350,
+        "missed": 1
+      }
+    },
+    "2026-04-03": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 7,
+        "totalTalkSec": 1781,
+        "totalWaitSec": 203,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 14,
+        "totalTalkSec": 15759,
+        "totalWaitSec": 166,
+        "missed": 1
+      }
+    },
+    "2026-04-02": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 9,
+        "totalTalkSec": 4681,
+        "totalWaitSec": 213,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 26,
+        "totalTalkSec": 14132,
+        "totalWaitSec": 446,
+        "missed": 0
+      }
+    },
+    "2026-04-01": {
+      "Bernadett Costea": {
+        "answered": 5,
+        "totalTalkSec": 2116,
+        "totalWaitSec": 698,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 32,
+        "totalTalkSec": 10596,
+        "totalWaitSec": 1509,
+        "missed": 2
+      },
+      "Cecilie Steinkopf": {
+        "answered": 20,
+        "totalTalkSec": 9140,
+        "totalWaitSec": 920,
+        "missed": 2
+      },
+      "Marie Gjengedal": {
+        "answered": 20,
+        "totalTalkSec": 8828,
+        "totalWaitSec": 616,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 16,
+        "totalTalkSec": 3929,
+        "totalWaitSec": 945,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 5,
+        "totalTalkSec": 825,
+        "totalWaitSec": 113,
+        "missed": 0
+      }
     }
   },
   "wtp_ql_shared": [
