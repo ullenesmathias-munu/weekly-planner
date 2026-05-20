@@ -7424,9 +7424,11 @@ async function generateReport(fromDate, toDate, container) {
     printStyle = document.createElement('style'); printStyle.id='report-print-style';
     printStyle.textContent = `
       @media print {
-        body > *:not(#reports-root) { display:none!important; }
-        #reports-root { display:block!important; }
+        body > *:not(#tab-reports) { display:none!important; }
+        #tab-reports { display:block!important; padding:0!important; }
+        #reports-root { display:block!important; max-width:100%!important; }
         .tab-bar, .topbar, #sync-indicator, #lock-screen { display:none!important; }
+        .report-export-bar { display:none!important; }
         .report-page { page-break-after:always; }
         .report-no-break { page-break-inside:avoid; }
         .report-kpi-grid { break-inside:avoid; }
@@ -8241,10 +8243,14 @@ async function zdGetStats(agentId, fromDate, toDate) {
       zdCount(`type:ticket assignee:${agentId} status:pending`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:hold`).catch(()=>0),
     ]);
-    const [email, web] = await Promise.all([
+    const [email, total2] = await Promise.all([
+      // Email channel (direct email tickets)
       zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate} channel:email`).catch(()=>null),
-      zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate} channel:web`).catch(()=>null),
+      // Total solved again (used to derive non-email count)
+      zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>null),
     ]);
+    // web = all non-email channels (web form, phone, chat, API)
+    const web = (email != null && total2 != null) ? Math.max(0, total2 - email) : null;
     return { solved, open, pending, onhold:hold, email, web };
   } catch { return { solved:0, open:0, pending:0, onhold:0, email:null, web:null }; }
 }
@@ -8360,7 +8366,7 @@ function zdRender(agents, fromDate, toDate) {
   });
   bar.appendChild(mkPill(totalSolved, 'Solved', 'var(--low-text)'));
   bar.appendChild(mkPill(totalEmail, 'Via email', 'var(--cal-text)'));
-  bar.appendChild(mkPill(totalWeb, 'Via web/phone', 'var(--med-text)'));
+  bar.appendChild(mkPill(totalWeb, 'Other ch.', 'var(--med-text)'));
   bar.appendChild(mkPill(totalOpen, 'Open now', totalOpen>100?'var(--high-text)':totalOpen>60?'var(--med-text)':'var(--text)'));
   bar.appendChild(mkPill(totalPending, 'Pending now', 'var(--med-text)'));
   bar.appendChild(mkPill(totalHold, 'On hold now', 'var(--text3)'));
@@ -8434,7 +8440,7 @@ function zdRender(agents, fromDate, toDate) {
     const fixedRows = [
       { dot:'var(--low-text)',  label:'Solved',       val: d.solved||0,  bold: true },
       { dot:'var(--cal-text)',  label:'Email',         val: d.email!=null ? d.email : '—' },
-      { dot:'var(--med-text)',  label:'Web / Phone',   val: d.web!=null   ? d.web   : '—' },
+      { dot:'var(--med-text)',  label:'Other channels', val: d.web!=null   ? d.web   : '—' },
       { dividerLabel: 'Live queue' },
       { dot:'var(--high-text)', label:'Open now',      val: d.open||0 },
       { dot:'var(--med-text)',  label:'Pending now',   val: d.pending||0 },
