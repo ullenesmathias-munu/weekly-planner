@@ -7867,11 +7867,11 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const el = document.getElementById('zd-csat-body'); if (el) el.innerHTML = '<div style="font-size:11px;color:var(--high-text);">Could not load: ' + e.message + '</div>';
   });
 
-  // ── Fetch MTTR — L1 group only, all pages ────────────────────
+  // ── Fetch MTTR — sample up to 500 tickets (5 pages) ─────────
   let gIdMttr = zdGroupId;
   if (!gIdMttr) { try { gIdMttr = await zdGetGroupId(); } catch {} }
   const gfMttr = gIdMttr ? ` group:${gIdMttr}` : '';
-  zdFetchAll(`/search.json?query=${encodeURIComponent(`type:ticket${gfMttr} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100&sort_by=solved_at&sort_order=desc`, 'results', 20).then(tickets => {
+  zdFetchAll(`/search.json?query=${encodeURIComponent(`type:ticket${gfMttr} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100&sort_by=solved_at&sort_order=desc`, 'results', 5).then(tickets => {
     const el = document.getElementById('zd-mttr-body'); if (!el) return;
     if (!tickets.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">No solved tickets in period</div>'; return; }
 
@@ -8318,12 +8318,10 @@ function getZdCreds() {
 function zdRender(agents, fromDate, toDate) {
   const body = document.getElementById('zd-body');
   if (!body) return;
-  // Clear except inbox stats
   Array.from(body.children).forEach(c => { if (c.id !== 'zd-inbox-stats') c.remove(); });
 
-  // Filter absent agents
+  // Filter to MY_TEAM only
   const absentNames = zdGetAbsentNames(fromDate, toDate);
-  // Only show agents who are in MY_TEAM (by first name match) and not absent the whole period
   const teamFirstNames = new Set(MY_TEAM.map(n => n.split(' ')[0].toLowerCase()));
   const presentAgents = agents.filter(a => {
     const firstName = a.name.split(' ')[0].toLowerCase();
@@ -8332,46 +8330,40 @@ function zdRender(agents, fromDate, toDate) {
     const isAbsent = absentNames.has(fullLower) || absentNames.has(firstName);
     return isTeam && !isAbsent;
   });
-  if (agents.length !== presentAgents.length) {
-    const info = document.createElement('div');
-    info.style.cssText = 'font-size:11px;color:var(--text3);padding:4px 0 10px;';
-    info.textContent = `${agents.length - presentAgents.length} agent(s) hidden — absent for entire period`;
-    body.appendChild(info);
-  }
 
-  // Per-agent call stats
   const agentCallStats = getAgentCallStats(fromDate, toDate);
   const fmtDurShort = (secs) => { if(!secs)return'—'; const m=Math.floor(secs/60),s=secs%60; return m>0?m+'m'+(s>0?' '+s+'s':''):s+'s'; };
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  const fromFmt = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const toFmt   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
 
-  // Summary bar
+  // Sort by solved desc
+  const sortedAgents = [...presentAgents].sort((a, b) => (zdData[b.id]?.solved||0) - (zdData[a.id]?.solved||0));
+  const maxSolved = Math.max(...sortedAgents.map(a => zdData[a.id]?.solved || 0), 1);
+
+  // ── Summary bar ───────────────────────────────────────────────
   const bar = document.createElement('div'); bar.id = 'zd-summary-bar';
   bar.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 0;margin-bottom:10px;border-bottom:1px solid var(--border);';
   const mkPill = (val, label, color) => {
     const p = document.createElement('div');
     p.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 10px;display:flex;flex-direction:column;align-items:center;min-width:60px;';
-    const v = document.createElement('div'); v.style.cssText = `font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:${color||'var(--text)'};letter-spacing:-0.02em;`;
-    v.textContent = val;
-    const l = document.createElement('div'); l.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);';
-    l.textContent = label; p.appendChild(v); p.appendChild(l); return p;
+    const v = document.createElement('div'); v.style.cssText = `font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:${color||'var(--text)'};letter-spacing:-0.02em;`; v.textContent = val;
+    const l = document.createElement('div'); l.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'; l.textContent = label;
+    p.appendChild(v); p.appendChild(l); return p;
   };
-  // Totals from zdData
   let totalSolved=0, totalOpen=0, totalPending=0, totalHold=0, totalEmail=0, totalWeb=0;
   presentAgents.forEach(a => {
     const d = zdData[a.id] || {};
-    totalSolved  += d.solved||0; totalOpen += d.open||0;
-    totalPending += d.pending||0; totalHold += d.onhold||0;
+    totalSolved += d.solved||0; totalOpen += d.open||0; totalPending += d.pending||0; totalHold += d.onhold||0;
     if (d.email != null) totalEmail += d.email||0;
     if (d.web   != null) totalWeb   += d.web||0;
   });
   bar.appendChild(mkPill(totalSolved, 'Solved', 'var(--low-text)'));
-  if (totalEmail > 0 || totalWeb > 0) {
-    bar.appendChild(mkPill(totalEmail, 'Via email', 'var(--cal-text)'));
-    bar.appendChild(mkPill(totalWeb,   'Via web/phone', 'var(--med-text)'));
-  }
-  bar.appendChild(mkPill(totalOpen,    'Open now',    totalOpen>100?'var(--high-text)':totalOpen>60?'var(--med-text)':'var(--text)'));
+  bar.appendChild(mkPill(totalEmail, 'Via email', 'var(--cal-text)'));
+  bar.appendChild(mkPill(totalWeb, 'Via web/phone', 'var(--med-text)'));
+  bar.appendChild(mkPill(totalOpen, 'Open now', totalOpen>100?'var(--high-text)':totalOpen>60?'var(--med-text)':'var(--text)'));
   bar.appendChild(mkPill(totalPending, 'Pending now', 'var(--med-text)'));
-  bar.appendChild(mkPill(totalHold,    'On hold now', 'var(--text3)'));
-  // Unifon totals for period
+  bar.appendChild(mkPill(totalHold, 'On hold now', 'var(--text3)'));
   const unifonPeriod = loadUnifonData().filter(d=>d.date>=fromDate&&d.date<=toDate);
   if (unifonPeriod.length) {
     const uOff = unifonPeriod.reduce((s,d)=>s+(d.offered||0),0);
@@ -8384,102 +8376,77 @@ function zdRender(agents, fromDate, toDate) {
   }
   body.appendChild(bar);
 
-  // Heatmap
-  const hourlyData = loadUnifonHourly();
-  const hasHourly = Object.values(hourlyData).some(h => h.date >= fromDate && h.date <= toDate);
-  if (hasHourly) {
-    const heatmapCard = document.createElement('div');
-    heatmapCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:14px;';
-    renderUnifonHeatmap(heatmapCard, fromDate, toDate);
-    body.appendChild(heatmapCard);
-  }
-
-  // Insights (CSAT + MTTR)
+  // ── CSAT + MTTR insights ──────────────────────────────────────
   zdRenderInsights(body, fromDate, toDate);
 
-  // ── Leaderboard bar chart — sorted by solved desc ─────────────
-  const sortedAgents = [...presentAgents].sort((a, b) => {
-    const aSolved = zdData[a.id]?.solved || 0;
-    const bSolved = zdData[b.id]?.solved || 0;
-    return bSolved - aSolved;
-  });
-  const maxSolved = Math.max(...sortedAgents.map(a => zdData[a.id]?.solved || 0), 1);
-
-  // ── Coloured bar chart — one bar per agent, sorted by solved desc ──
-  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
-  const fromFmt = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-  const toFmt   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-
+  // ── Bar chart ─────────────────────────────────────────────────
   if (sortedAgents.some(a => (zdData[a.id]?.solved||0) > 0)) {
     const chartWrap = document.createElement('div'); chartWrap.className = 'zd-chart-wrap';
     const chartTitle = document.createElement('div'); chartTitle.className = 'zd-chart-title';
     chartTitle.textContent = 'Tickets solved per agent — ' + fromFmt + ' to ' + toFmt;
     chartWrap.appendChild(chartTitle);
     const chart = document.createElement('div'); chart.className = 'zd-chart';
-
     sortedAgents.forEach((agent, idx) => {
       const solved = zdData[agent.id]?.solved || 0;
-      const pct = solved / maxSolved;
       const color = barColors[idx % barColors.length];
-      const firstName = agent.name.split(' ')[0];
       const col = document.createElement('div'); col.className = 'zd-bar-col';
       const val = document.createElement('div'); val.className = 'zd-bar-val'; val.textContent = solved || '';
-      const bar = document.createElement('div'); bar.className = 'zd-bar';
-      bar.style.cssText = 'background:' + color + ';height:0;';
-      bar.title = agent.name + ': ' + solved + ' solved';
-      const lbl = document.createElement('div'); lbl.className = 'zd-bar-label'; lbl.textContent = firstName;
-      col.appendChild(val); col.appendChild(bar); col.appendChild(lbl);
+      const bar2 = document.createElement('div'); bar2.className = 'zd-bar';
+      bar2.style.cssText = 'background:' + color + ';height:0;';
+      bar2.title = agent.name + ': ' + solved + ' solved';
+      const lbl = document.createElement('div'); lbl.className = 'zd-bar-label'; lbl.textContent = agent.name.split(' ')[0];
+      col.appendChild(val); col.appendChild(bar2); col.appendChild(lbl);
       chart.appendChild(col);
-      setTimeout(() => { bar.style.height = Math.max(pct * 120, solved > 0 ? 3 : 0) + 'px'; }, 50 + idx * 30);
+      setTimeout(() => { bar2.style.height = Math.max((solved/maxSolved) * 120, solved > 0 ? 3 : 0) + 'px'; }, 50 + idx * 30);
     });
-
     chartWrap.appendChild(chart);
     body.appendChild(chartWrap);
   }
 
-  // Agent cards grid — sorted by solved desc
+  // ── Agent cards grid ──────────────────────────────────────────
   const grid = document.createElement('div'); grid.className = 'zd-agent-grid';
   sortedAgents.forEach((agent, idx) => {
     const d = zdData[agent.id] || {};
     const agentColor = barColors[idx % barColors.length];
     const card = document.createElement('div'); card.className = 'zd-agent-card';
     card.style.borderTop = '3px solid ' + agentColor;
+
     // Header
     const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
     const av = document.createElement('div'); av.className = 'zd-agent-avatar';
     const parts = agent.name.split(' ');
     av.textContent = (parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
-    av.style.background = agentColor;
-    av.style.color = '#0f0f11';
+    av.style.background = agentColor; av.style.color = '#0f0f11';
     const info = document.createElement('div');
     const nm = document.createElement('div'); nm.className = 'zd-agent-name'; nm.textContent = agent.name;
     const sub = document.createElement('div'); sub.className = 'zd-agent-sub';
     sub.textContent = (d.solved||0) + ' solved this period';
-    if (d.solved > 0) { const badge = document.createElement('span'); badge.className = 'zd-trend-badge'; badge.style.cssText='margin-left:6px;font-size:10px;color:var(--low-text);font-weight:700;'; badge.textContent='+'+d.solved; sub.appendChild(badge); }
+    if (d.solved > 0) { const badge = document.createElement('span'); badge.className='zd-trend-badge'; badge.style.cssText='margin-left:6px;font-size:10px;color:var(--low-text);font-weight:700;'; badge.textContent='+'+d.solved; sub.appendChild(badge); }
     info.appendChild(nm); info.appendChild(sub);
     hdr.appendChild(av); hdr.appendChild(info); card.appendChild(hdr);
-    // Body rows
+
+    // Body — ALWAYS same structure regardless of data availability
     const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
     const callStats = resolveAgentCallStats(agent.name, agentCallStats);
     const hasAnyCallData = Object.keys(agentCallStats).length > 0;
-    const rows = [
-      { dot:'var(--low-text)',  label:'Solved',       val:d.solved||0, bold:true },
-      ...(d.email!=null?[{dot:'var(--cal-text)',label:'Email',val:d.email||0}]:[]),
-      ...(d.web!=null?[{dot:'var(--med-text)',label:'Web / Phone',val:d.web||0}]:[]),
-      ...(d.email!=null&&d.web!=null&&(d.email||0)+(d.web||0)>0?[{dot:'var(--border2)',label:'Ratio (email/web)',val:(()=>{const t=(d.email||0)+(d.web||0);const ep=Math.round((d.email||0)/t*100);return ep+'% / '+(100-ep)+'%';})(),ratio:true}]:[]),
-      {dividerLabel:'Live queue'},
-      {dot:'var(--high-text)',label:'Open now',   val:d.open||0},
-      {dot:'var(--med-text)', label:'Pending now',val:d.pending||0},
-      {dot:'var(--text3)',    label:'On hold now', val:d.onhold||0},
-      {dividerLabel:'Calls'},
-      ...(callStats?[
-        {dot:'var(--low-text)',label:'Answered',val:callStats.answered},
-        ...(callStats.missed>0?[{dot:'var(--high-text)',label:'Missed',val:callStats.missed}]:[]),
-        ...(callStats.avgTalkSec?[{dot:'var(--cal-text)',label:'Avg talk',val:fmtDurShort(callStats.avgTalkSec)}]:[]),
-        ...(callStats.avgWaitSec?[{dot:'var(--text3)',   label:'Avg wait',val:fmtDurShort(callStats.avgWaitSec)}]:[]),
-      ]:[{dot:'var(--text3)',label:hasAnyCallData?'No match — add name mapping':'Import calls report',val:'—',ratio:true}]),
+
+    // Always show these rows — use 0 if data not yet loaded
+    const fixedRows = [
+      { dot:'var(--low-text)',  label:'Solved',       val: d.solved||0,  bold: true },
+      { dot:'var(--cal-text)',  label:'Email',         val: d.email!=null ? d.email : '—' },
+      { dot:'var(--med-text)',  label:'Web / Phone',   val: d.web!=null   ? d.web   : '—' },
+      { dividerLabel: 'Live queue' },
+      { dot:'var(--high-text)', label:'Open now',      val: d.open||0 },
+      { dot:'var(--med-text)',  label:'Pending now',   val: d.pending||0 },
+      { dot:'var(--text3)',     label:'On hold now',   val: d.onhold||0 },
+      { dividerLabel: 'Calls' },
+      { dot:'var(--low-text)',  label:'Answered',      val: callStats ? callStats.answered : '—' },
+      { dot:'var(--high-text)', label:'Missed',        val: callStats ? callStats.missed : '—' },
+      { dot:'var(--cal-text)',  label:'Avg talk',      val: callStats ? fmtDurShort(callStats.avgTalkSec) : '—' },
+      { dot:'var(--text3)',     label:'Avg wait',      val: callStats ? fmtDurShort(callStats.avgWaitSec) : '—' },
     ];
-    rows.forEach(r => {
+
+    fixedRows.forEach(r => {
       if (r.dividerLabel) {
         const div = document.createElement('div'); div.className = 'zd-stat-divider'; div.textContent = r.dividerLabel;
         bdy.appendChild(div); return;
@@ -8489,12 +8456,31 @@ function zdRender(agents, fromDate, toDate) {
       const lbl = document.createElement('div'); lbl.className = 'zd-stat-label'; lbl.textContent = r.label;
       const val = document.createElement('div'); val.className = 'zd-stat-val'+(r.bold?' highlight':'');
       val.textContent = r.val;
-      if (r.ratio) val.style.cssText = 'font-size:11px;color:var(--text3);';
+      if (r.val === '—') val.style.color = 'var(--text3)';
       row.appendChild(dot); row.appendChild(lbl); row.appendChild(val); bdy.appendChild(row);
     });
+
+    // No call data note
+    if (!callStats && hasAnyCallData) {
+      const note = document.createElement('div');
+      note.style.cssText = 'font-size:10px;color:var(--text3);padding:4px 0 0;font-style:italic;';
+      note.textContent = 'No match — add name mapping in Settings';
+      bdy.appendChild(note);
+    }
+
     card.appendChild(bdy); grid.appendChild(card);
   });
   body.appendChild(grid);
+
+  // ── Call volume heatmap — at bottom ──────────────────────────
+  const hourlyData = loadUnifonHourly();
+  const hasHourly = Object.values(hourlyData).some(h => h.date >= fromDate && h.date <= toDate);
+  if (hasHourly) {
+    const heatmapCard = document.createElement('div');
+    heatmapCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-top:14px;';
+    renderUnifonHeatmap(heatmapCard, fromDate, toDate);
+    body.appendChild(heatmapCard);
+  }
 }
 
 function zdShowSetup() {
