@@ -2274,6 +2274,94 @@
         "totalWaitSec": 6429,
         "missed": 0
       }
+    },
+    "2026-05-19": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 7,
+        "totalTalkSec": 2411,
+        "totalWaitSec": 148,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 24,
+        "totalTalkSec": 12080,
+        "totalWaitSec": 903,
+        "missed": 1
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 18,
+        "totalTalkSec": 6848,
+        "totalWaitSec": 3017,
+        "missed": 1
+      },
+      "Jonas Johannes": {
+        "answered": 19,
+        "totalTalkSec": 8008,
+        "totalWaitSec": 2017,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 10,
+        "totalTalkSec": 3350,
+        "totalWaitSec": 1478,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 2,
+        "totalTalkSec": 1136,
+        "totalWaitSec": 20,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 12,
+        "totalTalkSec": 5704,
+        "totalWaitSec": 1931,
+        "missed": 0
+      }
+    },
+    "2026-05-18": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 6,
+        "totalTalkSec": 1049,
+        "totalWaitSec": 141,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 25,
+        "totalTalkSec": 9221,
+        "totalWaitSec": 3141,
+        "missed": 2
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 28,
+        "totalTalkSec": 8010,
+        "totalWaitSec": 3682,
+        "missed": 4
+      },
+      "Mathias Ullenes": {
+        "answered": 1,
+        "totalTalkSec": 176,
+        "totalWaitSec": 16,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 27,
+        "totalTalkSec": 8602,
+        "totalWaitSec": 2707,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 2,
+        "totalTalkSec": 1571,
+        "totalWaitSec": 23,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 5,
+        "totalTalkSec": 1726,
+        "totalWaitSec": 72,
+        "missed": 1
+      }
     }
   },
   "wtp_ql_shared": [
