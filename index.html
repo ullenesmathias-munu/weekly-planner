@@ -1585,11 +1585,121 @@
   .settings-card:hover { border-color: var(--border2); }
   .settings-card-title { font-family: 'Fira Sans', sans-serif; font-size: 13px; font-weight: 900; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
   .settings-card-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
-  /* Settings layout */
-  .settings-layout { max-width: 560px; display: flex; flex-direction: column; gap: 28px; padding-top: 4px; }
+  /* ── Settings overhaul ────────────────────────────────────── */
+  .settings-layout {
+    display: flex; gap: 0; min-height: calc(100vh - 52px);
+    max-width: 100%; overflow: hidden;
+  }
+  .settings-nav {
+    width: 200px; flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    display: flex; flex-direction: column; gap: 2px;
+    position: sticky; top: 0; height: calc(100vh - 52px); overflow-y: auto;
+  }
+  .settings-nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; cursor: pointer;
+    font-size: 12px; font-weight: 600; color: var(--text3);
+    border-radius: 0; border: none; background: none;
+    text-align: left; width: 100%;
+    transition: color 0.15s, background 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .settings-nav-item:hover { color: var(--text); background: var(--surface2); }
+  .settings-nav-item.active { color: var(--cal-text); background: rgba(77,171,247,0.08); border-left-color: var(--cal-text); }
+  .settings-nav-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .settings-nav-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+
+  .settings-content {
+    flex: 1; overflow-y: auto; padding: 28px 32px;
+    display: flex; flex-direction: column; gap: 32px;
+  }
+  .settings-section { display: flex; flex-direction: column; gap: 12px; }
+  .settings-section-header {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .settings-section-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .settings-section-title {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 13px; font-weight: 900; color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .settings-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .settings-card:hover { border-color: var(--border2); }
+  .settings-card-inner { padding: 16px 18px; }
+  .settings-card-title {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .settings-card-desc {
+    font-size: 11px; color: var(--text3); line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .settings-card-desc:last-child { margin-bottom: 0; }
+  .settings-field-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .settings-field-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .settings-field-label {
+    font-size: 11px; font-weight: 600; color: var(--text2);
+    width: 120px; flex-shrink: 0;
+  }
+  .settings-field-value { flex: 1; }
+  .settings-input {
+    width: 100%; font-family: inherit; font-size: 12px;
+    background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 10px; outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+  }
+  .settings-input:focus { border-color: var(--cal-text); }
+  .settings-btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .settings-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 10px; letter-spacing: 0.04em;
+  }
+  .settings-badge.green { background: rgba(52,211,153,0.12); color: var(--low-text); }
+  .settings-badge.blue  { background: rgba(77,171,247,0.12); color: var(--cal-text); }
+  .settings-badge.amber { background: rgba(255,183,77,0.12);  color: #ffb74d; }
+  .settings-badge.red   { background: rgba(239,83,80,0.12);   color: var(--high-text); }
+  .settings-divider { height: 1px; background: var(--border); margin: 4px 0; }
+  .settings-upload-btn {
+    font-size: 12px; font-weight: 600;
+    background: var(--cal-text); color: #0f0f11;
+    border-radius: 8px; padding: 7px 14px;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: opacity 0.15s; border: none; font-family: inherit;
+  }
+  .settings-upload-btn:hover { opacity: 0.85; }
+  .settings-danger-zone {
+    border-color: rgba(239,83,80,0.25) !important;
+  }
+  .settings-danger-zone .settings-card-title { color: var(--high-text); }
+  @media (max-width: 900px) {
+    .settings-nav { display: none; }
+    .settings-content { padding: 16px; }
+  }
+  /* Legacy compat */
   .sgroup { display: flex; flex-direction: column; gap: 12px; }
   .sgroup-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text3); padding-bottom: 4px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
-  .settings-upload-btn { font-size: 12px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border-radius: var(--radius-md); padding: 6px 14px; cursor: pointer; display: inline-block; transition: opacity 0.15s; }
   .lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
   .lock-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 36px 40px; width: 90%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
   @media (max-width: 768px) {
@@ -2026,246 +2136,370 @@ window.tryUnlock = async function() {
 
 <!-- SETTINGS TAB -->
 <div id="tab-settings" class="tab-content">
-  <div class="settings-layout">
+<div class="settings-layout">
 
-    <!-- ── ACCOUNT ─────────────────────────────────────────────── -->
-    <div class="sgroup">
-      <div class="sgroup-label">Account</div>
+  <!-- ── LEFT NAV ─────────────────────────────────────────── -->
+  <nav class="settings-nav">
+    <button class="settings-nav-item active" onclick="settingsNav('account',this)">
+      <span class="settings-nav-icon">👤</span> Account
+    </button>
+    <button class="settings-nav-item" onclick="settingsNav('sync',this)">
+      <span class="settings-nav-icon">🔄</span> Sync
+    </button>
+    <button class="settings-nav-item" onclick="settingsNav('team',this)">
+      <span class="settings-nav-icon">👥</span> Team
+    </button>
+    <div class="settings-nav-divider"></div>
+    <button class="settings-nav-item" onclick="settingsNav('data',this)">
+      <span class="settings-nav-icon">📊</span> Data &amp; Import
+    </button>
+    <button class="settings-nav-item" onclick="settingsNav('integrations',this)">
+      <span class="settings-nav-icon">🔌</span> Integrations
+    </button>
+    <div class="settings-nav-divider"></div>
+    <button class="settings-nav-item" onclick="settingsNav('danger',this)">
+      <span class="settings-nav-icon">⚠</span> Danger zone
+    </button>
+  </nav>
 
-      <div class="settings-card" id="users-card">
-        <div class="settings-card-title">Profile &amp; password</div>
-        <div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:8px;">
-          <div style="font-size:12px;font-weight:600;color:var(--text);">Signed in as <span id="settings-username" style="color:var(--cal-text);"></span></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <input type="password" id="pw-current" placeholder="Current password" autocomplete="current-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
-            <input type="password" id="pw-new" placeholder="New password" autocomplete="new-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
-            <input type="password" id="pw-confirm" placeholder="Confirm new" autocomplete="new-password" style="font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-            <button class="btn-save" onclick="changePassword()" style="font-size:12px;white-space:nowrap;">Change password</button>
+  <!-- ── CONTENT ──────────────────────────────────────────── -->
+  <div class="settings-content">
+
+    <!-- ══ ACCOUNT ════════════════════════════════════════════ -->
+    <div class="settings-section" data-section="account">
+      <div class="settings-section-header">
+        <div class="settings-section-icon">👤</div>
+        <div class="settings-section-title">Account</div>
+      </div>
+
+      <!-- Profile & password -->
+      <div class="settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Profile &amp; password</div>
+          <div class="settings-card-desc">Change your display name or password.</div>
+          <div class="settings-field-row">
+            <div class="settings-field-label">Username</div>
+            <div class="settings-field-value">
+              <input id="settings-username" class="settings-input" type="text" placeholder="Display name" />
+            </div>
           </div>
-          <span id="pw-msg" style="font-size:11px;color:var(--text3);"></span>
+          <div class="settings-field-row">
+            <div class="settings-field-label">Current password</div>
+            <div class="settings-field-value">
+              <input id="pw-current" class="settings-input" type="password" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+          </div>
+          <div class="settings-field-row">
+            <div class="settings-field-label">New password</div>
+            <div class="settings-field-value">
+              <input id="pw-new" class="settings-input" type="password" placeholder="••••••••" autocomplete="new-password" />
+            </div>
+          </div>
+          <div class="settings-field-row">
+            <div class="settings-field-label">Confirm new</div>
+            <div class="settings-field-value">
+              <input id="pw-confirm" class="settings-input" type="password" placeholder="••••••••" autocomplete="new-password" />
+            </div>
+          </div>
+          <div class="settings-btn-row">
+            <button class="btn-save" onclick="changePassword()">Save password</button>
+            <span id="pw-msg" style="font-size:11px;color:var(--text3);align-self:center;"></span>
+          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">
+            <button class="btn-cancel" onclick="signOut()" style="font-size:11px;">Sign out</button>
+          </div>
         </div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:10px;">
-          <button class="btn-cancel" onclick="signOut()">Sign out</button>
-          <span style="font-size:11px;color:var(--text3);">Locks the planner and requires sign in again</span>
+      </div>
+
+      <!-- Sync passphrase (non-admin) -->
+      <div id="nonadmin-sync-card" class="settings-card" style="display:none;">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Sync passphrase</div>
+          <div class="settings-card-desc">Enter the passphrase set by your admin to sync your data across devices.</div>
+          <div style="display:flex;gap:8px;margin-top:2px;">
+            <input id="user-passphrase-input" class="settings-input" type="password" placeholder="Enter passphrase…" style="flex:1;" />
+            <button class="btn-save" style="white-space:nowrap;" onclick="unlockWithPassphrase()">Connect</button>
+          </div>
+          <div id="user-passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
         </div>
       </div>
     </div>
 
-    <!-- ── SYNC ──────────────────────────────────────────────────── -->
-    <div class="sgroup">
-      <div class="sgroup-label">Sync</div>
-
-      <!-- Non-admin: passphrase sync -->
-      <div class="settings-card" id="nonadmin-sync-card" style="display:none;">
-        <div class="settings-card-title">Sync passphrase</div>
-        <div class="settings-card-desc">Enter the sync passphrase to keep your notes and feedback in sync across devices.</div>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
-          <input type="password" id="user-passphrase-input" placeholder="Enter sync passphrase…"
-            style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-          <button class="btn-save" onclick="unlockWithPassphrase()" style="font-size:12px;white-space:nowrap;">Unlock sync</button>
-        </div>
-        <div id="user-passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+    <!-- ══ SYNC ════════════════════════════════════════════════ -->
+    <div class="settings-section" data-section="sync" style="display:none;">
+      <div class="settings-section-header">
+        <div class="settings-section-icon">🔄</div>
+        <div class="settings-section-title">Sync</div>
       </div>
 
-      <!-- Admin: GitHub sync token -->
+      <!-- GitHub sync -->
       <div class="settings-card" id="gh-sync-card">
-        <div class="settings-card-title">GitHub sync</div>
-        <div class="settings-card-desc">Syncs tasks, notes and schedule across all devices via your GitHub repo. Your token is saved to this browser only.</div>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
-          <input type="password" id="gh-token-input" placeholder="Paste GitHub token (ghp_...)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-          <button class="btn-save" onclick="saveGhToken()" style="font-size:12px;white-space:nowrap;">Connect</button>
-          <button class="btn-cancel" onclick="removeGhToken()" style="font-size:12px;">Disconnect</button>
-        </div>
-        <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;align-items:center;gap:12px;flex-wrap:wrap;">
-          <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
-          <button onclick="ghLoad()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Pull now</button>
-          <button onclick="ghSave()" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text2);padding:3px 8px;cursor:pointer;">Push now</button>
-        </div>
-        <!-- Sub-section: read-only token -->
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;">Read-only token <span style="font-weight:400;color:var(--text3);">— lets team members pull without write access</span></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <input type="password" id="gh-readonly-input" placeholder="Paste read-only GitHub token…"
-              style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-            <button class="btn-save" onclick="saveReadonlyToken()" style="font-size:12px;white-space:nowrap;">Save</button>
+        <div class="settings-card-inner">
+          <div class="settings-card-title">GitHub sync</div>
+          <div class="settings-card-desc">Syncs tasks, notes and schedule across all devices via your GitHub repo. Your token is saved to this browser only.</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:2px;">
+            <input id="gh-token-input" class="settings-input" type="password" placeholder="GitHub personal access token" style="flex:1;" autocomplete="off" />
+            <button class="btn-save" style="white-space:nowrap;" onclick="saveGhToken()">Connect</button>
+            <button class="btn-cancel" style="white-space:nowrap;" onclick="removeGhToken()">Disconnect</button>
+          </div>
+          <div id="gh-sync-status-wrap" style="display:none;margin-top:10px;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span id="sync-status-detail" style="font-size:11px;color:var(--text3);"></span>
+            <button class="btn-save" style="font-size:11px;padding:3px 10px;" onclick="ghLoad()">Pull now</button>
+            <button class="btn-save" style="font-size:11px;padding:3px 10px;" onclick="ghSave()">Push now</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+            <label style="font-size:11px;color:var(--text3);">Auto-sync every</label>
+            <select id="sync-interval-select" onchange="updateSyncInterval(this.value)" style="font-family:inherit;font-size:11px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:3px 6px;">
+              <option value="30">30 seconds</option>
+              <option value="60" selected>1 minute</option>
+              <option value="120">2 minutes</option>
+              <option value="300">5 minutes</option>
+            </select>
           </div>
         </div>
-        <!-- Sub-section: shared passphrase -->
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;">Shared sync passphrase <span style="font-weight:400;color:var(--text3);">— team members use this instead of the raw token</span></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;">
-            <input type="text" id="sync-passphrase-input" placeholder="Set passphrase"
-              style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;flex:1;min-width:180px;outline:none;">
-            <button class="btn-save" onclick="saveSyncPassphrase()" style="font-size:12px;white-space:nowrap;">Encrypt &amp; Save</button>
+      </div>
+
+      <!-- Readonly token -->
+      <div class="settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Read-only token</div>
+          <div class="settings-card-desc">For non-admin team members to sync shared data (schedule, announcements, quick links). Generate a token with read-only access to the repo.</div>
+          <div style="display:flex;gap:8px;margin-top:2px;">
+            <input id="gh-readonly-input" class="settings-input" type="password" placeholder="Read-only GitHub token" style="flex:1;" autocomplete="off" />
+            <button class="btn-save" style="white-space:nowrap;" onclick="saveReadonlyToken()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sync passphrase (admin) -->
+      <div class="settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Sync passphrase</div>
+          <div class="settings-card-desc">Encrypts the read-only token stored in GitHub. Share this passphrase with your team so they can sync shared data on their devices.</div>
+          <div style="display:flex;gap:8px;margin-top:2px;">
+            <input id="sync-passphrase-input" class="settings-input" type="password" placeholder="Set a passphrase…" style="flex:1;" />
+            <button class="btn-save" style="white-space:nowrap;" onclick="saveSyncPassphrase()">Save</button>
           </div>
           <div id="passphrase-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
         </div>
       </div>
     </div>
 
-    <!-- ── TEAM (admin only) ──────────────────────────────────────── -->
-    <div class="sgroup" id="sgroup-team" style="display:none;">
-      <div class="sgroup-label">Team</div>
+    <!-- ══ TEAM ════════════════════════════════════════════════ -->
+    <div class="settings-section" data-section="team" style="display:none;">
+      <div class="settings-section-header">
+        <div class="settings-section-icon">👥</div>
+        <div class="settings-section-title">Team</div>
+      </div>
 
       <!-- Users -->
-      <div class="settings-card">
-        <div class="settings-card-title">Users</div>
-        <div class="settings-card-desc">Manage who can access this planner and what they can see.</div>
-        <div id="user-list-wrap" style="display:none;margin-top:14px;">
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">All users</div>
-          <div id="user-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:8px;">Add user</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
-            <input type="text" id="new-username" placeholder="Username or email" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:120px;">
-            <input type="text" id="new-displayname" placeholder="Display name (e.g. Kate)" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-            <input type="password" id="new-password" placeholder="Password" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;flex:1;min-width:100px;">
-            <input type="text" id="new-schedulename" placeholder="Schedule name (e.g. Vetle)" list="schedule-names-list" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;width:140px;">
-            <datalist id="schedule-names-list"></datalist>
+      <div class="settings-card" id="users-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Users</div>
+          <div class="settings-card-desc">Manage who can log in. Admins can access all tabs including Reports.</div>
+          <div id="user-list-wrap">
+            <div id="user-list" style="margin-bottom:12px;display:flex;flex-direction:column;gap:4px;"></div>
           </div>
-          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
-              <input type="checkbox" id="new-isadmin" style="accent-color:var(--cal-text);"> Admin
-            </label>
-            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
-              <input type="checkbox" id="new-priv-zendesk" style="accent-color:var(--cal-text);"> Tickets (Zendesk)
-            </label>
-            <button class="btn-save" onclick="addUser()" style="font-size:12px;margin-left:auto;">Add user</button>
+          <div style="padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:10px;">Add user</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <input id="new-username"     class="settings-input" type="text"     placeholder="Name" />
+              <input id="new-displayname"  class="settings-input" type="text"     placeholder="Display name (optional)" />
+              <input id="new-password"     class="settings-input" type="password" placeholder="Password" />
+              <input id="new-schedulename" class="settings-input" type="text"     placeholder="Schedule name (if different)" />
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;">
+                <input id="new-isadmin" type="checkbox" /> Admin access
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;">
+                <input id="new-priv-zendesk" type="checkbox" /> Zendesk access
+              </label>
+            </div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Schedule names: <span id="schedule-names-list" style="color:var(--text2);"></span></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="btn-save" onclick="addUser()">Add user</button>
+              <span id="user-add-msg" style="font-size:11px;color:var(--text3);"></span>
+            </div>
           </div>
-          <span id="user-add-msg" style="font-size:11px;color:var(--text3);display:block;margin-top:4px;"></span>
         </div>
       </div>
 
       <!-- Announcements -->
-      <div class="settings-card" id="announcements-settings-card" style="display:none;">
-        <div class="settings-card-title">Team announcements</div>
-        <div class="settings-card-desc">Post updates visible to all team members. Each person sees a notification until they mark it read.</div>
-        <div id="announcements-settings-body" style="margin-top:12px;"></div>
+      <div class="settings-card" id="announcements-settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Team announcements</div>
+          <div class="settings-card-desc">Post announcements visible to all users on their dashboard.</div>
+          <div id="announcements-settings-body" style="margin-top:8px;"></div>
+        </div>
       </div>
 
       <!-- Quick links -->
-      <div class="settings-card" id="ql-settings-card" style="display:none;">
-        <div class="settings-card-title">Quick links</div>
-        <div class="settings-card-desc">Manage shared links visible to all users, and your personal links.</div>
-        <div id="ql-settings-body" style="margin-top:12px;"></div>
+      <div class="settings-card" id="ql-settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Quick links</div>
+          <div class="settings-card-desc">Manage shared links visible to all users, and your personal links.</div>
+          <div id="ql-settings-body" style="margin-top:8px;"></div>
+        </div>
       </div>
     </div>
 
-    <!-- ── DATA ──────────────────────────────────────────────────── -->
-    <div class="sgroup">
-      <div class="sgroup-label">Data</div>
+    <!-- ══ DATA & IMPORT ════════════════════════════════════════ -->
+    <div class="settings-section" data-section="data" style="display:none;">
+      <div class="settings-section-header">
+        <div class="settings-section-icon">📊</div>
+        <div class="settings-section-title">Data &amp; Import</div>
+      </div>
 
-      <!-- Unifon call data import -->
+      <!-- Unifon call data -->
       <div class="settings-card" id="unifon-settings-card" style="display:none;">
-        <div class="settings-card-title">Unifon call data</div>
-        <div class="settings-card-desc">Import directly from a Unifon report. Imported data overwrites manual entries for the same dates.</div>
-        <div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <label class="settings-upload-btn" for="unifon-import-input" style="cursor:pointer;">⬆ Import queue report (.xlsx / .csv)</label>
-            <input type="file" id="unifon-import-input" accept=".xlsx,.csv" style="display:none" onchange="handleUnifonImport(this.files[0])">
-            <span id="unifon-import-status" style="font-size:11px;color:var(--text3);"></span>
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Unifon call data</div>
+          <div class="settings-card-desc">Import directly from a Unifon report. Imported data overwrites manual entries for the same dates.</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;background:var(--surface2);border-radius:8px;padding:12px;">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <label class="settings-upload-btn" for="unifon-import-input">⬆ Queue report (.xlsx/.csv)</label>
+              <input type="file" id="unifon-import-input" accept=".xlsx,.csv" style="display:none" onchange="handleUnifonImport(this.files[0])">
+              <span id="unifon-import-status" style="font-size:11px;color:var(--text3);"></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <label class="settings-upload-btn" for="unifon-calls-input">⬆ Calls report (.xlsx/.csv)</label>
+              <input type="file" id="unifon-calls-input" accept=".xlsx,.csv" style="display:none" onchange="handleUnifonCallsImport(this.files[0])">
+              <span id="unifon-calls-status" style="font-size:11px;color:var(--text3);"></span>
+            </div>
+            <div style="font-size:10px;color:var(--text3);">Queue report = daily/hourly totals · Calls report = per-agent individual calls</div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <label class="settings-upload-btn" for="unifon-calls-input" style="cursor:pointer;">⬆ Import calls report (.xlsx / .csv)</label>
-            <input type="file" id="unifon-calls-input" accept=".xlsx,.csv" style="display:none" onchange="handleUnifonCallsImport(this.files[0])">
-            <span id="unifon-calls-status" style="font-size:11px;color:var(--text3);"></span>
-          </div>
-          <div style="font-size:10px;color:var(--text3);line-height:1.5;">Queue report = daily/hourly totals &nbsp;·&nbsp; Calls report = per-agent individual calls</div>
+          <div id="unifon-settings-body" style="margin-top:8px;"></div>
         </div>
-        <div id="unifon-settings-body" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- Outlook calendar -->
+      <div class="settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Outlook calendar import</div>
+          <div class="settings-card-desc">Import your calendar as an .ics file. Events appear as blue cards in your planner.</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;">
+            <label class="settings-upload-btn" for="ics-file-input">⬆ Choose .ics file</label>
+            <input type="file" id="ics-file-input" accept=".ics" style="display:none" onchange="handleIcsFile(this.files[0], true)">
+            <button class="btn-cancel" onclick="clearCal()" style="font-size:11px;">Clear calendar</button>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.5;">
+            <strong>Web:</strong> Settings → Calendar → Shared calendars → Export &nbsp;|&nbsp; <strong>Desktop:</strong> File → Open &amp; Export → Import/Export → Export to iCalendar
+          </div>
+        </div>
+      </div>
+
+      <!-- Team schedule -->
+      <div class="settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Team schedule upload</div>
+          <div class="settings-card-desc">Upload a new shift schedule Excel file. Must follow the same format as the original.</div>
+          <div style="margin-top:8px;">
+            <label class="settings-upload-btn" for="sched-xlsx-input">⬆ Choose .xlsx file</label>
+            <input type="file" id="sched-xlsx-input" accept=".xlsx" style="display:none" onchange="handleXlsxUpload(this.files[0])">
+          </div>
+        </div>
+      </div>
+
+      <!-- Backup & restore -->
+      <div class="settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Backup &amp; restore</div>
+          <div class="settings-card-desc">Export all your data as a JSON file. Restore it any time on any device.</div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+            <button class="btn-save" onclick="exportBackup()">⬇ Export backup</button>
+            <label class="settings-upload-btn" for="import-backup-input" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);">⬆ Restore from backup</label>
+            <input type="file" id="import-backup-input" accept=".json" style="display:none" onchange="importBackup(this.files[0])">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INTEGRATIONS ════════════════════════════════════════ -->
+    <div class="settings-section" data-section="integrations" style="display:none;">
+      <div class="settings-section-header">
+        <div class="settings-section-icon">🔌</div>
+        <div class="settings-section-title">Integrations</div>
       </div>
 
       <!-- Unifon API -->
-      <div class="settings-card">
-        <div class="settings-card-title">Unifon API</div>
-        <div class="settings-card-desc">Connect the Unifon API for live call data. Credentials stay on this device only — never synced.</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;">API Base URL</div>
-            <input type="text" id="unifon-api-base" placeholder="https://api.unifon.no/v1" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;width:100%;box-sizing:border-box;">
-          </div>
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;">API Key</div>
-            <div style="display:flex;gap:8px;">
-              <input type="password" id="unifon-api-key" placeholder="Paste API key…" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 10px;outline:none;flex:1;">
-              <button class="btn-save" onclick="saveUnifonApiKey()" style="font-size:12px;white-space:nowrap;">Save</button>
-              <button class="btn-cancel" onclick="clearUnifonApiKey()" style="font-size:12px;">Clear</button>
+      <div class="settings-card" id="unifon-api-card" style="display:none;">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Unifon API</div>
+          <div class="settings-card-desc">Connect the Unifon API for live call data. Credentials stay on this device only — never synced.</div>
+          <div class="settings-field-row">
+            <div class="settings-field-label">API base URL</div>
+            <div class="settings-field-value">
+              <input id="unifon-api-url" class="settings-input" type="text" placeholder="https://api.unifon.no/v1" />
             </div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
-            <button class="btn-nav" onclick="testUnifonApi()" style="font-size:11px;">Test connection</button>
-            <span id="unifon-api-status" style="font-size:11px;color:var(--text3);"></span>
+          <div class="settings-field-row">
+            <div class="settings-field-label">API key</div>
+            <div class="settings-field-value">
+              <input id="unifon-api-key" class="settings-input" type="password" placeholder="Paste API key…" />
+            </div>
           </div>
+          <div class="settings-btn-row">
+            <button class="btn-save" onclick="saveUnifonApiKey()">Save</button>
+            <button class="btn-cancel" onclick="clearUnifonApiKey()">Clear</button>
+            <button class="btn-save" onclick="testUnifonApi()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);">Test connection</button>
+          </div>
+          <div id="unifon-api-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
         </div>
       </div>
 
       <!-- Unifon name mapping -->
-      <div class="settings-card" id="unifon-mapping-card" style="display:none;">
-        <div class="settings-card-title">Unifon name mapping</div>
-        <div class="settings-card-desc">If an agent's name differs between Zendesk and Unifon, map them here. Zendesk name → Unifon name.</div>
-        <div id="unifon-mapping-body" style="margin-top:12px;"></div>
-      </div>
-      <div class="settings-card">
-        <div class="settings-card-title">Outlook calendar import</div>
-        <div class="settings-card-desc">Import your calendar as an .ics file. Events appear as blue cards in your planner.</div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <label class="settings-upload-btn" for="ics-input-settings">Choose .ics file</label>
-          <input type="file" id="ics-input-settings" accept=".ics" style="display:none" onchange="handleIcsFile(this.files[0], true)">
-          <span id="ics-status" style="font-size:12px;color:var(--text3);"></span>
-          <button class="btn-cancel" id="ics-clear-btn" onclick="clearCal()" style="display:none;margin-left:auto;">✕ Clear</button>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6;">
-          <strong style="color:var(--text2);">Export from Outlook:</strong> Web → Settings → Calendar → Shared calendars → Export &nbsp;|&nbsp; Desktop → File → Open &amp; Export → Import/Export → Export to iCalendar
+      <div class="settings-card" id="unifon-map-card" style="display:none;">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Unifon name mapping</div>
+          <div class="settings-card-desc">Map Unifon agent names to your team member names so call stats appear on the right agent cards.</div>
+          <div id="unifon-map-body" style="margin-top:8px;"></div>
         </div>
       </div>
 
-      <!-- Schedule upload (admin only) -->
-      <div class="settings-card" id="schedule-upload-card" style="display:none;">
-        <div class="settings-card-title">Team schedule upload</div>
-        <div class="settings-card-desc">Upload a new shift schedule Excel file. Must follow the same format as the original.</div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;">
-          <label class="settings-upload-btn" for="xlsx-input-settings">Choose .xlsx file</label>
-          <input type="file" id="xlsx-input-settings" accept=".xlsx" style="display:none" onchange="handleXlsxUpload(this.files[0])">
-          <span id="xlsx-status" style="font-size:12px;color:var(--text3);"></span>
-        </div>
-        <div id="xlsx-preview" style="margin-top:10px;font-size:11px;color:var(--text3);display:none;"></div>
-      </div>
-
-      <!-- Backup & Restore -->
-      <div class="settings-card">
-        <div class="settings-card-title">Backup &amp; restore</div>
-        <div class="settings-card-desc">Export all your data as a JSON file. Restore it any time on any device.</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-          <button class="btn-save" onclick="exportBackup()" style="font-size:12px;">⬇ Export backup</button>
-          <label class="btn-cancel" for="restore-input" style="cursor:pointer;display:inline-flex;align-items:center;">⬆ Restore from backup</label>
-          <input type="file" id="restore-input" accept=".json" style="display:none" onchange="importBackup(this.files[0])">
-        </div>
-        <div id="backup-msg" style="font-size:11px;color:var(--text3);margin-top:8px;"></div>
-      </div>
-
-      <!-- Clear tasks (destructive — at bottom, subtle) -->
-      <div class="settings-card" style="border-color:rgba(255,107,107,0.15);">
-        <div class="settings-card-title" style="color:var(--high-text);font-size:13px;">Clear all tasks</div>
-        <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
-        <button class="btn-cancel" style="margin-top:10px;color:#A32D2D;border-color:#f09595;" onclick="confirmDialog('Delete all tasks? This cannot be undone.', () => { tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }, 'Delete all')">Clear all tasks</button>
-        <span id="clear-tasks-msg" style="font-size:11px;color:var(--text3);margin-left:10px;"></span>
-      </div>
-    </div>
-
-    <!-- ── HISTORY (collapsed by default) ───────────────────────── -->
-    <div class="sgroup">
-      <div class="sgroup-label" style="cursor:pointer;user-select:none;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none';this.querySelector('.sgroup-toggle').textContent=this.nextElementSibling.style.display===''?'▾':'▸';">
-        Incomplete tasks <span class="sgroup-toggle" style="font-size:10px;color:var(--text3);margin-left:6px;font-weight:400;">▸</span>
-      </div>
-      <div style="display:none;">
-        <div class="settings-card" id="history-card">
-          <div class="settings-card-desc">Tasks from previous weeks that were not completed. Mark them done or reschedule to this week.</div>
-          <div id="history-list" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;"></div>
+      <!-- Zendesk (shown if configured) -->
+      <div class="settings-card" id="zd-settings-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Zendesk</div>
+          <div class="settings-card-desc">Configure your Zendesk API credentials for the Tickets tab.</div>
+          <div id="zd-setup-body" style="margin-top:8px;"></div>
         </div>
       </div>
     </div>
 
-  </div>
-  </div>
+    <!-- ══ DANGER ZONE ══════════════════════════════════════════ -->
+    <div class="settings-section" data-section="danger" style="display:none;">
+      <div class="settings-section-header">
+        <div class="settings-section-icon">⚠</div>
+        <div class="settings-section-title" style="color:var(--high-text);">Danger zone</div>
+      </div>
+
+      <div class="settings-card settings-danger-zone">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Clear all tasks</div>
+          <div class="settings-card-desc">Remove all tasks from your planner. This cannot be undone.</div>
+          <div class="settings-btn-row">
+            <button class="btn-cancel" style="color:var(--high-text);border-color:rgba(239,83,80,0.3);"
+              onclick="confirmDialog('Delete all tasks? This cannot be undone.', () => { tasks=[]; save(); renderPlanner(); document.getElementById('clear-tasks-msg').textContent='All tasks cleared.'; }, 'Delete all')">
+              Delete all tasks
+            </button>
+            <span id="clear-tasks-msg" style="font-size:11px;color:var(--text3);"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card settings-danger-zone">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Incomplete tasks</div>
+          <div class="settings-card-desc" id="carry-tasks-desc">Move unfinished tasks forward to this week.</div>
+          <div id="carry-tasks-body" style="margin-top:8px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /settings-content -->
+</div><!-- /settings-layout -->
+</div>
 </div>
 
 <script>
@@ -2336,34 +2570,7 @@ function switchTab(name, btn) {
     }
   }
 
-  if (name === 'settings') {
-    renderHistory();
-    renderUserList();
-    const sn = document.getElementById('settings-username'); if (sn && currentUser) sn.textContent = currentUser.name;
-    // Account section: show user list only for admin
-    const wrap = document.getElementById('user-list-wrap'); if (wrap) wrap.style.display = isAdmin() ? '' : 'none';
-    // Sync section: show correct card
-    const ghCard = document.getElementById('gh-sync-card'); if (ghCard) ghCard.style.display = isAdmin() ? '' : 'none';
-    const nonadminSyncCard = document.getElementById('nonadmin-sync-card'); if (nonadminSyncCard) nonadminSyncCard.style.display = (!isAdmin()) ? '' : 'none';
-    // Team section: show for admins only
-    const sgroupTeam = document.getElementById('sgroup-team'); if (sgroupTeam) sgroupTeam.style.display = isAdmin() ? '' : 'none';
-    const schedUploadCard = document.getElementById('schedule-upload-card'); if (schedUploadCard) schedUploadCard.style.display = isAdmin() ? '' : 'none';
-    // Render admin-only sub-cards
-    const qlCard = document.getElementById('ql-settings-card');
-    if (qlCard) {
-      qlCard.style.display = isAdmin() ? '' : 'none';
-      if (isAdmin()) { const body = document.getElementById('ql-settings-body'); if (body) { body.innerHTML = ''; renderQuickLinks(body, currentUser.name, true); } }
-    }
-    const annCard = document.getElementById('announcements-settings-card');
-    if (annCard) { annCard.style.display = isAdmin() ? '' : 'none'; if (isAdmin()) renderAnnouncementsSettings(); }
-    const unifonCard = document.getElementById('unifon-settings-card');
-    if (unifonCard) { unifonCard.style.display = isAdmin() ? '' : 'none'; if (isAdmin()) { const b = document.getElementById('unifon-settings-body'); if (b) renderUnifonSettings(b); } }
-    const mappingCard = document.getElementById('unifon-mapping-card');
-    if (mappingCard) { mappingCard.style.display = isAdmin() ? '' : 'none'; if (isAdmin()) renderUnifonMappingSettings(); }
-    // History card always visible
-    const histCard = document.getElementById('history-card'); if (histCard) histCard.style.display = '';
-    initUnifonApiSettings();
-  }
+  if (name === 'settings') { initSettingsTab(); }
   if (name === 'schedule') { renderSchedule(); }
   if (name === 'dashboard') { renderDashboard(); }
   if (name === 'calendar') { initCalTab(); }
@@ -2372,7 +2579,6 @@ function switchTab(name, btn) {
   if (reportsBtn) reportsBtn.style.display = (isAdmin() || hasPrivilege('manager_view')) ? '' : 'none';
   if (name === 'reports') renderReportsTab();
   else { zdStopAutoRefresh(); }
-  if (name === 'settings') { initReadonlyTokenField(); }
   if (name === 'feedback') { renderFeedbackTab(); }
   if (isMobile()) buildMobileNav();
 }
@@ -7951,6 +8157,111 @@ function loadHandoverNotes(username) {
 function saveHandoverNotes(username, notes) {
   localStorage.setItem('wtp_handover_' + normalizeKey(username), JSON.stringify(notes)); scheduleSyncSave();
 }
+function settingsNav(section, btn) {
+  // Update nav active state
+  document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Show/hide sections
+  document.querySelectorAll('.settings-section').forEach(s => {
+    s.style.display = s.dataset.section === section ? '' : 'none';
+  });
+  // Scroll content to top
+  const content = document.querySelector('.settings-content');
+  if (content) content.scrollTop = 0;
+}
+
+function initSettingsTab() {
+  // Profile
+  const unameEl = document.getElementById('settings-username');
+  if (unameEl && currentUser) unameEl.value = currentUser.displayName || currentUser.name || '';
+
+  // Schedule names list
+  const snl = document.getElementById('schedule-names-list');
+  if (snl) {
+    const names = [...new Set(SCHEDULE.flatMap(w=>w.people||[]).map(p=>p.name))].sort();
+    snl.textContent = names.join(', ') || 'Load schedule first';
+  }
+
+  const admin = isAdmin();
+
+  // Show/hide admin-only cards
+  ['users-card','unifon-settings-card','unifon-api-card','unifon-map-card',
+   'announcements-settings-card','ql-settings-card'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = admin ? '' : 'none';
+  });
+
+  // Non-admin sync card
+  const nonadminCard = document.getElementById('nonadmin-sync-card');
+  if (nonadminCard) nonadminCard.style.display = admin ? 'none' : '';
+
+  // Populate admin sections
+  if (admin) {
+    const ul = document.getElementById('user-list'); if (ul) renderUserList(ul);
+    const ann = document.getElementById('announcements-settings-body'); if (ann) renderAnnouncementsSettings();
+    const ql = document.getElementById('ql-settings-body'); if (ql) renderQuickLinks(ql, currentUser.name, true);
+    const unifonCard = document.getElementById('unifon-settings-card');
+    if (unifonCard) { const b = document.getElementById('unifon-settings-body'); if (b) renderUnifonSettings(b); }
+    const mapCard = document.getElementById('unifon-map-card');
+    if (mapCard) { const b = document.getElementById('unifon-map-body'); if (b) renderUnifonMappingSettings(b); }
+    // Unifon API url
+    const apiUrl = document.getElementById('unifon-api-url');
+    if (apiUrl) apiUrl.value = localStorage.getItem('wtp_unifon_api_url') || 'https://api.unifon.no/v1';
+    const apiKey = document.getElementById('unifon-api-key');
+    if (apiKey && localStorage.getItem('wtp_unifon_api_key')) apiKey.value = '••••••••••••••••';
+  }
+
+  // GH sync status
+  const syncWrap = document.getElementById('gh-sync-status-wrap');
+  if (syncWrap) syncWrap.style.display = ghToken ? 'flex' : 'none';
+  const ghInp = document.getElementById('gh-token-input');
+  if (ghInp && ghToken) ghInp.value = '••••••••••••••••••••••••••••••••••••••••';
+
+  // ZD setup in settings
+  const zdBody = document.getElementById('zd-setup-body');
+  if (zdBody) {
+    zdBody.innerHTML = '';
+    const c = getZdCreds();
+    if (c.subdomain && c.email) {
+      // Already configured — show status
+      const status = document.createElement('div'); status.style.cssText='display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
+      const badge = document.createElement('span'); badge.style.cssText='font-size:11px;font-weight:700;color:var(--low-text);background:rgba(52,211,153,0.12);padding:2px 8px;border-radius:10px;'; badge.textContent='✓ Connected';
+      const info = document.createElement('span'); info.style.cssText='font-size:11px;color:var(--text3);'; info.textContent=c.email+' @ '+c.subdomain;
+      const clearBtn = document.createElement('button'); clearBtn.className='btn-cancel'; clearBtn.style.cssText='font-size:11px;margin-left:auto;'; clearBtn.textContent='Disconnect';
+      clearBtn.onclick=()=>{['wtp_zd_subdomain','wtp_zd_email','wtp_zd_token'].forEach(k=>localStorage.removeItem(k));zdGroupId=null;zdAgents=[];initSettingsTab();};
+      status.appendChild(badge); status.appendChild(info); status.appendChild(clearBtn); zdBody.appendChild(status);
+    } else {
+      // Not configured — show fields
+      [['Subdomain','zd-s-subdomain','e.g. munu3272','text',c.subdomain],
+       ['Email','zd-s-email','admin@company.com','email',c.email],
+       ['API token','zd-s-token','Paste API token…','password','']
+      ].forEach(([lbl,id,ph,type,val])=>{
+        const row=document.createElement('div'); row.style.marginBottom='8px;';
+        const l=document.createElement('label'); l.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);display:block;margin-bottom:3px;'; l.textContent=lbl;
+        const inp=document.createElement('input'); inp.id=id; inp.type=type; inp.value=val||''; inp.placeholder=ph; inp.className='settings-input';
+        row.appendChild(l); row.appendChild(inp); zdBody.appendChild(row);
+      });
+      const btn=document.createElement('button'); btn.className='btn-save'; btn.style.marginTop='8px;'; btn.textContent='Save & connect';
+      btn.onclick=()=>{
+        const sd=document.getElementById('zd-s-subdomain')?.value.trim().replace('.zendesk.com','').replace('https://','');
+        const em=document.getElementById('zd-s-email')?.value.trim();
+        const tk=document.getElementById('zd-s-token')?.value.trim();
+        if(!sd||!em||!tk){showToast('Please fill in all fields');return;}
+        localStorage.setItem(ZD_SUBDOMAIN_KEY,sd); localStorage.setItem(ZD_EMAIL_KEY,em); localStorage.setItem(ZD_TOKEN_KEY,tk);
+        zdGroupId=null; showToast('✓ Zendesk connected'); initSettingsTab();
+      };
+      zdBody.appendChild(btn);
+    }
+  }
+
+  // Carry tasks - use existing renderHistory if it covers this
+  const carryBody = document.getElementById('carry-tasks-body');
+  if (carryBody) { carryBody.innerHTML = ''; renderHistory(carryBody); }
+
+  // Default to account section
+  settingsNav('account', document.querySelector('.settings-nav-item'));
+}
+
 function renderAnnouncementsSettings() {
   const body = document.getElementById('announcements-settings-body'); if (!body) return;
   body.innerHTML = '';
@@ -8889,6 +9200,22 @@ async function ghSave() {
   }
 }
 
+let ghSyncIntervalTimer = null;
+
+function updateSyncInterval(seconds) {
+  const secs = parseInt(seconds);
+  localStorage.setItem('wtp_sync_interval', seconds);
+  // Update selector to reflect current value
+  const sel = document.getElementById('sync-interval-select');
+  if (sel) sel.value = seconds;
+  // Cancel existing interval
+  if (ghSyncIntervalTimer) { clearInterval(ghSyncIntervalTimer); ghSyncIntervalTimer = null; }
+  if (secs > 0) {
+    ghSyncIntervalTimer = setInterval(ghLoad, secs * 1000);
+  }
+  showToast(secs > 0 ? `Auto-sync set to every ${secs >= 60 ? Math.round(secs/60)+'m' : secs+'s'}` : 'Auto-sync disabled');
+}
+
 function scheduleSyncSave() {
   if (!ghToken) return;
   clearTimeout(syncTimer);
@@ -9094,6 +9421,9 @@ function initGitHubSync() {
     const wrap = document.getElementById('gh-sync-status-wrap');
     if (inp) inp.value = '••••••••••••••••';
     if (wrap) wrap.style.display = 'flex';
+    // Restore saved interval in selector
+    const sel = document.getElementById('sync-interval-select');
+    if (sel) sel.value = localStorage.getItem('wtp_sync_interval') || '300';
   } else {
     setSyncStatus('Not connected', '');
   }
@@ -9123,8 +9453,12 @@ function saveGhToken() {
   setSyncStatus('⟳ Connecting…', 'var(--text3)');
   ghLoad().then(() => {
     renderDashboard(); renderPlanner(); renderSchedule();
-    setInterval(ghLoad, 60 * 1000);
-  }).catch(() => setInterval(ghLoad, 60 * 1000));
+    const _syncSecs = parseInt(localStorage.getItem('wtp_sync_interval') || '300');
+    if (_syncSecs > 0) ghSyncIntervalTimer = setInterval(ghLoad, _syncSecs * 1000);
+  }).catch(() => {
+    const _syncSecs2 = parseInt(localStorage.getItem('wtp_sync_interval') || '300');
+    if (_syncSecs2 > 0) ghSyncIntervalTimer = setInterval(ghLoad, _syncSecs2 * 1000);
+  });
 }
 
 function removeGhToken() {
