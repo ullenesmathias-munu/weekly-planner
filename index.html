@@ -5904,8 +5904,8 @@ function renderAdminDashboard(root, viewerMode=false) {
 
       const webEl = document.createElement('div');
       webEl.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
-      webEl.innerHTML = '<div style="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--med-text);" id="db-ch-web">…</div>'
-        +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;">Web / Phone</div>';
+      webEl.innerHTML = '<div style="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--med-text);" id="db-ch-phone">…</div>'
+        +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;">Phone</div>';
 
       chanRow.appendChild(emailEl); chanRow.appendChild(webEl);
 
@@ -5923,25 +5923,33 @@ function renderAdminDashboard(root, viewerMode=false) {
       chanDiv.appendChild(chanRow); chanDiv.appendChild(splitBar);
       container.appendChild(chanDiv);
 
-      // Fetch email & total solved, derive web
-      Promise.all([
-        zdCount(`type:ticket channel:email status>=solved solved>=${from} solved<=${to}`).catch(()=>null),
-        zdCount(`type:ticket status>=solved solved>=${from} solved<=${to}`).catch(()=>null),
-      ]).then(([emailCount, totalCount])=>{
-        const eEl = document.getElementById('db-ch-email');
-        const wEl = document.getElementById('db-ch-web');
-        const bEl = document.getElementById('db-ch-bar-email');
-        if(eEl && emailCount != null && totalCount != null){
-          const webCount = Math.max(0, totalCount - emailCount);
-          eEl.textContent = emailCount;
-          if(wEl) wEl.textContent = webCount;
-          const tot = emailCount + webCount;
+      // Use zdData cache (populated by zdGetStats with real ticket objects — not count queries)
+      // Only available after Tickets tab has been loaded; show from cache or defer
+      const eEl = document.getElementById('db-ch-email');
+      const wEl = document.getElementById('db-ch-phone');
+      const bEl = document.getElementById('db-ch-bar-email');
+      function applyChannelFromCache() {
+        if (!zdAgents || !zdAgents.length) {
+          if(eEl) eEl.textContent = '—';
+          if(wEl) wEl.textContent = '—';
+          return;
+        }
+        let emailCount = 0, phoneCount = 0, hasData = false;
+        zdAgents.forEach(function(a) {
+          const d = zdData[a.id] || {};
+          if (d.email != null) { emailCount += d.email; phoneCount += d.phone||0; hasData = true; }
+        });
+        if (hasData) {
+          if(eEl) eEl.textContent = emailCount;
+          if(wEl) wEl.textContent = phoneCount;
+          const tot = emailCount + phoneCount;
           if(bEl && tot > 0) bEl.style.width = Math.round(emailCount/tot*100)+'%';
         } else {
           if(eEl) eEl.textContent = '—';
           if(wEl) wEl.textContent = '—';
         }
-      });
+      }
+      applyChannelFromCache();
 
       // ── Queue concentration (who's holding most open tickets) ──
       if(zdAgents && zdAgents.length){
@@ -7314,11 +7322,11 @@ function renderPrepBrief(personName, container) {
         else if (pd.solved < teamAvg * 0.7) concerns.push('Tickets solved ('+pd.solved+') — below team avg of '+teamAvg);
       }
       // Channel mix highlight
-      if (pd.email != null && pd.web != null && (pd.email+pd.web) > 0) {
-        const chanTotal = pd.email + pd.web;
+      if (pd.email != null && pd.phone != null && (pd.email+pd.phone) > 0) {
+        const chanTotal = pd.email + pd.phone;
         const emailShare = Math.round(pd.email/chanTotal*100);
         if (emailShare >= 70) highlights.push('Strong email handler — '+emailShare+'% of tickets via email');
-        else if (emailShare <= 20) highlights.push('Web/phone specialist — '+(100-emailShare)+'% via web/phone');
+        else if (emailShare <= 20) highlights.push('Phone specialist — '+(100-emailShare)+'% via phone');
       }
       // Open queue concern
       const openNow = (pd.open||0) + (pd.pending||0);
@@ -7863,13 +7871,13 @@ async function generateReport(fromDate, toDate, container) {
       resTimes.forEach(m=>{ if(m<60)mttrBuckets.lt1h++;else if(m<240)mttrBuckets.h1_4++;else if(m<1440)mttrBuckets.h4_24++;else mttrBuckets.gt24++; });
 
       // Per-agent ZD
-      const agentSolved={}, agentCsat={}, agentEmail={}, agentWeb={};
+      const agentSolved={}, agentCsat={}, agentEmail={}, agentPhone={};
       solvedTickets.forEach(t=>{
         const a=zdAgents.find(ag=>ag.id===t.assignee_id); if(!a)return;
         const n=a.name;
         agentSolved[n]=(agentSolved[n]||0)+1;
         if(t.channel==='email')agentEmail[n]=(agentEmail[n]||0)+1;
-        else agentWeb[n]=(agentWeb[n]||0)+1;
+        else agentPhone[n]=(agentPhone[n]||0)+1;
       });
       csatRatings.forEach(r=>{
         const a=zdAgents.find(ag=>ag.id===r.assignee_id); if(!a)return;
@@ -7890,9 +7898,9 @@ async function generateReport(fromDate, toDate, container) {
 
       // Channel totals
       const emailTotal=solvedTickets.filter(t=>t.channel==='email').length;
-      const webTotal=solvedTickets.length-emailTotal;
+      const phoneTotal=solvedTickets.length-emailTotal;
 
-      zd = { totalSolved, openNow, csatGood, csatBad, csatTotal, csatPct, csatPending, mttrMean, mttrMedian, mttrBuckets, agentSolved, agentCsat, agentEmail, agentWeb, solvedByDay, solvedByWeek, solvedTickets, emailTotal, webTotal, daysInPeriod, dailyAvg:Math.round(totalSolved/daysInPeriod) };
+      zd = { totalSolved, openNow, csatGood, csatBad, csatTotal, csatPct, csatPending, mttrMean, mttrMedian, mttrBuckets, agentSolved, agentCsat, agentEmail, agentPhone, solvedByDay, solvedByWeek, solvedTickets, emailTotal, phoneTotal, daysInPeriod, dailyAvg:Math.round(totalSolved/daysInPeriod) };
     } catch(e) { zd = {error:e.message}; }
   }
 
@@ -8049,10 +8057,10 @@ async function generateReport(fromDate, toDate, container) {
     const s2b=mk('div','report-2col');s2b.style.marginTop='16px';
     const chanDiv=mk('div');
     chanDiv.appendChild(mk('div','report-sub-title','Channel split'));
-    const chanTotal=zd.emailTotal+zd.webTotal;
+    const chanTotal=zd.emailTotal+zd.phoneTotal;
     chanDiv.appendChild(mkTable(['Channel','Tickets','%'],[
       ['Email',zd.emailTotal,chanTotal>0?Math.round(zd.emailTotal/chanTotal*100)+'%':'—'],
-      ['Web / Phone',zd.webTotal,chanTotal>0?Math.round(zd.webTotal/chanTotal*100)+'%':'—'],
+      ['Phone',zd.phoneTotal,chanTotal>0?Math.round(zd.phoneTotal/chanTotal*100)+'%':'—'],
       [{text:'Total',bold:true},{text:String(chanTotal),bold:true},''],
     ],['l','r','r']));
     const csatDiv=mk('div');
@@ -9071,12 +9079,12 @@ function renderWeeklyBriefingData(container) {
     const zdGrid = document.createElement('div');
     zdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;';
 
-    let totalSolved=0, totalEmail=0, totalWeb=0, openPending=0, slaBreaches=0;
+    let totalSolved=0, totalEmail=0, totalPhone=0, openPending=0, slaBreaches=0;
     zdAgents.forEach(function(a) {
       const d = zdData[a.id]||{};
       totalSolved  += d.solved||0;
       totalEmail   += d.email!=null ? d.email : 0;
-      totalWeb     += d.web!=null   ? d.web   : 0;
+      totalPhone   += d.phone!=null ? d.phone : 0;
       openPending  += (d.open||0)+(d.pending||0);
       slaBreaches  += d.breached||0;
     });
@@ -9087,20 +9095,20 @@ function renderWeeklyBriefingData(container) {
     // Email / web KPI cards with channel split bar
     const emailCard = document.createElement('div');
     emailCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    const chanTotal = totalEmail + totalWeb;
+    const chanTotal = totalEmail + totalPhone;
     const emailPct = chanTotal > 0 ? Math.round(totalEmail/chanTotal*100) : 0;
     const webPct   = chanTotal > 0 ? 100 - emailPct : 0;
-    emailCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Email / Web (phone)</div>'
+    emailCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Email / Phone</div>'
       +'<div style="display:flex;align-items:baseline;gap:6px;">'
       +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
       +'<span style="font-size:12px;color:var(--text3);">/</span>'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--med-text);">'+totalWeb+'</span>'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--med-text);">'+totalPhone+'</span>'
       +'</div>'
       +'<div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;margin-top:6px;">'
       +'<div style="width:'+emailPct+'%;background:var(--cal-text);"></div>'
       +'<div style="flex:1;background:var(--med-text);opacity:0.5;"></div>'
       +'</div>'
-      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+emailPct+'% email · '+webPct+'% web/phone</div>';
+      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+emailPct+'% email · '+webPct+'% phone</div>';
     zdGrid.appendChild(emailCard);
 
     zdGrid.appendChild(kpiCard('Open / pending', openPending, {txt:'live',color:'var(--text3)',icon:''}));
@@ -9121,7 +9129,7 @@ function renderWeeklyBriefingData(container) {
     // Header row
     const hdrRow = document.createElement('div');
     hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
-    ['Agent','','Solved','Email','Web','Open'].forEach(function(h,i) {
+    ['Agent','','Solved','Email','Phone','Open'].forEach(function(h,i) {
       const c = document.createElement('div');
       c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
       c.textContent = h;
@@ -9166,7 +9174,7 @@ function renderWeeklyBriefingData(container) {
       row.appendChild(barWrap);
       row.appendChild(numCell(d.solved||0));
       row.appendChild(numCell(d.email!=null?d.email:'—', 'var(--cal-text)'));
-      row.appendChild(numCell(d.web!=null?d.web:'—', 'var(--med-text)'));
+      row.appendChild(numCell(d.phone!=null?d.phone:'—', 'var(--med-text)'));
       row.appendChild(numCell(openNow||'—', openColor));
       tbl.appendChild(row);
     });
@@ -9175,7 +9183,119 @@ function renderWeeklyBriefingData(container) {
     wrap.appendChild(zdSec);
   }
 
-  // ── SECTION 4: Alerts ─────────────────────────────────────────
+  // ── SECTION 4: Calls vs Phone tickets ─────────────────────────
+  const callStats = getAgentCallStats(thisMonday, today);
+  const hasCallData = Object.keys(callStats).length > 0;
+  const hasPhoneTickets = zdAgents && zdAgents.length && zdAgents.some(function(a){ return zdData[a.id]&&zdData[a.id].phone>0; });
+
+  if (hasCallData || hasPhoneTickets) {
+    const cvpSec = document.createElement('div');
+    cvpSec.appendChild(sectionTitle('Calls answered vs phone tickets'));
+
+    const cvpCard = document.createElement('div');
+    cvpCard.style.cssText = 'background:var(--surface2);border-radius:10px;overflow:hidden;';
+
+    // Header
+    const cvpHdr = document.createElement('div');
+    cvpHdr.style.cssText = 'display:grid;grid-template-columns:80px 52px 52px 60px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
+    ['Agent','Calls','Tickets','Ratio'].forEach(function(h, i) {
+      const c = document.createElement('div');
+      c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
+      c.textContent = h;
+      cvpHdr.appendChild(c);
+    });
+    cvpCard.appendChild(cvpHdr);
+
+    // Per-agent rows — only agents with at least some data
+    let cvpRows = 0;
+    MY_TEAM.forEach(function(name, idx) {
+      // Calls answered from Unifon
+      const cs = resolveAgentCallStats(name, callStats);
+      const callsAnswered = cs ? cs.answered : 0;
+
+      // Phone tickets from ZD cache
+      const zdAgent = zdAgents && zdAgents.find(function(a) {
+        return a.name.toLowerCase() === name.toLowerCase() ||
+               a.name.split(' ')[0].toLowerCase() === name.split(' ')[0].toLowerCase();
+      });
+      const phoneTickets = zdAgent && zdData[zdAgent.id] ? (zdData[zdAgent.id].phone||0) : 0;
+
+      if (!callsAnswered && !phoneTickets) return;
+      cvpRows++;
+
+      const row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:80px 52px 52px 60px;gap:4px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);';
+
+      const nameEl = document.createElement('div');
+      nameEl.style.cssText = 'font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      nameEl.textContent = name.split(' ')[0];
+
+      function numCell(val, color) {
+        const c = document.createElement('div');
+        c.style.cssText = 'font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
+        c.textContent = val != null ? val : '—';
+        return c;
+      }
+
+      // Ratio: calls per phone ticket — insight into call deflection
+      let ratioEl;
+      if (callsAnswered > 0 && phoneTickets > 0) {
+        const ratio = (callsAnswered / phoneTickets).toFixed(1);
+        // High ratio = many calls per ticket (low deflection), low = efficient ticketing
+        const ratioColor = +ratio > 5 ? 'var(--high-text)' : +ratio > 2 ? '#ffb74d' : 'var(--low-text)';
+        ratioEl = numCell(ratio+'×', ratioColor);
+        ratioEl.title = ratio+' calls answered per phone ticket solved';
+      } else if (callsAnswered > 0 && phoneTickets === 0) {
+        ratioEl = numCell('no tix', 'var(--text3)');
+      } else {
+        ratioEl = numCell('—', 'var(--text3)');
+      }
+
+      row.appendChild(nameEl);
+      row.appendChild(numCell(callsAnswered||'—', 'var(--cal-text)'));
+      row.appendChild(numCell(phoneTickets||'—', 'var(--med-text)'));
+      row.appendChild(ratioEl);
+      cvpCard.appendChild(row);
+    });
+
+    // Remove border from last row
+    if (cvpCard.lastChild && cvpCard.lastChild !== cvpHdr) {
+      cvpCard.lastChild.style.borderBottom = 'none';
+    }
+
+    // Team totals footer
+    if (cvpRows > 1) {
+      const totalCalls = MY_TEAM.reduce(function(s, name) {
+        const cs = resolveAgentCallStats(name, callStats);
+        return s + (cs ? cs.answered : 0);
+      }, 0);
+      const totalPhoneTix = zdAgents ? zdAgents.reduce(function(s,a){ return s+(zdData[a.id]&&zdData[a.id].phone||0); }, 0) : 0;
+      const footer = document.createElement('div');
+      footer.style.cssText = 'display:grid;grid-template-columns:80px 52px 52px 60px;gap:4px;align-items:center;padding:6px 12px;border-top:1px solid var(--border);background:var(--surface);';
+      const totLabel = document.createElement('div');
+      totLabel.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);';
+      totLabel.textContent = 'Total';
+      function totCell(val, color) {
+        const c = document.createElement('div');
+        c.style.cssText = 'font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
+        c.textContent = val || '—';
+        return c;
+      }
+      const totRatio = totalCalls > 0 && totalPhoneTix > 0 ? (totalCalls/totalPhoneTix).toFixed(1)+'×' : '—';
+      footer.appendChild(totLabel);
+      footer.appendChild(totCell(totalCalls||'—', 'var(--cal-text)'));
+      footer.appendChild(totCell(totalPhoneTix||'—', 'var(--med-text)'));
+      footer.appendChild(totCell(totRatio, 'var(--text2)'));
+      cvpCard.appendChild(footer);
+    }
+
+    if (cvpRows > 0) {
+      cvpSec.appendChild(cvpCard);
+      wrap.appendChild(cvpSec);
+    }
+  }
+
+  // ── SECTION 5: Alerts ─────────────────────────────────────────
   const alertsSec = document.createElement('div');
   alertsSec.appendChild(sectionTitle('Attention needed'));
   const alertsWrap = document.createElement('div');
@@ -9631,23 +9751,32 @@ async function zdGetAgents(groupId) {
 
 async function zdGetStats(agentId, fromDate, toDate) {
   try {
-    // Search without group filter — we want all tickets this agent solved
-    const [solved, open, pending, hold] = await Promise.all([
-      zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>0),
+    const [open, pending, hold] = await Promise.all([
       zdCount(`type:ticket assignee:${agentId} status:open`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:pending`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:hold`).catch(()=>0),
     ]);
-    const [email, total2] = await Promise.all([
-      // Email channel (direct email tickets)
-      zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate} channel:email`).catch(()=>null),
-      // Total solved again (used to derive non-email count)
-      zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>null),
-    ]);
-    // web = all non-email channels (web form, phone, chat, API)
-    const web = (email != null && total2 != null) ? Math.max(0, total2 - email) : null;
-    return { solved, open, pending, onhold:hold, email, web };
-  } catch { return { solved:0, open:0, pending:0, onhold:0, email:null, web:null }; }
+    // Fetch actual ticket objects — channel:email is not a valid ZD search filter,
+    // must read t.channel from ticket objects directly
+    let email = 0, phone = 0, solved = 0;
+    try {
+      let url = `/search.json?query=${encodeURIComponent(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`;
+      for (let p = 0; p < 10 && url; p++) {
+        const r = await zdFetch(url);
+        const tickets = r.results || [];
+        tickets.forEach(t => {
+          solved++;
+          if (t.channel === 'email') email++;
+          else phone++;
+        });
+        url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+      }
+    } catch(e) {
+      solved = await zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>0);
+      email = null; phone = null;
+    }
+    return { solved, open, pending, onhold:hold, email, phone };
+  } catch { return { solved:0, open:0, pending:0, onhold:0, email:null, phone:null }; }
 }
 
 function zdGetAbsentNames(fromDate, toDate) {
@@ -9770,16 +9899,16 @@ function zdRender(agents, fromDate, toDate) {
     const l = document.createElement('div'); l.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'; l.textContent = label;
     p.appendChild(v); p.appendChild(l); return p;
   };
-  let totalSolved=0, totalOpen=0, totalPending=0, totalHold=0, totalEmail=0, totalWeb=0;
+  let totalSolved=0, totalOpen=0, totalPending=0, totalHold=0, totalEmail=0, totalPhone=0;
   presentAgents.forEach(a => {
     const d = zdData[a.id] || {};
     totalSolved += d.solved||0; totalOpen += d.open||0; totalPending += d.pending||0; totalHold += d.onhold||0;
     if (d.email != null) totalEmail += d.email||0;
-    if (d.web   != null) totalWeb   += d.web||0;
+    if (d.phone != null) totalPhone += d.phone||0;
   });
   bar.appendChild(mkPill(totalSolved, 'Solved', 'var(--low-text)'));
   bar.appendChild(mkPill(totalEmail, 'Via email', 'var(--cal-text)'));
-  bar.appendChild(mkPill(totalWeb, 'Other ch.', 'var(--med-text)'));
+  bar.appendChild(mkPill(totalPhone, 'Phone', 'var(--med-text)'));
   bar.appendChild(mkPill(totalOpen, 'Open now', totalOpen>100?'var(--high-text)':totalOpen>60?'var(--med-text)':'var(--text)'));
   bar.appendChild(mkPill(totalPending, 'Pending now', 'var(--med-text)'));
   bar.appendChild(mkPill(totalHold, 'On hold now', 'var(--text3)'));
@@ -9853,7 +9982,7 @@ function zdRender(agents, fromDate, toDate) {
     const fixedRows = [
       { dot:'var(--low-text)',  label:'Solved',       val: d.solved||0,  bold: true },
       { dot:'var(--cal-text)',  label:'Email',         val: d.email!=null ? d.email : '—' },
-      { dot:'var(--med-text)',  label:'Other channels', val: d.web!=null   ? d.web   : '—' },
+      { dot:'var(--med-text)',  label:'Phone', val: d.phone!=null ? d.phone : '—' },
       { dividerLabel: 'Live queue' },
       { dot:'var(--high-text)', label:'Open now',      val: d.open||0 },
       { dot:'var(--med-text)',  label:'Pending now',   val: d.pending||0 },
