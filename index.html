@@ -5885,6 +5885,121 @@ function renderAdminDashboard(root, viewerMode=false) {
       zdCount('type:ticket status:pending').then(v=>{const el=document.getElementById('db-q-pending');if(el)el.textContent=v;}).catch(()=>{});
       zdCount('type:ticket status:hold').then(v=>{const el=document.getElementById('db-q-hold');if(el)el.textContent=v;}).catch(()=>{});
       zdCount(`type:ticket status>=solved solved>=${from} solved<=${to}`).then(v=>{const el=document.getElementById('db-q-solved');if(el){el.textContent=v;el.style.color='var(--low-text)';}}).catch(()=>{});
+
+      // ── Channel split (Email vs Web/Phone) ──────────────────
+      const chanDiv = document.createElement('div');
+      chanDiv.style.cssText = 'margin-top:10px;border-top:1px solid var(--border);padding-top:10px;';
+      const chanLbl = document.createElement('div');
+      chanLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';
+      chanLbl.textContent = 'Solved by channel';
+      chanDiv.appendChild(chanLbl);
+
+      const chanRow = document.createElement('div');
+      chanRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;';
+
+      const emailEl = document.createElement('div');
+      emailEl.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
+      emailEl.innerHTML = '<div style="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--cal-text);" id="db-ch-email">…</div>'
+        +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;">Email</div>';
+
+      const webEl = document.createElement('div');
+      webEl.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
+      webEl.innerHTML = '<div style="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--med-text);" id="db-ch-web">…</div>'
+        +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;">Web / Phone</div>';
+
+      chanRow.appendChild(emailEl); chanRow.appendChild(webEl);
+
+      // Split bar
+      const splitBar = document.createElement('div');
+      splitBar.id = 'db-ch-bar';
+      splitBar.style.cssText = 'display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden;margin-top:8px;';
+      const splitBarEmail = document.createElement('div');
+      splitBarEmail.id = 'db-ch-bar-email';
+      splitBarEmail.style.cssText = 'background:var(--cal-text);width:50%;transition:width 0.4s;';
+      const splitBarWeb = document.createElement('div');
+      splitBarWeb.style.cssText = 'flex:1;background:var(--med-text);opacity:0.45;';
+      splitBar.appendChild(splitBarEmail); splitBar.appendChild(splitBarWeb);
+
+      chanDiv.appendChild(chanRow); chanDiv.appendChild(splitBar);
+      container.appendChild(chanDiv);
+
+      // Fetch email & total solved, derive web
+      Promise.all([
+        zdCount(`type:ticket channel:email status>=solved solved>=${from} solved<=${to}`).catch(()=>null),
+        zdCount(`type:ticket status>=solved solved>=${from} solved<=${to}`).catch(()=>null),
+      ]).then(([emailCount, totalCount])=>{
+        const eEl = document.getElementById('db-ch-email');
+        const wEl = document.getElementById('db-ch-web');
+        const bEl = document.getElementById('db-ch-bar-email');
+        if(eEl && emailCount != null && totalCount != null){
+          const webCount = Math.max(0, totalCount - emailCount);
+          eEl.textContent = emailCount;
+          if(wEl) wEl.textContent = webCount;
+          const tot = emailCount + webCount;
+          if(bEl && tot > 0) bEl.style.width = Math.round(emailCount/tot*100)+'%';
+        } else {
+          if(eEl) eEl.textContent = '—';
+          if(wEl) wEl.textContent = '—';
+        }
+      });
+
+      // ── Queue concentration (who's holding most open tickets) ──
+      if(zdAgents && zdAgents.length){
+        const qcDiv = document.createElement('div');
+        qcDiv.style.cssText = 'margin-top:10px;border-top:1px solid var(--border);padding-top:10px;';
+        const qcLbl = document.createElement('div');
+        qcLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';
+        qcLbl.textContent = 'Open queue';
+        qcDiv.appendChild(qcLbl);
+
+        // Collect open+pending per agent from live zdData cache
+        const agentQueues = zdAgents
+          .map(a => {
+            const d = zdData[a.id] || {};
+            const open = (d.open||0) + (d.pending||0);
+            const name = MY_TEAM.find(n =>
+              n.toLowerCase() === a.name.toLowerCase() ||
+              n.split(' ')[0].toLowerCase() === a.name.split(' ')[0].toLowerCase()
+            ) || a.name.split(' ')[0];
+            return { name, open };
+          })
+          .filter(a => a.open > 0)
+          .sort((a,b) => b.open - a.open)
+          .slice(0, 6);
+
+        if(agentQueues.length){
+          const maxOpen = agentQueues[0].open || 1;
+          agentQueues.forEach(a => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:3px 0;';
+
+            const nameEl = document.createElement('div');
+            nameEl.style.cssText = 'font-size:11px;color:var(--text2);width:68px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+            nameEl.textContent = a.name.split(' ')[0];
+
+            const barWrap = document.createElement('div');
+            barWrap.style.cssText = 'flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;';
+            const barFill = document.createElement('div');
+            const pct = Math.round(a.open/maxOpen*100);
+            const fillColor = a.open > 8 ? 'var(--high-text)' : a.open > 4 ? '#ffb74d' : 'var(--low-text)';
+            barFill.style.cssText = 'height:100%;border-radius:2px;background:'+fillColor+';width:'+pct+'%;';
+            barWrap.appendChild(barFill);
+
+            const countEl = document.createElement('div');
+            countEl.style.cssText = 'font-size:11px;font-weight:700;color:'+(a.open>8?'var(--high-text)':a.open>4?'#ffb74d':'var(--text2)')+';width:16px;text-align:right;flex-shrink:0;';
+            countEl.textContent = a.open;
+
+            row.appendChild(nameEl); row.appendChild(barWrap); row.appendChild(countEl);
+            qcDiv.appendChild(row);
+          });
+        } else {
+          const e = document.createElement('div');
+          e.style.cssText = 'font-size:11px;color:var(--low-text);';
+          e.textContent = '✓ No open queues';
+          qcDiv.appendChild(e);
+        }
+        container.appendChild(qcDiv);
+      }
     } else {
       ['db-q-open','db-q-pending','db-q-solved','db-q-hold'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
     }
@@ -6267,21 +6382,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   callPerfSec.appendChild(callPerfEl);
   col5.appendChild(callPerfSec);
 
-  const healthSec=dbSection('Team health',viewerMode?null:'My Team',viewerMode?null:()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
-  let hasRag=false;
-  MY_TEAM.forEach(name=>{
-    const profile=loadProfile(name);if(!profile.rag||profile.rag==='none')return;hasRag=true;
-    const row=document.createElement('div');row.className='db-row';
-    if(!viewerMode){row.style.cursor='pointer';row.onclick=()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]'));}
-    const n=document.createElement('div');n.className='db-row-label';n.textContent=name;
-    const sparkWrap=document.createElement('div');sparkWrap.style.cssText='display:flex;gap:2px;align-items:center;flex-shrink:0;';
-    const moodHistory=loadMoodHistory(name.toLowerCase())||loadMoodHistory(getUsers().find(u=>getScheduleName(u)===name||getUserDisplayName(u)===name)?.name||'');
-    moodHistory.slice(-4).forEach(m=>{const s=document.createElement('span');s.style.cssText='font-size:11px;line-height:1;opacity:0.75;';s.textContent=m.emoji;sparkWrap.appendChild(s);});
-    const dot=document.createElement('div');dot.className='db-rag-dot';dot.style.background=profile.rag==='red'?'#ff6b6b':profile.rag==='amber'?'#fbbf24':'#4ade80';
-    row.appendChild(n);row.appendChild(sparkWrap);row.appendChild(dot);healthSec.appendChild(row);
-  });
-  if(!hasRag){const e=document.createElement('div');e.className='db-empty';e.textContent='✓ All green';healthSec.appendChild(e);}
-  col5.appendChild(healthSec);
+  // Team health removed — surfaced in Col 2 queue panel and fire banner instead
 
   if(!viewerMode){
 
@@ -7192,7 +7293,66 @@ function renderPrepBrief(personName, container) {
     (s.actions||[]).filter(a => !a.done).forEach(a => actions.push(a.text));
   });
 
-  if (!recentLog.length && !openGoals.length && !actions.length) return;
+  // ── Build highlights & concerns from live data ──
+  const highlights = [];
+  const concerns   = [];
+
+  // ZD performance vs team average
+  if (zdReady() && zdAgents && zdAgents.length) {
+    const matched = zdAgents.find(a =>
+      MY_TEAM.some(n => n.toLowerCase() === personName.toLowerCase()) &&
+      (a.name.toLowerCase() === personName.toLowerCase() ||
+       a.name.split(' ')[0].toLowerCase() === personName.split(' ')[0].toLowerCase())
+    );
+    if (matched) {
+      const pd = zdData[matched.id] || {};
+      // Team average solved
+      const agentSolveds = zdAgents.map(a => zdData[a.id]&&zdData[a.id].solved||0).filter(v=>v>0);
+      const teamAvg = agentSolveds.length ? Math.round(agentSolveds.reduce((s,v)=>s+v,0)/agentSolveds.length) : 0;
+      if (pd.solved > 0 && teamAvg > 0) {
+        if (pd.solved >= teamAvg * 1.2) highlights.push('Tickets solved ('+pd.solved+') — '+Math.round((pd.solved-teamAvg)/teamAvg*100)+'% above team avg');
+        else if (pd.solved < teamAvg * 0.7) concerns.push('Tickets solved ('+pd.solved+') — below team avg of '+teamAvg);
+      }
+      // Channel mix highlight
+      if (pd.email != null && pd.web != null && (pd.email+pd.web) > 0) {
+        const chanTotal = pd.email + pd.web;
+        const emailShare = Math.round(pd.email/chanTotal*100);
+        if (emailShare >= 70) highlights.push('Strong email handler — '+emailShare+'% of tickets via email');
+        else if (emailShare <= 20) highlights.push('Web/phone specialist — '+(100-emailShare)+'% via web/phone');
+      }
+      // Open queue concern
+      const openNow = (pd.open||0) + (pd.pending||0);
+      if (openNow > 8) concerns.push('High open queue — '+openNow+' open/pending tickets right now');
+    }
+  }
+
+  // RAG concern
+  if (profile.rag === 'red')   concerns.push('RAG status: RED'+(profile.focus?' — '+profile.focus:''));
+  if (profile.rag === 'amber') concerns.push('RAG status: AMBER'+(profile.focus?' — '+profile.focus:''));
+  if (profile.rag === 'green') highlights.push('RAG status: GREEN'+(profile.focus?' — '+profile.focus:''));
+
+  // Overdue actions concern
+  const overdueActions = actions.filter(a => a);
+  if (overdueActions.length >= 3) concerns.push(overdueActions.length+' open action items — review progress');
+
+  // Call trend concern / highlight (last 2 saved snaps)
+  const thisMonday = fmtLocal(getMonday(0));
+  const lastMonday = fmtLocal(getMonday(-1));
+  const thisSnap = getWeeklySnapshot(thisMonday);
+  const lastSnap = getWeeklySnapshot(lastMonday);
+  if (thisSnap && lastSnap) {
+    const twA = thisSnap.agents&&thisSnap.agents[personName]||{};
+    const lwA = lastSnap.agents&&lastSnap.agents[personName]||{};
+    if ((lwA.answered||0) > 5) {
+      const pct = Math.round(((twA.answered||0)-(lwA.answered||0))/(lwA.answered||1)*100);
+      if (pct >= 20) highlights.push('Call volume up '+pct+'% vs last week ('+twA.answered+' answered)');
+      else if (pct <= -25) concerns.push('Call volume down '+Math.abs(pct)+'% vs last week ('+twA.answered+' vs '+lwA.answered+')');
+    }
+    if ((lwA.answered||0) > 10 && (twA.answered||0) === 0) concerns.push('No calls answered this week — absent or not logged in?');
+  }
+
+  const hasAnything = recentLog.length || openGoals.length || actions.length || highlights.length || concerns.length;
+  if (!hasAnything) return;
 
   const brief = document.createElement('div'); brief.className = 'prep-brief';
   const title = document.createElement('div'); title.className = 'prep-brief-title';
@@ -7201,17 +7361,45 @@ function renderPrepBrief(personName, container) {
   title.appendChild(toggle); brief.appendChild(title);
 
   const body = document.createElement('div');
-  const addItem = (text) => {
-    const item = document.createElement('div'); item.className = 'prep-brief-item';
-    const bullet = document.createElement('span'); bullet.className = 'prep-brief-bullet'; bullet.textContent = '·';
-    item.appendChild(bullet); item.appendChild(document.createTextNode(text)); body.appendChild(item);
-  };
-  if (actions.length) { addItem('Open actions: ' + actions.slice(0,3).join('; ')); }
-  if (openGoals.length) { addItem('Goals in progress: ' + openGoals.map(g=>g.text).slice(0,2).join('; ')); }
-  if (recentLog.length) { addItem('Recent: ' + recentLog[0].text.slice(0,80) + (recentLog[0].text.length>80?'…':'')); }
-  if (profile.rag && profile.rag !== 'none') { addItem('Status: ' + profile.rag.toUpperCase() + (profile.focus ? ' — ' + profile.focus : '')); }
-  brief.appendChild(body);
 
+  const addItem = (text, bullet, color) => {
+    const item = document.createElement('div'); item.className = 'prep-brief-item';
+    const b = document.createElement('span'); b.className = 'prep-brief-bullet';
+    b.textContent = bullet || '·';
+    if (color) b.style.color = color;
+    item.appendChild(b); item.appendChild(document.createTextNode(text)); body.appendChild(item);
+  };
+
+  // Highlights first
+  if (highlights.length) {
+    const hl = document.createElement('div');
+    hl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--low-text);margin:4px 0 2px;';
+    hl.textContent = 'Highlights';
+    body.appendChild(hl);
+    highlights.forEach(h => addItem(h, '↑', 'var(--low-text)'));
+  }
+
+  // Concerns
+  if (concerns.length) {
+    const cn = document.createElement('div');
+    cn.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--high-text);margin:6px 0 2px;';
+    cn.textContent = 'Concerns';
+    body.appendChild(cn);
+    concerns.forEach(c => addItem(c, '!', 'var(--high-text)'));
+  }
+
+  // Context
+  if (actions.length || openGoals.length || recentLog.length) {
+    const ctx = document.createElement('div');
+    ctx.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin:6px 0 2px;';
+    ctx.textContent = 'Context';
+    body.appendChild(ctx);
+    if (actions.length) addItem('Open actions: ' + actions.slice(0,3).join('; '));
+    if (openGoals.length) addItem('Goals in progress: ' + openGoals.map(g=>g.text).slice(0,2).join('; '));
+    if (recentLog.length) addItem('Recent: ' + recentLog[0].text.slice(0,80) + (recentLog[0].text.length>80?'…':''));
+  }
+
+  brief.appendChild(body);
   toggle.onclick = () => { body.style.display = body.style.display === 'none' ? '' : 'none'; toggle.textContent = body.style.display === 'none' ? '▸' : '▾'; };
   container.insertBefore(brief, container.firstChild);
 }
@@ -8875,27 +9063,49 @@ function renderWeeklyBriefingData(container) {
   wrap.appendChild(agentSec);
 
   // ── SECTION 3: Zendesk tickets ────────────────────────────────
-  if (zdReady()) {
+  if (zdReady() && zdAgents && zdAgents.length) {
     const zdSec = document.createElement('div');
     zdSec.appendChild(sectionTitle('Zendesk tickets'));
-    const zdGrid = document.createElement('div');
-    zdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;';
 
-    const totalSolved = MY_TEAM.reduce(function(s,n){ return s+(tw.agents&&tw.agents[n]&&tw.agents[n].zdSolved||0); }, 0);
+    // ── Top KPI row ──
+    const zdGrid = document.createElement('div');
+    zdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;';
+
+    let totalSolved=0, totalEmail=0, totalWeb=0, openPending=0, slaBreaches=0;
+    zdAgents.forEach(function(a) {
+      const d = zdData[a.id]||{};
+      totalSolved  += d.solved||0;
+      totalEmail   += d.email!=null ? d.email : 0;
+      totalWeb     += d.web!=null   ? d.web   : 0;
+      openPending  += (d.open||0)+(d.pending||0);
+      slaBreaches  += d.breached||0;
+    });
     const lTotalSolved = lw ? MY_TEAM.reduce(function(s,n){ return s+(lw.agents&&lw.agents[n]&&lw.agents[n].zdSolved||0); }, 0) : null;
 
-    let openPending = 0;
-    if (zdAgents && zdAgents.length) {
-      zdAgents.forEach(function(a){ openPending += (zdData[a.id]&&zdData[a.id].open||0) + (zdData[a.id]&&zdData[a.id].pending||0); });
-    }
-    let slaBreaches = 0;
-    if (zdAgents && zdAgents.length) {
-      zdAgents.forEach(function(a){ slaBreaches += zdData[a.id]&&zdData[a.id].breached||0; });
-    }
+    zdGrid.appendChild(kpiCard('Solved total', totalSolved, lTotalSolved!==null ? delta(totalSolved,lTotalSolved,true) : {txt:'—',color:'var(--text3)',icon:''}));
 
-    zdGrid.appendChild(kpiCard('Solved this week', totalSolved, lTotalSolved!==null ? delta(totalSolved, lTotalSolved, true) : {txt:'—',color:'var(--text3)',icon:''}));
-    zdGrid.appendChild(kpiCard('Open / pending',   openPending, {txt:'live',color:'var(--text3)',icon:''}));
-    const slaColor = slaBreaches > 3 ? 'var(--high-text)' : slaBreaches > 0 ? '#ffb74d' : 'var(--low-text)';
+    // Email / web KPI cards with channel split bar
+    const emailCard = document.createElement('div');
+    emailCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
+    const chanTotal = totalEmail + totalWeb;
+    const emailPct = chanTotal > 0 ? Math.round(totalEmail/chanTotal*100) : 0;
+    const webPct   = chanTotal > 0 ? 100 - emailPct : 0;
+    emailCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Email / Web (phone)</div>'
+      +'<div style="display:flex;align-items:baseline;gap:6px;">'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
+      +'<span style="font-size:12px;color:var(--text3);">/</span>'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--med-text);">'+totalWeb+'</span>'
+      +'</div>'
+      +'<div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;margin-top:6px;">'
+      +'<div style="width:'+emailPct+'%;background:var(--cal-text);"></div>'
+      +'<div style="flex:1;background:var(--med-text);opacity:0.5;"></div>'
+      +'</div>'
+      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+emailPct+'% email · '+webPct+'% web/phone</div>';
+    zdGrid.appendChild(emailCard);
+
+    zdGrid.appendChild(kpiCard('Open / pending', openPending, {txt:'live',color:'var(--text3)',icon:''}));
+
+    const slaColor = slaBreaches>3?'var(--high-text)':slaBreaches>0?'#ffb74d':'var(--low-text)';
     const slaCard = document.createElement('div');
     slaCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
     slaCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SLA breaches</div>'
@@ -8903,6 +9113,65 @@ function renderWeeklyBriefingData(container) {
       +'<div style="font-size:10px;margin-top:4px;color:var(--text3);">'+(slaBreaches===0?'All clear':slaBreaches+' need review')+'</div>';
     zdGrid.appendChild(slaCard);
     zdSec.appendChild(zdGrid);
+
+    // ── Per-agent channel breakdown table ──
+    const tbl = document.createElement('div');
+    tbl.style.cssText = 'background:var(--surface2);border-radius:10px;overflow:hidden;';
+
+    // Header row
+    const hdrRow = document.createElement('div');
+    hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
+    ['Agent','','Solved','Email','Web','Open'].forEach(function(h,i) {
+      const c = document.createElement('div');
+      c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
+      c.textContent = h;
+      hdrRow.appendChild(c);
+    });
+    tbl.appendChild(hdrRow);
+
+    // Sort agents by solved desc
+    const sortedForBriefing = zdAgents.filter(function(a){
+      return MY_TEAM.some(function(n){ return n.toLowerCase().startsWith(a.name.split(' ')[0].toLowerCase()); });
+    }).sort(function(a,b){ return (zdData[b.id]&&zdData[b.id].solved||0)-(zdData[a.id]&&zdData[a.id].solved||0); });
+
+    const maxAgentSolved = Math.max.apply(null, sortedForBriefing.map(function(a){ return zdData[a.id]&&zdData[a.id].solved||0; }).concat([1]));
+
+    sortedForBriefing.forEach(function(agent, idx) {
+      const d = zdData[agent.id]||{};
+      const row = document.createElement('div');
+      row.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedForBriefing.length-1?'border-bottom:1px solid var(--border);':'');
+
+      const nameCell = document.createElement('div');
+      nameCell.style.cssText = 'font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      nameCell.textContent = agent.name.split(' ')[0];
+
+      // Mini bar
+      const barWrap = document.createElement('div');
+      barWrap.style.cssText = 'height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px;';
+      const barFill = document.createElement('div');
+      const pct = maxAgentSolved>0 ? Math.round((d.solved||0)/maxAgentSolved*100) : 0;
+      barFill.style.cssText = 'height:100%;width:'+pct+'%;background:var(--cal-text);border-radius:2px;';
+      barWrap.appendChild(barFill);
+
+      function numCell(val, color) {
+        const c = document.createElement('div');
+        c.style.cssText = 'font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
+        c.textContent = val!=null && val!=='' ? val : '—';
+        return c;
+      }
+      const openNow = (d.open||0)+(d.pending||0);
+      const openColor = openNow > 8 ? 'var(--high-text)' : openNow > 4 ? '#ffb74d' : 'var(--text3)';
+
+      row.appendChild(nameCell);
+      row.appendChild(barWrap);
+      row.appendChild(numCell(d.solved||0));
+      row.appendChild(numCell(d.email!=null?d.email:'—', 'var(--cal-text)'));
+      row.appendChild(numCell(d.web!=null?d.web:'—', 'var(--med-text)'));
+      row.appendChild(numCell(openNow||'—', openColor));
+      tbl.appendChild(row);
+    });
+
+    zdSec.appendChild(tbl);
     wrap.appendChild(zdSec);
   }
 
