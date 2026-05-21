@@ -6743,6 +6743,106 @@
         "totalWaitSec": 113,
         "missed": 0
       }
+    },
+    "2026-05-21": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 12,
+        "totalTalkSec": 4645,
+        "totalWaitSec": 6481,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 33,
+        "totalTalkSec": 13915,
+        "totalWaitSec": 13595,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 33,
+        "totalTalkSec": 7185,
+        "totalWaitSec": 13704,
+        "missed": 5
+      },
+      "Jonas Johannes": {
+        "answered": 28,
+        "totalTalkSec": 13618,
+        "totalWaitSec": 9529,
+        "missed": 1
+      },
+      "Andreas Bergevik": {
+        "answered": 19,
+        "totalTalkSec": 4735,
+        "totalWaitSec": 713,
+        "missed": 3
+      },
+      "Vetle Bengtson": {
+        "answered": 7,
+        "totalTalkSec": 4168,
+        "totalWaitSec": 68,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 19,
+        "totalTalkSec": 6573,
+        "totalWaitSec": 3755,
+        "missed": 0
+      }
+    },
+    "2026-05-20": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 12,
+        "totalTalkSec": 3707,
+        "totalWaitSec": 1076,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 24,
+        "totalTalkSec": 10452,
+        "totalWaitSec": 2116,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 20,
+        "totalTalkSec": 8046,
+        "totalWaitSec": 2800,
+        "missed": 1
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 13,
+        "totalTalkSec": 4631,
+        "totalWaitSec": 2759,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 16,
+        "totalTalkSec": 8790,
+        "totalWaitSec": 2438,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 4,
+        "totalTalkSec": 722,
+        "totalWaitSec": 22,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 16,
+        "totalTalkSec": 5426,
+        "totalWaitSec": 431,
+        "missed": 0
+      },
+      "Andrea Torland": {
+        "answered": 3,
+        "totalTalkSec": 5728,
+        "totalWaitSec": 162,
+        "missed": 0
+      },
+      "Kenneth Raustein": {
+        "answered": 7,
+        "totalTalkSec": 4435,
+        "totalWaitSec": 1465,
+        "missed": 1
+      }
     }
   },
   "wtp_ql_shared": [
