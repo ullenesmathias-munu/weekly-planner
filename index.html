@@ -549,6 +549,7 @@
   .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
   .oto-add-person-btn:hover { color: var(--cal-text); }
 
+  @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
   /* ── Ticket view ──────────────────────────────────────────── */
   .zd-trend { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; letter-spacing: 0.04em; }
   .zd-trend.up   { background: rgba(52,211,153,0.15); color: var(--low-text); }
@@ -7442,59 +7443,148 @@ function renderReportsTab() {
   const root = document.getElementById('reports-root');
   if (!root) return;
   root.innerHTML = '';
+  root.style.cssText = 'display:flex;flex-direction:column;min-height:calc(100vh - 52px);';
 
-  // ── Header + period picker ────────────────────────────────────
-  const header = document.createElement('div');
-  header.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;';
+  // ── Top bar ──────────────────────────────────────────────────
+  const topbar = document.createElement('div');
+  topbar.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;flex-wrap:wrap;';
 
-  const title = document.createElement('div');
-  title.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:20px;font-weight:900;color:var(--text);letter-spacing:-0.03em;flex:1;";
-  title.textContent = 'Monthly report';
+  // Title
+  const titleWrap = document.createElement('div'); titleWrap.style.cssText='display:flex;flex-direction:column;margin-right:8px;';
+  const title = document.createElement('div'); title.style.cssText="font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.02em;"; title.textContent='Reports';
+  const subtitle = document.createElement('div'); subtitle.style.cssText='font-size:10px;color:var(--text3);margin-top:1px;'; subtitle.textContent='Generate and export team performance reports';
+  titleWrap.appendChild(title); titleWrap.appendChild(subtitle);
+  topbar.appendChild(titleWrap);
 
-  // Month picker — default to previous month
+  // Divider
+  const div1 = document.createElement('div'); div1.style.cssText='width:1px;height:32px;background:var(--border);'; topbar.appendChild(div1);
+
+  // Period label
+  const periodLabel = document.createElement('div'); periodLabel.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);white-space:nowrap;'; periodLabel.textContent='Period';
+  topbar.appendChild(periodLabel);
+
+  // Month quick-select buttons
   const prevMonth = new Date(); prevMonth.setDate(1); prevMonth.setMonth(prevMonth.getMonth()-1);
-  const fromInput = document.createElement('input'); fromInput.type='date'; fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 10px;outline:none;';
+  const fromInput = document.createElement('input'); fromInput.type='date';
+  fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;outline:none;transition:border-color 0.15s;';
   fromInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
-  const toInput = document.createElement('input'); toInput.type='date'; toInput.style.cssText=fromInput.style.cssText;
+  fromInput.onfocus = () => fromInput.style.borderColor = 'var(--cal-text)';
+  fromInput.onblur  = () => fromInput.style.borderColor = '';
+
+  const toSep = document.createElement('span'); toSep.style.cssText='font-size:11px;color:var(--text3);'; toSep.textContent='→';
+
+  const toInput = document.createElement('input'); toInput.type='date';
+  toInput.style.cssText = fromInput.style.cssText;
   toInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth()+1, 0));
+  toInput.onfocus = () => toInput.style.borderColor = 'var(--cal-text)';
+  toInput.onblur  = () => toInput.style.borderColor = '';
 
-  const toLabel = document.createElement('span'); toLabel.style.cssText='font-size:12px;color:var(--text3);'; toLabel.textContent='to';
+  topbar.appendChild(fromInput); topbar.appendChild(toSep); topbar.appendChild(toInput);
 
-  // Quick month buttons
-  const quickBtns = document.createElement('div'); quickBtns.style.cssText='display:flex;gap:4px;';
-  for (let i=1; i<=3; i++) {
+  // Quick month chips
+  const chipRow = document.createElement('div'); chipRow.style.cssText='display:flex;gap:4px;';
+  for (let i=1; i<=4; i++) {
     const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-i);
-    const btn = document.createElement('button');
-    btn.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:4px 10px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;transition:all 0.15s;';
-    btn.textContent = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
-    btn.onclick = () => {
+    const chip = document.createElement('button');
+    chip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);letter-spacing:0.04em;transition:all 0.15s;white-space:nowrap;';
+    chip.textContent = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}).toUpperCase();
+    chip.onmouseover = () => { chip.style.borderColor='var(--cal-text)'; chip.style.color='var(--cal-text)'; };
+    chip.onmouseout  = () => { chip.style.borderColor='var(--border)'; chip.style.color='var(--text3)'; };
+    chip.onclick = () => {
       fromInput.value = fmtLocal(new Date(d.getFullYear(), d.getMonth(), 1));
-      toInput.value = fmtLocal(new Date(d.getFullYear(), d.getMonth()+1, 0));
+      toInput.value   = fmtLocal(new Date(d.getFullYear(), d.getMonth()+1, 0));
+      const active = chipRow.querySelector('[data-active]');
+      if (active) { active.style.borderColor='var(--border)'; active.style.color='var(--text3)'; active.style.background='none'; delete active.dataset.active; }
+      chip.style.borderColor='var(--cal-text)'; chip.style.color='var(--cal-text)'; chip.style.background='rgba(77,171,247,0.08)'; chip.dataset.active='1';
     };
-    quickBtns.appendChild(btn);
+    chipRow.appendChild(chip);
   }
+  // Mark first chip active by default
+  chipRow.firstChild.click();
+  topbar.appendChild(chipRow);
 
-  const generateBtn = document.createElement('button');
-  generateBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;padding:7px 18px;border-radius:var(--radius-md);cursor:pointer;border:none;background:var(--cal-text);color:#000743;letter-spacing:-0.01em;transition:opacity 0.15s;";
-  generateBtn.textContent = 'Generate report';
-  generateBtn.onclick = () => generateReport(fromInput.value, toInput.value, reportBody);
+  // Spacer
+  const spacer = document.createElement('div'); spacer.style.flex='1'; topbar.appendChild(spacer);
 
-  header.appendChild(title);
-  header.appendChild(quickBtns);
-  header.appendChild(fromInput); header.appendChild(toLabel); header.appendChild(toInput);
-  header.appendChild(generateBtn);
-  root.appendChild(header);
+  // Export buttons
+  const exportBar = document.createElement('div'); exportBar.className='report-export-bar'; exportBar.style.cssText='display:flex;gap:6px;align-items:center;';
 
+  const printBtn = document.createElement('button');
+  printBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);display:flex;align-items:center;gap:6px;transition:all 0.15s;letter-spacing:-0.01em;";
+  printBtn.innerHTML='<span>🖨</span> Print / PDF';
+  printBtn.onmouseover=()=>{printBtn.style.borderColor='var(--border2)';};
+  printBtn.onmouseout=()=>{printBtn.style.borderColor='var(--border)';};
+  printBtn.onclick=()=>window.print();
+
+  const csvBtn = document.createElement('button');
+  csvBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;display:flex;align-items:center;gap:6px;transition:opacity 0.15s;letter-spacing:-0.01em;";
+  csvBtn.innerHTML='<span>⬇</span> Export CSV';
+  csvBtn.onmouseover=()=>csvBtn.style.opacity='0.85';
+  csvBtn.onmouseout=()=>csvBtn.style.opacity='1';
+  csvBtn.onclick=()=>{ const el=document.getElementById('report-csv-download'); if(el) el.click(); };
+
+  exportBar.appendChild(printBtn); exportBar.appendChild(csvBtn);
+  topbar.appendChild(exportBar);
+
+  // Generate button
+  const genBtn = document.createElement('button');
+  genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;padding:8px 20px;border-radius:8px;cursor:pointer;border:none;background:linear-gradient(135deg,#4dabf7,#339af0);color:#000743;letter-spacing:-0.01em;transition:opacity 0.15s;box-shadow:0 2px 8px rgba(77,171,247,0.3);";
+  genBtn.textContent='↻ Generate';
+  genBtn.onmouseover=()=>genBtn.style.opacity='0.9';
+  genBtn.onmouseout=()=>genBtn.style.opacity='1';
+  genBtn.onclick=()=>{
+    genBtn.textContent='⟳ Generating…'; genBtn.style.opacity='0.7';
+    setTimeout(()=>{
+      generateReport(fromInput.value, toInput.value, reportBody);
+      genBtn.textContent='↻ Generate'; genBtn.style.opacity='1';
+    }, 50);
+  };
+  topbar.appendChild(genBtn);
+  root.appendChild(topbar);
+
+  // ── Status bar ───────────────────────────────────────────────
+  const statusBar = document.createElement('div');
+  statusBar.id = 'report-status-bar';
+  statusBar.style.cssText = 'padding:8px 24px;background:rgba(77,171,247,0.05);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;';
+  const statusDot = document.createElement('span'); statusDot.style.cssText='width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;';
+  const statusText = document.createElement('span'); statusText.id='report-status-text'; statusText.style.cssText='font-size:11px;color:var(--text3);'; statusText.textContent='Ready to generate';
+  const statusPeriod = document.createElement('span'); statusPeriod.id='report-status-period'; statusPeriod.style.cssText='font-size:11px;font-weight:600;color:var(--text2);margin-left:auto;';
+  statusBar.appendChild(statusDot); statusBar.appendChild(statusText); statusBar.appendChild(statusPeriod);
+  root.appendChild(statusBar);
+
+  // ── Report body ──────────────────────────────────────────────
   const reportBody = document.createElement('div');
   reportBody.id = 'report-body';
+  reportBody.style.cssText = 'flex:1;overflow-y:auto;padding:32px;';
+
+  // Empty state
+  const emptyState = document.createElement('div'); emptyState.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;';
+  const emptyIcon = document.createElement('div'); emptyIcon.style.cssText='font-size:48px;opacity:0.3;'; emptyIcon.textContent='📊';
+  const emptyTitle = document.createElement('div'); emptyTitle.style.cssText="font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;color:var(--text3);letter-spacing:-0.02em;"; emptyTitle.textContent='No report generated yet';
+  const emptyDesc = document.createElement('div'); emptyDesc.style.cssText='font-size:12px;color:var(--text3);text-align:center;max-width:300px;line-height:1.6;'; emptyDesc.textContent='Select a period above and click Generate to build your report.';
+  const emptyBtn = document.createElement('button'); emptyBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;padding:10px 24px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;margin-top:8px;";
+  emptyBtn.textContent='Generate report'; emptyBtn.onclick=()=>genBtn.click();
+  emptyState.appendChild(emptyIcon); emptyState.appendChild(emptyTitle); emptyState.appendChild(emptyDesc); emptyState.appendChild(emptyBtn);
+  reportBody.appendChild(emptyState);
   root.appendChild(reportBody);
 
-  // Auto-generate for previous month
-  generateReport(fromInput.value, toInput.value, reportBody);
+  // ── Print tip note (hidden in screen) ────────────────────────
+  const note = document.createElement('div'); note.className='report-export-bar';
+  note.style.cssText='padding:10px 24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);flex-shrink:0;';
+  note.textContent='PDF tip: use browser Print → Save as PDF, set margins to None for best results';
+  root.appendChild(note);
+
+  // Auto-generate
+  setTimeout(() => genBtn.click(), 100);
 }
 
 async function generateReport(fromDate, toDate, container) {
-  container.innerHTML = '<div style="padding:60px 0;text-align:center;color:var(--text3);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:12px;"><div style="font-size:24px;">⟳</div><div>Fetching data…</div></div>';
+  container.innerHTML = '<div style="padding:80px 0;text-align:center;color:var(--text3);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:16px;"><div style="font-size:32px;animation:spin 1s linear infinite;">⟳</div><div style="font-weight:600;">Fetching data…</div><div style="font-size:11px;opacity:0.6;">Pulling from Zendesk + local data</div></div>';
+
+  // Update status bar
+  const statusText = document.getElementById('report-status-text');
+  const statusPeriod = document.getElementById('report-status-period');
+  if (statusText) statusText.textContent = 'Generating…';
 
   const fromLabel = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   const toLabel   = new Date(toDate  +'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
@@ -7899,64 +7989,47 @@ async function generateReport(fromDate, toDate, container) {
     container.appendChild(s6);
   }
 
-  // ── EXPORT BAR ───────────────────────────────────────────────
-  const exportBar=mk('div');exportBar.style.cssText='display:flex;gap:10px;margin-top:32px;padding-top:20px;border-top:2px solid var(--border);align-items:center;flex-wrap:wrap;';
+  // ── Update status bar & wire CSV download ──────────────────────
+  const statusTxt = document.getElementById('report-status-text');
+  const statusPer = document.getElementById('report-status-period');
+  if (statusTxt) statusTxt.textContent = 'Report ready · ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  if (statusPer) statusPer.textContent = fromLabel + ' – ' + toLabel;
 
-  const printBtn=mk('button');printBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;padding:9px 20px;border-radius:var(--radius-md);cursor:pointer;border:none;background:var(--cal-text);color:#000743;";
-  printBtn.textContent='🖨  Print / Save as PDF';printBtn.onclick=()=>window.print();
-
-  const csvBtn=mk('button');csvBtn.style.cssText="font-family:inherit;font-size:12px;font-weight:600;padding:9px 16px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);";
-  csvBtn.textContent='⬇ Export data as CSV';
-  csvBtn.onclick=()=>{
-    const rows=[
-      ['=== EXECUTIVE SUMMARY ==='],
-      ['Period',fromDate,'to',toDate],
-      ['Tickets solved',zd.totalSolved||0],
-      ['Daily average',zd.dailyAvg||0],
-      ['CSAT %',zd.csatPct!=null?zd.csatPct+'%':'N/A'],
-      ['CSAT rated',zd.csatTotal||0],
-      ['CSAT good',zd.csatGood||0],
-      ['CSAT bad',zd.csatBad||0],
-      ['MTTR mean (mins)',zd.mttrMean||0],
-      ['MTTR median (mins)',zd.mttrMedian||0],
-      ['Calls offered',uTotalOff],
-      ['Calls answered',uTotalAns],
-      ['Answer rate',uAnsRate!=null?uAnsRate+'%':'N/A'],
-      ['Calls missed',uTotalMis],
-      ['Avg wait (secs)',uAvgWait],
-      ['Avg talk (secs)',uAvgHandle],
-      [],
-      ['=== DAILY BREAKDOWN ==='],
-      ['Date','Solved','Calls offered','Calls answered','Answer %','Calls missed','Avg wait sec','Avg talk sec'],
-      ...allDates.map(date=>{
-        const solved=zd.solvedByDay?.[date]||0;
-        const u=unifonData.find(d=>d.date===date);
-        const ar=u&&u.offered>0?Math.round((u.answered||0)/u.offered*100):null;
-        return [date,solved,u?.offered||0,u?.answered||0,ar!=null?ar+'%':'',u?.missed||0,u?.avgWaitSec||0,u?.avgHandleSec||0];
-      }),
-      [],
-      ['=== AGENT PERFORMANCE ==='],
-      ['Agent','Tickets solved','CSAT %','Calls answered','Avg talk sec','Days worked','Days absent'],
-      ...[...allAgentNames].sort((a,b)=>(zd.agentSolved?.[b]||0)-(zd.agentSolved?.[a]||0)).map(name=>{
-        const solved=zd.agentSolved?.[name]||0;
-        const csat=zd.agentCsat?.[name];
-        const csatPct2=csat&&(csat.good+csat.bad)>0?Math.round(csat.good/(csat.good+csat.bad)*100):null;
-        const cs=resolveAgentCallStats(name,agentCalls);
-        const firstName=name.split(' ')[0];
-        const workDays=MY_TEAM.find(n=>n.split(' ')[0]===firstName)?agentWorkDays[MY_TEAM.find(n=>n.split(' ')[0]===firstName)]||0:0;
-        const absDays=MY_TEAM.find(n=>n.split(' ')[0]===firstName)?agentAbsenceDays[MY_TEAM.find(n=>n.split(' ')[0]===firstName)]||0:0;
-        return [name,solved,csatPct2!=null?csatPct2+'%':'',cs?.answered||0,cs?.avgTalkSec||0,workDays,absDays];
-      }),
-    ];
-    const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
-    const a=mk('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='munu-support-report-'+fromDate+'-to-'+toDate+'.csv';a.click();
-  };
-
-  const note=mk('div');note.style.cssText='font-size:10px;color:var(--text3);margin-left:auto;';
-  note.textContent='PDF tip: use browser print → Save as PDF, set margins to None';
-
-  exportBar.appendChild(printBtn);exportBar.appendChild(csvBtn);exportBar.appendChild(note);
-  container.appendChild(exportBar);
+  // Hidden CSV link (triggered by top bar export button)
+  let csvLinkEl = document.getElementById('report-csv-download');
+  if (!csvLinkEl) { csvLinkEl = document.createElement('a'); csvLinkEl.id='report-csv-download'; csvLinkEl.style.display='none'; document.body.appendChild(csvLinkEl); }
+  const csvRows=[
+    ['=== EXECUTIVE SUMMARY ==='],
+    ['Period',fromDate,'to',toDate],
+    ['Tickets solved',zd.totalSolved||0],
+    ['Daily average',zd.dailyAvg||0],
+    ['CSAT %',zd.csatPct!=null?zd.csatPct+'%':'N/A'],
+    ['Calls offered',uTotalOff],['Calls answered',uTotalAns],
+    ['Answer rate',uAnsRate!=null?uAnsRate+'%':'N/A'],
+    [],
+    ['=== DAILY BREAKDOWN ==='],
+    ['Date','Solved','Offered','Answered','Answer %','Missed','Avg wait sec','Avg talk sec'],
+    ...allDates.map(date=>{
+      const solved=zd.solvedByDay?.[date]||0;
+      const u=unifonData.find(d=>d.date===date);
+      const ar=u&&u.offered>0?Math.round((u.answered||0)/u.offered*100):null;
+      return [date,solved,u?.offered||0,u?.answered||0,ar!=null?ar+'%':'',u?.missed||0,u?.avgWaitSec||0,u?.avgHandleSec||0];
+    }),
+    [],
+    ['=== AGENT PERFORMANCE ==='],
+    ['Agent','Tickets solved','CSAT %','Calls answered','Avg talk sec','Days worked','Days absent'],
+    ...[...allAgentNames].sort((a,b)=>(zd.agentSolved?.[b]||0)-(zd.agentSolved?.[a]||0)).map(name=>{
+      const solved=zd.agentSolved?.[name]||0;
+      const csat=zd.agentCsat?.[name];
+      const csatPct2=csat&&(csat.good+csat.bad)>0?Math.round(csat.good/(csat.good+csat.bad)*100):null;
+      const cs=resolveAgentCallStats(name,agentCalls);
+      const tn=MY_TEAM.find(n=>n.split(' ')[0]===name.split(' ')[0]);
+      return [name,solved,csatPct2!=null?csatPct2+'%':'',cs?.answered||0,cs?.avgTalkSec||0,tn?agentWorkDays[tn]||0:0,tn?agentAbsenceDays[tn]||0:0];
+    }),
+  ];
+  const csv=csvRows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  csvLinkEl.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  csvLinkEl.download='munu-report-'+fromDate+'-to-'+toDate+'.csv';
 }
 
 
@@ -8609,10 +8682,9 @@ async function zdCount(query) {
 function zdInitDates() {
   const mon = getMonday(0);
   const sun = new Date(mon); sun.setDate(mon.getDate()+6);
-  const fmt = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   const f = document.getElementById('zd-from'); const t = document.getElementById('zd-to');
-  if (f && !f.value) f.value = fmt(mon);
-  if (t && !t.value) t.value = fmt(sun);
+  if (f) f.value = fmtLocal(mon);
+  if (t) t.value = fmtLocal(sun);
 }
 
 function zdSetToday() {
@@ -8622,15 +8694,219 @@ function zdSetToday() {
   zdRefresh();
 }
 
-function zdSetThisWeek() { zdInitDates(); zdRefresh(); }
+function zdSetThisWeek() {
+  // Always force-set dates (don't skip if already set)
+  const mon = getMonday(0);
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  const f = document.getElementById('zd-from'); const t = document.getElementById('zd-to');
+  if (f) f.value = fmtLocal(mon);
+  if (t) t.value = fmtLocal(sun);
+  zdRefresh();
+}
 
 function zdSetLastWeek() {
   const mon = getMonday(-1);
   const sun = new Date(mon); sun.setDate(mon.getDate()+6);
-  const fmt = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   const f = document.getElementById('zd-from'); const t = document.getElementById('zd-to');
-  if (f) f.value = fmt(mon); if (t) t.value = fmt(sun);
+  if (f) f.value = fmtLocal(mon);
+  if (t) t.value = fmtLocal(sun);
   zdRefresh();
+}
+
+function enterTvMode() {
+  const overlay = document.getElementById('tv-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  const tvRoot = document.getElementById('tv-root');
+  if (!tvRoot) return;
+  tvRoot.innerHTML = '';
+
+  // Build TV dashboard layout
+  tvRoot.style.cssText = 'flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:16px;padding:20px;min-height:0;overflow:hidden;';
+
+  // Header row (full width)
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid rgba(214,243,255,0.1);';
+  const wordmark = document.createElement('div');
+  wordmark.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:#D6F3FF;letter-spacing:-0.03em;";
+  wordmark.innerHTML = 'munu.<span style="color:#F1B7F2;font-size:14px;font-weight:400;margin-left:8px;letter-spacing:0.05em;">SUPPORT DASHBOARD</span>';
+  const clock = document.createElement('div');
+  clock.id = 'tv-clock';
+  clock.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:#D6F3FF;letter-spacing:-0.02em;";
+  const dateEl = document.createElement('div');
+  dateEl.id = 'tv-date';
+  dateEl.style.cssText = 'font-size:12px;color:rgba(214,243,255,0.5);text-align:right;margin-top:2px;';
+  const clockWrap = document.createElement('div'); clockWrap.style.textAlign='right';
+  clockWrap.appendChild(clock); clockWrap.appendChild(dateEl);
+  const exitBtn = document.createElement('button');
+  exitBtn.style.cssText = 'font-family:inherit;font-size:11px;color:rgba(214,243,255,0.4);background:none;border:1px solid rgba(214,243,255,0.15);border-radius:6px;padding:4px 10px;cursor:pointer;margin-left:16px;';
+  exitBtn.textContent = '✕ Exit';
+  exitBtn.onclick = exitTvMode;
+  hdr.appendChild(wordmark); hdr.appendChild(clockWrap); hdr.appendChild(exitBtn);
+  tvRoot.appendChild(hdr);
+
+  // Clock ticker
+  const tickClock = () => {
+    const now = new Date();
+    const timeEl = document.getElementById('tv-clock');
+    const dtEl = document.getElementById('tv-date');
+    if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    if (dtEl) dtEl.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  };
+  tickClock();
+  const clockTimer = setInterval(tickClock, 1000);
+  overlay.dataset.clockTimer = clockTimer;
+
+  const mkCard = (title, content, colSpan=1, rowSpan=1) => {
+    const card = document.createElement('div');
+    card.style.cssText = `background:rgba(255,255,255,0.04);border:1px solid rgba(214,243,255,0.08);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;overflow:hidden;${colSpan>1?`grid-column:span ${colSpan};`:''}${rowSpan>1?`grid-row:span ${rowSpan};`:''}`;
+    const titleEl = document.createElement('div');
+    titleEl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(214,243,255,0.35);';
+    titleEl.textContent = title;
+    card.appendChild(titleEl);
+    if (content) card.appendChild(content);
+    return { card, titleEl };
+  };
+
+  // ── Card 1: Queue ─────────────────────────────────────────────
+  const qBody = document.createElement('div'); qBody.id = 'tv-queue'; qBody.style.cssText='flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;';
+  const { card: qCard } = mkCard('Live queue', qBody);
+  tvRoot.appendChild(qCard);
+
+  // ── Card 2: Today's tickets ────────────────────────────────────
+  const tBody = document.createElement('div'); tBody.id = 'tv-tickets'; tBody.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
+  const { card: tCard } = mkCard('Solved today', tBody);
+  tvRoot.appendChild(tCard);
+
+  // ── Card 3: Calls ────────────────────────────────────────────
+  const cBody = document.createElement('div'); cBody.id = 'tv-calls'; cBody.style.cssText='flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;';
+  const { card: cCard } = mkCard('Calls today', cBody);
+  tvRoot.appendChild(cCard);
+
+  // ── Card 4: Team ─────────────────────────────────────────────
+  const tmBody = document.createElement('div'); tmBody.id = 'tv-team'; tmBody.style.cssText='flex:1;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;';
+  const { card: tmCard } = mkCard('Team today', tmBody, 2);
+  tvRoot.appendChild(tmCard);
+
+  // ── Card 5: Top agents ───────────────────────────────────────
+  const aBody = document.createElement('div'); aBody.id = 'tv-agents'; aBody.style.cssText='flex:1;display:flex;flex-direction:column;gap:6px;';
+  const { card: aCard } = mkCard('This week — solved', aBody);
+  tvRoot.appendChild(aCard);
+
+  // Populate with available data
+  renderTvData();
+
+  // Auto-refresh every 2 minutes
+  const refreshTimer = setInterval(renderTvData, 120000);
+  overlay.dataset.refreshTimer = refreshTimer;
+}
+
+function renderTvData() {
+  const today = localToday();
+  const mon = fmtLocal(getMonday(0));
+
+  // Queue data from zdData
+  const qEl = document.getElementById('tv-queue');
+  if (qEl) {
+    qEl.innerHTML = '';
+    const qItems = [
+      { label:'Open', val: Object.values(zdData).reduce((s,d)=>s+(d.open||0),0), color:'#ef5350' },
+      { label:'Pending', val: Object.values(zdData).reduce((s,d)=>s+(d.pending||0),0), color:'#ffb74d' },
+      { label:'On hold', val: Object.values(zdData).reduce((s,d)=>s+(d.onhold||0),0), color:'rgba(214,243,255,0.3)' },
+    ];
+    qItems.forEach(q => {
+      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;justify-content:space-between;';
+      const lbl = document.createElement('div'); lbl.style.cssText='font-size:14px;color:rgba(214,243,255,0.6);'; lbl.textContent=q.label;
+      const val = document.createElement('div'); val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:32px;font-weight:900;color:${q.color};letter-spacing:-0.04em;line-height:1;`; val.textContent=q.val;
+      row.appendChild(lbl); row.appendChild(val); qEl.appendChild(row);
+    });
+  }
+
+  // Solved today
+  const tEl = document.getElementById('tv-tickets');
+  if (tEl) {
+    tEl.innerHTML = '';
+    const todaySolved = Object.values(zdData).reduce((s,d)=>s+(d.solved||0),0);
+    const big = document.createElement('div'); big.style.cssText="font-family:'Fira Sans',sans-serif;font-size:80px;font-weight:900;color:#D6F3FF;letter-spacing:-0.06em;line-height:1;text-align:center;";
+    big.textContent = zdAgents.length ? todaySolved : '—';
+    tEl.appendChild(big);
+  }
+
+  // Calls today
+  const cEl = document.getElementById('tv-calls');
+  if (cEl) {
+    cEl.innerHTML = '';
+    const todayUnifonData = loadUnifonData().filter(d=>d.date===today);
+    const offered = todayUnifonData.reduce((s,d)=>s+(d.offered||0),0);
+    const answered = todayUnifonData.reduce((s,d)=>s+(d.answered||0),0);
+    const ar = offered > 0 ? Math.round(answered/offered*100) : null;
+    [
+      { label:'Offered', val:offered, color:'rgba(214,243,255,0.9)' },
+      { label:'Answered', val:answered, color:'#69db7c' },
+      { label:'Answer rate', val:ar!=null?ar+'%':'—', color:ar==null?'rgba(214,243,255,0.3)':ar>=90?'#69db7c':ar>=80?'#ffa94d':'#ff8787' },
+    ].forEach(q => {
+      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;justify-content:space-between;';
+      const lbl = document.createElement('div'); lbl.style.cssText='font-size:14px;color:rgba(214,243,255,0.6);'; lbl.textContent=q.label;
+      const val = document.createElement('div'); val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:${q.color};letter-spacing:-0.03em;line-height:1;`; val.textContent=q.val;
+      row.appendChild(lbl); row.appendChild(val); cEl.appendChild(row);
+    });
+  }
+
+  // Team today
+  const tmEl = document.getElementById('tv-team');
+  if (tmEl) {
+    tmEl.innerHTML = '';
+    MY_TEAM.forEach(name => {
+      const w = SCHEDULE.find(s => s.dates.includes(today));
+      const p = w?.people.find(p=>p.name===name);
+      const shiftIdx = w?.dates.indexOf(today);
+      const shift = shiftIdx>=0 ? (p?.shifts[shiftIdx]||'').toUpperCase() : '';
+      const isOff = ['SO','H','HD','OS','ABS','OL',''].includes(shift);
+      const chip = document.createElement('div');
+      chip.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:${isOff?'rgba(255,255,255,0.03)':'rgba(214,243,255,0.08)'};border:1px solid ${isOff?'rgba(255,255,255,0.05)':'rgba(214,243,255,0.12)'};`;
+      const av = document.createElement('div'); av.style.cssText=`width:28px;height:28px;border-radius:50%;background:hsl(${(name.charCodeAt(0)*47)%360},50%,${isOff?'20':'35'}%);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,${isOff?'0.3':'0.9'});flex-shrink:0;`; av.textContent=name.slice(0,2).toUpperCase();
+      const nm = document.createElement('div'); nm.style.cssText=`font-size:13px;font-weight:600;color:rgba(214,243,255,${isOff?'0.25':'0.85'});`; nm.textContent=name.split(' ')[0];
+      const sh = document.createElement('div'); sh.style.cssText=`font-size:10px;color:rgba(214,243,255,${isOff?'0.2':'0.4'});`; sh.textContent=shift||'—';
+      chip.appendChild(av); chip.appendChild(nm); chip.appendChild(sh);
+      tmEl.appendChild(chip);
+    });
+  }
+
+  // Top agents this week
+  const aEl = document.getElementById('tv-agents');
+  if (aEl && zdAgents.length) {
+    aEl.innerHTML = '';
+    const sorted = [...zdAgents]
+      .filter(a => MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0]))
+      .sort((a,b)=>(zdData[b.id]?.solved||0)-(zdData[a.id]?.solved||0))
+      .slice(0,8);
+    const max = Math.max(...sorted.map(a=>zdData[a.id]?.solved||0), 1);
+    sorted.forEach((agent,i) => {
+      const solved = zdData[agent.id]?.solved||0;
+      const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787'];
+      const color = barColors[i % barColors.length];
+      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:10px;';
+      const nm = document.createElement('div'); nm.style.cssText=`font-size:13px;font-weight:600;color:rgba(214,243,255,0.7);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`; nm.textContent=agent.name.split(' ')[0];
+      const barWrap = document.createElement('div'); barWrap.style.cssText='flex:1;height:16px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;';
+      const fill = document.createElement('div'); fill.style.cssText=`height:100%;width:${Math.round(solved/max*100)}%;background:${color};border-radius:4px;`;
+      barWrap.appendChild(fill);
+      const cnt = document.createElement('div'); cnt.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:14px;font-weight:900;color:${color};width:28px;text-align:right;flex-shrink:0;`; cnt.textContent=solved;
+      row.appendChild(nm); row.appendChild(barWrap); row.appendChild(cnt); aEl.appendChild(row);
+    });
+  } else if (aEl) {
+    aEl.innerHTML = '<div style="font-size:12px;color:rgba(214,243,255,0.3);padding:10px 0;">Load Tickets tab first</div>';
+  }
+}
+
+function exitTvMode() {
+  const overlay = document.getElementById('tv-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'none';
+  // Clear timers
+  if (overlay.dataset.clockTimer) clearInterval(parseInt(overlay.dataset.clockTimer));
+  if (overlay.dataset.refreshTimer) clearInterval(parseInt(overlay.dataset.refreshTimer));
+  const tvRoot = document.getElementById('tv-root');
+  if (tvRoot) tvRoot.innerHTML = '';
 }
 
 async function zdGetGroupId() {
