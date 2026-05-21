@@ -10575,6 +10575,36 @@ function weekDragDrop(dir, e) {
 }
 
 // ─── Utility stubs (required before startup) ─────────────────────
+function getISOWeek(date) {
+  const d = new Date(date); d.setHours(0,0,0,0); d.setDate(d.getDate()+4-(d.getDay()||7));
+  const yearStart = new Date(d.getFullYear(),0,1);
+  return d.getFullYear()+'-W'+String(Math.ceil((((d-yearStart)/86400000)+1)/7)).padStart(2,'0');
+}
+function moodKey(username, week) { return 'wtp_mood_'+normalizeKey(username)+'_'+(week||getISOWeek(new Date())); }
+function saveMoodEntry(username, mood) {
+  const week = getISOWeek(new Date());
+  const history = loadMoodHistory(username);
+  const existing = history.findIndex(h=>h.week===week);
+  const entry = { week, mood, ts: new Date().toISOString() };
+  if (existing >= 0) history[existing]=entry; else history.push(entry);
+  localStorage.setItem('wtp_mood_'+normalizeKey(username), JSON.stringify(history));
+  localStorage.setItem(moodKey(username,week), JSON.stringify(mood));
+  scheduleSyncSave();
+}
+function sparkline(vals, w, h, color) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`); svg.setAttribute('width',w); svg.setAttribute('height',h);
+  if (!vals||vals.length<2) return svg;
+  const nums=vals.filter(v=>v!=null); if(!nums.length) return svg;
+  const mn=Math.min(...nums),mx=Math.max(...nums,mn+1);
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1))*w},${h-2-((v??mn)-mn)/(mx-mn)*(h-4)}`).join(' ');
+  const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+  pl.setAttribute('points',pts); pl.setAttribute('fill','none');
+  pl.setAttribute('stroke',color||'var(--cal-text)'); pl.setAttribute('stroke-width','1.5');
+  pl.setAttribute('stroke-linecap','round'); pl.setAttribute('stroke-linejoin','round');
+  svg.appendChild(pl); return svg;
+}
+
 function getActiveHandovers() {
   const results = [];
   const today = localToday();
