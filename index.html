@@ -9749,33 +9749,42 @@ async function zdGetAgents(groupId) {
   return (users.users || []).filter(u => !u.suspended).map(u => ({id:u.id, name:u.name, email:u.email}));
 }
 
+// Batch-fetch all solved tickets for the period once, keyed by assignee_id
+// Called once in zdRefresh — avoids per-agent queries that cause 429 rate limits
+async function zdFetchSolvedBatch(agentIds, fromDate, toDate) {
+  const byAgent = {};
+  agentIds.forEach(id => { byAgent[id] = { solved:0, email:0, phone:0 }; });
+  try {
+    const idSet = new Set(agentIds.map(String));
+    let url = `/search.json?query=${encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`;
+    for (let p = 0; p < 20 && url; p++) {
+      const r = await zdFetch(url);
+      (r.results || []).forEach(t => {
+        const id = String(t.assignee_id);
+        if (!idSet.has(id)) return;
+        byAgent[id].solved++;
+        if (t.channel === 'email') byAgent[id].email++;
+        else byAgent[id].phone++;
+      });
+      url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+    }
+  } catch(e) {
+    console.warn('zdFetchSolvedBatch failed:', e.message);
+    // Return nulls so caller can fall back to count-only
+    agentIds.forEach(id => { byAgent[id].email = null; byAgent[id].phone = null; });
+  }
+  return byAgent;
+}
+
 async function zdGetStats(agentId, fromDate, toDate) {
+  // Used only for open/pending/hold counts — solved/channel now handled by zdFetchSolvedBatch
   try {
     const [open, pending, hold] = await Promise.all([
       zdCount(`type:ticket assignee:${agentId} status:open`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:pending`).catch(()=>0),
       zdCount(`type:ticket assignee:${agentId} status:hold`).catch(()=>0),
     ]);
-    // Fetch actual ticket objects — channel:email is not a valid ZD search filter,
-    // must read t.channel from ticket objects directly
-    let email = 0, phone = 0, solved = 0;
-    try {
-      let url = `/search.json?query=${encodeURIComponent(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`;
-      for (let p = 0; p < 10 && url; p++) {
-        const r = await zdFetch(url);
-        const tickets = r.results || [];
-        tickets.forEach(t => {
-          solved++;
-          if (t.channel === 'email') email++;
-          else phone++;
-        });
-        url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
-      }
-    } catch(e) {
-      solved = await zdCount(`type:ticket assignee:${agentId} status>=solved solved>=${fromDate} solved<=${toDate}`).catch(()=>0);
-      email = null; phone = null;
-    }
-    return { solved, open, pending, onhold:hold, email, phone };
+    return { solved:0, open, pending, onhold:hold, email:null, phone:null };
   } catch { return { solved:0, open:0, pending:0, onhold:0, email:null, phone:null }; }
 }
 
@@ -9840,11 +9849,50 @@ async function zdRefresh() {
     }
 
     // Step 3: Fetch stats per agent
-    if (loadMsg) loadMsg.textContent = `⟳ Fetching stats for ${agents.length} agents…`;
+    // Two passes: (a) batch solved+channel in one query, (b) per-agent open/pending/hold counts
+    if (loadMsg) loadMsg.textContent = `⟳ Fetching solved tickets…`;
     zdAgents = agents; zdData = {};
-    for (let i = 0; i < agents.length; i++) {
-      if (loadMsg) loadMsg.textContent = `⟳ ${agents[i].name.split(' ')[0]} (${i+1}/${agents.length})…`;
-      zdData[agents[i].id] = await zdGetStats(agents[i].id, fromDate, toDate);
+
+    // (a) Single batch query for all solved tickets — reads channel from ticket objects
+    const agentIds = agents.map(a => a.id);
+    const solvedBatch = await zdFetchSolvedBatch(agentIds, fromDate, toDate);
+
+    // (b) Batch open/pending/hold — one query per status across all agents
+    if (loadMsg) loadMsg.textContent = `⟳ Fetching queue stats…`;
+    // Seed from solved batch first
+    agents.forEach(a => {
+      const batch = solvedBatch[a.id] || { solved:0, email:null, phone:null };
+      zdData[a.id] = { solved:batch.solved, email:batch.email, phone:batch.phone, open:0, pending:0, onhold:0 };
+    });
+    // Fetch open/pending/hold tickets in 3 batch queries (no per_agent filter — read assignee from objects)
+    try {
+      const idSet = new Set(agentIds.map(String));
+      for (const status of ['open','pending','hold']) {
+        let url = `/search.json?query=${encodeURIComponent(`type:ticket status:${status}`)}&per_page=100`;
+        for (let p = 0; p < 5 && url; p++) {
+          const r = await zdFetch(url);
+          (r.results||[]).forEach(t => {
+            const id = String(t.assignee_id);
+            if (!idSet.has(id) || !zdData[id]) return;
+            if (status==='open')    zdData[id].open++;
+            if (status==='pending') zdData[id].pending++;
+            if (status==='hold')    zdData[id].onhold++;
+          });
+          url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+        }
+      }
+    } catch(e) {
+      console.warn('Queue batch fetch failed, falling back to per-agent counts:', e.message);
+      for (let i = 0; i < agents.length; i++) {
+        const [open, pending, hold] = await Promise.all([
+          zdCount(`type:ticket assignee:${agents[i].id} status:open`).catch(()=>0),
+          zdCount(`type:ticket assignee:${agents[i].id} status:pending`).catch(()=>0),
+          zdCount(`type:ticket assignee:${agents[i].id} status:hold`).catch(()=>0),
+        ]);
+        zdData[agents[i].id].open = open;
+        zdData[agents[i].id].pending = pending;
+        zdData[agents[i].id].onhold = hold;
+      }
     }
 
     zdRender(agents, fromDate, toDate);
