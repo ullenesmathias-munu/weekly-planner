@@ -12301,6 +12301,9 @@ function getISOWeek(date) {
   return d.getFullYear()+'-W'+String(Math.ceil((((d-yearStart)/86400000)+1)/7)).padStart(2,'0');
 }
 function moodKey(username, week) { return 'wtp_mood_'+normalizeKey(username)+'_'+(week||getISOWeek(new Date())); }
+function getCurrentMood(username) {
+  try { return JSON.parse(localStorage.getItem(moodKey(username)) || 'null'); } catch { return null; }
+}
 function saveMoodEntry(username, mood) {
   const week = getISOWeek(new Date());
   const history = loadMoodHistory(username);
