@@ -9807,12 +9807,28 @@ function zdGetAbsentNames(fromDate, toDate) {
   return absent;
 }
 
+let _zdRefreshInFlight = false;
+let _zdRefreshLastRun  = 0;
+const ZD_MIN_INTERVAL  = 30000; // ms — prevent hammering
+
 async function zdRefresh() {
   if (!zdReady()) { zdShowSetup(); return; }
+
+  // Collapse concurrent calls — if one is already running, skip
+  if (_zdRefreshInFlight) return;
+
+  // Rate-limit: don't re-run within 30s unless dates changed
   const fromEl = document.getElementById('zd-from');
   const toEl   = document.getElementById('zd-to');
   const fromDate = fromEl?.value || localToday();
   const toDate   = toEl?.value   || localToday();
+  const cacheKey = fromDate + '|' + toDate;
+  const now = Date.now();
+  if (now - _zdRefreshLastRun < ZD_MIN_INTERVAL && _zdLastCacheKey === cacheKey) return;
+  _zdLastCacheKey = cacheKey;
+  _zdRefreshLastRun = now;
+  _zdRefreshInFlight = true;
+
   const body = document.getElementById('zd-body');
   if (!body) return;
   body.innerHTML = '<div id="zd-load-msg" style="padding:20px;color:var(--text3);font-size:13px;">⟳ Loading ticket data…</div>';
@@ -9900,6 +9916,9 @@ async function zdRefresh() {
   } catch(e) {
     body.innerHTML = '<div class="zd-error">✗ ' + e.message + '</div>';
     console.error('Zendesk error:', e);
+    _zdRefreshLastRun = 0;
+  } finally {
+    _zdRefreshInFlight = false;
   }
 }
 
