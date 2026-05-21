@@ -7321,16 +7321,7 @@
     }
   ],
   "wtp_oto_data": {
-    "sessions": [
-      {
-        "id": "1779364301275",
-        "person": "Vetle",
-        "date": "2026-05-21",
-        "notes": "",
-        "actions": [],
-        "wins": []
-      }
-    ],
+    "sessions": [],
     "notes": {},
     "people": [
       {
