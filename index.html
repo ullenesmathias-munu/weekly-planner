@@ -8253,6 +8253,11 @@ function renderOtoPersonMain(personName) {
   });
   main.appendChild(body);
 }
+const ZD_SUBDOMAIN_KEY = 'wtp_zd_subdomain';
+const ZD_EMAIL_KEY     = 'wtp_zd_email';
+const ZD_TOKEN_KEY     = 'wtp_zd_token';
+const ZD_PROXY         = 'https://zendesk-proxy.ullenesmathias.workers.dev';
+
 function zdReady() {
   return !!(localStorage.getItem(ZD_SUBDOMAIN_KEY) && localStorage.getItem(ZD_EMAIL_KEY) && localStorage.getItem(ZD_TOKEN_KEY));
 }
@@ -8262,8 +8267,6 @@ function zdHeaders() {
   const token = localStorage.getItem(ZD_TOKEN_KEY) || '';
   return { 'Authorization': 'Basic ' + btoa(email + '/token:' + token), 'Content-Type': 'application/json' };
 }
-
-const ZD_PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev';
 
 async function zdFetch(path) {
   if (!zdReady()) throw new Error('Zendesk not configured');
