@@ -720,19 +720,19 @@
 
   /* Notification bar */
   .db-notif-bar {
-    padding: 9px 40px;
-    background: rgba(241,183,242,0.05);
-    border-bottom: 1px solid rgba(241,183,242,0.12);
+    padding: 10px 40px;
+    background: rgba(214,243,255,0.06);
+    border-bottom: 1px solid rgba(214,243,255,0.15);
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     flex-shrink: 0;
   }
-  .db-notif-bar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(241,183,242,0.5); flex-shrink: 0; }
-  .db-notif-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(241,183,242,0.07); border: 1px solid rgba(241,183,242,0.15); border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 500; color: var(--text2); cursor: pointer; transition: background 0.15s; white-space: nowrap; }
-  .db-notif-pill:hover { background: rgba(241,183,242,0.13); }
-  .db-notif-dot { width: 5px; height: 5px; border-radius: 50%; background: #F1B7F2; flex-shrink: 0; }
+  .db-notif-bar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(214,243,255,0.55); flex-shrink: 0; }
+  .db-notif-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(214,243,255,0.09); border: 1px solid rgba(214,243,255,0.22); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 600; color: #D6F3FF; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .db-notif-pill:hover { background: rgba(214,243,255,0.16); }
+  .db-notif-dot { width: 6px; height: 6px; border-radius: 50%; background: #D6F3FF; flex-shrink: 0; }
 
   /* Column layout — column accent colors create visual scannability */
   .db-body {
@@ -2732,7 +2732,7 @@ function renderSchedule() {
 
   const todayStr = localToday();
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
-  const OFF_SHIFTS = new Set(['so','h','hd','abs','']);
+  const OFF_SHIFTS = new Set(['so','h','hd','abs','']); // Note: E (night) kept in schedule view as working shift
 
   // ── Week meta stats ───────────────────────────────────────────
   const metaWrap = document.getElementById('sched-week-meta');
@@ -2792,7 +2792,7 @@ function renderSchedule() {
 
       const working = myTeam.filter(p => {
         const s = (p.shifts[di]||'').toLowerCase();
-        return !OFF_SHIFTS.has(s);
+        return !OFF_SHIFTS.has(s) && !s.startsWith('e');
       }).length;
       const total = myTeam.length;
       const covClass = working >= total * 0.8 ? 'cov-ok' : working >= total * 0.6 ? 'cov-warn' : 'cov-low';
@@ -5415,7 +5415,7 @@ function renderQuickLinks(container, username, editable) {
 
   if (editable) {
     const addRow = document.createElement('div'); addRow.className = 'ql-add-row';
-    const iconIn = document.createElement('input'); iconIn.className = 'ql-input'; iconIn.placeholder = '🔗'; iconIn.style.width = '42px'; iconIn.style.flex = 'none'; iconIn.maxLength = 2; iconIn.title = 'Emoji icon (optional)';
+    const iconIn = document.createElement('input'); iconIn.className = 'ql-input'; iconIn.placeholder = '🔗'; iconIn.style.cssText='width:44px;flex:none;text-align:center;font-size:16px;padding:4px 6px;'; iconIn.maxLength = 2; iconIn.title = 'Emoji icon (optional)';
     const labelIn = document.createElement('input'); labelIn.className = 'ql-input'; labelIn.placeholder = 'Name (e.g. Zendesk)';
     const urlIn = document.createElement('input'); urlIn.className = 'ql-input'; urlIn.placeholder = 'URL (https://…)'; urlIn.type = 'url';
     const addBtn = document.createElement('button'); addBtn.className = 'ql-add-btn'; addBtn.textContent = 'Add';
@@ -5607,10 +5607,11 @@ function renderAdminDashboard(root, viewerMode=false) {
   const hr = new Date().getHours();
   const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   const OFF = new Set(['so','h','hd','os','abs','ol','']);
+  const NIGHT = (s) => (s||'').toLowerCase().startsWith('e'); // E (17-6) = night shift, exclude from 'in today'
   const todayWeek = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
   const di = todayWeek ? todayWeek.dates.indexOf(todayStr) : -1;
-  const inToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&!OFF.has((p.shifts[di]||'').toLowerCase())) : [];
-  const outToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&OFF.has((p.shifts[di]||'').toLowerCase())) : [];
+  const inToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&!OFF.has((p.shifts[di]||'').toLowerCase())&&!NIGHT(p.shifts[di])) : [];
+  const outToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&(OFF.has((p.shifts[di]||'').toLowerCase())||NIGHT(p.shifts[di]))) : [];
   const absPeople = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&['abs','h'].includes((p.shifts[di]||'').toLowerCase())) : [];
   const weekStamp=mondayStamp(0), todayDay=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
   const todayTasks=tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
@@ -5736,7 +5737,10 @@ function renderAdminDashboard(root, viewerMode=false) {
   });
   if(!inToday.length){const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule data';teamGrid.appendChild(e);}
   teamSec.appendChild(teamGrid);
-  if(outToday.length){const offEl=document.createElement('div');offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:8px;';offEl.textContent='Off: '+outToday.map(p=>p.name).join(', ');teamSec.appendChild(offEl);}
+  // Night shift people
+  const nightToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&di>=0&&(p.shifts[di]||'').toLowerCase().startsWith('e')) : [];
+  if(nightToday.length){const nEl=document.createElement('div');nEl.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';nEl.textContent='Night shift: '+nightToday.map(p=>p.name).join(', ');teamSec.appendChild(nEl);}
+  if(outToday.length){const offEl=document.createElement('div');offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;';offEl.textContent='Off today: '+outToday.map(p=>p.name).join(', ');teamSec.appendChild(offEl);}
   col1.appendChild(teamSec);
 
   if(absPeople.length){
@@ -6695,6 +6699,7 @@ async function renderTeamMemberDashboard(root) {
   const hr = new Date().getHours();
   const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   const OFF = new Set(['so','h','hd','os','abs','ol','']);
+  const isNightShift = (s) => (s||'').toLowerCase().startsWith('e');
   const dayInfo = getPersonDayInfo(scheduleName, todayStr);
   const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
   const weekStamp = mondayStamp(0);
@@ -6734,7 +6739,8 @@ async function renderTeamMemberDashboard(root) {
   const colleaguesIn = todayWeek ? todayWeek.people.filter(p=>{
     if (p.name===scheduleName) return false;
     const di=todayWeek.dates.indexOf(todayStr);
-    return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has((p.shifts[di]||'').toLowerCase());
+    const sh = (p.shifts[di]||'').toLowerCase();
+    return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has(sh)&&!sh.startsWith('e');
   }) : [];
 
   // ── Contextual greeting subtitle ─────────────────────────────
@@ -6916,10 +6922,21 @@ async function renderTeamMemberDashboard(root) {
     // Show who's off
     const offPeople = todayWeek ? todayWeek.people.filter(p=>{
       if(p.name===scheduleName)return false;
-      const di=todayWeek.dates.indexOf(todayStr); return MY_TEAM.includes(p.name)&&di>=0&&OFF.has((p.shifts[di]||'').toLowerCase());
+      const di=todayWeek.dates.indexOf(todayStr);
+      const sh=(p.shifts[di]||'').toLowerCase();
+      return MY_TEAM.includes(p.name)&&di>=0&&OFF.has(sh)&&!sh.startsWith('e');
     }) : [];
+    const nightPeople = todayWeek ? todayWeek.people.filter(p=>{
+      if(p.name===scheduleName)return false;
+      const di2=todayWeek.dates.indexOf(todayStr);
+      return MY_TEAM.includes(p.name)&&di2>=0&&(p.shifts[di2]||'').toLowerCase().startsWith('e');
+    }) : [];
+    if (nightPeople.length) {
+      const nEl=document.createElement('div'); nEl.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';
+      nEl.textContent='Night shift: '+nightPeople.map(p=>p.name).join(', '); colleagSec.appendChild(nEl);
+    }
     if (offPeople.length) {
-      const offEl=document.createElement('div'); offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:8px;';
+      const offEl=document.createElement('div'); offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;';
       offEl.textContent='Off today: '+offPeople.map(p=>p.name).join(', '); colleagSec.appendChild(offEl);
     }
   }
@@ -7089,39 +7106,54 @@ async function renderTeamMemberDashboard(root) {
     statsGrid.appendChild(mkStat('nm-zd-email','Email'));
     statsGrid.appendChild(mkStat('nm-zd-phone','Phone'));
     statsSec.appendChild(statsGrid);
+
+    // Refresh stats button — sits below stats grid, no link to Tickets tab
+    const refreshStatsBtn = document.createElement('button');
+    refreshStatsBtn.style.cssText = 'margin-top:8px;font-family:inherit;font-size:10px;font-weight:700;color:var(--text3);background:none;border:1px solid var(--border);border-radius:var(--radius-md);padding:4px 10px;cursor:pointer;width:100%;transition:border-color 0.12s,color 0.12s;';
+    refreshStatsBtn.textContent = '↻ Refresh stats';
+    refreshStatsBtn.onmouseenter = () => { refreshStatsBtn.style.color='var(--cal-text)'; refreshStatsBtn.style.borderColor='var(--cal-text)'; };
+    refreshStatsBtn.onmouseleave = () => { refreshStatsBtn.style.color='var(--text3)'; refreshStatsBtn.style.borderColor='var(--border)'; };
+    statsSec.appendChild(refreshStatsBtn);
     col3.appendChild(statsSec);
 
     // Fetch async
     const _agCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
     const _agMatched = _agCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
-    if (_agMatched) {
-      const _wFrom = fmtLocal(getMonday(0)), _wTo = localToday();
+    const _doFetchStats = async () => {
+      const _agNow = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+      const _agM = _agNow.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+      if (!_agM) {
+        ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+        return;
+      }
+      ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='…';});
+      refreshStatsBtn.textContent='↻ Refreshing…'; refreshStatsBtn.disabled=true;
+      const _wFrom=fmtLocal(getMonday(0)), _wTo=localToday();
       let _solved=0,_email=0,_phone=0;
-      (async()=>{
-        try {
-          let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agMatched.id+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
-          for(let p=0;p<5&&url;p++){
-            const r=await zdFetch(url);
-            (r.results||[]).forEach(t=>{_solved++;if(t.channel==='email')_email++;else _phone++;});
-            url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
-          }
-          const sv=document.getElementById('nm-zd-solved'); if(sv){sv.textContent=_solved;sv.style.color=_solved>0?'var(--low-text)':'var(--text)';}
-          const ev=document.getElementById('nm-zd-email');  if(ev){ev.textContent=_email; ev.style.color='var(--cal-text)';}
-          const pv=document.getElementById('nm-zd-phone');  if(pv){pv.textContent=_phone; pv.style.color='var(--med-text)';}
-        } catch(e) {
-          ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+      try {
+        let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agM.id+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
+        for(let p=0;p<5&&url;p++){
+          const r=await zdFetch(url);
+          (r.results||[]).forEach(t=>{_solved++;if(t.channel==='email')_email++;else _phone++;});
+          url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
         }
-      })();
-    } else {
-      ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
-    }
+        const sv=document.getElementById('nm-zd-solved'); if(sv){sv.textContent=_solved;sv.style.color=_solved>0?'var(--low-text)':'var(--text)';}
+        const ev=document.getElementById('nm-zd-email');  if(ev){ev.textContent=_email; ev.style.color='var(--cal-text)';}
+        const pv=document.getElementById('nm-zd-phone');  if(pv){pv.textContent=_phone; pv.style.color='var(--med-text)';}
+      } catch(e) {
+        ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+      }
+      refreshStatsBtn.textContent='↻ Refresh stats'; refreshStatsBtn.disabled=false;
+    };
+    refreshStatsBtn.onclick = _doFetchStats;
+    if (_agMatched) _doFetchStats();
   }
 
   // Tickets
   const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
   const zdToken = localStorage.getItem('wtp_zd_token');
   if (zdSubdomain && zdToken) {
-    const ticketSec = dbSection('Open tickets','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+    const ticketSec = dbSection('Open tickets');
     const loading = document.createElement('div'); loading.className='db-empty'; loading.textContent='Loading…';
     ticketSec.appendChild(loading);
     col3.appendChild(ticketSec);
@@ -10042,6 +10074,7 @@ async function zdRefresh() {
     // Two passes: (a) batch solved+channel in one query, (b) per-agent open/pending/hold counts
     if (loadMsg) loadMsg.textContent = `⟳ Fetching solved tickets…`;
     zdAgents = agents; zdData = {};
+    localStorage.setItem('wtp_zd_agents_cache', JSON.stringify(agents.map(a=>({id:a.id,name:a.name,email:a.email}))));
 
     // (a) Single batch query for all solved tickets — reads channel from ticket objects
     const agentIds = agents.map(a => a.id);
