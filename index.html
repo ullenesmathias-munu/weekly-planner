@@ -6789,8 +6789,32 @@ async function renderTeamMemberDashboard(root) {
   if (overdueTasks.length) kpis.appendChild(mkKpi(overdueTasks.length,'Overdue','danger',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
   if (agendaItems.length) kpis.appendChild(mkKpi(agendaItems.length,'1:1 topics','ok',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
   if (newSharedNotes.length) kpis.appendChild(mkKpi(newSharedNotes.length,'From manager','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+
+  // RAG status KPI — show only if set (non-green)
+  const _selfProfile = loadProfile(scheduleName);
+  if (_selfProfile.rag === 'red')   kpis.appendChild(mkKpi('RED',   'Your status', 'danger', ()=>{}));
+  else if (_selfProfile.rag === 'amber') kpis.appendChild(mkKpi('AMBER', 'Your status', 'warn',   ()=>{}));
+
+  // Live queue pressure — async, non-blocking
+  const _qKpi = mkKpi('…', 'Open queue', 'neutral', ()=>{});
+  if (zdReady()) kpis.appendChild(_qKpi);
+
   hero.appendChild(kpis);
   root.appendChild(hero);
+
+  // Populate queue KPI async
+  if (zdReady()) {
+    const _agentsCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+    const _matched = _agentsCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+    if (_matched) {
+      zdCount('type:ticket assignee_id:'+_matched.id+' (status:open OR status:pending OR status:hold)').then(n=>{
+        const v = _qKpi.querySelector('.db-kpi-val');
+        if (v) { v.textContent=n; v.className='db-kpi-val '+(+n>8?'danger':+n>4?'warn':'ok'); }
+      }).catch(()=>{ _qKpi.querySelector('.db-kpi-val').textContent='—'; });
+    } else {
+      _qKpi.querySelector('.db-kpi-val').textContent='—';
+    }
+  }
 
   // ── Notification bar — announcements + manager notes ─────────
   const unreadAnns = getUnreadAnnouncements(currentUser.name);
@@ -6864,6 +6888,24 @@ async function renderTeamMemberDashboard(root) {
     shiftSec.appendChild(card);
   }
   col1.appendChild(shiftSec);
+
+  // RAG status — personal wellbeing indicator set by manager
+  const _ragProfile = loadProfile(scheduleName);
+  if (_ragProfile.rag && _ragProfile.rag !== 'none') {
+    const ragSec = dbSection('Your status');
+    const ragCard = document.createElement('div');
+    const ragColor = _ragProfile.rag==='red'?'#ff6b6b':_ragProfile.rag==='amber'?'#fbbf24':'#4ade80';
+    const ragBg    = _ragProfile.rag==='red'?'rgba(255,107,107,0.08)':_ragProfile.rag==='amber'?'rgba(251,191,36,0.08)':'rgba(74,222,128,0.08)';
+    ragCard.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-md);border:1px solid '+ragColor.replace(')',',0.25)').replace('rgb','rgba')+';background:'+ragBg+';';
+    const ragDot = document.createElement('div');
+    ragDot.style.cssText = 'width:10px;height:10px;border-radius:50%;background:'+ragColor+';flex-shrink:0;';
+    const ragText = document.createElement('div');
+    ragText.style.cssText = 'font-size:12px;color:var(--text2);flex:1;';
+    ragText.textContent = _ragProfile.focus || (_ragProfile.rag==='red'?'Needs attention':_ragProfile.rag==='amber'?'Check in with your manager':'On track');
+    ragCard.appendChild(ragDot); ragCard.appendChild(ragText);
+    ragSec.appendChild(ragCard);
+    col1.appendChild(ragSec);
+  }
 
   // Who's in today with me
   const colleagSec = dbSection('Team in today');
@@ -6973,6 +7015,45 @@ async function renderTeamMemberDashboard(root) {
     }
     col2.appendChild(oneToOneSec);
   }
+
+  // Open 1:1 action items assigned to this person
+  const _otoData = getOtoData();
+  const _myActions = [];
+  (_otoData.sessions||[]).filter(s=>s.person===scheduleName).forEach(s=>{
+    (s.actions||[]).filter(a=>!a.done).forEach(a=>_myActions.push({ text:a.text, sessionId:s.id, actionIdx:(s.actions||[]).indexOf(a) }));
+  });
+  if (_myActions.length) {
+    const actionSec = dbSection('Open actions from 1:1');
+    _myActions.slice(0,6).forEach(a=>{
+      const row = document.createElement('div'); row.className='db-row';
+      row.style.cssText += 'cursor:default;';
+      const dot = document.createElement('div');
+      dot.style.cssText = 'width:6px;height:6px;border-radius:50%;border:1.5px solid var(--cal-text);flex-shrink:0;margin-top:2px;';
+      const lbl = document.createElement('div'); lbl.className='db-row-label'; lbl.textContent=a.text;
+      const doneBtn = document.createElement('button');
+      doneBtn.style.cssText = 'font-size:11px;background:none;border:none;color:var(--text3);cursor:pointer;flex-shrink:0;padding:0 2px;';
+      doneBtn.textContent = '✓';
+      doneBtn.title = 'Mark done';
+      doneBtn.onclick = () => {
+        const d2 = getOtoData();
+        const sess = (d2.sessions||[]).find(s=>s.id===a.sessionId);
+        if (sess && sess.actions && sess.actions[a.actionIdx]) {
+          sess.actions[a.actionIdx].done = true;
+          saveOtoData(d2);
+          row.style.opacity='0.4'; row.style.textDecoration='line-through';
+          doneBtn.remove();
+        }
+      };
+      row.appendChild(dot); row.appendChild(lbl); row.appendChild(doneBtn);
+      actionSec.appendChild(row);
+    });
+    if (_myActions.length>6) {
+      const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;';
+      more.textContent='+'+ (_myActions.length-6)+' more'; actionSec.appendChild(more);
+    }
+    col2.appendChild(actionSec);
+  }
+
   body.appendChild(col2);
 
   // ── Col 3: Tasks ─────────────────────────────────────────────
@@ -7005,6 +7086,49 @@ async function renderTeamMemberDashboard(root) {
     const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;'; more.textContent='+'+(todayTasks.length-8)+' more in Planner'; taskSec.appendChild(more);
   }
   col3.appendChild(taskSec);
+
+  // Personal ZD stats this week
+  if (zdReady()) {
+    const statsSec = dbSection('My tickets this week');
+    const statsGrid = document.createElement('div');
+    statsGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;';
+    const mkStat = (id, label) => {
+      const c=document.createElement('div'); c.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
+      const v=document.createElement('div'); v.id=id; v.style.cssText="font-family:'Fira Sans',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--text);"; v.textContent='…';
+      const l=document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;'; l.textContent=label;
+      c.appendChild(v); c.appendChild(l); return c;
+    };
+    statsGrid.appendChild(mkStat('nm-zd-solved','Solved'));
+    statsGrid.appendChild(mkStat('nm-zd-email','Email'));
+    statsGrid.appendChild(mkStat('nm-zd-phone','Phone'));
+    statsSec.appendChild(statsGrid);
+    col3.appendChild(statsSec);
+
+    // Fetch async
+    const _agCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+    const _agMatched = _agCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+    if (_agMatched) {
+      const _wFrom = fmtLocal(getMonday(0)), _wTo = localToday();
+      let _solved=0,_email=0,_phone=0;
+      (async()=>{
+        try {
+          let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agMatched.id+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
+          for(let p=0;p<5&&url;p++){
+            const r=await zdFetch(url);
+            (r.results||[]).forEach(t=>{_solved++;if(t.channel==='email')_email++;else _phone++;});
+            url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
+          }
+          const sv=document.getElementById('nm-zd-solved'); if(sv){sv.textContent=_solved;sv.style.color=_solved>0?'var(--low-text)':'var(--text)';}
+          const ev=document.getElementById('nm-zd-email');  if(ev){ev.textContent=_email; ev.style.color='var(--cal-text)';}
+          const pv=document.getElementById('nm-zd-phone');  if(pv){pv.textContent=_phone; pv.style.color='var(--med-text)';}
+        } catch(e) {
+          ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+        }
+      })();
+    } else {
+      ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+    }
+  }
 
   // Tickets
   const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
@@ -8531,6 +8655,69 @@ function initSettingsTab() {
 
   // Default to account section
   settingsNav('account', document.querySelector('.settings-nav-item'));
+}
+
+function renderAnnouncementsForTeamMember(container, username) {
+  const all = loadAnnouncements();
+  if (!all.length) return 0;
+  const unread = getUnreadAnnouncements(username);
+  const unreadIds = new Set(unread.map(a => a.id));
+
+  const sec = dbSection('Updates');
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+  all.slice().reverse().forEach(ann => {
+    const isUnread = unreadIds.has(ann.id);
+    const card = document.createElement('div');
+    card.className = 'ann-card' + (isUnread ? ' unread' : '');
+    card.style.cssText = 'padding:10px 13px;border-radius:var(--radius-md);border:1px solid '
+      + (isUnread ? 'rgba(214,243,255,0.25)' : 'var(--border)')
+      + ';background:' + (isUnread ? 'rgba(0,7,67,0.5)' : 'var(--surface2)') + ';';
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:8px;';
+
+    let dot;
+    if (isUnread) {
+      dot = document.createElement('div');
+      dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#D6F3FF;flex-shrink:0;margin-top:4px;';
+      row.appendChild(dot);
+    }
+
+    const txt = document.createElement('div');
+    txt.style.cssText = 'font-size:12px;color:' + (isUnread ? 'var(--text)' : 'var(--text2)') + ';flex:1;line-height:1.5;';
+    txt.textContent = ann.text;
+    row.appendChild(txt);
+
+    if (isUnread) {
+      const markBtn = document.createElement('button');
+      markBtn.style.cssText = 'font-size:10px;background:none;border:none;color:var(--text3);cursor:pointer;flex-shrink:0;padding:0;';
+      markBtn.textContent = '\u2713';
+      markBtn.title = 'Mark as read';
+      markBtn.onclick = () => {
+        markAnnouncementRead(username, ann.id);
+        card.style.background = 'var(--surface2)';
+        card.style.borderColor = 'var(--border)';
+        if (dot) dot.style.display = 'none';
+        txt.style.color = 'var(--text2)';
+        markBtn.remove();
+      };
+      row.appendChild(markBtn);
+    }
+
+    const ts = document.createElement('div');
+    ts.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;';
+    ts.textContent = new Date(ann.ts).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+
+    card.appendChild(row);
+    card.appendChild(ts);
+    wrap.appendChild(card);
+  });
+
+  sec.appendChild(wrap);
+  container.appendChild(sec);
+  return unread.length;
 }
 
 function renderAnnouncementsSettings() {
