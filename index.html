@@ -8427,7 +8427,7 @@ function renderOtoTab() {
   briefingBtn.style.cssText = 'display:flex;align-items:center;gap:8px;padding:10px 14px;width:100%;border:none;background:rgba(77,171,247,0.08);border-bottom:1px solid var(--border);cursor:pointer;text-align:left;transition:background 0.15s;';
   briefingBtn.onmouseover = () => briefingBtn.style.background='rgba(77,171,247,0.15)';
   briefingBtn.onmouseout  = () => briefingBtn.style.background='rgba(77,171,247,0.08)';
-  briefingBtn.innerHTML = '<span style="font-size:14px;">🧠</span><div><div style="font-size:11px;font-weight:700;color:var(--cal-text);">Weekly Briefing</div><div style="font-size:9px;color:var(--text3);">AI-powered team review</div></div>';
+  briefingBtn.innerHTML = '<span style="font-size:14px;">📊</span><div><div style="font-size:11px;font-weight:700;color:var(--cal-text);">Weekly Briefing</div><div style="font-size:9px;color:var(--text3);">Calls, tickets & trends</div></div>';
   briefingBtn.onclick = () => renderWeeklyBriefingPanel();
   sidebar.appendChild(briefingBtn);
 
@@ -8470,12 +8470,12 @@ function renderWeeklyBriefingPanel() {
 
   const hdr = document.createElement('div'); hdr.style.cssText='padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0;';
   const titleWrap = document.createElement('div'); titleWrap.style.flex='1';
-  const title = document.createElement('div'); title.style.cssText="font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.02em;"; title.textContent='🧠 Weekly Intelligence Briefing';
-  const sub = document.createElement('div'); sub.style.cssText='font-size:11px;color:var(--text3);margin-top:2px;'; sub.textContent="AI analysis of your team's performance data + recommended actions";
+  const title = document.createElement('div'); title.style.cssText="font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.02em;"; title.textContent='📊 Weekly Briefing';
+  const sub = document.createElement('div'); sub.style.cssText='font-size:11px;color:var(--text3);margin-top:2px;'; sub.textContent='Calls, Zendesk tickets & trend — updated live from your data';
   titleWrap.appendChild(title); titleWrap.appendChild(sub);
-  const genBtn = document.createElement('button'); genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:7px 14px;border-radius:8px;cursor:pointer;border:none;background:linear-gradient(135deg,#4dabf7,#339af0);color:#000743;"; genBtn.textContent='↻ Generate';
-  genBtn.onclick = () => generateWeeklyBriefing(briefingBody);
-  hdr.appendChild(titleWrap); hdr.appendChild(genBtn); main.appendChild(hdr);
+  const refreshBtn = document.createElement('button'); refreshBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:7px 14px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);"; refreshBtn.textContent='↻ Refresh';
+  refreshBtn.onclick = () => renderWeeklyBriefingData(briefingBody);
+  hdr.appendChild(titleWrap); hdr.appendChild(refreshBtn); main.appendChild(hdr);
 
   // Trend alerts
   const alerts = getTrendAlerts();
@@ -8491,11 +8491,7 @@ function renderWeeklyBriefingPanel() {
   }
 
   const briefingBody = document.createElement('div'); briefingBody.style.cssText='flex:1;overflow-y:auto;padding:16px 20px;';
-  const thisMonday = fmtLocal(getMonday(0));
-  const savedKey = 'wtp_weekly_briefing_' + thisMonday;
-  const saved = localStorage.getItem(savedKey);
-  if (saved) { try { const {text,fromDate,toDate}=JSON.parse(saved); renderBriefingContent(briefingBody,text,fromDate,toDate); } catch { generateWeeklyBriefing(briefingBody); } }
-  else { generateWeeklyBriefing(briefingBody); }
+  renderWeeklyBriefingData(briefingBody);
   main.appendChild(briefingBody);
 }
 
@@ -8763,154 +8759,220 @@ function getAgentTrends(personName) {
 
 // ─── WEEKLY INTELLIGENCE BRIEFING ─────────────────────────────
 async function generateWeeklyBriefing(container) {
-  container.innerHTML = '';
-  const loadEl = document.createElement('div');
-  loadEl.style.cssText = 'padding:20px;display:flex;align-items:center;gap:10px;color:var(--text3);font-size:12px;';
-  loadEl.innerHTML = '<div style="animation:spin 1s linear infinite;font-size:16px;">⟳</div><div>Analysing your team data with Claude…</div>';
-  container.appendChild(loadEl);
-
-  try {
-    // Build data payload for Claude
-    const today = localToday();
-    const thisMonday = fmtLocal(getMonday(0));
-    const lastMonday = fmtLocal(getMonday(-1));
-    const lastSunday = fmtLocal(new Date(getMonday(0).getTime() - 86400000));
-
-    const thisWeekSnap = buildWeeklySnapshot(thisMonday, today);
-    const lastWeekSnap = getWeeklySnapshot(lastMonday) || buildWeeklySnapshot(lastMonday, lastSunday);
-
-    // 1:1 overdue
-    const data = getOtoData();
-    const overdue1on1 = MY_TEAM.filter(name => {
-      const sessions = (data.sessions||[]).filter(s=>s.person===name).sort((a,b)=>b.date.localeCompare(a.date));
-      if (!sessions.length) return true;
-      const daysSince = Math.floor((new Date(today) - new Date(sessions[0].date+'T00:00:00'))/86400000);
-      return daysSince > 21;
-    });
-
-    // Open actions
-    const openActions = MY_TEAM.flatMap(name =>
-      (data.sessions||[]).filter(s=>s.person===name).flatMap(s=>(s.actions||[]).filter(a=>!a.done).map(a=>({person:name, text:a.text})))
-    );
-
-    // RAG status
-    const ragStatus = {};
-    MY_TEAM.forEach(name => { const p = loadProfile(name); ragStatus[name] = p.rag || 'none'; });
-
-    const prompt = `You are an expert support team analyst and people manager advisor for Mathias at Munu, a Norwegian SaaS company. Analyse this week's team data and write a concise weekly intelligence briefing.
-
-## THIS WEEK (${thisMonday} to ${today})
-Team call stats:
-- Total calls offered: ${thisWeekSnap.totals.offered}
-- Answered: ${thisWeekSnap.totals.answered} (${thisWeekSnap.totals.ansRate ?? 'N/A'}% answer rate)
-- Missed: ${thisWeekSnap.totals.missed}
-- Avg wait: ${Math.round((thisWeekSnap.totals.avgWait||0)/60)}m ${(thisWeekSnap.totals.avgWait||0)%60}s
-
-## LAST WEEK (${lastMonday} to ${lastSunday})
-- Calls offered: ${lastWeekSnap?.totals?.offered ?? 'N/A'}
-- Answer rate: ${lastWeekSnap?.totals?.ansRate ?? 'N/A'}%
-- Avg wait: ${lastWeekSnap?.totals?.avgWait ? Math.round(lastWeekSnap.totals.avgWait/60)+'m' : 'N/A'}
-
-## AGENT PERFORMANCE (this week vs last week)
-${MY_TEAM.map(name => {
-  const tw = thisWeekSnap.agents[name] || {};
-  const lw = lastWeekSnap?.agents?.[name] || {};
-  return `${name}: ${tw.answered||0} answered (was ${lw.answered||'?'}), ${tw.missed||0} missed (was ${lw.missed||'?'}), avg talk ${Math.round((tw.avgTalk||0)/60)}m, ZD solved: ${tw.zdSolved||0}`;
-}).join('\n')}
-
-## 1:1 STATUS
-Overdue (>21 days): ${overdue1on1.length ? overdue1on1.join(', ') : 'None'}
-Open action items: ${openActions.length} total across ${[...new Set(openActions.map(a=>a.person))].length} team members
-
-## RAG STATUS
-${MY_TEAM.map(name => `${name}: ${ragStatus[name]}`).join(', ')}
-
-Write a briefing with these sections. Be specific, direct and actionable. Use Norwegian team context where relevant. Max 300 words total.
-
-**📊 Week summary** — 2-3 sentences on overall performance vs last week. Include % changes.
-**⚡ Needs attention** — bullet list of 2-4 specific concerns with recommended actions. Name specific people.
-**🏆 Wins this week** — 1-2 positive callouts.
-**📋 1:1 focus** — who to prioritise for 1:1 this week and why.
-**🎯 Next week targets** — 2-3 concrete suggested targets based on the data.`;
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const result = await response.json();
-    const text = result.content?.[0]?.text || 'Could not generate briefing.';
-
-    // Save snapshot and briefing for persistence
-    saveWeeklySnapshot(thisMonday, thisWeekSnap);
-    localStorage.setItem('wtp_weekly_briefing_' + thisMonday, JSON.stringify({ text, fromDate: thisMonday, toDate: today }));
-    scheduleSyncSave();
-
-    container.innerHTML = '';
-    renderBriefingContent(container, text, thisMonday, today);
-
-  } catch(e) {
-    container.innerHTML = '';
-    const err = document.createElement('div');
-    err.style.cssText = 'padding:16px;background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.2);border-radius:10px;font-size:12px;color:var(--high-text);';
-    err.textContent = '✗ Could not generate briefing: ' + e.message;
-    container.appendChild(err);
-  }
+  renderWeeklyBriefingData(container);
 }
 
-function renderBriefingContent(container, text, fromDate, toDate) {
-  // Parse markdown sections into styled HTML
-  const sections = text.split(/\n(?=\*\*[📊⚡🏆📋🎯])/);
-  const wrap = document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:12px;';
+function renderWeeklyBriefingData(container) {
+  container.innerHTML = '';
+  const today = localToday();
+  const thisMonday = fmtLocal(getMonday(0));
+  const lastMonday = fmtLocal(getMonday(-1));
+  const lastSunday = fmtLocal(new Date(getMonday(0).getTime() - 86400000));
 
-  sections.forEach(section => {
-    if (!section.trim()) return;
-    const card = document.createElement('div');
-    card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;';
+  const tw = buildWeeklySnapshot(thisMonday, today);
+  const lw = getWeeklySnapshot(lastMonday) || buildWeeklySnapshot(lastMonday, lastSunday);
+  saveWeeklySnapshot(thisMonday, tw);
 
-    // Extract title and body
-    const titleMatch = section.match(/^\*\*([^*]+)\*\*/);
-    if (titleMatch) {
-      const titleEl = document.createElement('div');
-      titleEl.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;color:var(--text);letter-spacing:-0.01em;margin-bottom:8px;";
-      titleEl.textContent = titleMatch[1];
-      card.appendChild(titleEl);
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:14px;';
 
-      const body = section.replace(/^\*\*[^*]+\*\*\s*—?\s*/, '').trim();
-      // Render bullet points
-      body.split('\n').forEach(line => {
-        if (!line.trim()) return;
-        const p = document.createElement('div');
-        p.style.cssText = 'font-size:12px;color:var(--text2);line-height:1.6;padding:2px 0;';
-        if (line.trim().startsWith('-') || line.trim().startsWith('•')) {
-          p.style.cssText += 'display:flex;gap:8px;padding-left:4px;';
-          const bullet = document.createElement('span'); bullet.style.cssText='color:var(--cal-text);flex-shrink:0;margin-top:2px;'; bullet.textContent='→';
-          const txt = document.createElement('span'); txt.textContent = line.replace(/^[-•]\s*/, '').replace(/\*\*([^*]+)\*\*/g, '$1');
-          p.appendChild(bullet); p.appendChild(txt);
-        } else {
-          p.textContent = line.replace(/\*\*([^*]+)\*\*/g, '$1');
-        }
-        card.appendChild(p);
-      });
-    } else {
-      const p = document.createElement('div'); p.style.cssText='font-size:12px;color:var(--text2);line-height:1.6;'; p.textContent = section.trim();
-      card.appendChild(p);
+  function fmtWait(s) {
+    if (!s) return '—';
+    return Math.floor(s/60)+'m '+(s%60)+'s';
+  }
+  function delta(curr, prev, higherBetter, unit) {
+    unit = unit||'';
+    if (!prev && prev !== 0) return {txt:'—',color:'var(--text3)',icon:''};
+    const diff = curr - prev;
+    const sign = diff > 0 ? '+' : '';
+    const better = higherBetter ? diff >= 0 : diff <= 0;
+    const neutral = diff === 0;
+    const color = neutral ? 'var(--text3)' : better ? 'var(--low-text)' : 'var(--high-text)';
+    const icon = neutral ? '→' : diff > 0 ? '↑' : '↓';
+    return { txt: sign+diff+unit, color, icon };
+  }
+  function sectionTitle(txt) {
+    const el = document.createElement('div');
+    el.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';
+    el.textContent = txt;
+    return el;
+  }
+  function kpiCard(label, val, d) {
+    const c = document.createElement('div');
+    c.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
+    c.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">'+label+'</div>'
+      +'<div style="font-family:\'Fira Sans\',sans-serif;font-size:22px;font-weight:900;color:var(--text);line-height:1;letter-spacing:-0.02em;">'+val+'</div>'
+      +'<div style="font-size:10px;margin-top:4px;color:'+d.color+';">'+d.icon+' '+d.txt+' vs last week</div>';
+    return c;
+  }
+
+  // ── SECTION 1: Call performance ──────────────────────────────
+  const callSec = document.createElement('div');
+  callSec.appendChild(sectionTitle('Call performance'));
+  const kpiGrid = document.createElement('div');
+  kpiGrid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;';
+  const offered = tw.totals.offered||0, lOffered = lw&&lw.totals&&lw.totals.offered||0;
+  const ansRate = tw.totals.ansRate, lAnsRate = lw&&lw.totals&&lw.totals.ansRate;
+  const avgWait = tw.totals.avgWait||0, lAvgWait = lw&&lw.totals&&lw.totals.avgWait||0;
+  const missed  = tw.totals.missed||0, lMissed  = lw&&lw.totals&&lw.totals.missed||0;
+  kpiGrid.appendChild(kpiCard('Calls offered',  offered,             delta(offered,   lOffered,  true)));
+  kpiGrid.appendChild(kpiCard('Answer rate',    (ansRate!=null?ansRate:'—')+'%', delta(ansRate!=null?ansRate:0, lAnsRate!=null?lAnsRate:0, true, 'pp')));
+  kpiGrid.appendChild(kpiCard('Avg wait',        fmtWait(avgWait),   delta(avgWait,  lAvgWait,  false, 's')));
+  kpiGrid.appendChild(kpiCard('Missed calls',    missed,             delta(missed,   lMissed,   false)));
+  callSec.appendChild(kpiGrid);
+  wrap.appendChild(callSec);
+
+  // ── SECTION 2: Agent call trend (last 4 weeks) ───────────────
+  const agentSec = document.createElement('div');
+  agentSec.appendChild(sectionTitle('Agent call trend — last 4 weeks'));
+  const trendCard = document.createElement('div');
+  trendCard.style.cssText = 'background:var(--surface2);border-radius:10px;overflow:hidden;';
+
+  MY_TEAM.forEach(function(name, idx) {
+    const weeks4 = [];
+    for (let i=3; i>=0; i--) {
+      const mon = fmtLocal(getMonday(-i));
+      const snap = i===0 ? tw : getWeeklySnapshot(mon);
+      weeks4.push(snap&&snap.agents&&snap.agents[name]&&snap.agents[name].answered || 0);
     }
-    wrap.appendChild(card);
+    const maxVal = Math.max.apply(null, weeks4.concat([1]));
+    const curr = weeks4[3], prev = weeks4[2];
+    const d = delta(curr, prev, true);
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 12px;'+(idx < MY_TEAM.length-1 ? 'border-bottom:1px solid var(--border);' : '');
+
+    const nameEl = document.createElement('div');
+    nameEl.style.cssText = 'font-size:12px;color:var(--text);width:76px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    nameEl.textContent = name;
+
+    const bars = document.createElement('div');
+    bars.style.cssText = 'flex:1;display:flex;align-items:flex-end;gap:2px;height:24px;';
+    weeks4.forEach(function(v, wi) {
+      const bar = document.createElement('div');
+      const h = Math.max(3, Math.round((v/maxVal)*24));
+      bar.style.cssText = 'flex:1;border-radius:2px 2px 0 0;height:'+h+'px;background:var(--cal-text);opacity:'+(wi===3?'1':'0.3')+';';
+      bars.appendChild(bar);
+    });
+
+    const valEl = document.createElement('div');
+    valEl.style.cssText = 'font-size:12px;font-weight:700;color:var(--text);width:24px;text-align:right;flex-shrink:0;';
+    valEl.textContent = curr;
+
+    const zdSolved = tw.agents&&tw.agents[name]&&tw.agents[name].zdSolved||0;
+    const zdEl = document.createElement('div');
+    zdEl.style.cssText = 'font-size:10px;color:var(--text3);width:46px;text-align:right;flex-shrink:0;';
+    zdEl.textContent = zdSolved ? zdSolved+' ZD' : '';
+
+    const arrowEl = document.createElement('div');
+    arrowEl.style.cssText = 'font-size:12px;width:16px;text-align:center;flex-shrink:0;color:'+d.color+';';
+    arrowEl.textContent = d.icon;
+
+    row.appendChild(nameEl); row.appendChild(bars); row.appendChild(valEl); row.appendChild(zdEl); row.appendChild(arrowEl);
+    trendCard.appendChild(row);
+  });
+  agentSec.appendChild(trendCard);
+  wrap.appendChild(agentSec);
+
+  // ── SECTION 3: Zendesk tickets ────────────────────────────────
+  if (zdReady()) {
+    const zdSec = document.createElement('div');
+    zdSec.appendChild(sectionTitle('Zendesk tickets'));
+    const zdGrid = document.createElement('div');
+    zdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;';
+
+    const totalSolved = MY_TEAM.reduce(function(s,n){ return s+(tw.agents&&tw.agents[n]&&tw.agents[n].zdSolved||0); }, 0);
+    const lTotalSolved = lw ? MY_TEAM.reduce(function(s,n){ return s+(lw.agents&&lw.agents[n]&&lw.agents[n].zdSolved||0); }, 0) : null;
+
+    let openPending = 0;
+    if (zdAgents && zdAgents.length) {
+      zdAgents.forEach(function(a){ openPending += (zdData[a.id]&&zdData[a.id].open||0) + (zdData[a.id]&&zdData[a.id].pending||0); });
+    }
+    let slaBreaches = 0;
+    if (zdAgents && zdAgents.length) {
+      zdAgents.forEach(function(a){ slaBreaches += zdData[a.id]&&zdData[a.id].breached||0; });
+    }
+
+    zdGrid.appendChild(kpiCard('Solved this week', totalSolved, lTotalSolved!==null ? delta(totalSolved, lTotalSolved, true) : {txt:'—',color:'var(--text3)',icon:''}));
+    zdGrid.appendChild(kpiCard('Open / pending',   openPending, {txt:'live',color:'var(--text3)',icon:''}));
+    const slaColor = slaBreaches > 3 ? 'var(--high-text)' : slaBreaches > 0 ? '#ffb74d' : 'var(--low-text)';
+    const slaCard = document.createElement('div');
+    slaCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
+    slaCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SLA breaches</div>'
+      +'<div style="font-family:\'Fira Sans\',sans-serif;font-size:22px;font-weight:900;color:'+slaColor+';line-height:1;letter-spacing:-0.02em;">'+slaBreaches+'</div>'
+      +'<div style="font-size:10px;margin-top:4px;color:var(--text3);">'+(slaBreaches===0?'All clear':slaBreaches+' need review')+'</div>';
+    zdGrid.appendChild(slaCard);
+    zdSec.appendChild(zdGrid);
+    wrap.appendChild(zdSec);
+  }
+
+  // ── SECTION 4: Alerts ─────────────────────────────────────────
+  const alertsSec = document.createElement('div');
+  alertsSec.appendChild(sectionTitle('Attention needed'));
+  const alertsWrap = document.createElement('div');
+  alertsWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+  const autoAlerts = [];
+
+  if (avgWait > 300) {
+    autoAlerts.push({ level:'danger', msg:'Avg wait '+fmtWait(avgWait)+' — customers waiting too long', sub:'Consider staffing review or callback option' });
+  } else if (lAvgWait > 0 && avgWait > lAvgWait * 1.2) {
+    autoAlerts.push({ level:'warn', msg:'Avg wait up '+(Math.round((avgWait-lAvgWait)/6)/10)+'m vs last week', sub:'Monitor closely this week' });
+  }
+
+  if (ansRate != null && lAnsRate != null) {
+    const drop = lAnsRate - ansRate;
+    if (drop >= 10) autoAlerts.push({ level:'danger', msg:'Answer rate dropped '+drop+'pp ('+ansRate+'% vs '+lAnsRate+'% last week)', sub:'Significant — check absence or call routing' });
+    else if (drop >= 5) autoAlerts.push({ level:'warn', msg:'Answer rate down '+drop+'pp this week', sub:ansRate+'% vs '+lAnsRate+'% last week' });
+  }
+
+  if (lOffered > 0 && offered > 0) {
+    const spike = Math.round((offered-lOffered)/lOffered*100);
+    if (spike >= 30) autoAlerts.push({ level:'warn', msg:'Call volume up '+spike+'% vs last week', sub:'Check if staffing matches demand' });
+  }
+
+  MY_TEAM.forEach(function(name) {
+    const twA = tw.agents&&tw.agents[name]||{};
+    const lwA = lw&&lw.agents&&lw.agents[name]||{};
+    if ((lwA.answered||0) > 20 && (twA.answered||0) === 0) {
+      autoAlerts.push({ level:'warn', msg:name+' — 0 calls answered (had '+lwA.answered+' last week)', sub:'Absent or not logged in?' });
+    }
   });
 
-  // Footer
+  const improvers = MY_TEAM.filter(function(name) {
+    const twA = tw.agents&&tw.agents[name]&&tw.agents[name].answered||0;
+    const lwA = lw&&lw.agents&&lw.agents[name]&&lw.agents[name].answered||0;
+    return lwA > 0 && twA > lwA * 1.15;
+  });
+  if (improvers.length) autoAlerts.push({ level:'good', msg:improvers.join(', ')+' — trending up this week', sub:'Worth a callout in standup' });
+
+  if (!autoAlerts.length) autoAlerts.push({ level:'good', msg:'No major issues detected this week', sub:'All metrics within normal range' });
+
+  autoAlerts.forEach(function(a) {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;background:var(--surface2);border-radius:10px;padding:10px 12px;';
+    const dot = document.createElement('div');
+    const dotColor = a.level==='danger' ? 'var(--high-text)' : a.level==='warn' ? '#ffb74d' : 'var(--low-text)';
+    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;background:'+dotColor+';flex-shrink:0;margin-top:4px;';
+    const txt = document.createElement('div');
+    txt.innerHTML = '<div style="font-size:12px;color:var(--text);">'+a.msg+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">'+(a.sub||'')+'</div>';
+    row.appendChild(dot); row.appendChild(txt);
+    alertsWrap.appendChild(row);
+  });
+  alertsSec.appendChild(alertsWrap);
+  wrap.appendChild(alertsSec);
+
+  // ── Footer ────────────────────────────────────────────────────
   const footer = document.createElement('div');
-  footer.style.cssText = 'font-size:10px;color:var(--text3);display:flex;justify-content:space-between;padding-top:4px;';
-  footer.innerHTML = `<span>Generated by Claude · ${new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}</span><span>${fromDate} – ${toDate}</span>`;
+  footer.style.cssText = 'font-size:10px;color:var(--text3);display:flex;justify-content:space-between;padding-top:2px;';
+  footer.innerHTML = '<span>Updated '+new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span><span>'+thisMonday+' – '+today+'</span>';
   wrap.appendChild(footer);
 
   container.appendChild(wrap);
+}
+
+function renderBriefingContent(container, text, fromDate, toDate) {
+  renderWeeklyBriefingData(container);
 }
 
 // ─── TEAM INTELLIGENCE PANEL (per-agent stats in My Team) ──────
