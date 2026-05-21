@@ -8253,6 +8253,11 @@ function renderOtoPersonMain(personName) {
   });
   main.appendChild(body);
 }
+// ─── Zendesk globals ──────────────────────────────────────────
+let zdAgents   = [];
+let zdData     = {};
+let zdGroupId  = null;
+
 const ZD_SUBDOMAIN_KEY = 'wtp_zd_subdomain';
 const ZD_EMAIL_KEY     = 'wtp_zd_email';
 const ZD_TOKEN_KEY     = 'wtp_zd_token';
@@ -8384,31 +8389,49 @@ async function zdRefresh() {
   const toDate   = toEl?.value   || localToday();
   const body = document.getElementById('zd-body');
   if (!body) return;
-  body.innerHTML = '<div id="zd-load-msg" style="padding:20px;color:var(--text3);font-size:13px;display:flex;flex-direction:column;gap:8px;">⟳ Loading…</div>';
+  body.innerHTML = '<div id="zd-load-msg" style="padding:20px;color:var(--text3);font-size:13px;">⟳ Loading ticket data…</div>';
   try {
     const loadMsg = document.getElementById('zd-load-msg');
-    if (loadMsg) loadMsg.textContent = '⟳ Step 1: Getting L1 group…';
-    let groupId; try { groupId = await zdGetGroupId(); } catch(e) { throw new Error('Group lookup failed: ' + e.message); }
-    if (loadMsg) loadMsg.textContent = '⟳ Step 2: Fetching agents…';
-    let agents; try { agents = await zdGetAgents(groupId); } catch(e) { throw new Error('Agent lookup failed: ' + e.message); }
-    // Also find agents from solved tickets in period — no group filter to catch all assignees
+
+    // Step 1: Get group — non-fatal, just affects which agents we fetch
+    if (loadMsg) loadMsg.textContent = '⟳ Getting L1 group…';
+    let groupId = zdGroupId;
+    if (!groupId) {
+      try { groupId = await zdGetGroupId(); zdGroupId = groupId; }
+      catch(e) { console.warn('Group lookup failed, will fetch all agents:', e.message); }
+    }
+
+    // Step 2: Get agents — only from L1 group (or all if no group found)
+    if (loadMsg) loadMsg.textContent = '⟳ Fetching L1 agents…';
+    let agents = [];
     try {
-      const solvedSearch = await zdFetch(`/search.json?query=${encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`);
-      const solvedTickets = solvedSearch.results || [];
-      const missingIds = [...new Set(solvedTickets.map(t=>t.assignee_id).filter(id=>id&&!agents.find(a=>a.id===id)))];
-      if (missingIds.length) {
-        const missing = await zdFetch('/users/show_many.json?ids=' + missingIds.slice(0,50).join(','));
-        const extra = (missing.users||[]).filter(u=>(u.role==='agent'||u.role==='admin')&&!u.suspended).map(u=>({id:u.id,name:u.name,email:u.email}));
-        agents = [...agents, ...extra];
+      if (groupId) {
+        agents = await zdGetAgents(groupId);
+      } else {
+        // Fallback: use MY_TEAM names to match against all agents
+        const allAgents = await zdFetch('/users.json?role=agent&per_page=100');
+        agents = (allAgents.users||[]).filter(u => {
+          const fn = u.name.split(' ')[0].toLowerCase();
+          return MY_TEAM.some(n => n.toLowerCase() === u.name.toLowerCase() || n.split(' ')[0].toLowerCase() === fn);
+        }).map(u => ({id:u.id, name:u.name, email:u.email}));
       }
-    } catch {}
-    if (loadMsg) loadMsg.textContent = `⟳ Step 3: Fetching stats for ${agents.length} agents…`;
+    } catch(e) { throw new Error('Could not fetch agents: ' + e.message); }
+
+    if (!agents.length) {
+      body.innerHTML = '<div class="zd-error">✗ No agents found. Check your Zendesk credentials in Settings.</div>';
+      return;
+    }
+
+    // Step 3: Fetch stats per agent
+    if (loadMsg) loadMsg.textContent = `⟳ Fetching stats for ${agents.length} agents…`;
     zdAgents = agents; zdData = {};
-    for (let i=0; i<agents.length; i++) {
-      if (loadMsg) loadMsg.textContent = `⟳ ${agents[i].name} (${i+1}/${agents.length})…`;
+    for (let i = 0; i < agents.length; i++) {
+      if (loadMsg) loadMsg.textContent = `⟳ ${agents[i].name.split(' ')[0]} (${i+1}/${agents.length})…`;
       zdData[agents[i].id] = await zdGetStats(agents[i].id, fromDate, toDate);
     }
+
     zdRender(agents, fromDate, toDate);
+
   } catch(e) {
     body.innerHTML = '<div class="zd-error">✗ ' + e.message + '</div>';
     console.error('Zendesk error:', e);
