@@ -5,7 +5,7 @@
     "author": "Mathias",
     "ts": "2026-05-12T08:58:56.097Z"
   },
-  "wtp_outlook_synced": "2026-05-21T20:25:05.425Z",
+  "wtp_outlook_synced": "2026-05-21T21:27:33.626Z",
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -5180,7 +5180,7 @@
       "responseTime": "0001-01-01T00:00:00+00:00",
       "id": "AAMkAGE1ZjI3NzE0LWFhOWQtNDM5NS1iZDM2LTc1ZmY1ZjNmNDNlNAFRAAgI3r9wuVhAAEYAAAAAMB9lSzw0ykKe5nNz6y1l_AcAAhiLnyevKkSSVF9Im7BaIQAAAAABDQAAAhiLnyevKkSSVF9Im7BaIQABViVkKgAAEA==",
       "createdDateTime": "2026-05-04T10:44:59.6688067+00:00",
-      "lastModifiedDateTime": "2026-05-04T10:50:56.1086983+00:00",
+      "lastModifiedDateTime": "2026-05-21T20:37:23.6714911+00:00",
       "organizer": "kate.rooke@munu.cloud",
       "timeZone": "W. Europe Standard Time",
       "seriesMasterId": "AAMkAGE1ZjI3NzE0LWFhOWQtNDM5NS1iZDM2LTc1ZmY1ZjNmNDNlNABGAAAAAAAwH2VLPDTKQp7mc3PrLWX4BwACGIufJ68qRJJUX0ibsFohAAAAAAENAAACGIufJ68qRJJUX0ibsFohAAFWJWQqAAA=",
@@ -7762,21 +7762,21 @@
   "wtp_intel_snap_2026-05-18": {
     "fromDate": "2026-05-18",
     "toDate": "2026-05-21",
-    "generated": "2026-05-21T21:26:12.242Z",
+    "generated": "2026-05-21T21:27:35.223Z",
     "agents": {
       "Jonas": {
         "answered": 71,
         "missed": 1,
         "avgTalk": 452,
         "avgWait": 192,
-        "zdSolved": 0
+        "zdSolved": 64
       },
       "Thomas": {
         "answered": 74,
         "missed": 0,
         "avgTalk": 355,
         "avgWait": 119,
-        "zdSolved": 0
+        "zdSolved": 90
       },
       "Maylen": {
         "answered": 0,
@@ -7790,21 +7790,21 @@
         "missed": 8,
         "avgTalk": 316,
         "avgWait": 240,
-        "zdSolved": 0
+        "zdSolved": 66
       },
       "Benjamin": {
         "answered": 37,
         "missed": 0,
         "avgTalk": 319,
         "avgWait": 212,
-        "zdSolved": 0
+        "zdSolved": 33
       },
       "Cecilie": {
         "answered": 33,
         "missed": 0,
         "avgTalk": 422,
         "avgWait": 412,
-        "zdSolved": 0
+        "zdSolved": 23
       },
       "Tord": {
         "answered": 0,
@@ -7818,14 +7818,14 @@
         "missed": 1,
         "avgTalk": 503,
         "avgWait": 38,
-        "zdSolved": 0
+        "zdSolved": 18
       },
       "Andreas": {
         "answered": 40,
         "missed": 4,
         "avgTalk": 381,
         "avgWait": 81,
-        "zdSolved": 0
+        "zdSolved": 47
       },
       "Julie": {
         "answered": 0,
@@ -7839,7 +7839,7 @@
         "missed": 0,
         "avgTalk": 506,
         "avgWait": 9,
-        "zdSolved": 0
+        "zdSolved": 16
       }
     },
     "totals": {
