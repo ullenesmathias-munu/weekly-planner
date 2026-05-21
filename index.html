@@ -2808,9 +2808,9 @@ function renderSchedule() {
         const dCount = myTeam.filter(p => (p.shifts[di]||'').toLowerCase().startsWith('d')).length;
         const eCount = myTeam.filter(p => (p.shifts[di]||'').toLowerCase().startsWith('e')).length;
         const wCount = myTeam.filter(p => (p.shifts[di]||'').toLowerCase().startsWith('w')).length;
-        if (dCount) { const d = document.createElement('span'); d.className='sched-shift-dot d'; d.textContent='DÃ'+dCount; dotsEl.appendChild(d); }
-        if (eCount) { const e = document.createElement('span'); e.className='sched-shift-dot e'; e.textContent='EÃ'+eCount; dotsEl.appendChild(e); }
-        if (wCount) { const ww = document.createElement('span'); ww.className='sched-shift-dot w'; ww.textContent='WÃ'+wCount; dotsEl.appendChild(ww); }
+        if (dCount) { const d = document.createElement('span'); d.className='sched-shift-dot d'; d.textContent='D '+dCount; dotsEl.appendChild(d); }
+        if (eCount) { const e = document.createElement('span'); e.className='sched-shift-dot e'; e.textContent='E '+eCount; dotsEl.appendChild(e); }
+        if (wCount) { const ww = document.createElement('span'); ww.className='sched-shift-dot w'; ww.textContent='W '+wCount; dotsEl.appendChild(ww); }
         cell.appendChild(numEl); cell.appendChild(lblEl); cell.appendChild(dotsEl);
       } else {
         cell.appendChild(numEl); cell.appendChild(lblEl);
@@ -3035,21 +3035,7 @@ function renderSchedule() {
     });
     tbody.appendChild(tr);
 
-    // Role row — editable per day, shown below shift row
-    const roleRow = document.createElement('tr'); roleRow.className = 'role-row';
-    const roleNameTd = document.createElement('td');
-    roleNameTd.style.cssText = 'padding:0 8px 4px 8px;font-size:10px;color:var(--text3);vertical-align:top;';
-    roleNameTd.textContent = ''; // empty — role name shown in role cells
-    roleRow.appendChild(roleNameTd);
-    p.shifts.forEach((shift, i) => {
-      const isOff = new Set(['so','h','hd','os','abs','ol','']).has((shift||'').toLowerCase());
-      const td2 = makeRoleCell(p, i);
-      td2.style.paddingBottom = '6px';
-      if (isOff) { td2.innerHTML = ''; td2.style.cursor = 'default'; } // no role for off days
-      if (w.dates[i] === todayStr) td2.classList.add('today-col');
-      roleRow.appendChild(td2);
-    });
-    tbody.appendChild(roleRow);
+    // Role row removed — roles shown in "Roles this week" summary only
   });
   table.appendChild(tbody);
 
@@ -5272,6 +5258,7 @@ function renderUnifonSettings(container) {
 }
 // ─── Mood widget ──────────────────────────────────────────────────
 const MOOD_LABELS = {'😊':'Good','😄':'Great','😐':'Meh','😔':'Low','😤':'Stressed','😴':'Tired','🤒':'Unwell'};
+const MOODS = Object.keys(MOOD_LABELS);
 
 function renderMoodWidget(container, username) {
   const wrap = document.createElement('div');
