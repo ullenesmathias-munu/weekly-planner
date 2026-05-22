@@ -7827,22 +7827,22 @@
   },
   "wtp_intel_snap_2026-05-18": {
     "fromDate": "2026-05-18",
-    "toDate": "2026-05-21",
-    "generated": "2026-05-21T21:57:22.350Z",
+    "toDate": "2026-05-22",
+    "generated": "2026-05-22T09:00:06.258Z",
     "agents": {
       "Jonas": {
         "answered": 71,
         "missed": 1,
         "avgTalk": 452,
         "avgWait": 192,
-        "zdSolved": 64
+        "zdSolved": 0
       },
       "Thomas": {
         "answered": 74,
         "missed": 0,
         "avgTalk": 355,
         "avgWait": 119,
-        "zdSolved": 90
+        "zdSolved": 0
       },
       "Maylen": {
         "answered": 0,
@@ -7856,21 +7856,21 @@
         "missed": 8,
         "avgTalk": 316,
         "avgWait": 240,
-        "zdSolved": 66
+        "zdSolved": 0
       },
       "Benjamin": {
         "answered": 37,
         "missed": 0,
         "avgTalk": 319,
         "avgWait": 212,
-        "zdSolved": 33
+        "zdSolved": 0
       },
       "Cecilie": {
         "answered": 33,
         "missed": 0,
         "avgTalk": 422,
         "avgWait": 412,
-        "zdSolved": 23
+        "zdSolved": 0
       },
       "Tord": {
         "answered": 0,
@@ -7884,14 +7884,14 @@
         "missed": 1,
         "avgTalk": 503,
         "avgWait": 38,
-        "zdSolved": 18
+        "zdSolved": 0
       },
       "Andreas": {
         "answered": 40,
         "missed": 4,
         "avgTalk": 381,
         "avgWait": 81,
-        "zdSolved": 47
+        "zdSolved": 0
       },
       "Julie": {
         "answered": 0,
@@ -7905,7 +7905,7 @@
         "missed": 0,
         "avgTalk": 506,
         "avgWait": 9,
-        "zdSolved": 16
+        "zdSolved": 0
       }
     },
     "totals": {
