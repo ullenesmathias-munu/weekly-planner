@@ -286,6 +286,22 @@
       "pendingName": "",
       "weekStamp": "2026-05-18",
       "done": true
+    },
+    {
+      "id": "1779442668869",
+      "day": "Monday",
+      "title": "[Vetle] Be fully operational within 30 days.",
+      "priority": "medium",
+      "due": "",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "",
+      "timeEnd": "",
+      "weekStamp": "2026-05-18",
+      "done": false,
+      "colour": "",
+      "reminder": ""
     }
   ],
   "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
