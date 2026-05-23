@@ -4755,19 +4755,21 @@ function getAgentCallStats(fromDate, toDate) {
 
 // Resolve Unifon stats for a Zendesk agent name, applying any name mappings
 function resolveAgentCallStats(zdAgentName, agentCallStats) {
+  const norm = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const map = loadUnifonNameMap();
-  // 1. Check if there's an explicit mapping for this Zendesk name
+  // 1. Explicit mapping
   const mappedName = map[zdAgentName] || map[zdAgentName.split(' ')[0]];
   if (mappedName && agentCallStats[mappedName]) return agentCallStats[mappedName];
-  // 2. Try exact full name
+  // 2. Exact full name
   if (agentCallStats[zdAgentName]) return agentCallStats[zdAgentName];
-  // 3. Try first name only
+  // 3. First name only
   const firstName = zdAgentName.split(' ')[0];
   if (agentCallStats[firstName]) return agentCallStats[firstName];
-  // 4. Case-insensitive full name
-  const lower = zdAgentName.toLowerCase();
+  // 4. Case-insensitive + accent-normalised (handles Maylén vs Maylen etc.)
+  const normFull = norm(zdAgentName);
+  const normFirst = norm(firstName);
   const match = Object.entries(agentCallStats).find(([n]) =>
-    n.toLowerCase() === lower || n.toLowerCase().startsWith(firstName.toLowerCase())
+    norm(n) === normFull || norm(n.split(' ')[0]) === normFirst
   );
   return match ? match[1] : null;
 }
