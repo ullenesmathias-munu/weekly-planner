@@ -1942,6 +1942,7 @@ window.tryUnlock = async function() {
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
   <button class="tab-btn" id="tab-btn-calendar" style="display:none" onclick="switchTab('calendar', this)">Calendar</button>
   <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">Tickets</button>
+  <button class="tab-btn" id="tab-btn-opshealth" style="display:none" onclick="switchTab('opshealth', this)">Operations</button>
   <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">Feedback</button>
   <button class="tab-btn" id="tab-btn-reports" style="display:none" onclick="switchTab('reports', this)">Reports</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">Settings</button>
@@ -2132,6 +2133,10 @@ window.tryUnlock = async function() {
 </div>
 
 <!-- REPORTS TAB -->
+<div id="tab-opshealth" class="tab-content">
+  <div id="opshealth-root" style="height:100%;overflow-y:auto;"></div>
+</div>
+
 <div id="tab-reports" class="tab-content">
   <div id="reports-root" style="max-width:900px;"></div>
 </div>
@@ -2509,6 +2514,8 @@ window.tryUnlock = async function() {
 let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylen", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26"], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylen", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17"], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "D1 (7-15)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24"], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31"], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylen", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}];
 
 const MY_TEAM = ['Jonas','Thomas','Maylen','Bernadett','Benjamin','Cecilie','Tord','Marie','Andreas','Julie','Vetle'];
+// Normalise name for matching — strips accents so Maylén === Maylen
+function normName(s) { return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
 const EXCLUDE = ['Kristian','Markus','Ulrik','Stian','Mathias'];
 const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
@@ -2580,6 +2587,9 @@ function switchTab(name, btn) {
   const reportsBtn = document.getElementById('tab-btn-reports');
   if (reportsBtn) reportsBtn.style.display = (isAdmin() || hasPrivilege('manager_view')) ? '' : 'none';
   if (name === 'reports') renderReportsTab();
+  if (name === 'opshealth') renderOpsHealth();
+  const opshealthBtn = document.getElementById('tab-btn-opshealth');
+  if (opshealthBtn) opshealthBtn.style.display = (isAdmin() || hasPrivilege('manager_view')) ? '' : 'none';
   else { zdStopAutoRefresh(); }
   if (name === 'feedback') { renderFeedbackTab(); }
   if (isMobile()) buildMobileNav();
@@ -5980,8 +5990,8 @@ function renderAdminDashboard(root, viewerMode=false) {
             const d = zdData[a.id] || {};
             const open = (d.open||0) + (d.pending||0);
             const name = MY_TEAM.find(n =>
-              n.toLowerCase() === a.name.toLowerCase() ||
-              n.split(' ')[0].toLowerCase() === a.name.split(' ')[0].toLowerCase()
+              normName(n) === normName(a.name) ||
+              normName(n.split(' ')[0]) === normName(a.name.split(' ')[0])
             ) || a.name.split(' ')[0];
             return { name, open };
           })
@@ -6875,7 +6885,7 @@ async function renderTeamMemberDashboard(root) {
   // Populate queue KPI async
   if (zdReady()) {
     const _agentsCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-    const _matched = _agentsCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+    const _matched = _agentsCached.find(a=>normName((a.name||'').split(' ')[0])===normName(scheduleName));
     if (_matched) {
       zdCount('type:ticket assignee_id:'+_matched.id+' (status:open OR status:pending OR status:hold)').then(n=>{
         const v = _qKpi.querySelector('.db-kpi-val');
@@ -7206,7 +7216,7 @@ async function renderTeamMemberDashboard(root) {
         // 2. Try team cache by first name
         if (!_agId) {
           const _agNow = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-          const _agM = _agNow.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+          const _agM = _agNow.find(a=>normName((a.name||'').split(' ')[0])===normName(scheduleName));
           if (_agM) { _agId=_agM.id; localStorage.setItem(_selfCacheKey, JSON.stringify({id:_agM.id,name:_agM.name})); }
         }
 
@@ -7269,7 +7279,7 @@ async function renderTeamMemberDashboard(root) {
       try { const sc=JSON.parse(localStorage.getItem('wtp_zd_self_agent')||'null'); if(sc&&sc.id) _tAgId=sc.id; } catch {}
       if (!_tAgId) {
         const ac=JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-        const am=ac.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+        const am=ac.find(a=>normName((a.name||'').split(' ')[0])===normName(scheduleName));
         if (am) _tAgId=am.id;
       }
       if (!_tAgId) {
@@ -7569,8 +7579,8 @@ function renderPrepBrief(personName, container) {
   if (zdReady() && zdAgents && zdAgents.length) {
     const matched = zdAgents.find(a =>
       MY_TEAM.some(n => n.toLowerCase() === personName.toLowerCase()) &&
-      (a.name.toLowerCase() === personName.toLowerCase() ||
-       a.name.split(' ')[0].toLowerCase() === personName.split(' ')[0].toLowerCase())
+      (normName(a.name) === normName(personName) ||
+       normName(a.name.split(' ')[0]) === normName(personName.split(' ')[0]))
     );
     if (matched) {
       const pd = zdData[matched.id] || {};
@@ -7897,6 +7907,299 @@ function fbMakeCard(post, isAdmin2, onDelete) {
 }
 
 // ─── Reports tab ──────────────────────────────────────────────────
+// ─── OPERATIONS HEALTH TAB ────────────────────────────────────────
+function renderOpsHealth() {
+  const root = document.getElementById('opshealth-root');
+  if (!root) return;
+  root.innerHTML = '';
+
+  const page = document.createElement('div');
+  page.style.cssText = 'max-width:900px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;';
+
+  // ── Period selector ──────────────────────────────────────────────
+  const periodRow = document.createElement('div');
+  periodRow.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap;';
+  const periodLabel = document.createElement('div');
+  periodLabel.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:20px;font-weight:900;color:var(--text);letter-spacing:-0.02em;flex:1;";
+  periodLabel.textContent = 'Operations Health';
+
+  const fromIn = document.createElement('input'); fromIn.type='date'; fromIn.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:4px 8px;outline:none;';
+  const toIn   = document.createElement('input'); toIn.type='date';   toIn.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:4px 8px;outline:none;';
+  const mon = getMonday(0), sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  fromIn.value = fmtLocal(mon); toIn.value = fmtLocal(sun);
+
+  const refreshBtn = document.createElement('button');
+  refreshBtn.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:5px 14px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;";
+  refreshBtn.textContent = '↻ Refresh';
+
+  const periodBtns = document.createElement('div'); periodBtns.style.cssText='display:flex;gap:4px;';
+  [['This week', 0], ['Last week', -1]].forEach(([label, offset]) => {
+    const b = document.createElement('button');
+    b.style.cssText = 'font-size:11px;padding:4px 10px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;';
+    b.textContent = label;
+    b.onclick = () => {
+      const m2 = getMonday(offset), s2 = new Date(m2); s2.setDate(m2.getDate()+6);
+      fromIn.value = fmtLocal(m2); toIn.value = fmtLocal(s2);
+      renderOpsContent(fromIn.value, toIn.value, content_area);
+    };
+    periodBtns.appendChild(b);
+  });
+
+  refreshBtn.onclick = () => renderOpsContent(fromIn.value, toIn.value, content_area);
+  periodRow.appendChild(periodLabel); periodRow.appendChild(periodBtns); periodRow.appendChild(fromIn); periodRow.appendChild(toIn); periodRow.appendChild(refreshBtn);
+  page.appendChild(periodRow);
+
+  const content_area = document.createElement('div');
+  content_area.style.cssText = 'display:flex;flex-direction:column;gap:20px;';
+  page.appendChild(content_area);
+  root.appendChild(page);
+  renderOpsContent(fromIn.value, toIn.value, content_area);
+}
+
+async function renderOpsContent(fromDate, toDate, container) {
+  container.innerHTML = '<div style="padding:40px 0;text-align:center;font-size:13px;color:var(--text3);">Loading operations data…</div>';
+
+  const callStats = getAgentCallStats(fromDate, toDate);
+  const thisMonday = fmtLocal(getMonday(0));
+  const lastMonday = fmtLocal(getMonday(-1));
+  const lastSunday = fmtLocal(new Date(getMonday(0).getTime()-86400000));
+  const tw = buildWeeklySnapshot(fromDate, toDate);
+  const lw = getWeeklySnapshot(lastMonday) || buildWeeklySnapshot(lastMonday, lastSunday);
+
+  container.innerHTML = '';
+
+  const mkLabel = txt => { const e=document.createElement('div'); e.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; e.textContent=txt; return e; };
+
+  // ── 1. Cycle status + targets ────────────────────────────────────
+  const totalEmailAll = zdAgents ? zdAgents.reduce((s,a)=>s+(zdData[a.id]&&zdData[a.id].email||0),0) : 0;
+  const totalPhoneAll = zdAgents ? zdAgents.reduce((s,a)=>s+(zdData[a.id]&&zdData[a.id].phone||0),0) : 0;
+  const emailRatio = (totalEmailAll+totalPhoneAll)>0 ? Math.round(totalEmailAll/(totalEmailAll+totalPhoneAll)*100) : null;
+  const openQ = zdAgents ? zdAgents.reduce((s,a)=>s+((zdData[a.id]&&zdData[a.id].open||0)+(zdData[a.id]&&zdData[a.id].pending||0)),0) : 0;
+  const callsNow = tw.totals.offered||0, callsPrev = lw&&lw.totals&&lw.totals.offered||0;
+  const callTrend = callsPrev>0 ? Math.round((callsNow-callsPrev)/callsPrev*100) : 0;
+
+  const signals = [];
+  if (openQ>60) signals.push('red'); else if (openQ>30) signals.push('amber');
+  if (emailRatio!==null&&emailRatio<30) signals.push('red'); else if (emailRatio!==null&&emailRatio<50) signals.push('amber');
+  if (callTrend>=50) signals.push('red'); else if (callTrend>=30) signals.push('amber');
+
+  const cycleRag = signals.includes('red')?'red':signals.includes('amber')?'amber':'green';
+  const cycleMsg = cycleRag==='red'?'Vicious cycle active — email backlog driving call volume':cycleRag==='amber'?'Warning signs — monitor closely this week':'Operations healthy — cycle broken';
+  const cycleSub = cycleRag==='red'?'Customers not getting email responses → calling instead → inbox grows':cycleRag==='amber'?'Queue or call trend showing early pressure — act before it compounds':'Email ratio healthy, queue manageable, call volume stable';
+  const ragColor = cycleRag==='red'?'var(--high-text)':cycleRag==='amber'?'#ffb74d':'var(--low-text)';
+  const ragBg    = cycleRag==='red'?'rgba(239,83,80,0.08)':cycleRag==='amber'?'rgba(255,183,77,0.08)':'rgba(52,211,153,0.08)';
+  const ragBorder= cycleRag==='red'?'rgba(239,83,80,0.25)':cycleRag==='amber'?'rgba(255,183,77,0.25)':'rgba(52,211,153,0.2)';
+
+  const cycleCard = document.createElement('div');
+  cycleCard.style.cssText = 'border:1px solid '+ragBorder+';border-radius:var(--radius-lg);padding:14px 16px;background:'+ragBg+';';
+  cycleCard.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
+    +'<div style="width:10px;height:10px;border-radius:50%;background:'+ragColor+';flex-shrink:0;"></div>'
+    +'<div style="font-family:\'Fira Sans\',sans-serif;font-size:15px;font-weight:900;color:'+ragColor+';letter-spacing:-0.01em;">'+cycleMsg+'</div>'
+    +'</div>'
+    +'<div style="font-size:12px;color:var(--text2);padding-left:18px;">'+cycleSub+'</div>';
+  container.appendChild(cycleCard);
+
+  // Targets row
+  const tGrid = document.createElement('div'); tGrid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;';
+  const mkTarget = (label, val, target, dir, fmt) => {
+    const met = val===null?null:(dir==='down'?val<=target:val>=target);
+    const col = val===null?'var(--text3)':met?'var(--low-text)':signals.includes('red')?'var(--high-text)':'#ffb74d';
+    const c=document.createElement('div'); c.style.cssText='background:var(--surface2);border-radius:var(--radius-md);padding:10px 12px;';
+    c.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:3px;">'+label+'</div>'
+      +'<div style="font-family:\'Fira Sans\',sans-serif;font-size:22px;font-weight:900;color:'+col+';line-height:1;letter-spacing:-0.02em;">'+(val!==null?fmt(val):'—')+'</div>'
+      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">target '+(dir==='down'?'< ':'\u2265 ')+fmt(target)+'</div>';
+    return c;
+  };
+  const avgWaitMin = tw.totals.avgWait>0?Math.round(tw.totals.avgWait/60*10)/10:null;
+  tGrid.appendChild(mkTarget('Open queue',  openQ,       30, 'down', v=>v));
+  tGrid.appendChild(mkTarget('Email %',     emailRatio,  50, 'up',   v=>v+'%'));
+  tGrid.appendChild(mkTarget('Avg wait',    avgWaitMin,  3,  'down', v=>v+'m'));
+  tGrid.appendChild(mkTarget('Call trend',  callTrend||0,0,  'down', v=>(v>0?'+':'')+v+'%'));
+  container.appendChild(tGrid);
+
+  // ── 2. Agent scorecard ───────────────────────────────────────────
+  container.appendChild(mkLabel('Agent scorecard — vs team average'));
+  const scCard = document.createElement('div'); scCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
+
+  // Build per-agent data
+  const agentData = MY_TEAM.map(name => {
+    const cs = resolveAgentCallStats(name, callStats) || {};
+    const zdA = zdAgents && zdAgents.find(a => normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
+    const d = zdA ? (zdData[zdA.id]||{}) : {};
+    return {
+      name,
+      calls:   cs.answered||0,
+      missed:  cs.missed||0,
+      talkSec: cs.avgTalkSec||0,
+      waitSec: cs.avgWaitSec||0,
+      solved:  d.solved||0,
+      email:   d.email!=null?d.email:null,
+      phone:   d.phone!=null?d.phone:null,
+    };
+  });
+
+  const active = agentData.filter(a => a.calls>0||a.solved>0);
+  const inactive = agentData.filter(a => a.calls===0&&a.solved===0);
+
+  const calcAvg = (arr, key) => { const v=arr.filter(a=>a[key]>0).map(a=>a[key]); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
+  const avgs = {
+    calls:   calcAvg(active,'calls'),
+    solved:  calcAvg(active,'solved'),
+    email:   calcAvg(active.filter(a=>a.email>0),'email'),
+    phone:   calcAvg(active.filter(a=>a.phone>0),'phone'),
+    talkSec: calcAvg(active.filter(a=>a.talkSec>0),'talkSec'),
+    waitSec: calcAvg(active.filter(a=>a.waitSec>0),'waitSec'),
+  };
+
+  const METRICS = [
+    {key:'calls',   label:'Calls',   lower:false},
+    {key:'solved',  label:'Solved',  lower:false},
+    {key:'email',   label:'Email',   lower:false},
+    {key:'phone',   label:'Phone',   lower:false},
+    {key:'talkSec', label:'Talk',    lower:true},
+    {key:'waitSec', label:'Wait',    lower:true},
+  ];
+
+  // Header
+  const scHdr = document.createElement('div');
+  scHdr.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:6px 14px;border-bottom:1px solid var(--border);background:var(--surface2);';
+  ['Agent',...METRICS.map(m=>m.label)].forEach((h,i) => {
+    const c=document.createElement('div'); c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:center;':''); c.textContent=h; scHdr.appendChild(c);
+  });
+  scCard.appendChild(scHdr);
+
+  const classify = (val, avg, lower) => {
+    if (!val||!avg) return 'none';
+    const r = val/avg;
+    if (lower) return r<=1.1?'good':r<=1.5?'warn':'bad';
+    return r>=0.9?'good':r>=0.5?'warn':'bad';
+  };
+
+  const fmtSec = s => s>0?Math.floor(s/60)+'m'+(s%60?s%60+'s':''):'—';
+  const fmtDelta = (v,a,lower) => { if(!v||!a)return''; const p=Math.round((v-a)/a*100); return (p>0?'+':'')+p+'%'; };
+  const cellBg = c => c==='good'?'rgba(52,211,153,0.1)':c==='warn'?'rgba(255,183,77,0.1)':c==='bad'?'rgba(239,83,80,0.1)':'transparent';
+  const cellColor = c => c==='good'?'var(--low-text)':c==='warn'?'#ffb74d':c==='bad'?'var(--high-text)':'var(--text3)';
+
+  const makeAgentRow = (a, faded) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:4px 14px;border-bottom:1px solid var(--border);'+(faded?'opacity:0.4;':'');
+
+    const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;'; nm.textContent=a.name.split(' ')[0]; row.appendChild(nm);
+
+    METRICS.forEach(m => {
+      const val = a[m.key];
+      const avg = avgs[m.key];
+      const cls = (val===null||val===0) ? 'none' : classify(val, avg, m.lower);
+      const cell = document.createElement('div');
+      cell.style.cssText = 'border-radius:6px;padding:4px 3px;background:'+cellBg(cls)+';display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;margin:1px;';
+      const ve=document.createElement('div'); ve.style.cssText='font-size:12px;font-weight:700;color:'+cellColor(cls)+';font-variant-numeric:tabular-nums;';
+      ve.textContent=(m.key==='talkSec'||m.key==='waitSec')?fmtSec(val):(val!=null&&val>0?val:'—');
+      cell.appendChild(ve);
+      if (val>0&&avg>0) { const de=document.createElement('div'); de.style.cssText='font-size:9px;color:'+cellColor(cls)+';opacity:0.8;'; de.textContent=fmtDelta(val,avg,m.lower); cell.appendChild(de); }
+      row.appendChild(cell);
+    });
+    return row;
+  };
+
+  active.sort((a,b)=>b.solved-a.solved).forEach(a => scCard.appendChild(makeAgentRow(a, false)));
+
+  // Team avg row
+  const avgRow = document.createElement('div');
+  avgRow.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:6px 14px;background:var(--surface2);border-top:1px solid var(--border);';
+  const avgNm=document.createElement('div'); avgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);display:flex;align-items:center;'; avgNm.textContent='Team avg'; avgRow.appendChild(avgNm);
+  METRICS.forEach(m => { const c=document.createElement('div'); c.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;'; c.textContent=(m.key==='talkSec'||m.key==='waitSec')?fmtSec(avgs[m.key]):(avgs[m.key]||'—'); avgRow.appendChild(c); });
+  scCard.appendChild(avgRow);
+
+  if (inactive.length) {
+    const sep=document.createElement('div'); sep.style.cssText='padding:6px 14px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);'; sep.textContent='No data this period:';
+    scCard.appendChild(sep);
+    inactive.forEach(a => scCard.appendChild(makeAgentRow(a, true)));
+  }
+
+  // Legend
+  const legend=document.createElement('div'); legend.style.cssText='padding:7px 14px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;';
+  [['good','var(--low-text)','rgba(52,211,153,0.1)','\u2265 90% of avg'],['warn','#ffb74d','rgba(255,183,77,0.1)','50–89%'],['bad','var(--high-text)','rgba(239,83,80,0.1)','< 50%']].forEach(([,tc,bg,lbl])=>{
+    const p=document.createElement('span'); p.style.cssText='display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);';
+    p.innerHTML='<span style="width:10px;height:10px;border-radius:3px;background:'+bg+';display:inline-block;"></span><span style="color:'+tc+'">'+lbl+'</span>';
+    legend.appendChild(p);
+  });
+  const note=document.createElement('span'); note.style.cssText='font-size:10px;color:var(--text3);margin-left:auto;'; note.textContent='Talk & wait time: lower = better';
+  legend.appendChild(note);
+  scCard.appendChild(legend);
+  container.appendChild(scCard);
+
+  // ── 3. Ticket themes ─────────────────────────────────────────────
+  if (zdReady()) {
+    container.appendChild(mkLabel('Ticket themes & resolution time'));
+    const themeCard = document.createElement('div'); themeCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
+    const themeLoading = document.createElement('div'); themeLoading.style.cssText='padding:16px;font-size:12px;color:var(--text3);'; themeLoading.textContent='Fetching ticket themes…';
+    themeCard.appendChild(themeLoading);
+    container.appendChild(themeCard);
+
+    (async()=>{
+      try {
+        let tix=[],url='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=desc';
+        for(let p=0;p<8&&url;p++){const r=await zdFetch(url);tix=tix.concat(r.results||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
+        themeCard.innerHTML='';
+        if(!tix.length){themeCard.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text3);">No tickets found for this period.</div>';return;}
+
+        const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
+        const tc={},tt={},tn={};
+        tix.forEach(t=>{
+          const res=t.solved_at?(new Date(t.solved_at)-new Date(t.created_at))/60000:null;
+          (t.tags||[]).forEach(tag=>{
+            if(SKIP.has(tag.toLowerCase()))return;
+            tc[tag]=(tc[tag]||0)+1;
+            if(res&&res>0){tt[tag]=(tt[tag]||0)+res;tn[tag]=(tn[tag]||0)+1;}
+          });
+        });
+
+        const sorted=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,10);
+        if(!sorted.length){themeCard.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text3);">No tags found on tickets this period.</div>';return;}
+
+        const maxC=sorted[0][1];
+        const tHdr=document.createElement('div');tHdr.style.cssText='display:grid;grid-template-columns:130px 1fr 48px 80px;gap:4px;padding:6px 14px;border-bottom:1px solid var(--border);background:var(--surface2);';
+        ['Tag / theme','','Count','Avg solve'].forEach((h,i)=>{const c=document.createElement('div');c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:right;':'');c.textContent=h;tHdr.appendChild(c);});
+        themeCard.appendChild(tHdr);
+
+        sorted.forEach((entry,idx)=>{
+          const tag=entry[0],count=entry[1];
+          const avg2=tn[tag]?Math.round(tt[tag]/tn[tag]):null;
+          const avgStr=avg2?(avg2<60?avg2+'m':Math.floor(avg2/60)+'h'+(avg2%60?avg2%60+'m':'')):'\u2014';
+          const tc2=avg2>1440?'var(--high-text)':avg2>240?'#ffb74d':'var(--low-text)';
+          const row2=document.createElement('div');row2.style.cssText='display:grid;grid-template-columns:130px 1fr 48px 80px;gap:4px;align-items:center;padding:7px 14px;'+(idx<sorted.length-1?'border-bottom:1px solid var(--border);':'');
+          const nm2=document.createElement('div');nm2.style.cssText='font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm2.textContent=tag.replace(/_/g,' ');
+          const bw2=document.createElement('div');bw2.style.cssText='height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:0 6px;';
+          const bf2=document.createElement('div');bf2.style.cssText='height:100%;width:'+Math.round(count/maxC*100)+'%;background:var(--cal-text);border-radius:3px;';bw2.appendChild(bf2);
+          const ce2=document.createElement('div');ce2.style.cssText='font-size:12px;font-weight:700;text-align:right;color:var(--text);';ce2.textContent=count;
+          const te2=document.createElement('div');te2.style.cssText='font-size:12px;font-weight:700;text-align:right;color:'+(avg2?tc2:'var(--text3)')+';';te2.textContent=avgStr;
+          row2.appendChild(nm2);row2.appendChild(bw2);row2.appendChild(ce2);row2.appendChild(te2);themeCard.appendChild(row2);
+        });
+
+        // Keywords
+        const wc2={};
+        const SW=new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','is','it','my','i','can','not','re','fwd','your','how','do','this','that','are','was','has','have','need','help','please','hi','hello','hey','regarding','about','from','its','be','been','we','our','you','issue','problem','ticket','request','support','question','update']);
+        tix.forEach(t=>{const words=(t.subject||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/);const seen=new Set();words.forEach(w=>{if(w.length<3||SW.has(w)||seen.has(w))return;seen.add(w);wc2[w]=(wc2[w]||0)+1;});});
+        const topW=Object.entries(wc2).filter(e=>e[1]>=2).sort((a,b)=>b[1]-a[1]).slice(0,12);
+
+        if(topW.length){
+          const kwDiv=document.createElement('div');kwDiv.style.cssText='padding:10px 14px;border-top:1px solid var(--border);';
+          const kwLbl2=document.createElement('div');kwLbl2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:7px;';kwLbl2.textContent='Recurring subjects';
+          kwDiv.appendChild(kwLbl2);
+          const pills2=document.createElement('div');pills2.style.cssText='display:flex;flex-wrap:wrap;gap:5px;';
+          topW.forEach(([w,c2])=>{
+            const col2=c2>=5?'var(--high-text)':c2>=3?'#ffb74d':'var(--text2)';
+            const bg2=c2>=5?'rgba(239,83,80,0.08)':c2>=3?'rgba(255,183,77,0.08)':'var(--surface2)';
+            const pill2=document.createElement('span');pill2.style.cssText='padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:'+bg2+';font-size:11px;color:'+col2+';';pill2.textContent=w+' \xd7'+c2;pills2.appendChild(pill2);
+          });
+          kwDiv.appendChild(pills2);themeCard.appendChild(kwDiv);
+        }
+      } catch(e){themeCard.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text3);">Could not load ticket themes — make sure Tickets are loaded first.</div>';}
+    })();
+  }
+}
+
+
 function renderReportsTab() {
   const root = document.getElementById('reports-root');
   if (!root) return;
@@ -9145,7 +9448,7 @@ function renderOtoPersonMain(personName) {
     const highlights = [], concerns = [];
 
     if (zdReady() && zdAgents && zdAgents.length) {
-      const matched = zdAgents.find(a=>a.name.split(' ')[0].toLowerCase()===personName.split(' ')[0].toLowerCase());
+      const matched = zdAgents.find(a=>normName(a.name.split(' ')[0])===normName(personName.split(' ')[0]));
       if (matched) {
         const pd = zdData[matched.id]||{};
         const teamAvg = zdAgents.length ? Math.round(zdAgents.map(a=>(zdData[a.id]||{}).solved||0).filter(v=>v>0).reduce((s,v)=>s+v,0) / zdAgents.filter(a=>(zdData[a.id]||{}).solved>0).length) : 0;
@@ -9421,7 +9724,7 @@ function buildWeeklySnapshot(fromDate, toDate) {
   if (zdAgents && zdAgents.length) {
     zdAgents.forEach(agent => {
       const d = zdData[agent.id] || {};
-      const teamName = MY_TEAM.find(n => n.toLowerCase() === agent.name.toLowerCase() || n.split(' ')[0].toLowerCase() === agent.name.split(' ')[0].toLowerCase());
+      const teamName = MY_TEAM.find(n => normName(n) === normName(agent.name) || normName(n.split(' ')[0]) === normName(agent.name.split(' ')[0]));
       if (teamName && snap.agents[teamName]) snap.agents[teamName].zdSolved = d.solved || 0;
     });
   }
@@ -9648,7 +9951,7 @@ function renderWeeklyBriefingData(container) {
 
     // Sort agents by solved desc
     const sortedForBriefing = zdAgents.filter(function(a){
-      return MY_TEAM.some(function(n){ return n.toLowerCase().startsWith(a.name.split(' ')[0].toLowerCase()); });
+      return MY_TEAM.some(function(n){ return normName(n).startsWith(normName(a.name.split(' ')[0])); });
     }).sort(function(a,b){ return (zdData[b.id]&&zdData[b.id].solved||0)-(zdData[a.id]&&zdData[a.id].solved||0); });
 
     const maxAgentSolved = Math.max.apply(null, sortedForBriefing.map(function(a){ return zdData[a.id]&&zdData[a.id].solved||0; }).concat([1]));
@@ -9822,8 +10125,8 @@ function renderWeeklyBriefingData(container) {
 
       // Phone tickets from ZD cache
       const zdAgent = zdAgents && zdAgents.find(function(a) {
-        return a.name.toLowerCase() === name.toLowerCase() ||
-               a.name.split(' ')[0].toLowerCase() === name.split(' ')[0].toLowerCase();
+        return normName(a.name) === normName(name) ||
+               normName(a.name.split(' ')[0]) === normName(name.split(' ')[0]);
       });
       const phoneTickets = zdAgent && zdData[zdAgent.id] ? (zdData[zdAgent.id].phone||0) : 0;
 
@@ -10036,7 +10339,7 @@ function renderWeeklyBriefingData(container) {
     aCard.appendChild(aHdr);
 
     const sortedA = zdAgents
-      .filter(function(a){return MY_TEAM.some(function(n){return n.split(' ')[0].toLowerCase()===a.name.split(' ')[0].toLowerCase();});})
+      .filter(function(a){return MY_TEAM.some(function(n){return normName(n.split(' ')[0])===normName(a.name.split(' ')[0]);});})
       .sort(function(a,b){return (zdData[b.id]&&zdData[b.id].solved||0)-(zdData[a.id]&&zdData[a.id].solved||0);});
 
     sortedA.forEach(function(agent, idx) {
@@ -10658,11 +10961,11 @@ function zdRender(agents, fromDate, toDate) {
 
   // Filter to MY_TEAM only
   const absentNames = zdGetAbsentNames(fromDate, toDate);
-  const teamFirstNames = new Set(MY_TEAM.map(n => n.split(' ')[0].toLowerCase()));
+  const teamFirstNames = new Set(MY_TEAM.map(n => normName(n.split(' ')[0])));
   const presentAgents = agents.filter(a => {
-    const firstName = a.name.split(' ')[0].toLowerCase();
-    const fullLower = a.name.toLowerCase();
-    const isTeam = teamFirstNames.has(firstName) || MY_TEAM.some(n => n.toLowerCase() === fullLower);
+    const firstName = normName(a.name.split(' ')[0]);
+    const fullLower = normName(a.name);
+    const isTeam = teamFirstNames.has(firstName) || MY_TEAM.some(n => normName(n) === fullLower);
     const isAbsent = absentNames.has(fullLower) || absentNames.has(firstName);
     return isTeam && !isAbsent;
   });
@@ -11537,6 +11840,8 @@ function loadUserData() {
   const reportsBtn2 = document.getElementById('tab-btn-reports');
   if (reportsBtn2) reportsBtn2.style.display = (currentUser?.isAdmin || hasPrivilege('manager_view')) ? '' : 'none';
   if (hasPrivilege('zendesk')) initZendeskTab();
+  const _ohBtn = document.getElementById('tab-btn-opshealth');
+  if (_ohBtn && (isAdmin() || hasPrivilege('manager_view'))) _ohBtn.style.display = '';
   // Show non-admin sync card
   const nonAdminCard = document.getElementById('nonadmin-sync-card');
   if (nonAdminCard) nonAdminCard.style.display = (!currentUser?.isAdmin) ? '' : 'none';
