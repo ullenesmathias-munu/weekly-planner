@@ -7831,6 +7831,58 @@
         "totalWaitSec": 1465,
         "missed": 1
       }
+    },
+    "2026-05-23": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 2,
+        "totalTalkSec": 700,
+        "totalWaitSec": 135,
+        "missed": 0
+      }
+    },
+    "2026-05-22": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 14,
+        "totalTalkSec": 6296,
+        "totalWaitSec": 2397,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 28,
+        "totalTalkSec": 12809,
+        "totalWaitSec": 10504,
+        "missed": 3
+      },
+      "Bernadett Costea": {
+        "answered": 23,
+        "totalTalkSec": 9193,
+        "totalWaitSec": 8009,
+        "missed": 4
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 17,
+        "totalTalkSec": 6411,
+        "totalWaitSec": 10331,
+        "missed": 1
+      },
+      "Vetle Bengtson": {
+        "answered": 8,
+        "totalTalkSec": 3800,
+        "totalWaitSec": 1612,
+        "missed": 1
+      },
+      "Jonas Johannes": {
+        "answered": 24,
+        "totalTalkSec": 12654,
+        "totalWaitSec": 8897,
+        "missed": 5
+      },
+      "Thomas Hildre": {
+        "answered": 15,
+        "totalTalkSec": 5695,
+        "totalWaitSec": 920,
+        "missed": 1
+      }
     }
   },
   "wtp_wingman": [
