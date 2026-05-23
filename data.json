@@ -8049,7 +8049,7 @@
   "wtp_intel_snap_2026-05-18": {
     "fromDate": "2026-05-18",
     "toDate": "2026-05-23",
-    "generated": "2026-05-23T07:00:59.724Z",
+    "generated": "2026-05-23T07:31:53.208Z",
     "agents": {
       "Jonas": {
         "answered": 95,
@@ -8066,10 +8066,10 @@
         "zdSolved": 111
       },
       "Maylen": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "answered": 76,
+        "missed": 6,
+        "avgTalk": 341,
+        "avgWait": 260,
         "zdSolved": 0
       },
       "Bernadett": {
