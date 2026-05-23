@@ -10372,7 +10372,12 @@ async function zdFetchSolvedBatch(agentIds, fromDate, toDate) {
         if (!idSet.has(id)) return;
         byAgent[id].solved++;
         // channel mapping: email=email, everything else (web/voice/api/mobile)=phone
-        if (t.channel==='email') byAgent[id].email++;
+        // ZD search API returns channel in t.channel OR nested in t.via.channel
+        const _rawCh = t.channel || (t.via && t.via.channel) || '';
+        if (!window._zdChSeen) window._zdChSeen = {};
+        window._zdChSeen[_rawCh] = (window._zdChSeen[_rawCh]||0)+1;
+        if (Object.keys(window._zdChSeen).length <= 8) console.log('[ZD channel] ticket', t.id, 'channel:', JSON.stringify(t.channel), 'via.channel:', JSON.stringify(t.via && t.via.channel));
+        if (_rawCh === 'email') byAgent[id].email++;
         else { byAgent[id].phone=(byAgent[id].phone||0)+1; }
       });
       url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
