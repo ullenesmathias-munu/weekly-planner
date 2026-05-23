@@ -5929,7 +5929,7 @@ function renderAdminDashboard(root, viewerMode=false) {
         let emailCount = 0, phoneCount = 0, hasData = false;
         zdAgents.forEach(function(a) {
           const d = zdData[a.id] || {};
-          if (d.email != null) { emailCount += d.email; phoneCount += d.phone||0; hasData = true; }
+          if (d.email != null) { emailCount += d.email; phoneCount += (d.web||0)+(d.voice||0); hasData = true; }
         });
         if (hasData) {
           if(eEl) eEl.textContent = emailCount;
@@ -6000,6 +6000,60 @@ function renderAdminDashboard(root, viewerMode=false) {
         }
         container.appendChild(qcDiv);
       }
+
+      // ── Trending tags (this week) ─────────────────────────────
+      const tagDiv = document.createElement('div');
+      tagDiv.style.cssText = 'margin-top:10px;border-top:1px solid var(--border);padding-top:10px;';
+      const tagLbl = document.createElement('div');
+      tagLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;';
+      tagLbl.innerHTML = '<span>Trending topics</span>';
+      const tagLink = document.createElement('span');
+      tagLink.style.cssText = 'font-size:9px;font-weight:400;color:var(--cal-text);cursor:pointer;';
+      tagLink.textContent = 'See briefing →';
+      tagLink.onclick = ()=>{
+        const btn=document.querySelector('[onclick*="onetoone"]');
+        switchTab('onetoone',btn);
+        setTimeout(()=>{ const wb=document.getElementById('oto-briefing-btn'); if(wb) wb.click(); },150);
+      };
+      tagLbl.appendChild(tagLink);
+      tagDiv.appendChild(tagLbl);
+      const pillsWrap=document.createElement('div');
+      pillsWrap.style.cssText='display:flex;flex-wrap:wrap;gap:5px;';
+      pillsWrap.id='db-tag-pills';
+      pillsWrap.innerHTML='<span style="font-size:11px;color:var(--text3);font-style:italic;">Loading…</span>';
+      tagDiv.appendChild(pillsWrap);
+      container.appendChild(tagDiv);
+
+      (async()=>{
+        try {
+          const mon=fmtLocal(getMonday(0)),tod=localToday();
+          const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
+          let tix=[],url='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+mon+' solved<='+tod)+'&per_page=100';
+          for(let p=0;p<4&&url;p++){const r=await zdFetch(url);tix=tix.concat(r.results||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
+          const tc={};
+          tix.forEach(t=>(t.tags||[]).forEach(tag=>{if(!SKIP.has(tag.toLowerCase()))tc[tag]=(tc[tag]||0)+1;}));
+          const top=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+          const w2=document.getElementById('db-tag-pills');
+          if(!w2) return;
+          w2.innerHTML='';
+          if(!top.length){w2.innerHTML='<span style="font-size:11px;color:var(--text3);">No tags this week</span>';return;}
+          top.forEach(([tag,count])=>{
+            const pill=document.createElement('span');
+            const col=count>=5?'var(--high-text)':count>=3?'#ffb74d':'var(--text2)';
+            const bg=count>=5?'rgba(239,83,80,0.08)':count>=3?'rgba(255,183,77,0.08)':'var(--surface2)';
+            pill.style.cssText='padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:'+bg+';font-size:11px;color:'+col+';cursor:pointer;white-space:nowrap;';
+            pill.textContent=tag.replace(/_/g,' ')+' ×'+count;
+            pill.title='See full breakdown in Weekly Briefing';
+            pill.onclick=()=>{
+              const btn=document.querySelector('[onclick*="onetoone"]');
+              switchTab('onetoone',btn);
+              setTimeout(()=>{ const wb=document.getElementById('oto-briefing-btn'); if(wb) wb.click(); },150);
+            };
+            w2.appendChild(pill);
+          });
+        } catch(e){ const w=document.getElementById('db-tag-pills');if(w)w.innerHTML=''; }
+      })();
+
     } else {
       ['db-q-open','db-q-pending','db-q-solved','db-q-hold'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
     }
@@ -7164,7 +7218,7 @@ async function renderTeamMemberDashboard(root) {
         let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agId+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
         for(let p=0;p<5&&url;p++){
           const r=await zdFetch(url);
-          (r.results||[]).forEach(t=>{_solved++;if(t.channel==='email')_email++;else _phone++;});
+          (r.results||[]).forEach(t=>{_solved++;const _ch=t.channel==='email'?'email':t.channel==='voice'||t.channel==='phone'?'voice':'web';if(_ch==='email')_email++;else _phone++;});
           url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
         }
         const sv=document.getElementById('nm-zd-solved'); if(sv){sv.textContent=_solved;sv.style.color=_solved>0?'var(--low-text)':'var(--text)';}
@@ -8060,7 +8114,8 @@ async function generateReport(fromDate, toDate, container) {
         const a=zdAgents.find(ag=>ag.id===t.assignee_id); if(!a)return;
         const n=a.name;
         agentSolved[n]=(agentSolved[n]||0)+1;
-        if(t.channel==='email')agentEmail[n]=(agentEmail[n]||0)+1;
+        const _rch=t.channel==='email'?'email':t.channel==='voice'||t.channel==='phone'?'voice':'web';
+        if(_rch==='email')agentEmail[n]=(agentEmail[n]||0)+1;
         else agentPhone[n]=(agentPhone[n]||0)+1;
       });
       csatRatings.forEach(r=>{
@@ -8082,6 +8137,7 @@ async function generateReport(fromDate, toDate, container) {
 
       // Channel totals
       const emailTotal=solvedTickets.filter(t=>t.channel==='email').length;
+      const voiceTotal=solvedTickets.filter(t=>t.channel==='voice'||t.channel==='phone').length;
       const phoneTotal=solvedTickets.length-emailTotal;
 
       zd = { totalSolved, openNow, csatGood, csatBad, csatTotal, csatPct, csatPending, mttrMean, mttrMedian, mttrBuckets, agentSolved, agentCsat, agentEmail, agentPhone, solvedByDay, solvedByWeek, solvedTickets, emailTotal, phoneTotal, daysInPeriod, dailyAvg:Math.round(totalSolved/daysInPeriod) };
@@ -8893,6 +8949,7 @@ function renderOtoTab() {
   briefingBtn.onmouseover = () => briefingBtn.style.background='rgba(77,171,247,0.15)';
   briefingBtn.onmouseout  = () => briefingBtn.style.background='rgba(77,171,247,0.08)';
   briefingBtn.innerHTML = '<span style="font-size:14px;">📊</span><div><div style="font-size:11px;font-weight:700;color:var(--cal-text);">Weekly Briefing</div><div style="font-size:9px;color:var(--text3);">Calls, tickets & trends</div></div>';
+  briefingBtn.id = 'oto-briefing-btn';
   briefingBtn.onclick = () => renderWeeklyBriefingPanel();
   sidebar.appendChild(briefingBtn);
 
@@ -9509,12 +9566,13 @@ function renderWeeklyBriefingData(container) {
     const zdGrid = document.createElement('div');
     zdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;';
 
-    let totalSolved=0, totalEmail=0, totalPhone=0, openPending=0, slaBreaches=0;
+    let totalSolved=0, totalEmail=0, totalWeb=0, totalVoice=0, openPending=0, slaBreaches=0;
     zdAgents.forEach(function(a) {
       const d = zdData[a.id]||{};
       totalSolved  += d.solved||0;
       totalEmail   += d.email!=null ? d.email : 0;
-      totalPhone   += d.phone!=null ? d.phone : 0;
+      totalWeb     += d.web!=null   ? d.web   : 0;
+      totalVoice   += d.voice!=null ? d.voice : 0;
       openPending  += (d.open||0)+(d.pending||0);
       slaBreaches  += d.breached||0;
     });
@@ -9522,24 +9580,29 @@ function renderWeeklyBriefingData(container) {
 
     zdGrid.appendChild(kpiCard('Solved total', totalSolved, lTotalSolved!==null ? delta(totalSolved,lTotalSolved,true) : {txt:'—',color:'var(--text3)',icon:''}));
 
-    // Email / web KPI cards with channel split bar
-    const emailCard = document.createElement('div');
-    emailCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    const chanTotal = totalEmail + totalPhone;
-    const emailPct = chanTotal > 0 ? Math.round(totalEmail/chanTotal*100) : 0;
-    const webPct   = chanTotal > 0 ? 100 - emailPct : 0;
-    emailCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">Email / Phone</div>'
-      +'<div style="display:flex;align-items:baseline;gap:6px;">'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
-      +'<span style="font-size:12px;color:var(--text3);">/</span>'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--med-text);">'+totalPhone+'</span>'
+    // Channel split: Email / Web form / Voice
+    const chanTotal = totalEmail + totalWeb + totalVoice;
+    const ePct = chanTotal>0 ? Math.round(totalEmail/chanTotal*100) : 0;
+    const wPct = chanTotal>0 ? Math.round(totalWeb/chanTotal*100) : 0;
+    const vPct = chanTotal>0 ? 100-ePct-wPct : 0;
+    const chanCard = document.createElement('div');
+    chanCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
+    chanCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:5px;">Channels</div>'
+      +'<div style="display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;">'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:16px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
+      +'<span style="font-size:9px;color:var(--text3);">email</span>'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:16px;font-weight:900;color:var(--med-text);margin-left:4px;">'+totalWeb+'</span>'
+      +'<span style="font-size:9px;color:var(--text3);">web</span>'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:16px;font-weight:900;color:#ffb74d;margin-left:4px;">'+totalVoice+'</span>'
+      +'<span style="font-size:9px;color:var(--text3);">voice</span>'
       +'</div>'
-      +'<div style="display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;margin-top:6px;">'
-      +'<div style="width:'+emailPct+'%;background:var(--cal-text);"></div>'
-      +'<div style="flex:1;background:var(--med-text);opacity:0.5;"></div>'
+      +'<div style="display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden;margin-top:7px;">'
+      +'<div style="width:'+ePct+'%;background:var(--cal-text);min-width:'+(totalEmail>0?2:0)+'px;"></div>'
+      +'<div style="width:'+wPct+'%;background:var(--med-text);opacity:0.7;min-width:'+(totalWeb>0?2:0)+'px;"></div>'
+      +'<div style="flex:1;background:#ffb74d;opacity:0.6;min-width:'+(totalVoice>0?2:0)+'px;"></div>'
       +'</div>'
-      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+emailPct+'% email · '+webPct+'% phone</div>';
-    zdGrid.appendChild(emailCard);
+      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+ePct+'% email · '+wPct+'% web · '+vPct+'% voice</div>';
+    zdGrid.appendChild(chanCard);
 
     zdGrid.appendChild(kpiCard('Open / pending', openPending, {txt:'live',color:'var(--text3)',icon:''}));
 
@@ -9558,8 +9621,8 @@ function renderWeeklyBriefingData(container) {
 
     // Header row
     const hdrRow = document.createElement('div');
-    hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
-    ['Agent','','Solved','Email','Phone','Open'].forEach(function(h,i) {
+    hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
+    ['Agent','','Solved','Email','Web','Voice','Open'].forEach(function(h,i) {
       const c = document.createElement('div');
       c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
       c.textContent = h;
@@ -9577,7 +9640,7 @@ function renderWeeklyBriefingData(container) {
     sortedForBriefing.forEach(function(agent, idx) {
       const d = zdData[agent.id]||{};
       const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedForBriefing.length-1?'border-bottom:1px solid var(--border);':'');
+      row.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px 52px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedForBriefing.length-1?'border-bottom:1px solid var(--border);':'');
 
       const nameCell = document.createElement('div');
       nameCell.style.cssText = 'font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
@@ -9604,7 +9667,8 @@ function renderWeeklyBriefingData(container) {
       row.appendChild(barWrap);
       row.appendChild(numCell(d.solved||0));
       row.appendChild(numCell(d.email!=null?d.email:'—', 'var(--cal-text)'));
-      row.appendChild(numCell(d.phone!=null?d.phone:'—', 'var(--med-text)'));
+      row.appendChild(numCell(d.web!=null?d.web:'—', 'var(--med-text)'));
+      row.appendChild(numCell(d.voice!=null?d.voice:'—', '#ffb74d'));
       row.appendChild(numCell(openNow||'—', openColor));
       tbl.appendChild(row);
     });
@@ -9612,6 +9676,104 @@ function renderWeeklyBriefingData(container) {
     zdSec.appendChild(tbl);
     wrap.appendChild(zdSec);
   }
+
+    // ── SECTION 3b: Ticket intelligence ───────────────────────────
+    (async function() {
+      try {
+        const query = 'type:ticket status>=solved solved>='+thisMonday+' solved<='+today;
+        let tix=[], tixUrl='/search.json?query='+encodeURIComponent(query)+'&per_page=100&sort_by=solved_at&sort_order=desc';
+        for(let p=0;p<8&&tixUrl;p++){const r=await zdFetch(tixUrl);tix=tix.concat(r.results||[]);tixUrl=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
+        if(!tix.length) return;
+
+        const intelSec=document.createElement('div');
+        intelSec.appendChild(sectionTitle('Ticket themes this week'));
+
+        // Tag frequency + avg resolution time per tag
+        const tagCount={},tagTime={},tagTix={};
+        const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
+        tix.forEach(function(t){
+          const res=t.solved_at?(new Date(t.solved_at)-new Date(t.created_at))/60000:null;
+          (t.tags||[]).forEach(function(tag){
+            if(SKIP.has(tag.toLowerCase())) return;
+            tagCount[tag]=(tagCount[tag]||0)+1;
+            if(res&&res>0){tagTime[tag]=(tagTime[tag]||0)+res;tagTix[tag]=(tagTix[tag]||0)+1;}
+          });
+        });
+
+        const sortedTags=Object.entries(tagCount).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+        if(sortedTags.length){
+          const maxC=sortedTags[0][1];
+          const tagCard=document.createElement('div');
+          tagCard.style.cssText='background:var(--surface2);border-radius:10px;overflow:hidden;';
+          const tagHdr=document.createElement('div');
+          tagHdr.style.cssText='display:grid;grid-template-columns:120px 1fr 40px 70px;gap:4px;padding:5px 12px;border-bottom:1px solid var(--border);';
+          ['Tag / theme','','Count','Avg. solve'].forEach(function(h,i){const c=document.createElement('div');c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:right;':'');c.textContent=h;tagHdr.appendChild(c);});
+          tagCard.appendChild(tagHdr);
+          sortedTags.forEach(function(entry,idx){
+            const tag=entry[0],count=entry[1];
+            const avg=tagTix[tag]?Math.round(tagTime[tag]/tagTix[tag]):null;
+            const avgStr=avg?(avg<60?avg+'m':Math.floor(avg/60)+'h'+(avg%60?''+avg%60+'m':'')):'—';
+            const tc=avg>1440?'var(--high-text)':avg>240?'#ffb74d':'var(--low-text)';
+            const row=document.createElement('div');
+            row.style.cssText='display:grid;grid-template-columns:120px 1fr 40px 70px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedTags.length-1?'border-bottom:1px solid var(--border);':'');
+            const nm=document.createElement('div');nm.style.cssText='font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=tag.replace(/_/g,' ');
+            const bw=document.createElement('div');bw.style.cssText='height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px;';
+            const bf=document.createElement('div');bf.style.cssText='height:100%;width:'+Math.round(count/maxC*100)+'%;background:var(--cal-text);border-radius:2px;';
+            bw.appendChild(bf);
+            const ce=document.createElement('div');ce.style.cssText='font-size:11px;font-weight:700;text-align:right;color:var(--text);';ce.textContent=count;
+            const te=document.createElement('div');te.style.cssText='font-size:11px;font-weight:700;text-align:right;color:'+(avg?tc:'var(--text3)')+';';te.textContent=avgStr;
+            row.appendChild(nm);row.appendChild(bw);row.appendChild(ce);row.appendChild(te);tagCard.appendChild(row);
+          });
+          intelSec.appendChild(tagCard);
+        }
+
+        // Keyword clusters from subjects
+        const wc={};
+        const SW=new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','is','it','my','i','can','not','re','fwd','your','how','do','this','that','are','was','has','have','need','help','please','hi','hello','hey','regarding','about','from','its','be','been','we','our','you','issue','problem','ticket','request','support','question','update','regarding','hi','dear']);
+        tix.forEach(function(t){
+          const words=(t.subject||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/);
+          const seen=new Set();
+          words.forEach(function(w){if(w.length<3||SW.has(w)||seen.has(w))return;seen.add(w);wc[w]=(wc[w]||0)+1;});
+        });
+        const topW=Object.entries(wc).filter(function(e){return e[1]>=2;}).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+        if(topW.length){
+          const kwWrap=document.createElement('div');kwWrap.style.cssText='margin-top:10px;';
+          const kwLbl=document.createElement('div');kwLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';kwLbl.textContent='Recurring subjects';
+          kwWrap.appendChild(kwLbl);
+          const pills=document.createElement('div');pills.style.cssText='display:flex;flex-wrap:wrap;gap:5px;';
+          topW.forEach(function(entry){
+            const w=entry[0],c=entry[1];
+            const col=c>=5?'var(--high-text)':c>=3?'#ffb74d':'var(--text2)';
+            const bg=c>=5?'rgba(239,83,80,0.08)':c>=3?'rgba(255,183,77,0.08)':'var(--surface2)';
+            const pill=document.createElement('span');
+            pill.style.cssText='display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:'+bg+';font-size:11px;color:'+col+';';
+            pill.textContent=w+' ×'+c;pills.appendChild(pill);
+          });
+          kwWrap.appendChild(pills);intelSec.appendChild(kwWrap);
+        }
+
+        // Slowest themes
+        const slowT=Object.entries(tagTime).filter(function(e){return tagTix[e[0]]>=2;}).map(function(e){return{tag:e[0],avg:Math.round(e[1]/tagTix[e[0]])};}).sort(function(a,b){return b.avg-a.avg;}).slice(0,3).filter(function(x){return x.avg>120;});
+        if(slowT.length&&slowT[0].avg>240){
+          const slWrap=document.createElement('div');slWrap.style.cssText='margin-top:10px;';
+          const slLbl=document.createElement('div');slLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';slLbl.textContent='Slowest to resolve';
+          slWrap.appendChild(slLbl);
+          const slList=document.createElement('div');slList.style.cssText='display:flex;flex-direction:column;gap:5px;';
+          slowT.forEach(function(item){
+            const h=Math.floor(item.avg/60),m=item.avg%60;
+            const ts=h>0?h+'h '+(m?m+'m':''):m+'m';
+            const col=item.avg>1440?'var(--high-text)':item.avg>480?'#ffb74d':'var(--text2)';
+            const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border-radius:8px;padding:6px 10px;';
+            const n2=document.createElement('div');n2.style.cssText='font-size:12px;color:var(--text);';n2.textContent=item.tag.replace(/_/g,' ');
+            const t2=document.createElement('div');t2.style.cssText='font-size:11px;font-weight:700;color:'+col+';';t2.textContent='avg '+ts;
+            row.appendChild(n2);row.appendChild(t2);slList.appendChild(row);
+          });
+          slWrap.appendChild(slList);intelSec.appendChild(slWrap);
+        }
+
+        if(intelSec.children.length>1){wrap.insertBefore(intelSec,wrap.children[wrap.children.length-2]);}
+      } catch(e){ console.warn('Ticket intelligence:',e.message); }
+    })();
 
   // ── SECTION 4: Calls vs Phone tickets ─────────────────────────
   const callStats = getAgentCallStats(thisMonday, today);
@@ -10183,7 +10345,7 @@ async function zdGetAgents(groupId) {
 // Called once in zdRefresh — avoids per-agent queries that cause 429 rate limits
 async function zdFetchSolvedBatch(agentIds, fromDate, toDate) {
   const byAgent = {};
-  agentIds.forEach(id => { byAgent[id] = { solved:0, email:0, phone:0 }; });
+  agentIds.forEach(id => { byAgent[id] = { solved:0, email:0, phone:0, web:0, voice:0 }; });
   try {
     const idSet = new Set(agentIds.map(String));
     let url = `/search.json?query=${encodeURIComponent(`type:ticket status>=solved solved>=${fromDate} solved<=${toDate}`)}&per_page=100`;
@@ -10193,8 +10355,10 @@ async function zdFetchSolvedBatch(agentIds, fromDate, toDate) {
         const id = String(t.assignee_id);
         if (!idSet.has(id)) return;
         byAgent[id].solved++;
-        if (t.channel === 'email') byAgent[id].email++;
-        else byAgent[id].phone++;
+        const _ch = t.channel==='email'?'email':t.channel==='voice'||t.channel==='phone'?'voice':'web';
+        if (_ch==='email') byAgent[id].email++;
+        else if (_ch==='voice') { byAgent[id].voice=(byAgent[id].voice||0)+1; byAgent[id].phone=(byAgent[id].phone||0)+1; }
+        else { byAgent[id].web=(byAgent[id].web||0)+1; byAgent[id].phone=(byAgent[id].phone||0)+1; }
       });
       url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
     }
@@ -10406,7 +10570,10 @@ function zdRender(agents, fromDate, toDate) {
   });
   bar.appendChild(mkPill(totalSolved, 'Solved', 'var(--low-text)'));
   bar.appendChild(mkPill(totalEmail, 'Via email', 'var(--cal-text)'));
-  bar.appendChild(mkPill(totalPhone, 'Phone', 'var(--med-text)'));
+  const totalWeb2 = zdAgents.reduce((s,a)=>{const d=zdData[a.id]||{};return s+(d.web||0);},0);
+  const totalVoice = zdAgents.reduce((s,a)=>{const d=zdData[a.id]||{};return s+(d.voice||0);},0);
+  bar.appendChild(mkPill(totalWeb2, 'Web form', 'var(--med-text)'));
+  bar.appendChild(mkPill(totalVoice, 'Voice', '#ffb74d'));
   bar.appendChild(mkPill(totalOpen, 'Open now', totalOpen>100?'var(--high-text)':totalOpen>60?'var(--med-text)':'var(--text)'));
   bar.appendChild(mkPill(totalPending, 'Pending now', 'var(--med-text)'));
   bar.appendChild(mkPill(totalHold, 'On hold now', 'var(--text3)'));
@@ -10480,7 +10647,8 @@ function zdRender(agents, fromDate, toDate) {
     const fixedRows = [
       { dot:'var(--low-text)',  label:'Solved',       val: d.solved||0,  bold: true },
       { dot:'var(--cal-text)',  label:'Email',         val: d.email!=null ? d.email : '—' },
-      { dot:'var(--med-text)',  label:'Phone', val: d.phone!=null ? d.phone : '—' },
+      { dot:'var(--med-text)',  label:'Web form', val: d.web!=null ? d.web : '—' },
+    { dot:'#ffb74d',              label:'Voice/phone', val: d.voice!=null ? d.voice : '—' },
       { dividerLabel: 'Live queue' },
       { dot:'var(--high-text)', label:'Open now',      val: d.open||0 },
       { dot:'var(--med-text)',  label:'Pending now',   val: d.pending||0 },
