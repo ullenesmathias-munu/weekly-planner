@@ -1194,7 +1194,7 @@
   .handover-note { background: var(--surface2); border-left: 3px solid var(--cal-text); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 9px 12px; font-size: 12px; color: var(--text); line-height: 1.55; white-space: pre-wrap; }
   .handover-meta { font-size: 10px; color: var(--text3); margin-top: 5px; }
   /* ─── Quick links ────────────────────────────────────────────── */
-  .ql-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .ql-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
   .ql-link { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); text-decoration: none; color: var(--text); font-size: 12px; font-weight: 500; transition: border-color 0.12s, background 0.12s, color 0.12s; }
   .ql-link:hover { border-color: var(--cal-text); background: var(--cal); color: var(--cal-text); }
   .ql-icon { font-size: 14px; flex-shrink: 0; line-height: 1; }
@@ -1209,10 +1209,11 @@
   .ql-add-btn:hover { opacity: 0.85; }
   /* ─── Announcements ─────────────────────────────────────────── */
   .ann-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; position: relative; }
-  .ann-card.unread { border-left: 3px solid #F1B7F2; background: rgba(241,183,242,0.05); }
+  .ann-card.unread { border-left: 3px solid rgba(214,243,255,0.7) !important; background: rgba(214,243,255,0.08) !important; }
+  .light-mode .ann-card.unread { background: rgba(0,7,67,0.06) !important; border-left-color: #000743 !important; }
   .ann-meta { font-size: 10px; color: var(--text3); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .ann-text { font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-wrap; font-weight: 500; }
-  .ann-badge { font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 8px; background: rgba(241,183,242,0.18); color: #F1B7F2; letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0; }
+  .ann-badge { font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 8px; background: rgba(214,243,255,0.15); color: #D6F3FF; letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0; }
   .ann-read-btn { font-size: 11px; font-weight: 600; color: var(--text3); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 2px 10px; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
   .ann-read-btn:hover { color: var(--cal-text); border-color: var(--cal-text); }
   .ann-compose { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
@@ -7116,22 +7117,51 @@ async function renderTeamMemberDashboard(root) {
     statsSec.appendChild(refreshStatsBtn);
     col3.appendChild(statsSec);
 
-    // Fetch async
-    const _agCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-    const _agMatched = _agCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+    // Resolve own ZD agent ID — try cache first, then /users/me.json self-lookup
+    const _selfCacheKey = 'wtp_zd_self_agent';
     const _doFetchStats = async () => {
-      const _agNow = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-      const _agM = _agNow.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
-      if (!_agM) {
-        ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
-        return;
-      }
       ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='…';});
       refreshStatsBtn.textContent='↻ Refreshing…'; refreshStatsBtn.disabled=true;
-      const _wFrom=fmtLocal(getMonday(0)), _wTo=localToday();
-      let _solved=0,_email=0,_phone=0;
       try {
-        let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agM.id+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
+        // 1. Try cached self-agent
+        let _agId = null;
+        try { const sc=JSON.parse(localStorage.getItem(_selfCacheKey)||'null'); if(sc&&sc.id) _agId=sc.id; } catch {}
+
+        // 2. Try team cache by first name
+        if (!_agId) {
+          const _agNow = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+          const _agM = _agNow.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+          if (_agM) { _agId=_agM.id; localStorage.setItem(_selfCacheKey, JSON.stringify({id:_agM.id,name:_agM.name})); }
+        }
+
+        // 3. Self-lookup via /users/me.json — works with own ZD credentials
+        if (!_agId) {
+          try {
+            const meRes = await zdFetch('/users/me.json');
+            const me = meRes.user;
+            if (me && me.id) {
+              _agId = me.id;
+              localStorage.setItem(_selfCacheKey, JSON.stringify({id:me.id, name:me.name}));
+              // Also add to team cache for future use
+              const existing = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+              if (!existing.find(a=>a.id===me.id)) {
+                existing.push({id:me.id, name:me.name, email:me.email});
+                localStorage.setItem('wtp_zd_agents_cache', JSON.stringify(existing));
+              }
+            }
+          } catch {}
+        }
+
+        if (!_agId) {
+          ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+          refreshStatsBtn.textContent='↻ Refresh stats'; refreshStatsBtn.disabled=false;
+          return;
+        }
+
+        // Fetch solved tickets for this week
+        const _wFrom=fmtLocal(getMonday(0)), _wTo=localToday();
+        let _solved=0,_email=0,_phone=0;
+        let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agId+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
         for(let p=0;p<5&&url;p++){
           const r=await zdFetch(url);
           (r.results||[]).forEach(t=>{_solved++;if(t.channel==='email')_email++;else _phone++;});
@@ -7146,7 +7176,7 @@ async function renderTeamMemberDashboard(root) {
       refreshStatsBtn.textContent='↻ Refresh stats'; refreshStatsBtn.disabled=false;
     };
     refreshStatsBtn.onclick = _doFetchStats;
-    if (_agMatched) _doFetchStats();
+    _doFetchStats(); // always attempt on load
   }
 
   // Tickets
@@ -7157,10 +7187,23 @@ async function renderTeamMemberDashboard(root) {
     const loading = document.createElement('div'); loading.className='db-empty'; loading.textContent='Loading…';
     ticketSec.appendChild(loading);
     col3.appendChild(ticketSec);
-    const agentsCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-    const matched = agentsCached.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
-    if (matched) {
-      zdFetch('/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+matched.id+' (status:open OR status:pending OR status:hold)')+'&per_page=6&sort_by=created_at&sort_order=asc').then(r=>{
+    // Use self-cached agent ID (set by doFetchStats above via /users/me.json)
+    (async () => {
+      let _tAgId = null;
+      try { const sc=JSON.parse(localStorage.getItem('wtp_zd_self_agent')||'null'); if(sc&&sc.id) _tAgId=sc.id; } catch {}
+      if (!_tAgId) {
+        const ac=JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
+        const am=ac.find(a=>(a.name||'').split(' ')[0].toLowerCase()===scheduleName.toLowerCase());
+        if (am) _tAgId=am.id;
+      }
+      if (!_tAgId) {
+        try {
+          const meRes=await zdFetch('/users/me.json');
+          if (meRes.user&&meRes.user.id) { _tAgId=meRes.user.id; localStorage.setItem('wtp_zd_self_agent',JSON.stringify({id:meRes.user.id,name:meRes.user.name})); }
+        } catch {}
+      }
+      if (!_tAgId) { loading.textContent='Could not identify your agent account.'; return; }
+      zdFetch('/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_tAgId+' (status:open OR status:pending OR status:hold)')+'&per_page=6&sort_by=created_at&sort_order=asc').then(r=>{
         loading.remove();
         const tickets=r.results||[];
         if (!tickets.length) { const e=document.createElement('div');e.className='db-empty';e.textContent='Queue is clear.';ticketSec.appendChild(e);return; }
@@ -7174,9 +7217,7 @@ async function renderTeamMemberDashboard(root) {
           a.appendChild(id);a.appendChild(subj);a.appendChild(age);ticketSec.appendChild(a);
         });
       }).catch(()=>{loading.textContent='Could not load tickets.';});
-    } else {
-      loading.textContent='No agent match for '+scheduleName;
-    }
+    })();
   }
   body.appendChild(col3);
 
@@ -8690,9 +8731,7 @@ function renderAnnouncementsForTeamMember(container, username) {
     const isUnread = unreadIds.has(ann.id);
     const card = document.createElement('div');
     card.className = 'ann-card' + (isUnread ? ' unread' : '');
-    card.style.cssText = 'padding:10px 13px;border-radius:var(--radius-md);border:1px solid '
-      + (isUnread ? 'rgba(214,243,255,0.25)' : 'var(--border)')
-      + ';background:' + (isUnread ? 'rgba(0,7,67,0.5)' : 'var(--surface2)') + ';';
+    card.style.cssText = 'padding:10px 13px;';
 
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:flex-start;gap:8px;';
@@ -8813,6 +8852,30 @@ function saveOtoData(data) {
   localStorage.setItem('wtp_oto_data', JSON.stringify(data)); scheduleSyncSave();
 }
 
+function fmtTenure(startDateStr) {
+  if (!startDateStr) return null;
+  const start = new Date(startDateStr + 'T00:00:00');
+  if (isNaN(start)) return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  if (start > now) {
+    const days = Math.round((start - now) / 86400000);
+    if (days === 1) return 'Starts tomorrow';
+    if (days <= 14) return 'Starts in ' + days + ' days';
+    const weeks = Math.round(days / 7);
+    if (weeks <= 8) return 'Starts in ' + weeks + (weeks === 1 ? ' week' : ' weeks');
+    const months = Math.round(days / 30);
+    return 'Starts in ' + months + (months === 1 ? ' month' : ' months');
+  }
+  let years  = now.getFullYear() - start.getFullYear();
+  let months = now.getMonth() - start.getMonth();
+  if (months < 0) { years--; months += 12; }
+  if (years < 0) return null;
+  if (years === 0 && months === 0) return 'Just started';
+  if (years === 0) return months + (months === 1 ? ' month' : ' months');
+  if (months === 0) return years + (years === 1 ? ' year' : ' years');
+  return years + (years === 1 ? ' yr' : ' yrs') + ' ' + months + (months === 1 ? ' mo' : ' mo');
+}
+
 function renderOtoTab() {
   const sidebar = document.getElementById('oto-sidebar');
   const main    = document.getElementById('oto-main');
@@ -8847,10 +8910,19 @@ function renderOtoTab() {
     av.textContent = name.slice(0,2).toUpperCase();
     const info = document.createElement('div'); info.style.cssText = 'flex:1;min-width:0;';
     const nm = document.createElement('div'); nm.className = 'oto-person-name'; nm.textContent = name;
+    const tenure = fmtTenure(profile.startDate);
+    if (tenure) {
+      const tenEl = document.createElement('div');
+      tenEl.style.cssText = 'font-size:10px;color:var(--cal-text);margin-bottom:1px;';
+      tenEl.textContent = tenure;
+      info.appendChild(nm); info.appendChild(tenEl);
+    } else {
+      info.appendChild(nm);
+    }
     const meta = document.createElement('div'); meta.className = 'oto-person-meta';
     meta.textContent = daysSince === null ? 'No sessions' : daysSince > 21 ? `${daysSince}d ago — overdue` : `${daysSince}d ago`;
     if (daysSince === null || daysSince > 21) meta.style.color = 'var(--high-text)';
-    info.appendChild(nm); info.appendChild(meta);
+    info.appendChild(meta);
     const ragDot = document.createElement('div'); ragDot.className = `rag-dot ${rag}`;
     btn.appendChild(av); btn.appendChild(info); btn.appendChild(ragDot);
     list.appendChild(btn);
@@ -8921,6 +8993,19 @@ function renderOtoPersonMain(personName) {
   if (profile.email) { const c = document.createElement('a'); c.href='mailto:'+profile.email; c.style.cssText='font-size:10px;color:var(--cal-text);text-decoration:none;background:var(--surface2);padding:1px 6px;border-radius:10px;'; c.textContent='✉ '+profile.email; c.onclick=e=>e.stopPropagation(); chipRow.appendChild(c); }
   if (profile.title) { const c = document.createElement('span'); c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;'; c.textContent=profile.title; chipRow.appendChild(c); }
   if (profile.birthday) { const c = document.createElement('span'); c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;'; c.textContent='🎂 '+profile.birthday; chipRow.appendChild(c); }
+  const _tenure = fmtTenure(profile.startDate);
+  if (_tenure) {
+    const _isFuture = profile.startDate && new Date(profile.startDate+'T00:00:00') > new Date();
+    const c = document.createElement('span');
+    c.style.cssText = _isFuture
+      ? 'font-size:10px;color:#ffb74d;background:rgba(255,183,77,0.1);border:1px solid rgba(255,183,77,0.25);padding:1px 6px;border-radius:10px;'
+      : 'font-size:10px;color:var(--low-text);background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);padding:1px 6px;border-radius:10px;';
+    c.textContent = (_isFuture ? '📅 ' : '⏱ ') + _tenure;
+    chipRow.appendChild(c);
+  } else if (profile.startDate) {
+    const c = document.createElement('span'); c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;'; c.textContent='Started '+profile.startDate; chipRow.appendChild(c);
+  }
+  else if (profile.startDate) { const c = document.createElement('span'); c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;'; c.textContent='Started '+profile.startDate; chipRow.appendChild(c); }
   const sub = document.createElement('div'); sub.style.cssText='font-size:11px;color:var(--text3);margin-top:2px;'; sub.textContent = sessions.length ? `${sessions.length} sessions · Last: ${sessions[0].date}` : 'No sessions yet';
   hInfo.appendChild(nm); hInfo.appendChild(chipRow); hInfo.appendChild(sub);
   // RAG selector
@@ -8950,11 +9035,12 @@ function renderOtoPersonMain(personName) {
   contactHdr.onclick = () => { contactCollapsed=!contactCollapsed; contactBody.style.display=contactCollapsed?'none':''; contactToggle.textContent=contactCollapsed?'▸':'▾'; };
   const contactGrid = document.createElement('div'); contactGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;';
   const contactFields = [
-    { key:'phone',    label:'Phone',     placeholder:'+47 000 00 000', type:'tel' },
-    { key:'email',    label:'Email',     placeholder:'name@munu.cloud', type:'email' },
-    { key:'birthday', label:'Birthday',  placeholder:'DD/MM', type:'text' },
-    { key:'title',    label:'Job title', placeholder:'e.g. L1 Agent', type:'text' },
-    { key:'notes',    label:'Notes',     placeholder:'Any info worth remembering…', type:'text', full:true },
+    { key:'phone',     label:'Phone',         placeholder:'+47 000 00 000',  type:'tel' },
+    { key:'email',     label:'Email',         placeholder:'name@munu.cloud', type:'email' },
+    { key:'birthday',  label:'Birthday',      placeholder:'DD/MM',           type:'text' },
+    { key:'title',     label:'Job title',     placeholder:'e.g. L1 Agent',   type:'text' },
+    { key:'startDate', label:'Start date',    placeholder:'YYYY-MM-DD',      type:'date', full:false },
+    { key:'notes',     label:'Notes',         placeholder:'Any info worth remembering…', type:'text', full:true },
   ];
   contactFields.forEach(f => {
     const wrap = document.createElement('div'); if (f.full) wrap.style.gridColumn='1/-1';
@@ -9062,7 +9148,7 @@ function renderOtoPersonMain(personName) {
     const card = document.createElement('div'); card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
     const cHdr = document.createElement('div'); cHdr.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;';
     const dateInp = document.createElement('input'); dateInp.type='date'; dateInp.value=session.date; dateInp.style.cssText='font-family:inherit;font-size:12px;font-weight:700;background:none;border:none;color:var(--text);cursor:pointer;outline:none;';
-    dateInp.onchange=()=>{session.date=dateInp.value;saveOtoData(getOtoData());};
+    dateInp.onchange=()=>{session.date=dateInp.value;saveOtoData(data);};
     const actionCount = (session.actions||[]).filter(a=>!a.done).length;
     if (actionCount > 0) { const ac=document.createElement('span'); ac.style.cssText='font-size:10px;font-weight:700;color:var(--high-text);background:rgba(239,83,80,0.12);padding:1px 5px;border-radius:8px;'; ac.textContent=actionCount+' open'; cHdr.appendChild(ac); }
     const toggle = document.createElement('span'); toggle.style.cssText='font-size:11px;color:var(--text3);margin-left:auto;'; toggle.textContent='▾';
@@ -9073,16 +9159,16 @@ function renderOtoPersonMain(personName) {
     let collapsed=false; cHdr.onclick=(e)=>{if(e.target===dateInp||e.target===del)return;collapsed=!collapsed;cBody.style.display=collapsed?'none':'';toggle.textContent=collapsed?'▸':'▾';};
     const nL2=document.createElement('div');nL2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:10px 0 4px;';nL2.textContent='Notes';
     const nT=document.createElement('textarea');nT.style.cssText='width:100%;min-height:55px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 8px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;';nT.placeholder='What did you discuss?';nT.value=session.notes||'';
-    let nT2;nT.oninput=()=>{clearTimeout(nT2);nT2=setTimeout(()=>{session.notes=nT.value;saveOtoData(getOtoData());},600);};
+    let nT2;nT.oninput=()=>{clearTimeout(nT2);nT2=setTimeout(()=>{session.notes=nT.value;saveOtoData(data);nT.style.borderColor='var(--low-text)';setTimeout(()=>nT.style.borderColor='',800);},600);};
     const wL=document.createElement('div');wL.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:8px 0 4px;';wL.textContent='🏆 Wins this session';
     const wT=document.createElement('textarea');wT.style.cssText='width:100%;min-height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 8px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;';wT.placeholder='Wins, highlights from this session…';wT.value=(session.wins||[]).join('\n');
-    let wT2;wT.oninput=()=>{clearTimeout(wT2);wT2=setTimeout(()=>{session.wins=wT.value.split('\n').filter(Boolean);saveOtoData(getOtoData());},600);};
+    let wT2;wT.oninput=()=>{clearTimeout(wT2);wT2=setTimeout(()=>{session.wins=wT.value.split('\n').filter(Boolean);saveOtoData(data);wT.style.borderColor='var(--low-text)';setTimeout(()=>wT.style.borderColor='',800);},600);};
     const aL=document.createElement('div');aL.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:8px 0 4px;';aL.textContent='Action items';
     const aList=document.createElement('div');
-    const renderActs=()=>{aList.innerHTML='';(session.actions||[]).forEach((a,ai)=>{const r=document.createElement('div');r.className='oto-action-item';const cb=document.createElement('input');cb.type='checkbox';cb.className='oto-action-check';cb.checked=!!a.done;cb.onchange=()=>{a.done=cb.checked;saveOtoData(getOtoData());};const t=document.createElement('span');t.className='oto-action-text'+(a.done?' done':'');t.textContent=a.text;const d2=document.createElement('button');d2.className='oto-action-del';d2.textContent='✕';d2.onclick=()=>{session.actions.splice(ai,1);saveOtoData(getOtoData());renderActs();};const sp=document.createElement('button');sp.className='oto-send-btn';sp.textContent='→ Planner';sp.onclick=()=>{tasks.push({id:Date.now()+'',day:'Monday',title:'['+personName+'] '+a.text,priority:'medium',due:'',note:'',people:[],isMeeting:false,timeStart:'',timeEnd:'',weekStamp:mondayStamp(0),done:false,colour:'',reminder:''});save();showToast('✓ Sent to planner');};r.appendChild(cb);r.appendChild(t);r.appendChild(sp);r.appendChild(d2);aList.appendChild(r);});};
+    const renderActs=()=>{aList.innerHTML='';(session.actions||[]).forEach((a,ai)=>{const r=document.createElement('div');r.className='oto-action-item';const cb=document.createElement('input');cb.type='checkbox';cb.className='oto-action-check';cb.checked=!!a.done;cb.onchange=()=>{a.done=cb.checked;saveOtoData(data);};const t=document.createElement('span');t.className='oto-action-text'+(a.done?' done':'');t.textContent=a.text;const d2=document.createElement('button');d2.className='oto-action-del';d2.textContent='✕';d2.onclick=()=>{session.actions.splice(ai,1);saveOtoData(data);renderActs();};const sp=document.createElement('button');sp.className='oto-send-btn';sp.textContent='→ Planner';sp.onclick=()=>{tasks.push({id:Date.now()+'',day:'Monday',title:'['+personName+'] '+a.text,priority:'medium',due:'',note:'',people:[],isMeeting:false,timeStart:'',timeEnd:'',weekStamp:mondayStamp(0),done:false,colour:'',reminder:''});save();showToast('✓ Sent to planner');};r.appendChild(cb);r.appendChild(t);r.appendChild(sp);r.appendChild(d2);aList.appendChild(r);});};
     renderActs();
     const aRow=document.createElement('div');aRow.className='oto-action-row';const aInp=document.createElement('input');aInp.type='text';aInp.className='oto-action-input';aInp.placeholder='Add action item…';const aAdd=document.createElement('button');aAdd.className='btn-save';aAdd.style.cssText='font-size:11px;padding:4px 10px;';aAdd.textContent='Add';
-    const doAdd=()=>{const t=aInp.value.trim();if(!t)return;session.actions=session.actions||[];session.actions.push({text:t,done:false});saveOtoData(getOtoData());aInp.value='';renderActs();};
+    const doAdd=()=>{const t=aInp.value.trim();if(!t)return;session.actions=session.actions||[];session.actions.push({text:t,done:false});saveOtoData(data);aInp.value='';renderActs();};
     aAdd.onclick=doAdd;aInp.addEventListener('keydown',e=>{if(e.key==='Enter')doAdd();});
     aRow.appendChild(aInp);aRow.appendChild(aAdd);
     cBody.appendChild(nL2);cBody.appendChild(nT);cBody.appendChild(wL);cBody.appendChild(wT);cBody.appendChild(aL);cBody.appendChild(aList);cBody.appendChild(aRow);
