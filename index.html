@@ -5876,6 +5876,26 @@ function renderAdminDashboard(root, viewerMode=false) {
     // ZD async fetch for the period
     if(zdReady()){
       zdCount('type:ticket status:open').then(v=>{const el=document.getElementById('db-q-open');if(el){el.textContent=v;el.style.color=+v>100?'var(--high-text)':+v>60?'var(--med-text)':'var(--low-text)';}}).catch(()=>{});
+      // Unassigned group tickets on dashboard
+      (async()=>{
+        try {
+          let gId=zdGroupId; if(!gId){try{gId=await zdGetGroupId();}catch{}}
+          if(!gId) return;
+          const n=await zdCount('type:ticket group:'+gId+' status:open assignee:'+gId).catch(()=>null);
+          if(n===null) return;
+          let uEl=document.getElementById('db-q-unassigned');
+          if(!uEl){
+            const qGrid=document.getElementById('db-q-open')?.closest('.db-stat-grid')||document.getElementById('db-q-open')?.parentElement;
+            if(qGrid){
+              const cell=document.createElement('div');cell.className='db-stat-cell';
+              const v=document.createElement('div');v.id='db-q-unassigned';v.className='db-stat-val';v.style.color=n>0?'var(--high-text)':'var(--low-text)';v.textContent=n;
+              const l=document.createElement('div');l.className='db-stat-label';l.textContent='Unassigned';
+              cell.appendChild(v);cell.appendChild(l);qGrid.appendChild(cell);
+              uEl=v;
+            }
+          } else { uEl.textContent=n; uEl.style.color=n>0?'var(--high-text)':'var(--low-text)'; }
+        } catch(e){}
+      })();
       zdCount('type:ticket status:pending').then(v=>{const el=document.getElementById('db-q-pending');if(el)el.textContent=v;}).catch(()=>{});
       zdCount('type:ticket status:hold').then(v=>{const el=document.getElementById('db-q-hold');if(el)el.textContent=v;}).catch(()=>{});
       zdCount(`type:ticket status>=solved solved>=${from} solved<=${to}`).then(v=>{const el=document.getElementById('db-q-solved');if(el){el.textContent=v;el.style.color='var(--low-text)';}}).catch(()=>{});
@@ -5931,7 +5951,7 @@ function renderAdminDashboard(root, viewerMode=false) {
         let emailCount = 0, phoneCount = 0, hasData = false;
         zdAgents.forEach(function(a) {
           const d = zdData[a.id] || {};
-          if (d.email != null) { emailCount += d.email; phoneCount += (d.web||0)+(d.voice||0); hasData = true; }
+          if (d.email != null) { emailCount += d.email; phoneCount += (d.phone||0); hasData = true; }
         });
         if (hasData) {
           if(eEl) eEl.textContent = emailCount;
@@ -7220,7 +7240,7 @@ async function renderTeamMemberDashboard(root) {
         let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agId+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
         for(let p=0;p<5&&url;p++){
           const r=await zdFetch(url);
-          (r.results||[]).forEach(t=>{_solved++;const _ch=t.channel==='email'?'email':t.channel==='voice'||t.channel==='phone'?'voice':'web';if(_ch==='email')_email++;else _phone++;});
+          (r.results||[]).forEach(t=>{_solved++;if(t.channel==='email')_email++;else _phone++;});
           url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
         }
         const sv=document.getElementById('nm-zd-solved'); if(sv){sv.textContent=_solved;sv.style.color=_solved>0?'var(--low-text)':'var(--text)';}
@@ -8116,8 +8136,7 @@ async function generateReport(fromDate, toDate, container) {
         const a=zdAgents.find(ag=>ag.id===t.assignee_id); if(!a)return;
         const n=a.name;
         agentSolved[n]=(agentSolved[n]||0)+1;
-        const _rch=t.channel==='email'?'email':t.channel==='voice'||t.channel==='phone'?'voice':'web';
-        if(_rch==='email')agentEmail[n]=(agentEmail[n]||0)+1;
+        if(t.channel==='email')agentEmail[n]=(agentEmail[n]||0)+1;
         else agentPhone[n]=(agentPhone[n]||0)+1;
       });
       csatRatings.forEach(r=>{
@@ -9583,27 +9602,23 @@ function renderWeeklyBriefingData(container) {
     zdGrid.appendChild(kpiCard('Solved total', totalSolved, lTotalSolved!==null ? delta(totalSolved,lTotalSolved,true) : {txt:'—',color:'var(--text3)',icon:''}));
 
     // Channel split: Email / Web form / Voice
-    const chanTotal = totalEmail + totalWeb + totalVoice;
+    const chanTotal = totalEmail + totalPhone;
     const ePct = chanTotal>0 ? Math.round(totalEmail/chanTotal*100) : 0;
-    const wPct = chanTotal>0 ? Math.round(totalWeb/chanTotal*100) : 0;
-    const vPct = chanTotal>0 ? 100-ePct-wPct : 0;
+    const pPct = 100 - ePct;
     const chanCard = document.createElement('div');
     chanCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    chanCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:5px;">Channels</div>'
-      +'<div style="display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;">'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:16px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
+    chanCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:5px;">Email / Phone</div>'
+      +'<div style="display:flex;align-items:baseline;gap:6px;">'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
       +'<span style="font-size:9px;color:var(--text3);">email</span>'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:16px;font-weight:900;color:var(--med-text);margin-left:4px;">'+totalWeb+'</span>'
-      +'<span style="font-size:9px;color:var(--text3);">web</span>'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:16px;font-weight:900;color:#ffb74d;margin-left:4px;">'+totalVoice+'</span>'
-      +'<span style="font-size:9px;color:var(--text3);">voice</span>'
+      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--med-text);margin-left:6px;">'+totalPhone+'</span>'
+      +'<span style="font-size:9px;color:var(--text3);">phone</span>'
       +'</div>'
       +'<div style="display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden;margin-top:7px;">'
       +'<div style="width:'+ePct+'%;background:var(--cal-text);min-width:'+(totalEmail>0?2:0)+'px;"></div>'
-      +'<div style="width:'+wPct+'%;background:var(--med-text);opacity:0.7;min-width:'+(totalWeb>0?2:0)+'px;"></div>'
-      +'<div style="flex:1;background:#ffb74d;opacity:0.6;min-width:'+(totalVoice>0?2:0)+'px;"></div>'
+      +'<div style="flex:1;background:var(--med-text);opacity:0.6;min-width:'+(totalPhone>0?2:0)+'px;"></div>'
       +'</div>'
-      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+ePct+'% email · '+wPct+'% web · '+vPct+'% voice</div>';
+      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+ePct+'% email · '+pPct+'% phone</div>';
     zdGrid.appendChild(chanCard);
 
     zdGrid.appendChild(kpiCard('Open / pending', openPending, {txt:'live',color:'var(--text3)',icon:''}));
@@ -9623,8 +9638,8 @@ function renderWeeklyBriefingData(container) {
 
     // Header row
     const hdrRow = document.createElement('div');
-    hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
-    ['Agent','','Solved','Email','Web','Voice','Open'].forEach(function(h,i) {
+    hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
+    ['Agent','','Solved','Email','Phone','Open'].forEach(function(h,i) {
       const c = document.createElement('div');
       c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
       c.textContent = h;
@@ -9642,7 +9657,7 @@ function renderWeeklyBriefingData(container) {
     sortedForBriefing.forEach(function(agent, idx) {
       const d = zdData[agent.id]||{};
       const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px 52px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedForBriefing.length-1?'border-bottom:1px solid var(--border);':'');
+      row.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedForBriefing.length-1?'border-bottom:1px solid var(--border);':'');
 
       const nameCell = document.createElement('div');
       nameCell.style.cssText = 'font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
@@ -9669,8 +9684,7 @@ function renderWeeklyBriefingData(container) {
       row.appendChild(barWrap);
       row.appendChild(numCell(d.solved||0));
       row.appendChild(numCell(d.email!=null?d.email:'—', 'var(--cal-text)'));
-      row.appendChild(numCell(d.web!=null?d.web:'—', 'var(--med-text)'));
-      row.appendChild(numCell(d.voice!=null?d.voice:'—', '#ffb74d'));
+      row.appendChild(numCell(d.phone!=null?d.phone:'—', 'var(--med-text)'));
       row.appendChild(numCell(openNow||'—', openColor));
       tbl.appendChild(row);
     });
@@ -10357,10 +10371,9 @@ async function zdFetchSolvedBatch(agentIds, fromDate, toDate) {
         const id = String(t.assignee_id);
         if (!idSet.has(id)) return;
         byAgent[id].solved++;
-        const _ch = t.channel==='email'?'email':t.channel==='voice'||t.channel==='phone'?'voice':'web';
-        if (_ch==='email') byAgent[id].email++;
-        else if (_ch==='voice') { byAgent[id].voice=(byAgent[id].voice||0)+1; byAgent[id].phone=(byAgent[id].phone||0)+1; }
-        else { byAgent[id].web=(byAgent[id].web||0)+1; byAgent[id].phone=(byAgent[id].phone||0)+1; }
+        // channel mapping: email=email, everything else (web/voice/api/mobile)=phone
+        if (t.channel==='email') byAgent[id].email++;
+        else { byAgent[id].phone=(byAgent[id].phone||0)+1; }
       });
       url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
     }
@@ -10572,10 +10585,7 @@ function zdRender(agents, fromDate, toDate) {
   });
   bar.appendChild(mkPill(totalSolved, 'Solved', 'var(--low-text)'));
   bar.appendChild(mkPill(totalEmail, 'Via email', 'var(--cal-text)'));
-  const totalWeb2 = zdAgents.reduce((s,a)=>{const d=zdData[a.id]||{};return s+(d.web||0);},0);
-  const totalVoice = zdAgents.reduce((s,a)=>{const d=zdData[a.id]||{};return s+(d.voice||0);},0);
-  bar.appendChild(mkPill(totalWeb2, 'Web form', 'var(--med-text)'));
-  bar.appendChild(mkPill(totalVoice, 'Voice', '#ffb74d'));
+  bar.appendChild(mkPill(totalPhone, 'Phone', 'var(--med-text)'));
   bar.appendChild(mkPill(totalOpen, 'Open now', totalOpen>100?'var(--high-text)':totalOpen>60?'var(--med-text)':'var(--text)'));
   bar.appendChild(mkPill(totalPending, 'Pending now', 'var(--med-text)'));
   bar.appendChild(mkPill(totalHold, 'On hold now', 'var(--text3)'));
@@ -10589,6 +10599,97 @@ function zdRender(agents, fromDate, toDate) {
     bar.appendChild(mkPill(uAns, 'Answered', 'var(--low-text)'));
     bar.appendChild(mkPill(uAR+'%', 'Answer rate', uAR>=90?'var(--low-text)':uAR>=80?'var(--med-text)':'var(--high-text)'));
   }
+  // ── Unassigned group tickets — async fetch ────────────────────
+  (async()=>{
+    try {
+      let gId = zdGroupId;
+      if (!gId) { try { gId = await zdGetGroupId(); } catch {} }
+      if (!gId) return;
+
+      // Tickets still assigned to the group (not a specific agent)
+      const unassignedCount = await zdCount('type:ticket group:'+gId+' status:open assignee:'+gId).catch(()=>null);
+      if (unassignedCount === null) return;
+
+      // Update the pill in summary bar
+      const upv = unassignedPill.querySelector('div');
+      if (upv) upv.textContent = unassignedCount;
+      if (unassignedCount === 0) {
+        unassignedPill.style.border = '1px solid var(--border)';
+        unassignedPill.style.background = 'var(--surface2)';
+        const upvEl = unassignedPill.querySelector('div');
+        if (upvEl) upvEl.style.color = 'var(--low-text)';
+      }
+
+      if (unassignedCount === 0) return; // no panel needed
+
+      // Fetch the actual tickets for the detail panel
+      let tix=[], url='/search.json?query='+encodeURIComponent('type:ticket group:'+gId+' status:open assignee:'+gId)+'&per_page=20&sort_by=created_at&sort_order=asc';
+      const r = await zdFetch(url);
+      tix = r.results || [];
+
+      // Build the unassigned panel
+      const uPanel = document.createElement('div');
+      uPanel.className = 'zd-unassigned-panel';
+      uPanel.style.cssText = 'margin-bottom:16px;border:1px solid rgba(239,83,80,0.25);border-radius:var(--radius-lg);overflow:hidden;';
+
+      const uHdr = document.createElement('div');
+      uHdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(239,83,80,0.06);border-bottom:1px solid rgba(239,83,80,0.15);';
+      const uTitle = document.createElement('div');
+      uTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;color:var(--high-text);letter-spacing:-0.01em;";
+      uTitle.textContent = '⚠ L1 Unassigned tickets';
+      const uBadge = document.createElement('div');
+      uBadge.style.cssText = 'font-size:11px;font-weight:700;color:var(--high-text);background:rgba(239,83,80,0.12);padding:2px 8px;border-radius:10px;';
+      uBadge.textContent = unassignedCount + ' open';
+      uHdr.appendChild(uTitle); uHdr.appendChild(uBadge);
+      uPanel.appendChild(uHdr);
+
+      if (tix.length) {
+        const zdSubdomain = localStorage.getItem('wtp_zd_subdomain')||'munu3272';
+        tix.forEach(t => {
+          const row = document.createElement('a');
+          row.className = 'db-ticket-row';
+          row.href = 'https://'+zdSubdomain+'.zendesk.com/agent/tickets/'+t.id;
+          row.target = '_blank'; row.rel = 'noopener';
+          row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);text-decoration:none;';
+
+          const ms = Date.now()-new Date(t.created_at).getTime();
+          const days = Math.floor(ms/86400000), hrs = Math.floor((ms%86400000)/3600000);
+          const ageStr = days>0 ? days+'d' : hrs>0 ? hrs+'h' : 'now';
+          const ageColor = days>=2 ? 'var(--high-text)' : days>=1 ? '#ffb74d' : 'var(--text3)';
+
+          const idEl = document.createElement('span');
+          idEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;min-width:48px;';
+          idEl.textContent = '#'+t.id;
+
+          const subjEl = document.createElement('span');
+          subjEl.style.cssText = 'font-size:12px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+          subjEl.textContent = t.subject||'(no subject)';
+
+          const chanEl = document.createElement('span');
+          chanEl.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;min-width:42px;text-align:right;';
+          chanEl.textContent = t.channel||'';
+
+          const ageEl = document.createElement('span');
+          ageEl.style.cssText = 'font-size:10px;font-weight:700;color:'+ageColor+';flex-shrink:0;min-width:28px;text-align:right;';
+          ageEl.textContent = ageStr;
+
+          row.appendChild(idEl); row.appendChild(subjEl); row.appendChild(chanEl); row.appendChild(ageEl);
+          uPanel.appendChild(row);
+        });
+
+        if (unassignedCount > tix.length) {
+          const more = document.createElement('div');
+          more.style.cssText = 'padding:7px 14px;font-size:11px;color:var(--text3);';
+          more.textContent = '+'+(unassignedCount-tix.length)+' more — open Zendesk to see all';
+          uPanel.appendChild(more);
+        }
+      }
+
+      // Insert right after summary bar
+      body.insertBefore(uPanel, bar.nextSibling);
+    } catch(e) { console.warn('Unassigned tickets fetch failed:', e.message); }
+  })();
+
   body.appendChild(bar);
 
   // ── CSAT + MTTR insights ──────────────────────────────────────
@@ -10649,8 +10750,7 @@ function zdRender(agents, fromDate, toDate) {
     const fixedRows = [
       { dot:'var(--low-text)',  label:'Solved',       val: d.solved||0,  bold: true },
       { dot:'var(--cal-text)',  label:'Email',         val: d.email!=null ? d.email : '—' },
-      { dot:'var(--med-text)',  label:'Web form', val: d.web!=null ? d.web : '—' },
-    { dot:'#ffb74d',              label:'Voice/phone', val: d.voice!=null ? d.voice : '—' },
+      { dot:'var(--med-text)',  label:'Phone', val: d.phone!=null ? d.phone : '—' },
       { dividerLabel: 'Live queue' },
       { dot:'var(--high-text)', label:'Open now',      val: d.open||0 },
       { dot:'var(--med-text)',  label:'Pending now',   val: d.pending||0 },
