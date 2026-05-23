@@ -5020,7 +5020,12 @@
         "person": "Vetle",
         "date": "2026-05-22",
         "notes": "We discussed the MUNU principles and his overall experience in the role. He stated that there are currently no major uncertainties regarding the position itself, but highlighted a need for more structure around ticket handling, including clearer guidance on escalation paths and points of contact.\n\nHe also raised concerns regarding the current culture of agents logging off the phone queue and emphasized the importance of improving this while still maintaining a manageable workload. In addition, he noted that there has been a somewhat negative atmosphere within the team.\n\nHe expressed that it is important for him to feel supported and visible, and that he values having accessible leadership and open communication. He would like an environment where challenges and concerns can be discussed openly.\n\nFor future 1:1s, he would like to focus on receiving actionable feedback, as well as reviewing his current status related to tickets, calls, ongoing plans, and any complex cases or incidents.\n\nI shared a quick win by highlighting that he remains calm and professional when interacting with customers, despite still being in the training phase. I also noted that he appears comfortable speaking with customers.\n\nHe explained that his limited phone activity so far is mainly due to wanting to feel more confident and secure, particularly having support available nearby should he need assistance during calls.\n\nWe agreed on a plan for him to reach the team\u2019s average call handling level within the next 30 days.",
-        "actions": [],
+        "actions": [
+          {
+            "text": "Reach the teams average call handling leven within the next 30 days.",
+            "done": false
+          }
+        ],
         "wins": []
       }
     ],
