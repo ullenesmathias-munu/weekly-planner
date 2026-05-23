@@ -8048,21 +8048,21 @@
   },
   "wtp_intel_snap_2026-05-18": {
     "fromDate": "2026-05-18",
-    "toDate": "2026-05-22",
-    "generated": "2026-05-22T11:44:34.575Z",
+    "toDate": "2026-05-23",
+    "generated": "2026-05-23T06:24:03.194Z",
     "agents": {
       "Jonas": {
-        "answered": 71,
-        "missed": 1,
-        "avgTalk": 452,
-        "avgWait": 192,
+        "answered": 95,
+        "missed": 6,
+        "avgTalk": 471,
+        "avgWait": 237,
         "zdSolved": 0
       },
       "Thomas": {
-        "answered": 74,
-        "missed": 0,
-        "avgTalk": 355,
-        "avgWait": 119,
+        "answered": 89,
+        "missed": 1,
+        "avgTalk": 360,
+        "avgWait": 109,
         "zdSolved": 0
       },
       "Maylen": {
@@ -8073,24 +8073,24 @@
         "zdSolved": 0
       },
       "Bernadett": {
-        "answered": 88,
-        "missed": 8,
-        "avgTalk": 316,
-        "avgWait": 240,
+        "answered": 111,
+        "missed": 12,
+        "avgTalk": 333,
+        "avgWait": 262,
         "zdSolved": 0
       },
       "Benjamin": {
-        "answered": 37,
-        "missed": 0,
-        "avgTalk": 319,
-        "avgWait": 212,
+        "answered": 53,
+        "missed": 1,
+        "avgTalk": 355,
+        "avgWait": 196,
         "zdSolved": 0
       },
       "Cecilie": {
-        "answered": 33,
-        "missed": 0,
-        "avgTalk": 422,
-        "avgWait": 412,
+        "answered": 61,
+        "missed": 3,
+        "avgTalk": 438,
+        "avgWait": 395,
         "zdSolved": 0
       },
       "Tord": {
@@ -8122,19 +8122,19 @@
         "zdSolved": 0
       },
       "Vetle": {
-        "answered": 15,
-        "missed": 0,
-        "avgTalk": 506,
-        "avgWait": 9,
+        "answered": 23,
+        "missed": 1,
+        "avgTalk": 496,
+        "avgWait": 76,
         "zdSolved": 0
       }
     },
     "totals": {
-      "offered": 541,
-      "answered": 453,
-      "missed": 88,
-      "ansRate": 84,
-      "avgWait": 733
+      "offered": 703,
+      "answered": 584,
+      "missed": 119,
+      "ansRate": 83,
+      "avgWait": 647
     }
   },
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
