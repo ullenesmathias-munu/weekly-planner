@@ -9022,158 +9022,296 @@ function renderOtoPersonMain(personName) {
   main.appendChild(hdr);
 
   // ── Body ─────────────────────────────────────────────────────
-  const body = document.createElement('div'); body.style.cssText = 'flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px;';
+  // ── TAB BAR ──────────────────────────────────────────────────
+  const tabBar = document.createElement('div');
+  tabBar.style.cssText = 'display:flex;border-bottom:1px solid var(--border);flex-shrink:0;padding:0 20px;';
 
-  // ── 1. Contact details (collapsible) ─────────────────────────
-  const contactCard = document.createElement('div'); contactCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
-  const contactHdr = document.createElement('div'); contactHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;';
-  const contactTitle = document.createElement('div'); contactTitle.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);'; contactTitle.textContent='📋 Contact details';
-  const contactToggle = document.createElement('span'); contactToggle.style.cssText='font-size:11px;color:var(--text3);'; contactToggle.textContent='▾';
-  contactHdr.appendChild(contactTitle); contactHdr.appendChild(contactToggle);
-  const contactBody = document.createElement('div'); contactBody.style.cssText='padding:0 14px 12px;border-top:1px solid var(--border);';
-  let contactCollapsed = false;
-  contactHdr.onclick = () => { contactCollapsed=!contactCollapsed; contactBody.style.display=contactCollapsed?'none':''; contactToggle.textContent=contactCollapsed?'▸':'▾'; };
-  const contactGrid = document.createElement('div'); contactGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;';
-  const contactFields = [
-    { key:'phone',     label:'Phone',         placeholder:'+47 000 00 000',  type:'tel' },
-    { key:'email',     label:'Email',         placeholder:'name@munu.cloud', type:'email' },
-    { key:'birthday',  label:'Birthday',      placeholder:'DD/MM',           type:'text' },
-    { key:'title',     label:'Job title',     placeholder:'e.g. L1 Agent',   type:'text' },
-    { key:'startDate', label:'Start date',    placeholder:'YYYY-MM-DD',      type:'date', full:false },
-    { key:'notes',     label:'Notes',         placeholder:'Any info worth remembering…', type:'text', full:true },
-  ];
-  contactFields.forEach(f => {
-    const wrap = document.createElement('div'); if (f.full) wrap.style.gridColumn='1/-1';
-    const lbl = document.createElement('label'); lbl.style.cssText='font-size:9px;color:var(--text3);display:block;margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;'; lbl.textContent=f.label;
-    const inp = document.createElement('input'); inp.type=f.type; inp.value=profile[f.key]||''; inp.placeholder=f.placeholder;
-    inp.style.cssText='width:100%;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;transition:border-color 0.15s;box-sizing:border-box;';
-    inp.addEventListener('focus', ()=>inp.style.borderColor='var(--cal-text)');
-    inp.addEventListener('blur',  ()=>inp.style.borderColor='');
-    let t; inp.addEventListener('input', ()=>{clearTimeout(t);t=setTimeout(()=>{profile[f.key]=inp.value;saveProfile(personName,profile);renderOtoTab();},600);});
-    wrap.appendChild(lbl); wrap.appendChild(inp); contactGrid.appendChild(wrap);
+  const tabs = ['Overview','1:1 Sessions','Profile'];
+  let activeTab = 'Overview';
+
+  const tabEls = {};
+  const tabStyleActive   = 'font-size:12px;font-weight:700;padding:9px 14px;cursor:pointer;color:var(--text);border-bottom:2px solid var(--cal-text);margin-bottom:-1px;background:none;border-left:none;border-right:none;border-top:none;letter-spacing:0.01em;';
+  const tabStyleInactive = 'font-size:12px;font-weight:500;padding:9px 14px;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-left:none;border-right:none;border-top:none;letter-spacing:0.01em;';
+
+  const body = document.createElement('div');
+  body.style.cssText = 'flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;';
+
+  const switchOtoTab = (name) => {
+    activeTab = name;
+    tabs.forEach(t => { tabEls[t].style.cssText = t===name ? tabStyleActive : tabStyleInactive; });
+    body.innerHTML = '';
+    body.style.gap = '14px';
+    if (name==='Overview')       renderOtoOverview(body);
+    else if (name==='1:1 Sessions') renderOtoSessions(body);
+    else if (name==='Profile')   renderOtoProfile(body);
+  };
+
+  tabs.forEach(t => {
+    const btn = document.createElement('button');
+    btn.style.cssText = t==='Overview' ? tabStyleActive : tabStyleInactive;
+    btn.textContent = t;
+    btn.onclick = () => switchOtoTab(t);
+    tabEls[t] = btn;
+    tabBar.appendChild(btn);
   });
-  contactBody.appendChild(contactGrid);
-  contactCard.appendChild(contactHdr); contactCard.appendChild(contactBody); body.appendChild(contactCard);
+  main.appendChild(tabBar);
+  main.appendChild(body);
 
-  // ── 2. Performance trends (from weekly snapshots) ─────────────
-  renderAgentIntelligence(personName, body);
+  // ═════════════════════════════════════════════════════════════
+  // TAB: OVERVIEW
+  // ═════════════════════════════════════════════════════════════
+  function renderOtoOverview(container) {
 
-  // ── 3. Quick wins (log wins outside sessions) ─────────────────
-  const winsKey = 'wtp_oto_quickwins_' + normalizeKey(personName);
-  const quickWins = (() => { try { return JSON.parse(localStorage.getItem(winsKey)||'[]'); } catch { return []; } })();
-  const winsCard = document.createElement('div'); winsCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
-  const winsHdr = document.createElement('div'); winsHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 14px;';
-  const winsTitle = document.createElement('div'); winsTitle.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);'; winsTitle.textContent='🏆 Quick wins';
-  const winsBadge = document.createElement('span'); winsBadge.style.cssText='font-size:10px;font-weight:700;color:var(--low-text);background:rgba(52,211,153,0.12);padding:1px 6px;border-radius:10px;'; winsBadge.textContent=quickWins.length+' logged';
-  winsHdr.appendChild(winsTitle); winsHdr.appendChild(winsBadge);
-  const winsBody = document.createElement('div'); winsBody.style.cssText='padding:0 14px 12px;border-top:1px solid var(--border);';
-  const renderWins = () => {
-    winsBody.innerHTML='';
-    const wins2 = (() => { try { return JSON.parse(localStorage.getItem(winsKey)||'[]'); } catch { return []; } })();
-    winsBadge.textContent = wins2.length+' logged';
-    wins2.slice().reverse().forEach((w, ri) => {
-      const ai = wins2.length-1-ri;
-      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);';
-      const dt = document.createElement('div'); dt.style.cssText='font-size:10px;color:var(--text3);flex-shrink:0;min-width:70px;'; dt.textContent=w.date||'';
-      const txt = document.createElement('div'); txt.style.cssText='font-size:12px;color:var(--text2);flex:1;'; txt.textContent=w.text;
-      const del = document.createElement('button'); del.style.cssText='font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;'; del.textContent='✕';
-      del.onclick=()=>{ wins2.splice(ai,1); localStorage.setItem(winsKey,JSON.stringify(wins2)); scheduleSyncSave(); renderWins(); };
-      row.appendChild(dt); row.appendChild(txt); row.appendChild(del); winsBody.appendChild(row);
-    });
-    const addRow = document.createElement('div'); addRow.style.cssText='display:flex;gap:6px;margin-top:8px;';
-    const winInp = document.createElement('input'); winInp.type='text'; winInp.placeholder='Log a win…';
-    winInp.style.cssText='flex:1;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;';
-    const winAdd = document.createElement('button'); winAdd.className='btn-save'; winAdd.style.cssText='font-size:11px;padding:4px 10px;white-space:nowrap;'; winAdd.textContent='Add win';
-    const doWin = () => { const t=winInp.value.trim(); if(!t)return; wins2.push({text:t,date:today}); localStorage.setItem(winsKey,JSON.stringify(wins2)); scheduleSyncSave(); winInp.value=''; renderWins(); };
-    winAdd.onclick=doWin; winInp.addEventListener('keydown',e=>{if(e.key==='Enter')doWin();});
-    addRow.appendChild(winInp); addRow.appendChild(winAdd); winsBody.appendChild(addRow);
-  };
-  renderWins();
-  winsCard.appendChild(winsHdr); winsCard.appendChild(winsBody); body.appendChild(winsCard);
+    // ── Prep brief ────────────────────────────────────────────
+    const openActions = sessions.flatMap(s=>(s.actions||[]).filter(a=>!a.done));
+    const highlights = [], concerns = [];
 
-  // ── 3. 1:1 Prep brief ─────────────────────────────────────────
-  const allWins2 = (() => { try { return JSON.parse(localStorage.getItem(winsKey)||'[]'); } catch { return []; } })();
-  const openActions = sessions.flatMap(s=>(s.actions||[]).filter(a=>!a.done)).slice(0,8);
-  const recentWins = [...allWins2.slice(-3).reverse(), ...sessions.flatMap(s=>s.wins||[]).slice(0,3)].slice(0,5);
-  const prepCard = document.createElement('div'); prepCard.style.cssText='background:var(--surface);border:1px solid rgba(77,171,247,0.2);border-radius:var(--radius-lg);overflow:hidden;';
-  const prepHdr = document.createElement('div'); prepHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;';
-  const prepTitle = document.createElement('div'); prepTitle.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--cal-text);'; prepTitle.textContent='📋 1:1 Prep brief';
-  const prepSub = document.createElement('div'); prepSub.style.cssText='font-size:10px;color:var(--text3);'; prepSub.textContent='Auto-generated · open actions + recent wins';
-  const prepToggle = document.createElement('span'); prepToggle.style.cssText='font-size:11px;color:var(--text3);'; prepToggle.textContent='▾';
-  prepHdr.appendChild(prepTitle); prepHdr.appendChild(prepSub); prepHdr.appendChild(prepToggle);
-  const prepBody = document.createElement('div'); prepBody.style.cssText='padding:0 14px 12px;border-top:1px solid var(--border);';
-  let prepCollapsed=false;
-  prepHdr.onclick=()=>{prepCollapsed=!prepCollapsed;prepBody.style.display=prepCollapsed?'none':'';prepToggle.textContent=prepCollapsed?'▸':'▾';};
-  const mkPrepSection = (title, items, color, icon) => {
-    if (!items.length) return;
-    const s = document.createElement('div'); s.style.cssText='margin-top:10px;';
-    const l = document.createElement('div'); l.style.cssText=`font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:${color};margin-bottom:5px;`; l.textContent=icon+' '+title;
-    s.appendChild(l);
-    items.forEach(item => {
-      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:flex-start;gap:6px;padding:3px 0;';
-      const bullet = document.createElement('span'); bullet.style.cssText=`color:${color};font-size:11px;flex-shrink:0;margin-top:1px;`; bullet.textContent='→';
-      const txt = document.createElement('span'); txt.style.cssText='font-size:12px;color:var(--text2);'; txt.textContent=typeof item==='string'?item:(item.text||item);
-      row.appendChild(bullet); row.appendChild(txt); s.appendChild(row);
-    });
-    prepBody.appendChild(s);
-  };
-  mkPrepSection('Open action items', openActions.map(a=>a.text), 'var(--high-text)', '⚡');
-  mkPrepSection('Recent wins to celebrate', recentWins, 'var(--low-text)', '🏆');
-  // Notes prep input
-  const prepNotesWrap = document.createElement('div'); prepNotesWrap.style.marginTop='10px;';
-  const prepNotesLbl = document.createElement('div'); prepNotesLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:5px;'; prepNotesLbl.textContent='📝 Your prep notes';
-  const prepNotesKey = 'wtp_oto_prep_' + normalizeKey(personName);
-  const prepNotesTA = document.createElement('textarea'); prepNotesTA.style.cssText='width:100%;min-height:60px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 8px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;'; prepNotesTA.placeholder='What do you want to raise in this 1:1?'; prepNotesTA.value=localStorage.getItem(prepNotesKey)||'';
-  let prepTimer; prepNotesTA.oninput=()=>{clearTimeout(prepTimer);prepTimer=setTimeout(()=>{localStorage.setItem(prepNotesKey,prepNotesTA.value);scheduleSyncSave();},600);};
-  prepNotesWrap.appendChild(prepNotesLbl); prepNotesWrap.appendChild(prepNotesTA);
-  prepBody.appendChild(prepNotesWrap);
-  if (!openActions.length && !recentWins.length) { const empty2=document.createElement('div'); empty2.style.cssText='font-size:12px;color:var(--text3);padding:10px 0;'; empty2.textContent='No open actions or wins yet — start logging sessions!'; prepBody.appendChild(empty2); }
-  prepCard.appendChild(prepHdr); prepCard.appendChild(prepBody); body.appendChild(prepCard);
+    if (zdReady() && zdAgents && zdAgents.length) {
+      const matched = zdAgents.find(a=>a.name.split(' ')[0].toLowerCase()===personName.split(' ')[0].toLowerCase());
+      if (matched) {
+        const pd = zdData[matched.id]||{};
+        const teamAvg = zdAgents.length ? Math.round(zdAgents.map(a=>(zdData[a.id]||{}).solved||0).filter(v=>v>0).reduce((s,v)=>s+v,0) / zdAgents.filter(a=>(zdData[a.id]||{}).solved>0).length) : 0;
+        if (pd.solved>0 && teamAvg>0) {
+          if (pd.solved >= teamAvg*1.2) highlights.push({ msg:'Tickets solved ('+pd.solved+') — '+Math.round((pd.solved-teamAvg)/teamAvg*100)+'% above team avg', sub:null });
+          else if (pd.solved < teamAvg*0.7) concerns.push({ msg:'Tickets solved ('+pd.solved+') — below team avg of '+teamAvg, sub:null });
+        }
+        if (pd.email!=null && pd.phone!=null && (pd.email+pd.phone)>0) {
+          const ep = Math.round(pd.email/(pd.email+pd.phone)*100);
+          if (ep>=70) highlights.push({ msg:'Strong email handler — '+ep+'% via email', sub:null });
+          else if (ep<=20) highlights.push({ msg:'Phone specialist — '+(100-ep)+'% via phone', sub:null });
+        }
+        const oq = (pd.open||0)+(pd.pending||0);
+        if (oq>8) concerns.push({ msg:'High open queue — '+oq+' open/pending', sub:'Check before end of week' });
+      }
+    }
+    if (profile.rag==='red')   concerns.push({ msg:'RAG: RED'+(profile.focus?' — '+profile.focus:''), sub:null });
+    if (profile.rag==='amber') concerns.push({ msg:'RAG: AMBER'+(profile.focus?' — '+profile.focus:''), sub:null });
+    if (profile.rag==='green' && highlights.length===0) highlights.push({ msg:'RAG: GREEN'+(profile.focus?' — '+profile.focus:''), sub:null });
+    if (openActions.length>=3) concerns.push({ msg:openActions.length+' open action items — review progress', sub:null });
 
-  // ── 4. Ongoing notes ──────────────────────────────────────────
-  const notesKey = 'wtp_oto_notes_' + normalizeKey(personName);
-  const nLabel = document.createElement('div'); nLabel.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:5px;'; nLabel.textContent='Ongoing notes';
-  const nTA = document.createElement('textarea'); nTA.style.cssText='width:100%;min-height:70px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;'; nTA.placeholder='Ongoing context, goals, concerns about this person…'; nTA.value=localStorage.getItem(notesKey)||'';
-  let nTimer; nTA.oninput=()=>{clearTimeout(nTimer);nTimer=setTimeout(()=>{localStorage.setItem(notesKey,nTA.value);scheduleSyncSave();},800);};
-  const notesWrap = document.createElement('div'); notesWrap.appendChild(nLabel); notesWrap.appendChild(nTA); body.appendChild(notesWrap);
+    const thisMonday = fmtLocal(getMonday(0)), lastMonday = fmtLocal(getMonday(-1));
+    const tw2 = getWeeklySnapshot(thisMonday), lw2 = getWeeklySnapshot(lastMonday);
+    if (tw2&&lw2) {
+      const twA=(tw2.agents&&tw2.agents[personName])||{}, lwA=(lw2.agents&&lw2.agents[personName])||{};
+      if ((lwA.answered||0)>5) {
+        const pct=Math.round(((twA.answered||0)-(lwA.answered||0))/(lwA.answered||1)*100);
+        if (pct>=20) highlights.push({ msg:'Call volume up '+pct+'% vs last week ('+twA.answered+' answered)', sub:null });
+        else if (pct<=-25) concerns.push({ msg:'Call volume down '+Math.abs(pct)+'% vs last week', sub:(twA.answered||0)+' vs '+(lwA.answered||0)+' last week' });
+      }
+    }
 
-  // ── 5. Sessions ───────────────────────────────────────────────
-  const sHdr = document.createElement('div'); sHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;';
-  const sLabel = document.createElement('div'); sLabel.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);'; sLabel.textContent='Sessions';
-  const addBtn = document.createElement('button'); addBtn.style.cssText='font-family:inherit;font-size:11px;font-weight:700;padding:4px 10px;border-radius:var(--radius-md);border:1px solid var(--cal-border);background:var(--cal);color:var(--cal-text);cursor:pointer;'; addBtn.textContent='+ New session';
-  addBtn.onclick = () => { const d=getOtoData(); d.sessions=d.sessions||[]; d.sessions.unshift({id:Date.now()+'',person:personName,date:today,notes:'',actions:[],wins:[]}); saveOtoData(d); renderOtoPersonMain(personName); };
-  sHdr.appendChild(sLabel); sHdr.appendChild(addBtn); body.appendChild(sHdr);
-  if (!sessions.length) { const noS=document.createElement('div'); noS.style.cssText='font-size:12px;color:var(--text3);'; noS.textContent='No sessions yet — click "+ New session" to start.'; body.appendChild(noS); }
-  sessions.forEach(session => {
+    if (highlights.length||concerns.length||openActions.length) {
+      const pc = document.createElement('div');
+      pc.style.cssText = 'border:1px solid rgba(77,171,247,0.25);border-radius:var(--radius-lg);overflow:hidden;';
+      const ph = document.createElement('div');
+      ph.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:rgba(77,171,247,0.07);';
+      const pt = document.createElement('div'); pt.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--cal-text);'; pt.textContent='1:1 Prep brief';
+      const pct2 = document.createElement('div'); pct2.style.cssText='font-size:10px;color:var(--text3);'; pct2.textContent=openActions.length+' open action'+(openActions.length!==1?'s':'');
+      ph.appendChild(pt); ph.appendChild(pct2); pc.appendChild(ph);
+
+      const allItems = [
+        ...highlights.map(h=>({...h, level:'good'})),
+        ...concerns.map(c=>({...c, level: c.msg.startsWith('RAG: RED')||c.msg.includes('high open')||c.msg.includes('open action')?'danger':'warn'}))
+      ];
+      allItems.forEach((item, i) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:8px 13px;'+(i<allItems.length-1?'border-bottom:1px solid rgba(77,171,247,0.12);':'');
+        const dot = document.createElement('div');
+        const dc = item.level==='good'?'var(--low-text)':item.level==='danger'?'var(--high-text)':'#ffb74d';
+        dot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:'+dc+';flex-shrink:0;margin-top:4px;';
+        const txt = document.createElement('div');
+        txt.innerHTML = '<div style="font-size:12px;color:var(--text);">'+item.msg+'</div>'+(item.sub?'<div style="font-size:10px;color:var(--text3);margin-top:1px;">'+item.sub+'</div>':'');
+        row.appendChild(dot); row.appendChild(txt); pc.appendChild(row);
+      });
+      container.appendChild(pc);
+    }
+
+    // ── Prep notes ────────────────────────────────────────────
+    const notesKey = 'wtp_oto_notes_'+normalizeKey(personName);
+    const prepWrap = document.createElement('div');
+    const prepLbl = document.createElement('div'); prepLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:5px;'; prepLbl.textContent='Your prep notes';
+    const prepTA = document.createElement('textarea');
+    prepTA.style.cssText='width:100%;min-height:64px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;';
+    prepTA.placeholder='What do you want to raise in this 1:1?';
+    prepTA.value=localStorage.getItem(notesKey)||'';
+    let nTimer; prepTA.oninput=()=>{clearTimeout(nTimer);nTimer=setTimeout(()=>{localStorage.setItem(notesKey,prepTA.value);scheduleSyncSave();prepTA.style.borderColor='var(--low-text)';setTimeout(()=>prepTA.style.borderColor='',700);},600);};
+    prepWrap.appendChild(prepLbl); prepWrap.appendChild(prepTA);
+    container.appendChild(prepWrap);
+
+    // ── Most recent session ───────────────────────────────────
+    if (sessions.length) {
+      const recent = sessions[0];
+      const rLabel = document.createElement('div'); rLabel.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; rLabel.textContent='Most recent session';
+      container.appendChild(rLabel);
+      appendSessionCard(container, recent, false);
+    } else {
+      const noS = document.createElement('div'); noS.style.cssText='font-size:12px;color:var(--text3);padding:12px 0;'; noS.textContent='No sessions yet — start one in the 1:1 Sessions tab.';
+      container.appendChild(noS);
+    }
+
+    // ── Quick wins ────────────────────────────────────────────
+    const winsKey = 'wtp_oto_quickwins_'+normalizeKey(personName);
+    const qwWrap = document.createElement('div');
+    const qwHdr = document.createElement('div'); qwHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;';
+    const qwLbl = document.createElement('div'); qwLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);'; qwLbl.textContent='Quick wins';
+    const qwBadge = document.createElement('span'); qwBadge.style.cssText='font-size:10px;font-weight:700;color:var(--low-text);background:rgba(52,211,153,0.12);padding:1px 6px;border-radius:10px;';
+    qwHdr.appendChild(qwLbl); qwHdr.appendChild(qwBadge);
+    qwWrap.appendChild(qwHdr);
+    const qwList = document.createElement('div'); qwList.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;';
+    const renderQW = () => {
+      qwList.innerHTML='';
+      const wins2=(() => { try { return JSON.parse(localStorage.getItem(winsKey)||'[]'); } catch { return []; } })();
+      qwBadge.textContent=wins2.length+' logged';
+      wins2.slice().reverse().slice(0,5).forEach((w,ri)=>{
+        const ai=wins2.length-1-ri;
+        const row=document.createElement('div'); row.style.cssText='display:flex;align-items:flex-start;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border);';
+        const dt=document.createElement('div'); dt.style.cssText='font-size:10px;color:var(--text3);flex-shrink:0;min-width:68px;padding-top:1px;'; dt.textContent=w.date||'';
+        const tx=document.createElement('div'); tx.style.cssText='font-size:12px;color:var(--text2);flex:1;'; tx.textContent=w.text;
+        const dl=document.createElement('button'); dl.style.cssText='font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;flex-shrink:0;'; dl.textContent='✕';
+        dl.onclick=()=>{wins2.splice(wins2.length-1-ri,1);localStorage.setItem(winsKey,JSON.stringify(wins2));scheduleSyncSave();renderQW();};
+        row.appendChild(dt);row.appendChild(tx);row.appendChild(dl);qwList.appendChild(row);
+      });
+      const addRow=document.createElement('div'); addRow.style.cssText='display:flex;gap:6px;padding:6px 10px;';
+      const wInp=document.createElement('input'); wInp.type='text'; wInp.placeholder='Log a win…';
+      wInp.style.cssText='flex:1;font-family:inherit;font-size:12px;background:transparent;color:var(--text);border:none;outline:none;';
+      const wAdd=document.createElement('button'); wAdd.className='btn-save'; wAdd.style.cssText='font-size:11px;padding:3px 10px;white-space:nowrap;'; wAdd.textContent='Add';
+      const doW=()=>{const t=wInp.value.trim();if(!t)return;wins2.push({text:t,date:today});localStorage.setItem(winsKey,JSON.stringify(wins2));scheduleSyncSave();wInp.value='';renderQW();};
+      wAdd.onclick=doW; wInp.addEventListener('keydown',e=>{if(e.key==='Enter')doW();});
+      addRow.appendChild(wInp);addRow.appendChild(wAdd);qwList.appendChild(addRow);
+    };
+    renderQW();
+    qwWrap.appendChild(qwList);
+    container.appendChild(qwWrap);
+  }
+
+  // ═════════════════════════════════════════════════════════════
+  // TAB: 1:1 SESSIONS
+  // ═════════════════════════════════════════════════════════════
+  function renderOtoSessions(container) {
+    const sHdr = document.createElement('div'); sHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;';
+    const sLbl = document.createElement('div'); sLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);';
+    sLbl.textContent = sessions.length+' session'+(sessions.length!==1?'s':'');
+    const addBtn = document.createElement('button');
+    addBtn.style.cssText='font-family:inherit;font-size:11px;font-weight:700;padding:5px 12px;border-radius:var(--radius-md);border:1px solid var(--cal-border);background:var(--cal);color:var(--cal-text);cursor:pointer;';
+    addBtn.textContent='+ New session';
+    addBtn.onclick=()=>{const d=getOtoData();d.sessions=d.sessions||[];d.sessions.unshift({id:Date.now()+'',person:personName,date:today,notes:'',actions:[],wins:[]});saveOtoData(d);renderOtoPersonMain(personName);switchOtoTab('1:1 Sessions');};
+    sHdr.appendChild(sLbl); sHdr.appendChild(addBtn);
+    container.appendChild(sHdr);
+
+    if (!sessions.length) {
+      const noS=document.createElement('div'); noS.style.cssText='font-size:12px;color:var(--text3);padding:12px 0;'; noS.textContent='No sessions yet.';
+      container.appendChild(noS); return;
+    }
+    sessions.forEach(session => appendSessionCard(container, session, true));
+  }
+
+  // ═════════════════════════════════════════════════════════════
+  // TAB: PROFILE
+  // ═════════════════════════════════════════════════════════════
+  function renderOtoProfile(container) {
+    // Performance intel
+    renderAgentIntelligence(personName, container);
+
+    // Contact details card
     const card = document.createElement('div'); card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
-    const cHdr = document.createElement('div'); cHdr.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;';
-    const dateInp = document.createElement('input'); dateInp.type='date'; dateInp.value=session.date; dateInp.style.cssText='font-family:inherit;font-size:12px;font-weight:700;background:none;border:none;color:var(--text);cursor:pointer;outline:none;';
+    const cardHdr = document.createElement('div'); cardHdr.style.cssText='padding:10px 14px;border-bottom:1px solid var(--border);';
+    const cardTitle = document.createElement('div'); cardTitle.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);'; cardTitle.textContent='Contact details';
+    cardHdr.appendChild(cardTitle); card.appendChild(cardHdr);
+    const cardBody = document.createElement('div'); cardBody.style.cssText='padding:12px 14px;';
+    const grid = document.createElement('div'); grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;';
+    const cFields = [
+      { key:'phone',     label:'Phone',      placeholder:'+47 000 00 000',  type:'tel' },
+      { key:'email',     label:'Email',      placeholder:'name@munu.cloud', type:'email' },
+      { key:'birthday',  label:'Birthday',   placeholder:'DD/MM',           type:'text' },
+      { key:'title',     label:'Job title',  placeholder:'e.g. L1 Agent',   type:'text' },
+      { key:'startDate', label:'Start date', placeholder:'',                type:'date' },
+      { key:'notes',     label:'Notes',      placeholder:'Any info worth remembering…', type:'text', full:true },
+    ];
+    cFields.forEach(f => {
+      const wrap=document.createElement('div'); if(f.full) wrap.style.gridColumn='1/-1';
+      const lbl=document.createElement('label'); lbl.style.cssText='font-size:9px;color:var(--text3);display:block;margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;'; lbl.textContent=f.label;
+      const inp=document.createElement('input'); inp.type=f.type; inp.value=profile[f.key]||''; inp.placeholder=f.placeholder||'';
+      inp.style.cssText='width:100%;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:5px 8px;outline:none;transition:border-color 0.15s;box-sizing:border-box;';
+      inp.addEventListener('focus',()=>inp.style.borderColor='var(--cal-text)');
+      inp.addEventListener('blur',()=>{inp.style.borderColor='';});
+      let t; inp.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(()=>{profile[f.key]=inp.value;saveProfile(personName,profile);renderOtoTab();inp.style.borderColor='var(--low-text)';setTimeout(()=>inp.style.borderColor='',700);},600);});
+      wrap.appendChild(lbl); wrap.appendChild(inp); grid.appendChild(wrap);
+    });
+    cardBody.appendChild(grid); card.appendChild(cardBody);
+    container.appendChild(card);
+
+    // Goals section
+    const openGoals=(profile.goals||[]).filter(g=>g.status!=='done');
+    if (openGoals.length) {
+      const gLbl=document.createElement('div'); gLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; gLbl.textContent='Goals in progress';
+      container.appendChild(gLbl);
+      openGoals.forEach(g=>{
+        const row=document.createElement('div'); row.style.cssText='display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);';
+        const dot=document.createElement('div'); dot.style.cssText='width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;margin-top:4px;';
+        const txt=document.createElement('div'); txt.style.cssText='font-size:12px;color:var(--text2);'; txt.textContent=g.text;
+        row.appendChild(dot); row.appendChild(txt); container.appendChild(row);
+      });
+    }
+  }
+
+  // ═════════════════════════════════════════════════════════════
+  // SHARED: SESSION CARD
+  // ═════════════════════════════════════════════════════════════
+  function appendSessionCard(container, session, expanded) {
+    const card = document.createElement('div'); card.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
+    const cHdr = document.createElement('div'); cHdr.style.cssText='display:flex;align-items:center;gap:8px;padding:9px 13px;cursor:pointer;background:var(--surface2);';
+
+    const dateInp=document.createElement('input'); dateInp.type='date'; dateInp.value=session.date;
+    dateInp.style.cssText='font-family:inherit;font-size:12px;font-weight:700;background:none;border:none;color:var(--text);cursor:pointer;outline:none;';
     dateInp.onchange=()=>{session.date=dateInp.value;saveOtoData(data);};
-    const actionCount = (session.actions||[]).filter(a=>!a.done).length;
-    if (actionCount > 0) { const ac=document.createElement('span'); ac.style.cssText='font-size:10px;font-weight:700;color:var(--high-text);background:rgba(239,83,80,0.12);padding:1px 5px;border-radius:8px;'; ac.textContent=actionCount+' open'; cHdr.appendChild(ac); }
-    const toggle = document.createElement('span'); toggle.style.cssText='font-size:11px;color:var(--text3);margin-left:auto;'; toggle.textContent='▾';
-    const del = document.createElement('button'); del.style.cssText='font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 4px;'; del.textContent='✕';
-    del.onclick=(e)=>{e.stopPropagation();confirmDialog('Delete this session?',()=>{const d=getOtoData();d.sessions=d.sessions.filter(s=>s.id!==session.id);saveOtoData(d);renderOtoPersonMain(personName);},'Delete');};
+
+    const openActs=(session.actions||[]).filter(a=>!a.done).length;
+    if (openActs>0) {
+      const ac=document.createElement('span'); ac.style.cssText='font-size:10px;font-weight:700;color:var(--high-text);background:rgba(239,83,80,0.12);padding:1px 5px;border-radius:8px;'; ac.textContent=openActs+' open';
+      cHdr.appendChild(ac);
+    }
+
+    const winsCount=(session.wins||[]).length;
+    if (winsCount>0) {
+      const wc=document.createElement('span'); wc.style.cssText='font-size:10px;font-weight:700;color:var(--low-text);background:rgba(52,211,153,0.1);padding:1px 5px;border-radius:8px;'; wc.textContent=winsCount+' win'+(winsCount!==1?'s':'');
+      cHdr.appendChild(wc);
+    }
+
+    const toggle=document.createElement('span'); toggle.style.cssText='font-size:11px;color:var(--text3);margin-left:auto;'; toggle.textContent=expanded?'▾':'▸';
+    const del=document.createElement('button'); del.style.cssText='font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 4px;'; del.textContent='✕';
+    del.onclick=(e)=>{e.stopPropagation();confirmDialog('Delete this session?',()=>{const d2=getOtoData();d2.sessions=d2.sessions.filter(s=>s.id!==session.id);saveOtoData(d2);renderOtoPersonMain(personName);},'Delete');};
     cHdr.appendChild(dateInp); cHdr.appendChild(toggle); cHdr.appendChild(del);
-    const cBody = document.createElement('div'); cBody.style.cssText='padding:0 14px 12px;border-top:1px solid var(--border);';
-    let collapsed=false; cHdr.onclick=(e)=>{if(e.target===dateInp||e.target===del)return;collapsed=!collapsed;cBody.style.display=collapsed?'none':'';toggle.textContent=collapsed?'▸':'▾';};
-    const nL2=document.createElement('div');nL2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:10px 0 4px;';nL2.textContent='Notes';
+
+    const cBody=document.createElement('div'); cBody.style.cssText='padding:0 13px 12px;border-top:1px solid var(--border);display:'+(expanded?'block':'none')+';';
+    let collapsed=!expanded;
+    cHdr.onclick=(e)=>{if(e.target===dateInp||e.target===del)return;collapsed=!collapsed;cBody.style.display=collapsed?'none':'block';toggle.textContent=collapsed?'▸':'▾';};
+
+    const mkLabel=(txt)=>{const l=document.createElement('div');l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:10px 0 4px;';l.textContent=txt;return l;};
+
     const nT=document.createElement('textarea');nT.style.cssText='width:100%;min-height:55px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 8px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;';nT.placeholder='What did you discuss?';nT.value=session.notes||'';
-    let nT2;nT.oninput=()=>{clearTimeout(nT2);nT2=setTimeout(()=>{session.notes=nT.value;saveOtoData(data);nT.style.borderColor='var(--low-text)';setTimeout(()=>nT.style.borderColor='',800);},600);};
-    const wL=document.createElement('div');wL.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:8px 0 4px;';wL.textContent='🏆 Wins this session';
+    let nT2;nT.oninput=()=>{clearTimeout(nT2);nT2=setTimeout(()=>{session.notes=nT.value;saveOtoData(data);nT.style.borderColor='var(--low-text)';setTimeout(()=>nT.style.borderColor='',700);},600);};
+
     const wT=document.createElement('textarea');wT.style.cssText='width:100%;min-height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:6px 8px;font-family:inherit;font-size:12px;color:var(--text);resize:vertical;outline:none;box-sizing:border-box;';wT.placeholder='Wins, highlights from this session…';wT.value=(session.wins||[]).join('\n');
-    let wT2;wT.oninput=()=>{clearTimeout(wT2);wT2=setTimeout(()=>{session.wins=wT.value.split('\n').filter(Boolean);saveOtoData(data);wT.style.borderColor='var(--low-text)';setTimeout(()=>wT.style.borderColor='',800);},600);};
-    const aL=document.createElement('div');aL.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin:8px 0 4px;';aL.textContent='Action items';
+    let wT2;wT.oninput=()=>{clearTimeout(wT2);wT2=setTimeout(()=>{session.wins=wT.value.split('\n').filter(Boolean);saveOtoData(data);wT.style.borderColor='var(--low-text)';setTimeout(()=>wT.style.borderColor='',700);},600);};
+
     const aList=document.createElement('div');
     const renderActs=()=>{aList.innerHTML='';(session.actions||[]).forEach((a,ai)=>{const r=document.createElement('div');r.className='oto-action-item';const cb=document.createElement('input');cb.type='checkbox';cb.className='oto-action-check';cb.checked=!!a.done;cb.onchange=()=>{a.done=cb.checked;saveOtoData(data);};const t=document.createElement('span');t.className='oto-action-text'+(a.done?' done':'');t.textContent=a.text;const d2=document.createElement('button');d2.className='oto-action-del';d2.textContent='✕';d2.onclick=()=>{session.actions.splice(ai,1);saveOtoData(data);renderActs();};const sp=document.createElement('button');sp.className='oto-send-btn';sp.textContent='→ Planner';sp.onclick=()=>{tasks.push({id:Date.now()+'',day:'Monday',title:'['+personName+'] '+a.text,priority:'medium',due:'',note:'',people:[],isMeeting:false,timeStart:'',timeEnd:'',weekStamp:mondayStamp(0),done:false,colour:'',reminder:''});save();showToast('✓ Sent to planner');};r.appendChild(cb);r.appendChild(t);r.appendChild(sp);r.appendChild(d2);aList.appendChild(r);});};
     renderActs();
-    const aRow=document.createElement('div');aRow.className='oto-action-row';const aInp=document.createElement('input');aInp.type='text';aInp.className='oto-action-input';aInp.placeholder='Add action item…';const aAdd=document.createElement('button');aAdd.className='btn-save';aAdd.style.cssText='font-size:11px;padding:4px 10px;';aAdd.textContent='Add';
+    const aRow=document.createElement('div');aRow.className='oto-action-row';
+    const aInp=document.createElement('input');aInp.type='text';aInp.className='oto-action-input';aInp.placeholder='Add action item…';
+    const aAdd=document.createElement('button');aAdd.className='btn-save';aAdd.style.cssText='font-size:11px;padding:4px 10px;';aAdd.textContent='Add';
     const doAdd=()=>{const t=aInp.value.trim();if(!t)return;session.actions=session.actions||[];session.actions.push({text:t,done:false});saveOtoData(data);aInp.value='';renderActs();};
     aAdd.onclick=doAdd;aInp.addEventListener('keydown',e=>{if(e.key==='Enter')doAdd();});
     aRow.appendChild(aInp);aRow.appendChild(aAdd);
-    cBody.appendChild(nL2);cBody.appendChild(nT);cBody.appendChild(wL);cBody.appendChild(wT);cBody.appendChild(aL);cBody.appendChild(aList);cBody.appendChild(aRow);
-    card.appendChild(cHdr);card.appendChild(cBody);body.appendChild(card);
-  });
+
+    cBody.appendChild(mkLabel('Notes'));cBody.appendChild(nT);
+    cBody.appendChild(mkLabel('Wins'));cBody.appendChild(wT);
+    cBody.appendChild(mkLabel('Action items'));cBody.appendChild(aList);cBody.appendChild(aRow);
+    card.appendChild(cHdr);card.appendChild(cBody);container.appendChild(card);
+  }
+
+  // Initial render
+  renderOtoOverview(body);
   main.appendChild(body);
 }
 // ─── Zendesk globals ──────────────────────────────────────────
