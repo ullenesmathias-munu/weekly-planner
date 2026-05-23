@@ -7175,7 +7175,7 @@ async function renderTeamMemberDashboard(root) {
     statsGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;';
     const mkStat = (id, label) => {
       const c=document.createElement('div'); c.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
-      const v=document.createElement('div'); v.id=id; v.style.cssText="font-family:'Fira Sans',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--text);"; v.textContent='…';
+      const v=document.createElement('div'); v.id=id; v.style.cssText="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--text);"; v.textContent='…';
       const l=document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;'; l.textContent=label;
       c.appendChild(v); c.appendChild(l); return c;
     };
@@ -9959,6 +9959,117 @@ function renderWeeklyBriefingData(container) {
   wrap.appendChild(alertsSec);
 
   // ── Footer ────────────────────────────────────────────────────
+  // ── SECTION 6: Operations Health ─────────────────────────────
+  (function() {
+    const ohSec = document.createElement('div');
+
+    const totalEmailAll = zdAgents ? zdAgents.reduce(function(s,a){return s+(zdData[a.id]&&zdData[a.id].email||0);},0) : 0;
+    const totalPhoneAll = zdAgents ? zdAgents.reduce(function(s,a){return s+(zdData[a.id]&&zdData[a.id].phone||0);},0) : 0;
+    const emailRatio = (totalEmailAll+totalPhoneAll) > 0 ? Math.round(totalEmailAll/(totalEmailAll+totalPhoneAll)*100) : null;
+    const callsThisWeek = tw.totals.offered||0;
+    const callsLastWeek = lw&&lw.totals&&lw.totals.offered||0;
+    const callTrend = callsLastWeek > 0 ? Math.round((callsThisWeek-callsLastWeek)/callsLastWeek*100) : 0;
+    const openPendingTotal = zdAgents ? zdAgents.reduce(function(s,a){return s+(zdData[a.id]&&(zdData[a.id].open||0)+(zdData[a.id].pending||0)||0);},0) : 0;
+
+    const signals = [];
+    if (openPendingTotal > 60) signals.push('red'); else if (openPendingTotal > 30) signals.push('amber');
+    if (emailRatio !== null && emailRatio < 30) signals.push('red'); else if (emailRatio !== null && emailRatio < 50) signals.push('amber');
+    if (callTrend >= 50) signals.push('red'); else if (callTrend >= 30) signals.push('amber');
+
+    const cycleRag = signals.includes('red') ? 'red' : signals.includes('amber') ? 'amber' : 'green';
+    const cycleMsg = cycleRag==='red' ? 'Vicious cycle active — email backlog driving call volume'
+      : cycleRag==='amber' ? 'Warning signs — monitor closely this week'
+      : 'Cycle broken — operations running well';
+    const cycleSub = cycleRag==='red' ? 'Customers not getting email responses fast enough → calling instead → inbox grows'
+      : cycleRag==='amber' ? 'Queue or call trend showing early pressure — act before it compounds'
+      : 'Email ratio healthy, queue manageable, call volume stable';
+
+    const ragColor = cycleRag==='red'?'var(--high-text)':cycleRag==='amber'?'#ffb74d':'var(--low-text)';
+    const ragBg    = cycleRag==='red'?'rgba(239,83,80,0.08)':cycleRag==='amber'?'rgba(255,183,77,0.08)':'rgba(52,211,153,0.08)';
+    const ragBorder= cycleRag==='red'?'rgba(239,83,80,0.25)':cycleRag==='amber'?'rgba(255,183,77,0.25)':'rgba(52,211,153,0.2)';
+
+    const cycleBanner = document.createElement('div');
+    cycleBanner.style.cssText = 'border:1px solid '+ragBorder+';border-radius:10px;padding:10px 14px;background:'+ragBg+';margin-bottom:10px;';
+    cycleBanner.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">'
+      +'<div style="width:8px;height:8px;border-radius:50%;background:'+ragColor+';flex-shrink:0;"></div>'
+      +'<div style="font-size:12px;font-weight:700;color:'+ragColor+';">'+cycleMsg+'</div>'
+      +'</div><div style="font-size:11px;color:var(--text3);margin-top:4px;padding-left:16px;">'+cycleSub+'</div>';
+
+    // 3 headline targets
+    const tGrid = document.createElement('div');
+    tGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;';
+    function tCard(label, val, target, dir, unit) {
+      unit=unit||'';
+      const met = val===null?null:(dir==='down'?val<=target:val>=target);
+      const col = val===null?'var(--text3)':met?'var(--low-text)':cycleRag==='red'?'var(--high-text)':'#ffb74d';
+      const c=document.createElement('div'); c.style.cssText='background:var(--surface2);border-radius:10px;padding:10px 12px;';
+      c.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:3px;">'+label+'</div>'
+        +'<div style="font-family:sans-serif;font-weight:900;sans-serif;font-size:20px;color:'+col+';line-height:1;letter-spacing:-0.02em;">'+(val!==null?val+unit:'—')+'</div>'
+        +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">target '+(dir==='down'?'< ':'≥ ')+target+unit+'</div>';
+      return c;
+    }
+    const avgWaitMin = tw.totals.avgWait>0 ? Math.round(tw.totals.avgWait/60*10)/10 : null;
+    tGrid.appendChild(tCard('Open queue',  openPendingTotal, 30, 'down', ''));
+    tGrid.appendChild(tCard('Email %',     emailRatio,       50, 'up',   '%'));
+    tGrid.appendChild(tCard('Avg wait',    avgWaitMin,       3,  'down', 'm'));
+
+    // Agent performance tiers
+    if (!zdAgents || !zdAgents.length) return;
+
+    const agentSolveds = zdAgents.map(function(a){return zdData[a.id]&&zdData[a.id].solved||0;}).filter(Boolean);
+    const teamAvg = agentSolveds.length ? Math.round(agentSolveds.reduce(function(s,v){return s+v;},0)/agentSolveds.length) : 1;
+    const maxSolvedA = Math.max.apply(null, agentSolveds.concat([1]));
+
+    function getTier(s) {
+      if (!s) return {label:'—', color:'var(--text3)', bg:'transparent'};
+      if (s>=teamAvg*1.3) return {label:'S', color:'var(--low-text)',  bg:'rgba(52,211,153,0.12)'};
+      if (s>=teamAvg*0.9) return {label:'A', color:'var(--cal-text)',  bg:'rgba(77,171,247,0.12)'};
+      if (s>=teamAvg*0.5) return {label:'B', color:'#ffb74d',         bg:'rgba(255,183,77,0.12)'};
+      return                     {label:'C', color:'var(--high-text)', bg:'rgba(239,83,80,0.12)'};
+    }
+
+    const aCard = document.createElement('div'); aCard.style.cssText='background:var(--surface2);border-radius:10px;overflow:hidden;';
+    const aHdr = document.createElement('div'); aHdr.style.cssText='display:grid;grid-template-columns:80px 1fr 44px 44px 44px 44px;gap:4px;padding:5px 12px;border-bottom:1px solid var(--border);';
+    ['Agent','','Solved','Email','Phone','Tier'].forEach(function(h,i){
+      const c=document.createElement('div');c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);'+(i>0?'text-align:right;':'');c.textContent=h;aHdr.appendChild(c);
+    });
+    aCard.appendChild(aHdr);
+
+    const sortedA = zdAgents
+      .filter(function(a){return MY_TEAM.some(function(n){return n.split(' ')[0].toLowerCase()===a.name.split(' ')[0].toLowerCase();});})
+      .sort(function(a,b){return (zdData[b.id]&&zdData[b.id].solved||0)-(zdData[a.id]&&zdData[a.id].solved||0);});
+
+    sortedA.forEach(function(agent, idx) {
+      const d=zdData[agent.id]||{};
+      const solved=d.solved||0, email=d.email!=null?d.email:null, phone=d.phone!=null?d.phone:null;
+      const tier=getTier(solved);
+      const row=document.createElement('div');
+      row.style.cssText='display:grid;grid-template-columns:80px 1fr 44px 44px 44px 44px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedA.length-1?'border-bottom:1px solid var(--border);':'');
+      const nm=document.createElement('div');nm.style.cssText='font-size:11px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=agent.name.split(' ')[0];
+      const bw=document.createElement('div');bw.style.cssText='height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px;';
+      const bf=document.createElement('div');bf.style.cssText='height:100%;width:'+Math.round(solved/maxSolvedA*100)+'%;background:'+(solved>=teamAvg?'var(--low-text)':'#ffb74d')+';border-radius:2px;';bw.appendChild(bf);
+      function ne(v,c){const e=document.createElement('div');e.style.cssText='font-size:11px;font-weight:700;text-align:right;color:'+(c||'var(--text)')+';';e.textContent=v!=null&&v!==''?v:'—';return e;}
+      const te=document.createElement('div');te.style.cssText='text-align:right;';
+      if(tier.label!=='—'){const b=document.createElement('span');b.style.cssText='font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:'+tier.bg+';color:'+tier.color+';';b.textContent=tier.label;te.appendChild(b);}
+      row.appendChild(nm);row.appendChild(bw);row.appendChild(ne(solved||'—'));row.appendChild(ne(email,'var(--cal-text)'));row.appendChild(ne(phone,'var(--med-text)'));row.appendChild(te);
+      aCard.appendChild(row);
+    });
+
+    const legend=document.createElement('div');legend.style.cssText='padding:5px 12px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;';
+    [['S','var(--low-text)','rgba(52,211,153,0.12)','130%+ avg'],['A','var(--cal-text)','rgba(77,171,247,0.12)','90%+ avg'],['B','#ffb74d','rgba(255,183,77,0.12)','50%+ avg'],['C','var(--high-text)','rgba(239,83,80,0.12)','Below 50%']].forEach(function(t){
+      const p=document.createElement('span');p.style.cssText='display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--text3);';
+      p.innerHTML='<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px;background:'+t[2]+';color:'+t[1]+';">'+t[0]+'</span>'+t[3];legend.appendChild(p);
+    });
+    aCard.appendChild(legend);
+
+    ohSec.appendChild(sectionTitle('Operations health'));
+    ohSec.appendChild(cycleBanner);
+    ohSec.appendChild(tGrid);
+    ohSec.appendChild(sectionTitle('Agent tiers'));
+    ohSec.appendChild(aCard);
+    wrap.appendChild(ohSec);
+  })();
+
   const footer = document.createElement('div');
   footer.style.cssText = 'font-size:10px;color:var(--text3);display:flex;justify-content:space-between;padding-top:2px;';
   footer.innerHTML = '<span>Updated '+new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span><span>'+thisMonday+' – '+today+'</span>';
