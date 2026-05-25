@@ -1936,8 +1936,8 @@ window.tryUnlock = async function() {
   <div style="display:flex;align-items:center;padding:0 18px 6px 2px;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;">
     <span id="tab-wordmark" style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
   </div>
-  <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
-  <button class="tab-btn" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" id="tab-btn-opshealth" style="display:none" onclick="switchTab('opshealth', this)">Operations</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
@@ -1956,6 +1956,7 @@ window.tryUnlock = async function() {
     <button onclick="showKeyboardShortcuts()" style="background:none;border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text3);font-size:12px;padding:3px 8px;cursor:pointer;" title="Keyboard shortcuts">?</button>
     <span id="live-clock"></span>
     <span id="live-date"></span>
+    <span id="clock-weather" style="display:none;font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:2px 8px;cursor:default;white-space:nowrap;" title="Forecast for your commute (16-17:00)"></span>
   </div>
 </div>
 
@@ -7646,6 +7647,7 @@ function renderNonAdminBriefing(panel) {
 
 // ─── Morning Briefing ──────────────────────────────────────────────
 function renderMorningBriefing() {
+  return; // Moved to Dashboard — not shown in Planner
   const panel = document.getElementById('morning-briefing');
   if (!panel || !currentUser) return;
   // Non-admin with a schedule link gets their personal briefing
@@ -11931,10 +11933,10 @@ function loadUserData() {
     }
     renderDashboard(); renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule();
     // Start on My Planner tab
-    switchTab('planner', document.querySelector('[onclick*="\'planner\'"]'));
+    switchTab('dashboard', document.querySelector('[onclick*="\'dashboard\'"]'));
     // Seed history state
     if (!history.state?.tab) {
-      history.replaceState({ tab: 'planner' }, '', '#planner');
+      history.replaceState({ tab: 'dashboard' }, '', '#dashboard');
     }
   }
   // Auto-pull from GitHub — handled by startup sequence, not here
@@ -13501,6 +13503,56 @@ function updateClock() {
     now.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
   document.getElementById('live-date').textContent =
     now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  // Update commute weather chip (16-17:00 window)
+  const chip = document.getElementById('clock-weather');
+  if (chip) {
+    try {
+      const cache = JSON.parse(localStorage.getItem('wtp_weather_cache') || 'null');
+      const ts = cache?.data?.properties?.timeseries;
+      if (ts && ts.length) {
+        const hour = now.getHours();
+        // Show commute chip from 13:00 onwards (3h warning); hide after 18:00
+        if (hour >= 13 && hour < 18) {
+          // Find the forecast slot closest to 16:30
+          const target = new Date(now); target.setHours(16, 30, 0, 0);
+          let best = null, bestDiff = Infinity;
+          for (const t of ts) {
+            const d = new Date(t.time);
+            const diff = Math.abs(d - target);
+            if (diff < bestDiff) { bestDiff = diff; best = t; }
+          }
+          if (best) {
+            const d2 = best.data;
+            const temp = d2?.instant?.details?.air_temperature;
+            const wind = d2?.instant?.details?.wind_speed;
+            const sym  = d2?.next_1_hours?.summary?.symbol_code || d2?.next_6_hours?.summary?.symbol_code || '';
+            const emoji = sym.includes('clearsky') ? '☀️'
+              : sym.includes('fair')         ? '🌤'
+              : sym.includes('partlycloudy') ? '⛅'
+              : sym.includes('cloudy')       ? '☁️'
+              : sym.includes('heavyrain')    ? '🌧'
+              : sym.includes('rain')         ? '🌦'
+              : sym.includes('snow')         ? '🌨'
+              : sym.includes('thunder')      ? '⛈'
+              : sym.includes('fog')          ? '🌫'
+              : '🌡';
+            const parts = ['16-17'];
+            if (temp != null) parts.push(Math.round(temp) + '°');
+            if (wind != null) parts.push(Math.round(wind) + 'm/s');
+            chip.textContent = emoji + ' ' + parts.join(' · ');
+            // Colour hint — rain/wind = amber, clear = normal
+            const isWet  = sym.includes('rain') || sym.includes('sleet') || sym.includes('thunder');
+            const isWindy = wind != null && wind >= 8;
+            chip.style.color = (isWet || isWindy) ? '#ffb74d' : 'var(--text2)';
+            chip.style.borderColor = (isWet || isWindy) ? 'rgba(255,183,77,0.3)' : 'var(--border)';
+            chip.style.display = '';
+          }
+        } else {
+          chip.style.display = 'none';
+        }
+      }
+    } catch(_we) { chip.style.display = 'none'; }
+  }
 }
 updateClock();
 setInterval(updateClock, 1000);
