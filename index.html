@@ -5695,6 +5695,9 @@ function renderAdminDashboard(root, viewerMode=false) {
     try {
       const CACHE_KEY = 'wtp_weather_cache';
       const CACHE_TTL = 30 * 60 * 1000; // 30 min
+      // Clear cache if it has no timeseries (was cached from a failed/pre-worker request)
+      const _raw = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
+      if (_raw && !_raw.data?.properties?.timeseries?.length) localStorage.removeItem(CACHE_KEY);
       const cached = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
       let data;
       if (cached && Date.now() - cached.ts < CACHE_TTL) {
@@ -5702,11 +5705,18 @@ function renderAdminDashboard(root, viewerMode=false) {
       } else {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 8000);
-        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331', { signal: controller.signal });
+        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331', {
+          signal: controller.signal,
+          mode: 'cors',
+          cache: 'no-store'
+        });
         clearTimeout(timeout);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         data = await res.json();
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+        // Only cache valid data with timeseries
+        if (data?.properties?.timeseries?.length) {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+        }
       }
 
       const timeseries = data?.properties?.timeseries || [];
