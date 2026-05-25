@@ -8412,84 +8412,128 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-25",
-    "generated": "2026-05-25T05:23:20.326Z",
+    "generated": "2026-05-25T08:09:09.843Z",
     "agents": {
       "Jonas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 11
+        "zdSolved": 88,
+        "zdEmail": 10,
+        "zdPhone": 78,
+        "zdOpen": 6,
+        "zdPending": 3
       },
       "Thomas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 16
+        "zdSolved": 122,
+        "zdEmail": 25,
+        "zdPhone": 97,
+        "zdOpen": 2,
+        "zdPending": 0
       },
       "Maylen": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 34
+        "zdSolved": 97,
+        "zdEmail": 22,
+        "zdPhone": 75,
+        "zdOpen": 10,
+        "zdPending": 11
       },
       "Bernadett": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 9
+        "zdSolved": 78,
+        "zdEmail": 7,
+        "zdPhone": 71,
+        "zdOpen": 10,
+        "zdPending": 3
       },
       "Benjamin": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 10
+        "zdSolved": 44,
+        "zdEmail": 1,
+        "zdPhone": 43,
+        "zdOpen": 4,
+        "zdPending": 0
       },
       "Cecilie": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 10
+        "zdSolved": 43,
+        "zdEmail": 2,
+        "zdPhone": 41,
+        "zdOpen": 7,
+        "zdPending": 5
       },
       "Tord": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0
+        "zdSolved": 0,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 0
       },
       "Marie": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0
+        "zdSolved": 18,
+        "zdEmail": 1,
+        "zdPhone": 17,
+        "zdOpen": 2,
+        "zdPending": 7
       },
       "Andreas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0
+        "zdSolved": 46,
+        "zdEmail": 17,
+        "zdPhone": 29,
+        "zdOpen": 4,
+        "zdPending": 7
       },
       "Julie": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0
+        "zdSolved": 0,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 0
       },
       "Vetle": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 6
+        "zdSolved": 22,
+        "zdEmail": 3,
+        "zdPhone": 19,
+        "zdOpen": 9,
+        "zdPending": 4
       }
     },
     "totals": {
