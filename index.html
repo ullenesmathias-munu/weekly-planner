@@ -1962,9 +1962,10 @@ window.tryUnlock = async function() {
 <!-- PLANNER TAB -->
 <div id="tab-dashboard" class="tab-content active">
   <div id="dashboard-root"></div>
+  <div id="weekly-review-container" style="padding:0 24px;"></div>
 </div>
 
-<div id="tab-planner" class="tab-content">  <div id="morning-briefing" class="briefing-panel" style="display:none;"></div>
+<div id="tab-planner" class="tab-content">  <div id="morning-briefing" class="briefing-panel" style="display:none!important;"></div>
   <div class="topbar">
     <div class="topbar-left">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -1981,7 +1982,6 @@ window.tryUnlock = async function() {
         <div id="search-results" class="search-results"></div>
       </div>
       <button class="btn-today-view" onclick="toggleTodayPanel()" id="today-panel-btn">☀ Today</button>
-      <button class="btn-nav" onclick="toggleWeeklyReview()" id="weekly-review-btn" style="font-size:11px;">📋 Review</button>
     </div>
   </div>
   <!-- Week progress bar -->
@@ -1990,7 +1990,6 @@ window.tryUnlock = async function() {
     <span class="week-progress-label" id="week-progress-label"></span>
   </div>
   <!-- Carry forward banner -->
-  <div id="weekly-review-container"></div>
   <div id="carry-banner-wrap"></div>
   <div class="planner-filter-bar" id="planner-filter-bar"></div>
   <div class="planner-wrap">
@@ -3854,8 +3853,13 @@ let weeklyReviewOpen = false;
 
 function toggleWeeklyReview() {
   weeklyReviewOpen = !weeklyReviewOpen;
+  // Switch to dashboard if not already there (that's where Review now lives)
+  const activeTab = document.querySelector('.tab-content.active');
+  if (activeTab && activeTab.id !== 'tab-dashboard') {
+    switchTab('dashboard', document.querySelector('[onclick*=\'dashboard\']'));
+  }
   const btn = document.getElementById('weekly-review-btn');
-  if (btn) { btn.style.color = weeklyReviewOpen ? 'var(--cal-text)' : ''; btn.style.background = weeklyReviewOpen ? 'var(--cal)' : ''; btn.style.borderColor = weeklyReviewOpen ? 'var(--cal-border)' : ''; }
+  if (btn) { btn.style.color = weeklyReviewOpen ? 'var(--cal-text)' : ''; }
   renderWeeklyReview();
 }
 
@@ -5667,7 +5671,131 @@ function renderAdminDashboard(root, viewerMode=false) {
   const zdOpenKpi=mkKpi('…','Open tickets','neutral',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
   const zdSolvedKpi=mkKpi('…','Solved today','ok',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
   if(zdReady()){kpis.appendChild(zdOpenKpi);kpis.appendChild(zdSolvedKpi);}
+  // Weekly Review button — moved here from planner topbar
+  const reviewBtn = document.createElement('button');
+  reviewBtn.id = 'weekly-review-btn';
+  reviewBtn.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:var(--radius-md);border:1px solid rgba(214,243,255,0.25);background:rgba(214,243,255,0.08);color:rgba(214,243,255,0.7);cursor:pointer;white-space:nowrap;letter-spacing:-0.01em;";
+  reviewBtn.textContent = '📋 Weekly Review';
+  reviewBtn.onmouseover = () => reviewBtn.style.background = 'rgba(214,243,255,0.14)';
+  reviewBtn.onmouseout  = () => reviewBtn.style.background = 'rgba(214,243,255,0.08)';
+  reviewBtn.onclick = () => toggleWeeklyReview();
+  heroLeft.appendChild(reviewBtn);
+
   hero.appendChild(kpis);
+
+  // ── Weather widget — Stavanger ────────────────────────────────
+  const weatherWrap = document.createElement('div');
+  weatherWrap.id = 'db-weather';
+  weatherWrap.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:10px;';
+  weatherWrap.innerHTML = '<span style="font-size:11px;color:rgba(214,243,255,0.4);">Loading weather…</span>';
+  heroLeft.appendChild(weatherWrap);
+
+  // Fetch from proxy — once per session, cache for 30 min
+  (async () => {
+    try {
+      const CACHE_KEY = 'wtp_weather_cache';
+      const CACHE_TTL = 30 * 60 * 1000; // 30 min
+      const cached = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
+      let data;
+      if (cached && Date.now() - cached.ts < CACHE_TTL) {
+        data = cached.data;
+      } else {
+        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        data = await res.json();
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+      }
+
+      const timeseries = data?.properties?.timeseries || [];
+      if (!timeseries.length) throw new Error('No data');
+
+      // Symbol code → emoji
+      const symbolEmoji = (code) => {
+        if (!code) return '🌡';
+        if (code.includes('clearsky'))         return '☀️';
+        if (code.includes('fair'))             return '🌤';
+        if (code.includes('partlycloudy'))     return '⛅';
+        if (code.includes('cloudy'))           return '☁️';
+        if (code.includes('fog'))              return '🌫';
+        if (code.includes('heavyrain') || code.includes('heavysleet')) return '🌧';
+        if (code.includes('rain') || code.includes('sleet'))  return '🌦';
+        if (code.includes('snow'))             return '🌨';
+        if (code.includes('thunder'))          return '⛈';
+        return '🌡';
+      };
+
+      // Pick next 5 forecasts roughly 3h apart (so today + next ~15h)
+      const now = new Date();
+      const slots = [];
+      for (const ts of timeseries) {
+        const t = new Date(ts.time);
+        if (t < now) continue;
+        if (slots.length === 0 || (t - slots[slots.length-1].t) >= 2.5 * 3600000) {
+          const d = ts.data;
+          const temp = d?.instant?.details?.air_temperature;
+          const wind = d?.instant?.details?.wind_speed;
+          const symbol = d?.next_1_hours?.summary?.symbol_code || d?.next_6_hours?.summary?.symbol_code;
+          const precip = d?.next_1_hours?.details?.precipitation_amount ?? d?.next_6_hours?.details?.precipitation_amount;
+          slots.push({ t, temp, wind, symbol, precip });
+          if (slots.length >= 5) break;
+        }
+      }
+
+      const el = document.getElementById('db-weather');
+      if (!el) return;
+      el.innerHTML = '';
+
+      // Location label
+      const loc = document.createElement('span');
+      loc.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(214,243,255,0.4);margin-right:4px;white-space:nowrap;';
+      loc.textContent = 'Stavanger';
+      el.appendChild(loc);
+
+      slots.forEach((s, i) => {
+        const card = document.createElement('div');
+        card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.06);min-width:50px;';
+
+        const timeStr = i === 0 ? 'Now' : s.t.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+        const timeLbl = document.createElement('div');
+        timeLbl.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;';
+        timeLbl.textContent = timeStr;
+
+        const ico = document.createElement('div');
+        ico.style.cssText = 'font-size:18px;line-height:1.2;';
+        ico.textContent = symbolEmoji(s.symbol);
+
+        const tmp = document.createElement('div');
+        tmp.style.cssText = 'font-size:12px;font-weight:700;color:rgba(214,243,255,0.9);';
+        tmp.textContent = s.temp != null ? Math.round(s.temp) + '°' : '—';
+
+        const sub = document.createElement('div');
+        sub.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.4);';
+        const parts = [];
+        if (s.wind != null) parts.push(Math.round(s.wind) + 'm/s');
+        if (s.precip != null && s.precip > 0) parts.push(s.precip.toFixed(1) + 'mm');
+        sub.textContent = parts.join(' · ');
+
+        card.appendChild(timeLbl);
+        card.appendChild(ico);
+        card.appendChild(tmp);
+        if (parts.length) card.appendChild(sub);
+        el.appendChild(card);
+      });
+
+      // Yr attribution (required by terms)
+      const attr = document.createElement('a');
+      attr.href = 'https://www.yr.no';
+      attr.target = '_blank'; attr.rel = 'noopener';
+      attr.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.25);text-decoration:none;align-self:flex-end;margin-left:4px;white-space:nowrap;';
+      attr.textContent = 'yr.no';
+      el.appendChild(attr);
+
+    } catch(e) {
+      const el = document.getElementById('db-weather');
+      if (el) el.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">Weather unavailable</span>';
+    }
+  })();
+
   root.appendChild(hero);
 
   if(zdReady()){
