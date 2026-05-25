@@ -5686,11 +5686,21 @@ function renderAdminDashboard(root, viewerMode=false) {
   // ── Weather widget — Stavanger ────────────────────────────────
   const weatherWrap = document.createElement('div');
   weatherWrap.id = 'db-weather';
-  weatherWrap.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:10px;';
+  weatherWrap.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;';
   weatherWrap.innerHTML = '<span style="font-size:11px;color:rgba(214,243,255,0.4);">Loading weather…</span>';
   heroLeft.appendChild(weatherWrap);
 
-  // Fetch from proxy — once per session, cache for 30 min
+  // If already fetched and cached this session, render immediately without async delay
+  const _wCache = (() => { try { return JSON.parse(localStorage.getItem('wtp_weather_cache') || 'null'); } catch { return null; } })();
+  if (_wCache?.data?.properties?.timeseries?.length) {
+    _renderWeatherCards(_wCache.data, weatherWrap);
+  } else {
+    _fetchWeather(weatherWrap);
+  }
+}
+
+// Standalone weather fetch — lives outside renderAdminDashboard so re-renders don't kill it
+function _fetchWeather(targetEl) {
   (async () => {
     try {
       const CACHE_KEY = 'wtp_weather_cache';
@@ -5721,6 +5731,9 @@ function renderAdminDashboard(root, viewerMode=false) {
 
       const timeseries = data?.properties?.timeseries || [];
       if (!timeseries.length) throw new Error('No data');
+      // Always re-query after async ops — dashboard re-renders replace the DOM
+      const elW = document.getElementById('db-weather');
+      if (!elW) return;
 
       // Symbol code → emoji
       const symbolEmoji = (code) => {
@@ -5754,16 +5767,17 @@ function renderAdminDashboard(root, viewerMode=false) {
         }
       }
 
+      // Re-query after async — dashboard may have re-rendered
       const el = document.getElementById('db-weather');
       if (!el) return;
       // Check if worker has the /weather route by looking at error
-      el.innerHTML = '';
+      elW.innerHTML = '';
 
       // Location label
       const loc = document.createElement('span');
       loc.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(214,243,255,0.4);margin-right:4px;white-space:nowrap;';
       loc.textContent = 'Stavanger';
-      el.appendChild(loc);
+      elW.appendChild(loc);
 
       slots.forEach((s, i) => {
         const card = document.createElement('div');
@@ -5802,13 +5816,13 @@ function renderAdminDashboard(root, viewerMode=false) {
       attr.target = '_blank'; attr.rel = 'noopener';
       attr.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.25);text-decoration:none;align-self:flex-end;margin-left:4px;white-space:nowrap;';
       attr.textContent = 'yr.no';
-      el.appendChild(attr);
+      elW.appendChild(attr);
 
     } catch(e) {
       const el = document.getElementById('db-weather');
-      if (el) {
-        el.innerHTML = '<a href="https://dash.cloudflare.com" target="_blank" style="font-size:10px;color:rgba(214,243,255,0.35);text-decoration:underline;">⚠ Update Cloudflare worker to enable weather</a>';
-      }
+      const elErr = document.getElementById('db-weather');
+      if (elErr) elErr.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">Weather unavailable</span>';
+      console.warn('Weather error:', e);
     }
   })();
 
