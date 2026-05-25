@@ -8026,10 +8026,10 @@ async function renderOpsContent(fromDate, toDate, container) {
   const scCard = document.createElement('div'); scCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
 
   // Build per-agent data
-  // Work out how many days each agent was scheduled (not absent) in the period
-  const workingDaysInPeriod = (name, from, to) => {
+  // Work out scheduled days + shift profile for an agent in the period
+  const scheduleProfile = (name, from, to) => {
     const OFF_S = new Set(['so','h','hd','os','abs','ol','']);
-    let working=0, total=0;
+    let working=0, total=0, nightDays=0, dayDays=0;
     const d = new Date(from+'T00:00:00');
     const end = new Date(to+'T00:00:00');
     while (d <= end) {
@@ -8039,22 +8039,51 @@ async function renderOpsContent(fromDate, toDate, container) {
         total++;
         const person = week.people.find(p => p.name === name);
         const idx = week.dates.indexOf(ds);
-        const shift = (person && idx>=0 ? person.shifts[idx] : '') || '';
-        if (!OFF_S.has(shift.toLowerCase())) working++;
+        const shift = ((person && idx>=0 ? person.shifts[idx] : '') || '').toLowerCase();
+        if (!OFF_S.has(shift)) {
+          working++;
+          if (shift.startsWith('e')) nightDays++; else dayDays++;
+        }
       }
       d.setDate(d.getDate()+1);
     }
-    return { working, total };
+    // Agent is "night shift" if majority of their working days are night shifts
+    const isNight = nightDays > 0 && nightDays >= dayDays;
+    return { working, total, nightDays, dayDays, isNight };
+  };
+
+  // 4-week trend per agent: get their rolling average answered+solved over last 4 weeks
+  const agentTrend = (name) => {
+    const weeks = [];
+    for (let i=1; i<=4; i++) {
+      const mon = fmtLocal(getMonday(-i));
+      const snap = getWeeklySnapshot(mon);
+      if (snap && snap.agents && snap.agents[name]) {
+        weeks.push({ answered: snap.agents[name].answered||0, solved: snap.agents[name].zdSolved||0 });
+      }
+    }
+    if (weeks.length < 2) return null;
+    // Compare most recent week vs average of earlier weeks
+    const latest = weeks[0];
+    const earlier = weeks.slice(1);
+    const avgAnswered = Math.round(earlier.reduce((s,w)=>s+w.answered,0)/earlier.length);
+    const avgSolved   = Math.round(earlier.reduce((s,w)=>s+w.solved,0)/earlier.length);
+    // Arrow: based on solved for ZD agents, answered for call-only
+    const mainMetricLatest = latest.solved > 0 ? latest.solved : latest.answered;
+    const mainMetricAvg    = avgSolved > 0 ? avgSolved : avgAnswered;
+    if (!mainMetricAvg) return null;
+    const pct = Math.round((mainMetricLatest - mainMetricAvg) / mainMetricAvg * 100);
+    return { pct, arrow: pct >= 10 ? '↑' : pct <= -10 ? '↓' : '→', color: pct >= 10 ? 'var(--low-text)' : pct <= -10 ? 'var(--high-text)' : '#ffb74d' };
   };
 
   const agentData = MY_TEAM.map(name => {
     const cs = resolveAgentCallStats(name, callStats) || {};
     const zdA = zdAgents && zdAgents.find(a => normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
     const d = zdA ? (zdData[zdA.id]||{}) : {};
-    const { working, total } = workingDaysInPeriod(name, fromDate, toDate);
-    const absenceRatio = total > 0 ? working / total : 1; // 0 = fully absent, 1 = fully present
+    const { working, total, nightDays, dayDays, isNight } = scheduleProfile(name, fromDate, toDate);
     const fullyAbsent  = working === 0 && total > 0;
     const partlyAbsent = working > 0 && working < total;
+    const trend = agentTrend(name);
     return {
       name,
       calls:        cs.answered||0,
@@ -8064,21 +8093,19 @@ async function renderOpsContent(fromDate, toDate, container) {
       solved:       d.solved||0,
       email:        d.email!=null?d.email:null,
       phone:        d.phone!=null?d.phone:null,
-      working,
-      total,
-      absenceRatio,
-      fullyAbsent,
-      partlyAbsent,
+      working, total, nightDays, dayDays, isNight,
+      fullyAbsent, partlyAbsent, trend,
     };
   });
 
-  // Only agents who worked at least 1 day contribute to team average
-  const active   = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0));
-  const partial  = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working>0);
-  const absent   = agentData.filter(a => a.fullyAbsent);
-  const inactive = agentData.filter(a => !a.fullyAbsent && a.calls===0&&a.solved===0&&a.working===0);
+  // Split by shift type — night shift agents get separate averages
+  const active      = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0) && !a.isNight);
+  const activeNight = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0) && a.isNight);
+  const partial     = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working>0 && !a.isNight);
+  const absent      = agentData.filter(a => a.fullyAbsent);
+  const inactive    = agentData.filter(a => !a.fullyAbsent && a.calls===0&&a.solved===0&&a.working===0);
 
-  // Averages only from agents who actually worked — fully absent agents excluded
+  // Separate averages for day shift and night shift
   const calcAvg = (arr, key) => { const v=arr.filter(a=>!a.fullyAbsent&&a[key]>0).map(a=>a[key]); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
   const avgs = {
     calls:   calcAvg(active,'calls'),
@@ -8088,6 +8115,15 @@ async function renderOpsContent(fromDate, toDate, container) {
     talkSec: calcAvg(active.filter(a=>a.talkSec>0),'talkSec'),
     waitSec: calcAvg(active.filter(a=>a.waitSec>0),'waitSec'),
   };
+  // Night shift averages (calls only — email/solved not applicable)
+  const nightAvgs = {
+    calls:   calcAvg(activeNight,'calls'),
+    solved:  0,
+    email:   0,
+    phone:   calcAvg(activeNight.filter(a=>a.phone>0),'phone'),
+    talkSec: calcAvg(activeNight.filter(a=>a.talkSec>0),'talkSec'),
+    waitSec: calcAvg(activeNight.filter(a=>a.waitSec>0),'waitSec'),
+  };
 
   const METRICS = [
     {key:'calls',   label:'Calls',   lower:false},
@@ -8096,11 +8132,12 @@ async function renderOpsContent(fromDate, toDate, container) {
     {key:'phone',   label:'Phone',   lower:false},
     {key:'talkSec', label:'Talk',    lower:true},
     {key:'waitSec', label:'Wait',    lower:true},
+    {key:'trend',   label:'Trend',   lower:false, isTrend:true},
   ];
 
   // Header
   const scHdr = document.createElement('div');
-  scHdr.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:6px 14px;border-bottom:1px solid var(--border);background:var(--surface2);';
+  scHdr.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:6px 14px;border-bottom:1px solid var(--border);background:var(--surface2);';
   ['Agent',...METRICS.map(m=>m.label)].forEach((h,i) => {
     const c=document.createElement('div'); c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:center;':''); c.textContent=h; scHdr.appendChild(c);
   });
@@ -8120,7 +8157,7 @@ async function renderOpsContent(fromDate, toDate, container) {
 
   const makeAgentRow = (a, faded, label) => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:4px 14px;border-bottom:1px solid var(--border);'+(faded?'opacity:0.45;':'');
+    row.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:4px 14px;border-bottom:1px solid var(--border);'+(faded?'opacity:0.45;':'');
 
     const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;justify-content:center;';
     const nmTxt=document.createElement('span'); nmTxt.textContent=a.name.split(' ')[0]; nm.appendChild(nmTxt);
@@ -8129,15 +8166,36 @@ async function renderOpsContent(fromDate, toDate, container) {
     row.appendChild(nm);
 
     METRICS.forEach(m => {
-      const val = a[m.key];
-      const avg = avgs[m.key];
-      const cls = (val===null||val===0) ? 'none' : classify(val, avg, m.lower);
       const cell = document.createElement('div');
-      cell.style.cssText = 'border-radius:6px;padding:4px 3px;background:'+cellBg(cls)+';display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;margin:1px;';
-      const ve=document.createElement('div'); ve.style.cssText='font-size:12px;font-weight:700;color:'+cellColor(cls)+';font-variant-numeric:tabular-nums;';
-      ve.textContent=(m.key==='talkSec'||m.key==='waitSec')?fmtSec(val):(val!=null&&val>0?val:'—');
+
+      // Trend column — special rendering
+      if (m.isTrend) {
+        cell.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;margin:1px;';
+        if (a.trend) {
+          const ar=document.createElement('div'); ar.style.cssText='font-size:16px;font-weight:700;color:'+a.trend.color+';line-height:1;'; ar.textContent=a.trend.arrow;
+          const pct=document.createElement('div'); pct.style.cssText='font-size:9px;color:'+a.trend.color+';margin-top:1px;'; pct.textContent=(a.trend.pct>0?'+':'')+a.trend.pct+'%';
+          const sub=document.createElement('div'); sub.style.cssText='font-size:8px;color:var(--text3);margin-top:1px;'; sub.textContent='4wk trend';
+          cell.appendChild(ar); cell.appendChild(pct); cell.appendChild(sub);
+        } else {
+          const dash=document.createElement('div'); dash.style.cssText='font-size:12px;color:var(--text3);'; dash.textContent='—';
+          cell.appendChild(dash);
+        }
+        row.appendChild(cell);
+        return;
+      }
+
+      // Night shift — grey out email/solved columns (not applicable)
+      const isNA = a.isNight && (m.key==='email'||m.key==='solved');
+      const val = a[m.key];
+      const avg = (a.isNight ? nightAvgs : avgs)[m.key];
+      const cls = isNA ? 'na' : (val===null||val===0) ? 'none' : classify(val, avg, m.lower);
+
+      cell.style.cssText = 'border-radius:6px;padding:4px 3px;background:'+(isNA?'transparent':cellBg(cls))+';display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;margin:1px;';
+      const ve=document.createElement('div');
+      ve.style.cssText='font-size:12px;font-weight:700;color:'+(isNA?'var(--text3)':cellColor(cls))+';font-variant-numeric:tabular-nums;';
+      ve.textContent = isNA ? 'N/A' : (m.key==='talkSec'||m.key==='waitSec')?fmtSec(val):(val!=null&&val>0?val:'—');
       cell.appendChild(ve);
-      if (val>0&&avg>0) { const de=document.createElement('div'); de.style.cssText='font-size:9px;color:'+cellColor(cls)+';opacity:0.8;'; de.textContent=fmtDelta(val,avg,m.lower); cell.appendChild(de); }
+      if (!isNA&&val>0&&avg>0) { const de=document.createElement('div'); de.style.cssText='font-size:9px;color:'+cellColor(cls)+';opacity:0.8;'; de.textContent=fmtDelta(val,avg,m.lower); cell.appendChild(de); }
       row.appendChild(cell);
     });
     return row;
@@ -8152,18 +8210,38 @@ async function renderOpsContent(fromDate, toDate, container) {
 
   // Team avg row (absent agents excluded from calculation)
   const avgRow = document.createElement('div');
-  avgRow.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:6px 14px;background:var(--surface2);border-top:1px solid var(--border);';
+  avgRow.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:6px 14px;background:var(--surface2);border-top:1px solid var(--border);';
   const avgNm=document.createElement('div'); avgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);display:flex;align-items:center;'; avgNm.textContent='Team avg'; avgRow.appendChild(avgNm);
-  METRICS.forEach(m => { const c=document.createElement('div'); c.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;'; c.textContent=(m.key==='talkSec'||m.key==='waitSec')?fmtSec(avgs[m.key]):(avgs[m.key]||'—'); avgRow.appendChild(c); });
+  METRICS.forEach(m => {
+    const c=document.createElement('div'); c.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;';
+    c.textContent = m.isTrend ? '4wk' : (m.key==='talkSec'||m.key==='waitSec')?fmtSec(avgs[m.key]):(avgs[m.key]||'—');
+    avgRow.appendChild(c);
+  });
   scCard.appendChild(avgRow);
 
-  // Absent agents — shown separately, not compared vs avg
+  // Night shift section
+  if (activeNight.length) {
+    const nSep=document.createElement('div'); nSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a78bfa;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;';
+    nSep.innerHTML='Night shift <span style="font-size:10px;font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;color:var(--text3);">— vs night avg · Email/Solved N/A</span>';
+    scCard.appendChild(nSep);
+    const nAvgRow=document.createElement('div'); nAvgRow.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:5px 14px;background:rgba(167,139,250,0.05);border-bottom:1px solid var(--border);';
+    const nAvgNm=document.createElement('div'); nAvgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#a78bfa;display:flex;align-items:center;'; nAvgNm.textContent='Night avg'; nAvgRow.appendChild(nAvgNm);
+    METRICS.forEach(function(m2) {
+      const c2=document.createElement('div'); c2.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;';
+      const isNA2=m2.key==='email'||m2.key==='solved';
+      c2.textContent=m2.isTrend?'':isNA2?'N/A':(m2.key==='talkSec'||m2.key==='waitSec')?fmtSec(nightAvgs[m2.key]):(nightAvgs[m2.key]||'—');
+      nAvgRow.appendChild(c2);
+    });
+    scCard.appendChild(nAvgRow);
+    activeNight.sort(function(a,b){return b.calls-a.calls;}).forEach(function(a){scCard.appendChild(makeAgentRow(a,false,null));});
+  }
+
   if (absent.length) {
     const absSep=document.createElement('div'); absSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;';
     absSep.innerHTML='On leave / absent <span style="font-size:10px;color:var(--text3);font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;">— excluded from team average</span>';
     scCard.appendChild(absSep);
     absent.forEach(a => {
-      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:5px 14px;border-bottom:1px solid var(--border);opacity:0.35;';
+      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:5px 14px;border-bottom:1px solid var(--border);opacity:0.35;';
       const nm2=document.createElement('div'); nm2.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;';
       nm2.innerHTML='<span>'+a.name.split(' ')[0]+'</span><span style="font-size:9px;color:#ffb74d;">Absent</span>';
       row.appendChild(nm2);
