@@ -5700,7 +5700,10 @@ function renderAdminDashboard(root, viewerMode=false) {
       if (cached && Date.now() - cached.ts < CACHE_TTL) {
         data = cached.data;
       } else {
-        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331');
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331', { signal: controller.signal });
+        clearTimeout(timeout);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         data = await res.json();
         localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
@@ -5792,7 +5795,10 @@ function renderAdminDashboard(root, viewerMode=false) {
 
     } catch(e) {
       const el = document.getElementById('db-weather');
-      if (el) el.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">Weather unavailable</span>';
+      if (el) {
+        const msg = e.name === 'AbortError' ? 'Deploy worker.js first' : 'Weather unavailable';
+        el.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">' + msg + '</span>';
+      }
     }
   })();
 
