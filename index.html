@@ -6033,6 +6033,9 @@ function renderAdminDashboard(root, viewerMode=false) {
 
       (async()=>{
         try {
+          // Delay so this doesn't race with Tickets tab ZD calls
+          await new Promise(r => setTimeout(r, 3000));
+          const w2check=document.getElementById('db-tag-pills'); if(!w2check) return;
           const mon=fmtLocal(getMonday(0)),tod=localToday();
           const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
           let tix=[],url='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+mon+' solved<='+tod)+'&per_page=100';
@@ -10665,21 +10668,50 @@ function zdHeaders() {
   return { 'Authorization': 'Basic ' + btoa(email + '/token:' + token), 'Content-Type': 'application/json' };
 }
 
+// ── ZD request queue — max 3 concurrent, auto-retry on 429 ─────
+let _zdActive = 0;
+const _zdQueue = [];
+const ZD_MAX_CONCURRENT = 3;
+const ZD_RETRY_DELAY    = 8000;
+
+function _zdDequeue() {
+  while (_zdActive < ZD_MAX_CONCURRENT && _zdQueue.length > 0) {
+    const { run } = _zdQueue.shift();
+    _zdActive++;
+    run().finally(() => { _zdActive--; _zdDequeue(); });
+  }
+}
+
 async function zdFetch(path) {
   if (!zdReady()) throw new Error('Zendesk not configured');
-  const email= localStorage.getItem(ZD_EMAIL_KEY) || '';
-  const token= localStorage.getItem(ZD_TOKEN_KEY) || '';
-  const cleanPath = path.startsWith('http') ? '/' + path.split('/api/v2/').slice(1).join('/api/v2/') : path;
-  const url = ZD_PROXY + cleanPath;
-  const res = await fetch(url, {
-    headers: { 'Authorization': 'Basic ' + btoa(email + '/token:' + token) }
+  return new Promise((resolve, reject) => {
+    _zdQueue.push({
+      run: async () => {
+        const email     = localStorage.getItem(ZD_EMAIL_KEY) || '';
+        const token     = localStorage.getItem(ZD_TOKEN_KEY) || '';
+        const cleanPath = path.startsWith('http') ? '/' + path.split('/api/v2/').slice(1).join('/api/v2/') : path;
+        const url = ZD_PROXY + cleanPath;
+        const doFetch = async (attempt) => {
+          const res = await fetch(url, {
+            headers: { 'Authorization': 'Basic ' + btoa(email + '/token:' + token) }
+          });
+          if (res.status === 429 && attempt < 2) {
+            const wait = parseInt(res.headers.get('Retry-After') || '8') * 1000 || ZD_RETRY_DELAY;
+            await new Promise(r => setTimeout(r, wait));
+            return doFetch(attempt + 1);
+          }
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            const msg = json.description || json.error || json.message || ('HTTP ' + res.status);
+            throw new Error(msg + ' - ' + cleanPath.split('?')[0]);
+          }
+          return json;
+        };
+        return doFetch(0).then(resolve).catch(reject);
+      }
+    });
+    _zdDequeue();
   });
-  const json = await res.json().catch(()=>({}));
-  if (!res.ok) {
-    const msg = json.description || json.error || json.message || ('HTTP ' + res.status);
-    throw new Error(msg + ' - ' + cleanPath.split('?')[0]);
-  }
-  return json;
 }
 
 async function zdCount(query) {
