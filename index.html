@@ -2916,23 +2916,26 @@ function renderSchedule() {
       e.stopPropagation();
       document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
 
+      // Render dropdown in body (not inside td) to avoid clipping/z-index issues
       const dd = document.createElement('div');
       dd.className = 'shift-dropdown';
-      dd.style.cssText = 'position:absolute;top:100%;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);z-index:200;min-width:130px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+      dd.style.cssText = 'position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);z-index:9999;min-width:140px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35);';
 
       ALL_SHIFTS.forEach(code => {
         const item = document.createElement('div');
-        item.style.cssText = 'padding:6px 12px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;';
+        item.style.cssText = 'padding:7px 14px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;user-select:none;';
         if (code === person.shifts[dayIdx]) item.style.background = 'var(--surface2)';
         if (code) {
-          const p = document.createElement('span'); p.className = 'shift-pill ' + shiftClass(code); p.style.cssText = 'font-size:10px;min-width:0;'; p.textContent = code;
+          const p = document.createElement('span'); p.className = 'shift-pill ' + shiftClass(code); p.style.cssText = 'font-size:10px;min-width:0;flex-shrink:0;'; p.textContent = code;
           item.appendChild(p);
         } else {
           item.appendChild(document.createTextNode('— clear'));
         }
         item.onmouseover = () => item.style.background = 'var(--surface3)';
         item.onmouseout = () => item.style.background = code === person.shifts[dayIdx] ? 'var(--surface2)' : '';
-        item.onclick = () => {
+        item.onmousedown = (ev) => {
+          // Use mousedown so it fires before the document click dismiss
+          ev.stopPropagation();
           person.shifts[dayIdx] = code;
           saveSchedule();
           dd.remove();
@@ -2941,18 +2944,22 @@ function renderSchedule() {
         dd.appendChild(item);
       });
 
-      td.appendChild(dd);
-      // Flip upward if dropdown would be clipped by viewport bottom
-      const rect = dd.getBoundingClientRect();
-      if (rect.bottom > window.innerHeight - 16) {
-        dd.style.top = 'auto';
-        dd.style.bottom = '100%';
-      }
-      // Also clamp horizontal position to stay within viewport
-      const rect2 = dd.getBoundingClientRect();
-      if (rect2.left < 8) { dd.style.left = '0'; dd.style.transform = 'none'; }
-      else if (rect2.right > window.innerWidth - 8) { dd.style.left = 'auto'; dd.style.right = '0'; dd.style.transform = 'none'; }
-      setTimeout(() => document.addEventListener('click', () => dd.remove(), { once: true }), 0);
+      // Position relative to the cell using fixed coords
+      document.body.appendChild(dd);
+      const tdRect = td.getBoundingClientRect();
+      let top = tdRect.bottom + 2;
+      let left = tdRect.left + tdRect.width/2 - 70;
+      // Flip up if clips bottom
+      if (top + dd.offsetHeight > window.innerHeight - 12) top = tdRect.top - dd.offsetHeight - 2;
+      // Clamp horizontal
+      if (left < 8) left = 8;
+      if (left + 140 > window.innerWidth - 8) left = window.innerWidth - 148;
+      dd.style.top = top + 'px';
+      dd.style.left = left + 'px';
+
+      // Dismiss on click outside — use mousedown with slight delay so above handler fires first
+      const dismiss = (ev) => { if (!dd.contains(ev.target)) { dd.remove(); document.removeEventListener('mousedown', dismiss); } };
+      setTimeout(() => document.addEventListener('mousedown', dismiss), 50);
     });
 
     // Drag to swap
