@@ -7951,6 +7951,20 @@
         "totalWaitSec": 920,
         "missed": 1
       }
+    },
+    "2026-05-24": {
+      "Mayl\u00e9n Milson": {
+        "answered": 9,
+        "totalTalkSec": 4136,
+        "totalWaitSec": 298,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 2,
+        "totalTalkSec": 1159,
+        "totalWaitSec": 38,
+        "missed": 0
+      }
     }
   },
   "wtp_wingman": [
