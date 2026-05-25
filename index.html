@@ -5746,6 +5746,7 @@ function renderAdminDashboard(root, viewerMode=false) {
 
       const el = document.getElementById('db-weather');
       if (!el) return;
+      // Check if worker has the /weather route by looking at error
       el.innerHTML = '';
 
       // Location label
@@ -5796,8 +5797,7 @@ function renderAdminDashboard(root, viewerMode=false) {
     } catch(e) {
       const el = document.getElementById('db-weather');
       if (el) {
-        const msg = e.name === 'AbortError' ? 'Deploy worker.js first' : 'Weather unavailable';
-        el.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">' + msg + '</span>';
+        el.innerHTML = '<a href="https://dash.cloudflare.com" target="_blank" style="font-size:10px;color:rgba(214,243,255,0.35);text-decoration:underline;">⚠ Update Cloudflare worker to enable weather</a>';
       }
     }
   })();
