@@ -5697,135 +5697,6 @@ function renderAdminDashboard(root, viewerMode=false) {
   } else {
     _fetchWeather(weatherWrap);
   }
-}
-
-// Standalone weather fetch — lives outside renderAdminDashboard so re-renders don't kill it
-function _fetchWeather(targetEl) {
-  (async () => {
-    try {
-      const CACHE_KEY = 'wtp_weather_cache';
-      const CACHE_TTL = 30 * 60 * 1000; // 30 min
-      // Clear cache if it has no timeseries (was cached from a failed/pre-worker request)
-      const _raw = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
-      if (_raw && !_raw.data?.properties?.timeseries?.length) localStorage.removeItem(CACHE_KEY);
-      const cached = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
-      let data;
-      if (cached && Date.now() - cached.ts < CACHE_TTL) {
-        data = cached.data;
-      } else {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 8000);
-        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331', {
-          signal: controller.signal,
-          mode: 'cors',
-          cache: 'no-store'
-        });
-        clearTimeout(timeout);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        data = await res.json();
-        // Only cache valid data with timeseries
-        if (data?.properties?.timeseries?.length) {
-          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
-        }
-      }
-
-      const timeseries = data?.properties?.timeseries || [];
-      if (!timeseries.length) throw new Error('No data');
-      // Always re-query after async ops — dashboard re-renders replace the DOM
-      const elW = document.getElementById('db-weather');
-      if (!elW) return;
-
-      // Symbol code → emoji
-      const symbolEmoji = (code) => {
-        if (!code) return '🌡';
-        if (code.includes('clearsky'))         return '☀️';
-        if (code.includes('fair'))             return '🌤';
-        if (code.includes('partlycloudy'))     return '⛅';
-        if (code.includes('cloudy'))           return '☁️';
-        if (code.includes('fog'))              return '🌫';
-        if (code.includes('heavyrain') || code.includes('heavysleet')) return '🌧';
-        if (code.includes('rain') || code.includes('sleet'))  return '🌦';
-        if (code.includes('snow'))             return '🌨';
-        if (code.includes('thunder'))          return '⛈';
-        return '🌡';
-      };
-
-      // Pick next 5 forecasts roughly 3h apart (so today + next ~15h)
-      const now = new Date();
-      const slots = [];
-      for (const ts of timeseries) {
-        const t = new Date(ts.time);
-        if (t < now) continue;
-        if (slots.length === 0 || (t - slots[slots.length-1].t) >= 2.5 * 3600000) {
-          const d = ts.data;
-          const temp = d?.instant?.details?.air_temperature;
-          const wind = d?.instant?.details?.wind_speed;
-          const symbol = d?.next_1_hours?.summary?.symbol_code || d?.next_6_hours?.summary?.symbol_code;
-          const precip = d?.next_1_hours?.details?.precipitation_amount ?? d?.next_6_hours?.details?.precipitation_amount;
-          slots.push({ t, temp, wind, symbol, precip });
-          if (slots.length >= 5) break;
-        }
-      }
-
-      // Re-query after async — dashboard may have re-rendered
-      const el = document.getElementById('db-weather');
-      if (!el) return;
-      // Check if worker has the /weather route by looking at error
-      elW.innerHTML = '';
-
-      // Location label
-      const loc = document.createElement('span');
-      loc.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(214,243,255,0.4);margin-right:4px;white-space:nowrap;';
-      loc.textContent = 'Stavanger';
-      elW.appendChild(loc);
-
-      slots.forEach((s, i) => {
-        const card = document.createElement('div');
-        card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.06);min-width:50px;';
-
-        const timeStr = i === 0 ? 'Now' : s.t.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-        const timeLbl = document.createElement('div');
-        timeLbl.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;';
-        timeLbl.textContent = timeStr;
-
-        const ico = document.createElement('div');
-        ico.style.cssText = 'font-size:18px;line-height:1.2;';
-        ico.textContent = symbolEmoji(s.symbol);
-
-        const tmp = document.createElement('div');
-        tmp.style.cssText = 'font-size:12px;font-weight:700;color:rgba(214,243,255,0.9);';
-        tmp.textContent = s.temp != null ? Math.round(s.temp) + '°' : '—';
-
-        const sub = document.createElement('div');
-        sub.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.4);';
-        const parts = [];
-        if (s.wind != null) parts.push(Math.round(s.wind) + 'm/s');
-        if (s.precip != null && s.precip > 0) parts.push(s.precip.toFixed(1) + 'mm');
-        sub.textContent = parts.join(' · ');
-
-        card.appendChild(timeLbl);
-        card.appendChild(ico);
-        card.appendChild(tmp);
-        if (parts.length) card.appendChild(sub);
-        el.appendChild(card);
-      });
-
-      // Yr attribution (required by terms)
-      const attr = document.createElement('a');
-      attr.href = 'https://www.yr.no';
-      attr.target = '_blank'; attr.rel = 'noopener';
-      attr.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.25);text-decoration:none;align-self:flex-end;margin-left:4px;white-space:nowrap;';
-      attr.textContent = 'yr.no';
-      elW.appendChild(attr);
-
-    } catch(e) {
-      const el = document.getElementById('db-weather');
-      const elErr = document.getElementById('db-weather');
-      if (elErr) elErr.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">Weather unavailable</span>';
-      console.warn('Weather error:', e);
-    }
-  })();
-
   root.appendChild(hero);
 
   if(zdReady()){
@@ -7487,6 +7358,135 @@ async function renderTeamMemberDashboard(root) {
     root.appendChild(err);
   }
 }
+
+// Standalone weather fetch — lives outside renderAdminDashboard so re-renders don't kill it
+function _fetchWeather(targetEl) {
+  (async () => {
+    try {
+      const CACHE_KEY = 'wtp_weather_cache';
+      const CACHE_TTL = 30 * 60 * 1000; // 30 min
+      // Clear cache if it has no timeseries (was cached from a failed/pre-worker request)
+      const _raw = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
+      if (_raw && !_raw.data?.properties?.timeseries?.length) localStorage.removeItem(CACHE_KEY);
+      const cached = (() => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch { return null; } })();
+      let data;
+      if (cached && Date.now() - cached.ts < CACHE_TTL) {
+        data = cached.data;
+      } else {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch('https://zendesk-proxy.ullenesmathias.workers.dev/weather?lat=58.9700&lon=5.7331', {
+          signal: controller.signal,
+          mode: 'cors',
+          cache: 'no-store'
+        });
+        clearTimeout(timeout);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        data = await res.json();
+        // Only cache valid data with timeseries
+        if (data?.properties?.timeseries?.length) {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+        }
+      }
+
+      const timeseries = data?.properties?.timeseries || [];
+      if (!timeseries.length) throw new Error('No data');
+      // Always re-query after async ops — dashboard re-renders replace the DOM
+      const elW = document.getElementById('db-weather');
+      if (!elW) return;
+
+      // Symbol code → emoji
+      const symbolEmoji = (code) => {
+        if (!code) return '🌡';
+        if (code.includes('clearsky'))         return '☀️';
+        if (code.includes('fair'))             return '🌤';
+        if (code.includes('partlycloudy'))     return '⛅';
+        if (code.includes('cloudy'))           return '☁️';
+        if (code.includes('fog'))              return '🌫';
+        if (code.includes('heavyrain') || code.includes('heavysleet')) return '🌧';
+        if (code.includes('rain') || code.includes('sleet'))  return '🌦';
+        if (code.includes('snow'))             return '🌨';
+        if (code.includes('thunder'))          return '⛈';
+        return '🌡';
+      };
+
+      // Pick next 5 forecasts roughly 3h apart (so today + next ~15h)
+      const now = new Date();
+      const slots = [];
+      for (const ts of timeseries) {
+        const t = new Date(ts.time);
+        if (t < now) continue;
+        if (slots.length === 0 || (t - slots[slots.length-1].t) >= 2.5 * 3600000) {
+          const d = ts.data;
+          const temp = d?.instant?.details?.air_temperature;
+          const wind = d?.instant?.details?.wind_speed;
+          const symbol = d?.next_1_hours?.summary?.symbol_code || d?.next_6_hours?.summary?.symbol_code;
+          const precip = d?.next_1_hours?.details?.precipitation_amount ?? d?.next_6_hours?.details?.precipitation_amount;
+          slots.push({ t, temp, wind, symbol, precip });
+          if (slots.length >= 5) break;
+        }
+      }
+
+      // Re-query after async — dashboard may have re-rendered
+      const el = document.getElementById('db-weather');
+      if (!el) return;
+      // Check if worker has the /weather route by looking at error
+      elW.innerHTML = '';
+
+      // Location label
+      const loc = document.createElement('span');
+      loc.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(214,243,255,0.4);margin-right:4px;white-space:nowrap;';
+      loc.textContent = 'Stavanger';
+      elW.appendChild(loc);
+
+      slots.forEach((s, i) => {
+        const card = document.createElement('div');
+        card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.06);min-width:50px;';
+
+        const timeStr = i === 0 ? 'Now' : s.t.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+        const timeLbl = document.createElement('div');
+        timeLbl.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;';
+        timeLbl.textContent = timeStr;
+
+        const ico = document.createElement('div');
+        ico.style.cssText = 'font-size:18px;line-height:1.2;';
+        ico.textContent = symbolEmoji(s.symbol);
+
+        const tmp = document.createElement('div');
+        tmp.style.cssText = 'font-size:12px;font-weight:700;color:rgba(214,243,255,0.9);';
+        tmp.textContent = s.temp != null ? Math.round(s.temp) + '°' : '—';
+
+        const sub = document.createElement('div');
+        sub.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.4);';
+        const parts = [];
+        if (s.wind != null) parts.push(Math.round(s.wind) + 'm/s');
+        if (s.precip != null && s.precip > 0) parts.push(s.precip.toFixed(1) + 'mm');
+        sub.textContent = parts.join(' · ');
+
+        card.appendChild(timeLbl);
+        card.appendChild(ico);
+        card.appendChild(tmp);
+        if (parts.length) card.appendChild(sub);
+        el.appendChild(card);
+      });
+
+      // Yr attribution (required by terms)
+      const attr = document.createElement('a');
+      attr.href = 'https://www.yr.no';
+      attr.target = '_blank'; attr.rel = 'noopener';
+      attr.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.25);text-decoration:none;align-self:flex-end;margin-left:4px;white-space:nowrap;';
+      attr.textContent = 'yr.no';
+      elW.appendChild(attr);
+
+    } catch(e) {
+      const el = document.getElementById('db-weather');
+      const elErr = document.getElementById('db-weather');
+      if (elErr) elErr.innerHTML = '<span style="font-size:10px;color:rgba(214,243,255,0.3);">Weather unavailable</span>';
+      console.warn('Weather error:', e);
+    }
+  })();
+}
+
 function renderNonAdminBriefing(panel) {
   const todayStr = localToday();
   const hr = new Date().getHours();
@@ -8170,7 +8170,13 @@ async function renderOpsContent(fromDate, toDate, container) {
   container.appendChild(tGrid);
 
   // ── 2. Agent scorecard ───────────────────────────────────────────
-  container.appendChild(mkLabel('Agent scorecard — vs team average'));
+  const snapNote = useSnap
+    ? '<span style="font-size:10px;font-weight:400;color:var(--low-text);margin-left:6px;">✓ from saved snapshot</span>'
+    : (!isCurrentWeek ? '<span style="font-size:10px;font-weight:400;color:#ffb74d;margin-left:6px;">⚠ no snapshot — load Tickets tab for this week first</span>' : '');
+  const scorecardLabel = document.createElement('div');
+  scorecardLabel.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;';
+  scorecardLabel.innerHTML = 'Agent scorecard — vs team average' + snapNote;
+  container.appendChild(scorecardLabel);
   const scCard = document.createElement('div'); scCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
 
   // Build per-agent data
@@ -8224,25 +8230,44 @@ async function renderOpsContent(fromDate, toDate, container) {
     return { pct, arrow: pct >= 10 ? '↑' : pct <= -10 ? '↓' : '→', color: pct >= 10 ? 'var(--low-text)' : pct <= -10 ? 'var(--high-text)' : '#ffb74d' };
   };
 
+  // Determine if the selected period matches a saved snapshot
+  // If so, use snapshot data instead of requiring a live ZD fetch
+  const periodMonday = fmtLocal(new Date(fromDate+'T00:00:00').setDate(new Date(fromDate+'T00:00:00').getDate() - ((new Date(fromDate+'T00:00:00').getDay()+6)%7)));
+  const savedSnap = getWeeklySnapshot(periodMonday);
+  const isCurrentWeek = periodMonday === fmtLocal(getMonday(0));
+  // Use live zdData for current week (most up to date), snapshot for past weeks
+  const useSnap = !isCurrentWeek && savedSnap && savedSnap.agents;
+
   const agentData = MY_TEAM.map(name => {
     const cs = resolveAgentCallStats(name, callStats) || {};
-    const zdA = zdAgents && zdAgents.find(a => normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
-    const d = zdA ? (zdData[zdA.id]||{}) : {};
+    // For past weeks: read from snapshot; for current week: read from live zdData
+    let solved = 0, email = null, phone = null;
+    if (useSnap) {
+      const sa = savedSnap.agents[name] || {};
+      solved = sa.zdSolved || 0;
+      email  = sa.zdEmail  != null ? sa.zdEmail  : null;
+      phone  = sa.zdPhone  != null ? sa.zdPhone  : null;
+    } else {
+      const zdA = zdAgents && zdAgents.find(a => normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
+      const d = zdA ? (zdData[zdA.id]||{}) : {};
+      solved = d.solved || 0;
+      email  = d.email  != null ? d.email  : null;
+      phone  = d.phone  != null ? d.phone  : null;
+    }
     const { working, total, nightDays, dayDays, isNight } = scheduleProfile(name, fromDate, toDate);
     const fullyAbsent  = working === 0 && total > 0;
     const partlyAbsent = working > 0 && working < total;
     const trend = agentTrend(name);
     return {
       name,
-      calls:        cs.answered||0,
-      missed:       cs.missed||0,
-      talkSec:      cs.avgTalkSec||0,
-      waitSec:      cs.avgWaitSec||0,
-      solved:       d.solved||0,
-      email:        d.email!=null?d.email:null,
-      phone:        d.phone!=null?d.phone:null,
+      calls:    cs.answered||0,
+      missed:   cs.missed||0,
+      talkSec:  cs.avgTalkSec||0,
+      waitSec:  cs.avgWaitSec||0,
+      solved, email, phone,
       working, total, nightDays, dayDays, isNight,
       fullyAbsent, partlyAbsent, trend,
+      _fromSnap: useSnap,
     };
   });
 
@@ -9998,12 +10023,18 @@ function buildWeeklySnapshot(fromDate, toDate) {
       zdSolved: 0, // filled below if zdData available
     };
   });
-  // ZD data from current cache
+  // ZD data from current cache — save full channel breakdown for Operations heatmap
   if (zdAgents && zdAgents.length) {
     zdAgents.forEach(agent => {
       const d = zdData[agent.id] || {};
       const teamName = MY_TEAM.find(n => normName(n) === normName(agent.name) || normName(n.split(' ')[0]) === normName(agent.name.split(' ')[0]));
-      if (teamName && snap.agents[teamName]) snap.agents[teamName].zdSolved = d.solved || 0;
+      if (teamName && snap.agents[teamName]) {
+        snap.agents[teamName].zdSolved  = d.solved  || 0;
+        snap.agents[teamName].zdEmail   = d.email   != null ? d.email  : null;
+        snap.agents[teamName].zdPhone   = d.phone   != null ? d.phone  : null;
+        snap.agents[teamName].zdOpen    = d.open    || 0;
+        snap.agents[teamName].zdPending = d.pending || 0;
+      }
     });
   }
   // Unifon totals
@@ -10911,6 +10942,13 @@ async function zdRefresh() {
     _zdRefreshLastRun = 0;
   } finally {
     _zdRefreshInFlight = false;
+    // Auto-save weekly snapshot after each ZD refresh — captures email/phone breakdown
+    try {
+      const _snapMon = fmtLocal(getMonday(0));
+      const _snapToday = localToday();
+      const _snap = buildWeeklySnapshot(_snapMon, _snapToday);
+      saveWeeklySnapshot(_snapMon, _snap);
+    } catch(_se) { console.warn('Snapshot save after zdRefresh failed:', _se); }
   }
 }
 
