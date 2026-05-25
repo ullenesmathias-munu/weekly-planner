@@ -7626,7 +7626,11 @@ function renderPrepBrief(personName, container) {
       if (pct >= 20) highlights.push('Call volume up '+pct+'% vs last week ('+twA.answered+' answered)');
       else if (pct <= -25) concerns.push('Call volume down '+Math.abs(pct)+'% vs last week ('+twA.answered+' vs '+lwA.answered+')');
     }
-    if ((lwA.answered||0) > 10 && (twA.answered||0) === 0) concerns.push('No calls answered this week — absent or not logged in?');
+    // Only flag mid-week+ with schedule check
+    const _pdEl = Math.round((new Date(today+'T00:00:00') - new Date(thisMonday+'T00:00:00'))/86400000);
+    if (_pdEl >= 2 && (thisSnap&&thisSnap.totals&&thisSnap.totals.offered||0) >= 10 && (lwA.answered||0) > 10 && (twA.answered||0) === 0) {
+      concerns.push('No calls answered this week — absent or not logged in?');
+    }
   }
 
   const hasAnything = recentLog.length || openGoals.length || actions.length || highlights.length || concerns.length;
@@ -8022,26 +8026,60 @@ async function renderOpsContent(fromDate, toDate, container) {
   const scCard = document.createElement('div'); scCard.style.cssText='background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;';
 
   // Build per-agent data
+  // Work out how many days each agent was scheduled (not absent) in the period
+  const workingDaysInPeriod = (name, from, to) => {
+    const OFF_S = new Set(['so','h','hd','os','abs','ol','']);
+    let working=0, total=0;
+    const d = new Date(from+'T00:00:00');
+    const end = new Date(to+'T00:00:00');
+    while (d <= end) {
+      const ds = fmtLocal(d);
+      const week = SCHEDULE.find(w => w.dates && w.dates.includes(ds));
+      if (week) {
+        total++;
+        const person = week.people.find(p => p.name === name);
+        const idx = week.dates.indexOf(ds);
+        const shift = (person && idx>=0 ? person.shifts[idx] : '') || '';
+        if (!OFF_S.has(shift.toLowerCase())) working++;
+      }
+      d.setDate(d.getDate()+1);
+    }
+    return { working, total };
+  };
+
   const agentData = MY_TEAM.map(name => {
     const cs = resolveAgentCallStats(name, callStats) || {};
     const zdA = zdAgents && zdAgents.find(a => normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
     const d = zdA ? (zdData[zdA.id]||{}) : {};
+    const { working, total } = workingDaysInPeriod(name, fromDate, toDate);
+    const absenceRatio = total > 0 ? working / total : 1; // 0 = fully absent, 1 = fully present
+    const fullyAbsent  = working === 0 && total > 0;
+    const partlyAbsent = working > 0 && working < total;
     return {
       name,
-      calls:   cs.answered||0,
-      missed:  cs.missed||0,
-      talkSec: cs.avgTalkSec||0,
-      waitSec: cs.avgWaitSec||0,
-      solved:  d.solved||0,
-      email:   d.email!=null?d.email:null,
-      phone:   d.phone!=null?d.phone:null,
+      calls:        cs.answered||0,
+      missed:       cs.missed||0,
+      talkSec:      cs.avgTalkSec||0,
+      waitSec:      cs.avgWaitSec||0,
+      solved:       d.solved||0,
+      email:        d.email!=null?d.email:null,
+      phone:        d.phone!=null?d.phone:null,
+      working,
+      total,
+      absenceRatio,
+      fullyAbsent,
+      partlyAbsent,
     };
   });
 
-  const active = agentData.filter(a => a.calls>0||a.solved>0);
-  const inactive = agentData.filter(a => a.calls===0&&a.solved===0);
+  // Only agents who worked at least 1 day contribute to team average
+  const active   = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0));
+  const partial  = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working>0);
+  const absent   = agentData.filter(a => a.fullyAbsent);
+  const inactive = agentData.filter(a => !a.fullyAbsent && a.calls===0&&a.solved===0&&a.working===0);
 
-  const calcAvg = (arr, key) => { const v=arr.filter(a=>a[key]>0).map(a=>a[key]); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
+  // Averages only from agents who actually worked — fully absent agents excluded
+  const calcAvg = (arr, key) => { const v=arr.filter(a=>!a.fullyAbsent&&a[key]>0).map(a=>a[key]); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
   const avgs = {
     calls:   calcAvg(active,'calls'),
     solved:  calcAvg(active,'solved'),
@@ -8080,11 +8118,15 @@ async function renderOpsContent(fromDate, toDate, container) {
   const cellBg = c => c==='good'?'rgba(52,211,153,0.1)':c==='warn'?'rgba(255,183,77,0.1)':c==='bad'?'rgba(239,83,80,0.1)':'transparent';
   const cellColor = c => c==='good'?'var(--low-text)':c==='warn'?'#ffb74d':c==='bad'?'var(--high-text)':'var(--text3)';
 
-  const makeAgentRow = (a, faded) => {
+  const makeAgentRow = (a, faded, label) => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:4px 14px;border-bottom:1px solid var(--border);'+(faded?'opacity:0.4;':'');
+    row.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:4px 14px;border-bottom:1px solid var(--border);'+(faded?'opacity:0.45;':'');
 
-    const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;'; nm.textContent=a.name.split(' ')[0]; row.appendChild(nm);
+    const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;justify-content:center;';
+    const nmTxt=document.createElement('span'); nmTxt.textContent=a.name.split(' ')[0]; nm.appendChild(nmTxt);
+    if (label) { const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=label; nm.appendChild(lbl); }
+    else if (a.partlyAbsent) { const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=a.working+'/'+a.total+' days'; nm.appendChild(lbl); }
+    row.appendChild(nm);
 
     METRICS.forEach(m => {
       const val = a[m.key];
@@ -8101,19 +8143,39 @@ async function renderOpsContent(fromDate, toDate, container) {
     return row;
   };
 
-  active.sort((a,b)=>b.solved-a.solved).forEach(a => scCard.appendChild(makeAgentRow(a, false)));
+  active.sort((a,b)=>b.solved-a.solved).forEach(a => scCard.appendChild(makeAgentRow(a, false, null)));
 
-  // Team avg row
+  // Partially absent — show with faded cells and day count, but still compare vs avg
+  if (partial.length) {
+    partial.forEach(a => scCard.appendChild(makeAgentRow(a, true, a.working+'/'+a.total+' days')));
+  }
+
+  // Team avg row (absent agents excluded from calculation)
   const avgRow = document.createElement('div');
   avgRow.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:6px 14px;background:var(--surface2);border-top:1px solid var(--border);';
   const avgNm=document.createElement('div'); avgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);display:flex;align-items:center;'; avgNm.textContent='Team avg'; avgRow.appendChild(avgNm);
   METRICS.forEach(m => { const c=document.createElement('div'); c.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;'; c.textContent=(m.key==='talkSec'||m.key==='waitSec')?fmtSec(avgs[m.key]):(avgs[m.key]||'—'); avgRow.appendChild(c); });
   scCard.appendChild(avgRow);
 
+  // Absent agents — shown separately, not compared vs avg
+  if (absent.length) {
+    const absSep=document.createElement('div'); absSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;';
+    absSep.innerHTML='On leave / absent <span style="font-size:10px;color:var(--text3);font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;">— excluded from team average</span>';
+    scCard.appendChild(absSep);
+    absent.forEach(a => {
+      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr);gap:2px;padding:5px 14px;border-bottom:1px solid var(--border);opacity:0.35;';
+      const nm2=document.createElement('div'); nm2.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;';
+      nm2.innerHTML='<span>'+a.name.split(' ')[0]+'</span><span style="font-size:9px;color:#ffb74d;">Absent</span>';
+      row.appendChild(nm2);
+      METRICS.forEach(()=>{ const e=document.createElement('div'); e.style.cssText='text-align:center;font-size:12px;color:var(--text3);display:flex;align-items:center;justify-content:center;'; e.textContent='—'; row.appendChild(e); });
+      scCard.appendChild(row);
+    });
+  }
+
   if (inactive.length) {
-    const sep=document.createElement('div'); sep.style.cssText='padding:6px 14px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);'; sep.textContent='No data this period:';
+    const sep=document.createElement('div'); sep.style.cssText='padding:6px 14px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);'; sep.textContent='No schedule or data this period:';
     scCard.appendChild(sep);
-    inactive.forEach(a => scCard.appendChild(makeAgentRow(a, true)));
+    inactive.forEach(a => scCard.appendChild(makeAgentRow(a, true, null)));
   }
 
   // Legend
@@ -10230,13 +10292,30 @@ function renderWeeklyBriefingData(container) {
     if (spike >= 30) autoAlerts.push({ level:'warn', msg:'Call volume up '+spike+'% vs last week', sub:'Check if staffing matches demand' });
   }
 
-  MY_TEAM.forEach(function(name) {
-    const twA = tw.agents&&tw.agents[name]||{};
-    const lwA = lw&&lw.agents&&lw.agents[name]||{};
-    if ((lwA.answered||0) > 20 && (twA.answered||0) === 0) {
-      autoAlerts.push({ level:'warn', msg:name+' — 0 calls answered (had '+lwA.answered+' last week)', sub:'Absent or not logged in?' });
-    }
-  });
+  // Only fire agent-drop alerts mid-week with enough data
+  const _todayD = new Date(today+'T00:00:00');
+  const _monD   = new Date(thisMonday+'T00:00:00');
+  const _daysEl = Math.round((_todayD - _monD)/86400000);
+  const _enoughDays  = _daysEl >= 2;
+  const _enoughCalls = (tw.totals.offered||0) >= 15;
+
+  if (_enoughDays && _enoughCalls) {
+    MY_TEAM.forEach(function(name) {
+      const twA = tw.agents&&tw.agents[name]||{};
+      const lwA = lw&&lw.agents&&lw.agents[name]||{};
+      if ((lwA.answered||0) > 20 && (twA.answered||0) === 0) {
+        const OFF_S2 = new Set(['so','h','hd','os','abs','ol','']);
+        let sched2 = 0;
+        for (let i=0; i<=_daysEl; i++) {
+          const d2=new Date(_monD); d2.setDate(_monD.getDate()+i);
+          const ds2=fmtLocal(d2);
+          const wk2=SCHEDULE.find(function(w){return w.dates&&w.dates.includes(ds2);});
+          if(wk2){const p2=wk2.people.find(function(p){return p.name===name;});const idx2=wk2.dates.indexOf(ds2);const sh2=(p2&&idx2>=0?p2.shifts[idx2]:'')||'';if(!OFF_S2.has(sh2.toLowerCase()))sched2++;}
+        }
+        if (sched2 >= 2) autoAlerts.push({ level:'warn', msg:name+' — 0 calls answered (had '+lwA.answered+' last week)', sub:'Absent or not logged in?' });
+      }
+    });
+  }
 
   const improvers = MY_TEAM.filter(function(name) {
     const twA = tw.agents&&tw.agents[name]&&tw.agents[name].answered||0;
@@ -10446,35 +10525,84 @@ function getTrendAlerts() {
   const today = localToday();
   const thisMonday = fmtLocal(getMonday(0));
   const lastMonday = fmtLocal(getMonday(-1));
-  const lastSunday = fmtLocal(new Date(getMonday(0).getTime() - 86400000));
 
   const thisSnap = buildWeeklySnapshot(thisMonday, today);
   const lastSnap = getWeeklySnapshot(lastMonday);
 
-  if (lastSnap) {
-    // Answer rate drop
+  // ── How far into the week are we? ─────────────────────────────
+  const todayDate = new Date(today + 'T00:00:00');
+  const mondayDate = new Date(thisMonday + 'T00:00:00');
+  const daysElapsed = Math.round((todayDate - mondayDate) / 86400000); // 0=Mon, 1=Tue, 2=Wed…
+
+  // ── Count public holidays this week (HD shifts on majority of team) ──
+  let holidaysThisWeek = 0;
+  for (let i = 0; i <= daysElapsed; i++) {
+    const d = new Date(mondayDate); d.setDate(mondayDate.getDate() + i);
+    const ds = fmtLocal(d);
+    const week = SCHEDULE.find(w => w.dates && w.dates.includes(ds));
+    if (week) {
+      const hdCount = week.people.filter(p => {
+        const idx = week.dates.indexOf(ds);
+        return MY_TEAM.includes(p.name) && idx >= 0 && (p.shifts[idx]||'').toUpperCase() === 'HD';
+      }).length;
+      if (hdCount >= Math.max(2, MY_TEAM.length * 0.4)) holidaysThisWeek++;
+    }
+  }
+
+  // Effective working days so far (elapsed days minus holidays)
+  const effectiveDays = Math.max(0, daysElapsed - holidaysThisWeek);
+
+  // ── Too early / too little data — skip comparative alerts ─────
+  // Don't fire agent-drop or volume alerts until Wed (effectiveDays >= 2)
+  // and only if we have meaningful call data (>= 15 calls)
+  const enoughDays = effectiveDays >= 2;
+  const enoughCalls = (thisSnap.totals.offered || 0) >= 15;
+
+  if (lastSnap && enoughDays && enoughCalls) {
+    // Answer rate drop — scale threshold by days elapsed vs full week
     if (thisSnap.totals.ansRate !== null && lastSnap.totals?.ansRate !== null) {
       const drop = lastSnap.totals.ansRate - thisSnap.totals.ansRate;
       if (drop >= 10) alerts.push({ level:'danger', msg:`Answer rate dropped ${drop}pp this week (${thisSnap.totals.ansRate}% vs ${lastSnap.totals.ansRate}% last week)` });
       else if (drop >= 5) alerts.push({ level:'warn', msg:`Answer rate slightly down ${drop}pp (${thisSnap.totals.ansRate}% vs ${lastSnap.totals.ansRate}%)` });
     }
-    // Agent call drop
+
+    // Agent call drop — only flag if we're mid/late week and agent was scheduled to work
     MY_TEAM.forEach(name => {
       const tw = thisSnap.agents[name]||{};
       const lw = lastSnap.agents?.[name]||{};
       if ((lw.answered||0) > 20 && (tw.answered||0) === 0) {
-        alerts.push({ level:'warn', msg:`${name.split(' ')[0]} has 0 calls answered this week (had ${lw.answered} last week)` });
+        // Check they were actually scheduled this week (not on leave)
+        const OFF_S = new Set(['so','h','hd','os','abs','ol','']);
+        let scheduledDays = 0;
+        for (let i = 0; i <= daysElapsed; i++) {
+          const d2 = new Date(mondayDate); d2.setDate(mondayDate.getDate() + i);
+          const ds2 = fmtLocal(d2);
+          const wk = SCHEDULE.find(w => w.dates && w.dates.includes(ds2));
+          if (wk) {
+            const p2 = wk.people.find(p => p.name === name);
+            const idx2 = wk.dates.indexOf(ds2);
+            const shift = (p2 && idx2 >= 0 ? p2.shifts[idx2] : '') || '';
+            if (!OFF_S.has(shift.toLowerCase())) scheduledDays++;
+          }
+        }
+        // Only alert if they were scheduled to work at least 2 days
+        if (scheduledDays >= 2) {
+          alerts.push({ level:'warn', msg:`${name.split(' ')[0]} has 0 calls answered this week (had ${lw.answered} last week)` });
+        }
       }
     });
+
     // Volume spike
     if (thisSnap.totals.offered > 0 && lastSnap.totals?.offered > 0) {
-      const spike = Math.round((thisSnap.totals.offered - lastSnap.totals.offered) / lastSnap.totals.offered * 100);
-      if (spike >= 30) alerts.push({ level:'warn', msg:`Call volume up ${spike}% this week — check staffing` });
+      // Pro-rate last week by days elapsed to make a fair comparison
+      const proRatedLast = Math.round((lastSnap.totals.offered / 5) * Math.max(1, effectiveDays));
+      const spike = Math.round((thisSnap.totals.offered - proRatedLast) / proRatedLast * 100);
+      if (spike >= 40) alerts.push({ level:'warn', msg:`Call volume up ${spike}% vs same point last week — check staffing` });
     }
   }
 
-  // Avg wait spike (absolute)
-  if ((thisSnap.totals.avgWait||0) > 300) {
+  // Avg wait spike — this one is fine any day, it's a live signal not cumulative
+  if ((thisSnap.totals.avgWait||0) > 300 && (thisSnap.totals.offered||0) >= 10) {
     alerts.push({ level:'danger', msg:`Avg wait time ${Math.floor(thisSnap.totals.avgWait/60)}m — customers waiting too long` });
   }
 
