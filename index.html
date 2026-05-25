@@ -1936,9 +1936,9 @@ window.tryUnlock = async function() {
   <div style="display:flex;align-items:center;padding:0 18px 6px 2px;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;">
     <span id="tab-wordmark" style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
   </div>
-  <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn active" onclick="switchTab('planner', this)">My Planner</button>
+  <button class="tab-btn" onclick="switchTab('dashboard', this)">Dashboard</button>
   <button class="tab-btn" id="tab-btn-opshealth" style="display:none" onclick="switchTab('opshealth', this)">Operations</button>
-  <button class="tab-btn" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
   <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">Tickets</button>
@@ -6031,38 +6031,34 @@ function renderAdminDashboard(root, viewerMode=false) {
       tagDiv.appendChild(pillsWrap);
       container.appendChild(tagDiv);
 
-      (async()=>{
-        try {
-          // Delay so this doesn't race with Tickets tab ZD calls
-          await new Promise(r => setTimeout(r, 3000));
-          const w2check=document.getElementById('db-tag-pills'); if(!w2check) return;
-          const mon=fmtLocal(getMonday(0)),tod=localToday();
-          const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
-          let tix=[],url='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+mon+' solved<='+tod)+'&per_page=100';
-          for(let p=0;p<4&&url;p++){const r=await zdFetch(url);tix=tix.concat(r.results||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
-          const tc={};
-          tix.forEach(t=>(t.tags||[]).forEach(tag=>{if(!SKIP.has(tag.toLowerCase()))tc[tag]=(tc[tag]||0)+1;}));
-          const top=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
-          const w2=document.getElementById('db-tag-pills');
-          if(!w2) return;
-          w2.innerHTML='';
-          if(!top.length){w2.innerHTML='<span style="font-size:11px;color:var(--text3);">No tags this week</span>';return;}
-          top.forEach(([tag,count])=>{
-            const pill=document.createElement('span');
-            const col=count>=5?'var(--high-text)':count>=3?'#ffb74d':'var(--text2)';
-            const bg=count>=5?'rgba(239,83,80,0.08)':count>=3?'rgba(255,183,77,0.08)':'var(--surface2)';
-            pill.style.cssText='padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:'+bg+';font-size:11px;color:'+col+';cursor:pointer;white-space:nowrap;';
-            pill.textContent=tag.replace(/_/g,' ')+' ×'+count;
-            pill.title='See full breakdown in Weekly Briefing';
-            pill.onclick=()=>{
-              const btn=document.querySelector('[onclick*="onetoone"]');
-              switchTab('onetoone',btn);
-              setTimeout(()=>{ const wb=document.getElementById('oto-briefing-btn'); if(wb) wb.click(); },150);
-            };
-            w2.appendChild(pill);
-          });
-        } catch(e){ const w=document.getElementById('db-tag-pills');if(w)w.innerHTML=''; }
-      })();
+      // Tags fetch — only runs once per session, 5s delay, lowest priority
+      if (!_zdTagsFetched) {
+        _zdTagsFetched = true;
+        setTimeout(async () => {
+          const w2=document.getElementById('db-tag-pills'); if(!w2) return;
+          try {
+            const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
+            const mon=fmtLocal(getMonday(0)),tod=localToday();
+            let tix=[],url='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+mon+' solved<='+tod)+'&per_page=100';
+            for(let p=0;p<4&&url;p++){const r=await zdFetch(url);tix=tix.concat(r.results||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
+            const tc={};
+            tix.forEach(t=>(t.tags||[]).forEach(tag=>{if(!SKIP.has(tag.toLowerCase()))tc[tag]=(tc[tag]||0)+1;}));
+            const top=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            w2.innerHTML='';
+            if(!top.length){w2.innerHTML='<span style="font-size:11px;color:var(--text3);">No tags this week</span>';return;}
+            top.forEach(([tag,count])=>{
+              const pill=document.createElement('span');
+              const col=count>=5?'var(--high-text)':count>=3?'#ffb74d':'var(--text2)';
+              const bg=count>=5?'rgba(239,83,80,0.08)':count>=3?'rgba(255,183,77,0.08)':'var(--surface2)';
+              pill.style.cssText='padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:'+bg+';font-size:11px;color:'+col+';cursor:pointer;white-space:nowrap;';
+              pill.textContent=tag.replace(/_/g,' ')+' ×'+count;
+              pill.title='Full breakdown in Operations tab';
+              pill.onclick=()=>switchTab('opshealth',document.querySelector('[onclick*=\'opshealth\']'));
+              w2.appendChild(pill);
+            });
+          } catch(e){ w2.innerHTML=''; }
+        }, 5000);
+      }
 
     } else {
       ['db-q-open','db-q-pending','db-q-solved','db-q-hold'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
@@ -9874,7 +9870,7 @@ async function generateWeeklyBriefing(container) {
 
 function renderWeeklyBriefingData(container) {
   container.innerHTML = '';
-  const today = localToday();
+  const today      = localToday();
   const thisMonday = fmtLocal(getMonday(0));
   const lastMonday = fmtLocal(getMonday(-1));
   const lastSunday = fmtLocal(new Date(getMonday(0).getTime() - 86400000));
@@ -9884,55 +9880,13 @@ function renderWeeklyBriefingData(container) {
   saveWeeklySnapshot(thisMonday, tw);
 
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;flex-direction:column;gap:14px;';
+  wrap.style.cssText = 'display:flex;flex-direction:column;gap:16px;';
 
-  function fmtWait(s) {
-    if (!s) return '—';
-    return Math.floor(s/60)+'m '+(s%60)+'s';
-  }
-  function delta(curr, prev, higherBetter, unit) {
-    unit = unit||'';
-    if (!prev && prev !== 0) return {txt:'—',color:'var(--text3)',icon:''};
-    const diff = curr - prev;
-    const sign = diff > 0 ? '+' : '';
-    const better = higherBetter ? diff >= 0 : diff <= 0;
-    const neutral = diff === 0;
-    const color = neutral ? 'var(--text3)' : better ? 'var(--low-text)' : 'var(--high-text)';
-    const icon = neutral ? '→' : diff > 0 ? '↑' : '↓';
-    return { txt: sign+diff+unit, color, icon };
-  }
-  function sectionTitle(txt) {
-    const el = document.createElement('div');
-    el.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';
-    el.textContent = txt;
-    return el;
-  }
-  function kpiCard(label, val, d) {
-    const c = document.createElement('div');
-    c.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    c.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">'+label+'</div>'
-      +'<div style="font-family:\'Fira Sans\',sans-serif;font-size:22px;font-weight:900;color:var(--text);line-height:1;letter-spacing:-0.02em;">'+val+'</div>'
-      +'<div style="font-size:10px;margin-top:4px;color:'+d.color+';">'+d.icon+' '+d.txt+' vs last week</div>';
-    return c;
-  }
+  // ── Note: Call KPIs, ZD tickets, ticket themes, ops health ────
+  // All live in the Operations tab — no duplication here.
+  // This briefing focuses on: 4-week trends, calls vs tickets, and alerts.
 
-  // ── SECTION 1: Call performance ──────────────────────────────
-  const callSec = document.createElement('div');
-  callSec.appendChild(sectionTitle('Call performance'));
-  const kpiGrid = document.createElement('div');
-  kpiGrid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;';
-  const offered = tw.totals.offered||0, lOffered = lw&&lw.totals&&lw.totals.offered||0;
-  const ansRate = tw.totals.ansRate, lAnsRate = lw&&lw.totals&&lw.totals.ansRate;
-  const avgWait = tw.totals.avgWait||0, lAvgWait = lw&&lw.totals&&lw.totals.avgWait||0;
-  const missed  = tw.totals.missed||0, lMissed  = lw&&lw.totals&&lw.totals.missed||0;
-  kpiGrid.appendChild(kpiCard('Calls offered',  offered,             delta(offered,   lOffered,  true)));
-  kpiGrid.appendChild(kpiCard('Answer rate',    (ansRate!=null?ansRate:'—')+'%', delta(ansRate!=null?ansRate:0, lAnsRate!=null?lAnsRate:0, true, 'pp')));
-  kpiGrid.appendChild(kpiCard('Avg wait',        fmtWait(avgWait),   delta(avgWait,  lAvgWait,  false, 's')));
-  kpiGrid.appendChild(kpiCard('Missed calls',    missed,             delta(missed,   lMissed,   false)));
-  callSec.appendChild(kpiGrid);
-  wrap.appendChild(callSec);
-
-  // ── SECTION 2: Agent call trend (last 4 weeks) ───────────────
+  // ── SECTION 1: 4-week agent call trend (sparklines) ───────────
   const agentSec = document.createElement('div');
   agentSec.appendChild(sectionTitle('Agent call trend — last 4 weeks'));
   const trendCard = document.createElement('div');
@@ -9947,368 +9901,115 @@ function renderWeeklyBriefingData(container) {
     }
     const maxVal = Math.max.apply(null, weeks4.concat([1]));
     const curr = weeks4[3], prev = weeks4[2];
-    const d = delta(curr, prev, true);
+    const diff = curr - prev;
+    const dColor = diff > 0 ? 'var(--low-text)' : diff < 0 ? 'var(--high-text)' : 'var(--text3)';
+    const dIcon  = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
 
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 12px;'+(idx < MY_TEAM.length-1 ? 'border-bottom:1px solid var(--border);' : '');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 12px;'
+      +(idx < MY_TEAM.length-1 ? 'border-bottom:1px solid var(--border);' : '');
 
     const nameEl = document.createElement('div');
-    nameEl.style.cssText = 'font-size:12px;color:var(--text);width:76px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    nameEl.style.cssText = 'font-size:12px;color:var(--text);width:72px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
     nameEl.textContent = name;
 
     const bars = document.createElement('div');
-    bars.style.cssText = 'flex:1;display:flex;align-items:flex-end;gap:2px;height:24px;';
+    bars.style.cssText = 'flex:1;display:flex;align-items:flex-end;gap:2px;height:22px;';
     weeks4.forEach(function(v, wi) {
       const bar = document.createElement('div');
-      const h = Math.max(3, Math.round((v/maxVal)*24));
-      bar.style.cssText = 'flex:1;border-radius:2px 2px 0 0;height:'+h+'px;background:var(--cal-text);opacity:'+(wi===3?'1':'0.3')+';';
+      const h = Math.max(2, Math.round((v/maxVal)*22));
+      bar.style.cssText = 'flex:1;border-radius:2px 2px 0 0;height:'+h+'px;background:var(--cal-text);opacity:'+(wi===3?'1':'0.28')+';';
       bars.appendChild(bar);
     });
 
     const valEl = document.createElement('div');
-    valEl.style.cssText = 'font-size:12px;font-weight:700;color:var(--text);width:24px;text-align:right;flex-shrink:0;';
-    valEl.textContent = curr;
+    valEl.style.cssText = 'font-size:11px;font-weight:700;color:var(--text);width:22px;text-align:right;flex-shrink:0;';
+    valEl.textContent = curr || '—';
 
     const zdSolved = tw.agents&&tw.agents[name]&&tw.agents[name].zdSolved||0;
     const zdEl = document.createElement('div');
-    zdEl.style.cssText = 'font-size:10px;color:var(--text3);width:46px;text-align:right;flex-shrink:0;';
+    zdEl.style.cssText = 'font-size:10px;color:var(--text3);width:44px;text-align:right;flex-shrink:0;';
     zdEl.textContent = zdSolved ? zdSolved+' ZD' : '';
 
     const arrowEl = document.createElement('div');
-    arrowEl.style.cssText = 'font-size:12px;width:16px;text-align:center;flex-shrink:0;color:'+d.color+';';
-    arrowEl.textContent = d.icon;
+    arrowEl.style.cssText = 'font-size:12px;width:14px;text-align:center;flex-shrink:0;color:'+dColor+';';
+    arrowEl.textContent = dIcon;
 
-    row.appendChild(nameEl); row.appendChild(bars); row.appendChild(valEl); row.appendChild(zdEl); row.appendChild(arrowEl);
+    row.appendChild(nameEl); row.appendChild(bars); row.appendChild(valEl);
+    row.appendChild(zdEl); row.appendChild(arrowEl);
     trendCard.appendChild(row);
   });
   agentSec.appendChild(trendCard);
   wrap.appendChild(agentSec);
 
-  // ── SECTION 3: Zendesk tickets ────────────────────────────────
-  if (zdReady() && zdAgents && zdAgents.length) {
-    const zdSec = document.createElement('div');
-    zdSec.appendChild(sectionTitle('Zendesk tickets'));
-
-    // ── Top KPI row ──
-    const zdGrid = document.createElement('div');
-    zdGrid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;';
-
-    let totalSolved=0, totalEmail=0, totalPhone=0, openPending=0, slaBreaches=0;
-    zdAgents.forEach(function(a) {
-      const d = zdData[a.id]||{};
-      totalSolved  += d.solved||0;
-      totalEmail   += d.email!=null  ? d.email  : 0;
-      totalPhone   += d.phone!=null  ? d.phone  : 0;
-      openPending  += (d.open||0)+(d.pending||0);
-      slaBreaches  += d.breached||0;
-    });
-    const lTotalSolved = lw ? MY_TEAM.reduce(function(s,n){ return s+(lw.agents&&lw.agents[n]&&lw.agents[n].zdSolved||0); }, 0) : null;
-
-    zdGrid.appendChild(kpiCard('Solved total', totalSolved, lTotalSolved!==null ? delta(totalSolved,lTotalSolved,true) : {txt:'—',color:'var(--text3)',icon:''}));
-
-    // Channel split: Email / Web form / Voice
-    const chanTotal = totalEmail + totalPhone;
-    const ePct = chanTotal>0 ? Math.round(totalEmail/chanTotal*100) : 0;
-    const pPct = 100 - ePct;
-    const chanCard = document.createElement('div');
-    chanCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    chanCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:5px;">Email / Phone</div>'
-      +'<div style="display:flex;align-items:baseline;gap:6px;">'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--cal-text);">'+totalEmail+'</span>'
-      +'<span style="font-size:9px;color:var(--text3);">email</span>'
-      +'<span style="font-family:\'Fira Sans\',sans-serif;font-size:18px;font-weight:900;color:var(--med-text);margin-left:6px;">'+totalPhone+'</span>'
-      +'<span style="font-size:9px;color:var(--text3);">phone</span>'
-      +'</div>'
-      +'<div style="display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden;margin-top:7px;">'
-      +'<div style="width:'+ePct+'%;background:var(--cal-text);min-width:'+(totalEmail>0?2:0)+'px;"></div>'
-      +'<div style="flex:1;background:var(--med-text);opacity:0.6;min-width:'+(totalPhone>0?2:0)+'px;"></div>'
-      +'</div>'
-      +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">'+ePct+'% email · '+pPct+'% phone</div>';
-    zdGrid.appendChild(chanCard);
-
-    zdGrid.appendChild(kpiCard('Open / pending', openPending, {txt:'live',color:'var(--text3)',icon:''}));
-
-    const slaColor = slaBreaches>3?'var(--high-text)':slaBreaches>0?'#ffb74d':'var(--low-text)';
-    const slaCard = document.createElement('div');
-    slaCard.style.cssText = 'background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    slaCard.innerHTML = '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SLA breaches</div>'
-      +'<div style="font-family:\'Fira Sans\',sans-serif;font-size:22px;font-weight:900;color:'+slaColor+';line-height:1;letter-spacing:-0.02em;">'+slaBreaches+'</div>'
-      +'<div style="font-size:10px;margin-top:4px;color:var(--text3);">'+(slaBreaches===0?'All clear':slaBreaches+' need review')+'</div>';
-    zdGrid.appendChild(slaCard);
-    zdSec.appendChild(zdGrid);
-
-    // ── Per-agent channel breakdown table ──
-    const tbl = document.createElement('div');
-    tbl.style.cssText = 'background:var(--surface2);border-radius:10px;overflow:hidden;';
-
-    // Header row
-    const hdrRow = document.createElement('div');
-    hdrRow.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
-    ['Agent','','Solved','Email','Phone','Open'].forEach(function(h,i) {
-      const c = document.createElement('div');
-      c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
-      c.textContent = h;
-      hdrRow.appendChild(c);
-    });
-    tbl.appendChild(hdrRow);
-
-    // Sort agents by solved desc
-    const sortedForBriefing = zdAgents.filter(function(a){
-      return MY_TEAM.some(function(n){ return normName(n).startsWith(normName(a.name.split(' ')[0])); });
-    }).sort(function(a,b){ return (zdData[b.id]&&zdData[b.id].solved||0)-(zdData[a.id]&&zdData[a.id].solved||0); });
-
-    const maxAgentSolved = Math.max.apply(null, sortedForBriefing.map(function(a){ return zdData[a.id]&&zdData[a.id].solved||0; }).concat([1]));
-
-    sortedForBriefing.forEach(function(agent, idx) {
-      const d = zdData[agent.id]||{};
-      const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:80px 1fr 52px 52px 52px 52px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedForBriefing.length-1?'border-bottom:1px solid var(--border);':'');
-
-      const nameCell = document.createElement('div');
-      nameCell.style.cssText = 'font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-      nameCell.textContent = agent.name.split(' ')[0];
-
-      // Mini bar
-      const barWrap = document.createElement('div');
-      barWrap.style.cssText = 'height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px;';
-      const barFill = document.createElement('div');
-      const pct = maxAgentSolved>0 ? Math.round((d.solved||0)/maxAgentSolved*100) : 0;
-      barFill.style.cssText = 'height:100%;width:'+pct+'%;background:var(--cal-text);border-radius:2px;';
-      barWrap.appendChild(barFill);
-
-      function numCell(val, color) {
-        const c = document.createElement('div');
-        c.style.cssText = 'font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
-        c.textContent = val!=null && val!=='' ? val : '—';
-        return c;
-      }
-      const openNow = (d.open||0)+(d.pending||0);
-      const openColor = openNow > 8 ? 'var(--high-text)' : openNow > 4 ? '#ffb74d' : 'var(--text3)';
-
-      row.appendChild(nameCell);
-      row.appendChild(barWrap);
-      row.appendChild(numCell(d.solved||0));
-      row.appendChild(numCell(d.email!=null?d.email:'—', 'var(--cal-text)'));
-      row.appendChild(numCell(d.phone!=null?d.phone:'—', 'var(--med-text)'));
-      row.appendChild(numCell(openNow||'—', openColor));
-      tbl.appendChild(row);
-    });
-
-    zdSec.appendChild(tbl);
-    wrap.appendChild(zdSec);
-  }
-
-    // ── SECTION 3b: Ticket intelligence ───────────────────────────
-    (async function() {
-      try {
-        const query = 'type:ticket status>=solved solved>='+thisMonday+' solved<='+today;
-        let tix=[], tixUrl='/search.json?query='+encodeURIComponent(query)+'&per_page=100&sort_by=solved_at&sort_order=desc';
-        for(let p=0;p<8&&tixUrl;p++){const r=await zdFetch(tixUrl);tix=tix.concat(r.results||[]);tixUrl=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
-        if(!tix.length) return;
-
-        const intelSec=document.createElement('div');
-        intelSec.appendChild(sectionTitle('Ticket themes this week'));
-
-        // Tag frequency + avg resolution time per tag
-        const tagCount={},tagTime={},tagTix={};
-        const SKIP=new Set(['sla_breach','csat_bad','csat_good','pending','hold','closed','solved','open','l1','l2','spam','test','automated','new','normal','low','high','urgent']);
-        tix.forEach(function(t){
-          const res=t.solved_at?(new Date(t.solved_at)-new Date(t.created_at))/60000:null;
-          (t.tags||[]).forEach(function(tag){
-            if(SKIP.has(tag.toLowerCase())) return;
-            tagCount[tag]=(tagCount[tag]||0)+1;
-            if(res&&res>0){tagTime[tag]=(tagTime[tag]||0)+res;tagTix[tag]=(tagTix[tag]||0)+1;}
-          });
-        });
-
-        const sortedTags=Object.entries(tagCount).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
-        if(sortedTags.length){
-          const maxC=sortedTags[0][1];
-          const tagCard=document.createElement('div');
-          tagCard.style.cssText='background:var(--surface2);border-radius:10px;overflow:hidden;';
-          const tagHdr=document.createElement('div');
-          tagHdr.style.cssText='display:grid;grid-template-columns:120px 1fr 40px 70px;gap:4px;padding:5px 12px;border-bottom:1px solid var(--border);';
-          ['Tag / theme','','Count','Avg. solve'].forEach(function(h,i){const c=document.createElement('div');c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:right;':'');c.textContent=h;tagHdr.appendChild(c);});
-          tagCard.appendChild(tagHdr);
-          sortedTags.forEach(function(entry,idx){
-            const tag=entry[0],count=entry[1];
-            const avg=tagTix[tag]?Math.round(tagTime[tag]/tagTix[tag]):null;
-            const avgStr=avg?(avg<60?avg+'m':Math.floor(avg/60)+'h'+(avg%60?''+avg%60+'m':'')):'—';
-            const tc=avg>1440?'var(--high-text)':avg>240?'#ffb74d':'var(--low-text)';
-            const row=document.createElement('div');
-            row.style.cssText='display:grid;grid-template-columns:120px 1fr 40px 70px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedTags.length-1?'border-bottom:1px solid var(--border);':'');
-            const nm=document.createElement('div');nm.style.cssText='font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=tag.replace(/_/g,' ');
-            const bw=document.createElement('div');bw.style.cssText='height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px;';
-            const bf=document.createElement('div');bf.style.cssText='height:100%;width:'+Math.round(count/maxC*100)+'%;background:var(--cal-text);border-radius:2px;';
-            bw.appendChild(bf);
-            const ce=document.createElement('div');ce.style.cssText='font-size:11px;font-weight:700;text-align:right;color:var(--text);';ce.textContent=count;
-            const te=document.createElement('div');te.style.cssText='font-size:11px;font-weight:700;text-align:right;color:'+(avg?tc:'var(--text3)')+';';te.textContent=avgStr;
-            row.appendChild(nm);row.appendChild(bw);row.appendChild(ce);row.appendChild(te);tagCard.appendChild(row);
-          });
-          intelSec.appendChild(tagCard);
-        }
-
-        // Keyword clusters from subjects
-        const wc={};
-        const SW=new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','is','it','my','i','can','not','re','fwd','your','how','do','this','that','are','was','has','have','need','help','please','hi','hello','hey','regarding','about','from','its','be','been','we','our','you','issue','problem','ticket','request','support','question','update','regarding','hi','dear']);
-        tix.forEach(function(t){
-          const words=(t.subject||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/);
-          const seen=new Set();
-          words.forEach(function(w){if(w.length<3||SW.has(w)||seen.has(w))return;seen.add(w);wc[w]=(wc[w]||0)+1;});
-        });
-        const topW=Object.entries(wc).filter(function(e){return e[1]>=2;}).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
-        if(topW.length){
-          const kwWrap=document.createElement('div');kwWrap.style.cssText='margin-top:10px;';
-          const kwLbl=document.createElement('div');kwLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';kwLbl.textContent='Recurring subjects';
-          kwWrap.appendChild(kwLbl);
-          const pills=document.createElement('div');pills.style.cssText='display:flex;flex-wrap:wrap;gap:5px;';
-          topW.forEach(function(entry){
-            const w=entry[0],c=entry[1];
-            const col=c>=5?'var(--high-text)':c>=3?'#ffb74d':'var(--text2)';
-            const bg=c>=5?'rgba(239,83,80,0.08)':c>=3?'rgba(255,183,77,0.08)':'var(--surface2)';
-            const pill=document.createElement('span');
-            pill.style.cssText='display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);background:'+bg+';font-size:11px;color:'+col+';';
-            pill.textContent=w+' ×'+c;pills.appendChild(pill);
-          });
-          kwWrap.appendChild(pills);intelSec.appendChild(kwWrap);
-        }
-
-        // Slowest themes
-        const slowT=Object.entries(tagTime).filter(function(e){return tagTix[e[0]]>=2;}).map(function(e){return{tag:e[0],avg:Math.round(e[1]/tagTix[e[0]])};}).sort(function(a,b){return b.avg-a.avg;}).slice(0,3).filter(function(x){return x.avg>120;});
-        if(slowT.length&&slowT[0].avg>240){
-          const slWrap=document.createElement('div');slWrap.style.cssText='margin-top:10px;';
-          const slLbl=document.createElement('div');slLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';slLbl.textContent='Slowest to resolve';
-          slWrap.appendChild(slLbl);
-          const slList=document.createElement('div');slList.style.cssText='display:flex;flex-direction:column;gap:5px;';
-          slowT.forEach(function(item){
-            const h=Math.floor(item.avg/60),m=item.avg%60;
-            const ts=h>0?h+'h '+(m?m+'m':''):m+'m';
-            const col=item.avg>1440?'var(--high-text)':item.avg>480?'#ffb74d':'var(--text2)';
-            const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border-radius:8px;padding:6px 10px;';
-            const n2=document.createElement('div');n2.style.cssText='font-size:12px;color:var(--text);';n2.textContent=item.tag.replace(/_/g,' ');
-            const t2=document.createElement('div');t2.style.cssText='font-size:11px;font-weight:700;color:'+col+';';t2.textContent='avg '+ts;
-            row.appendChild(n2);row.appendChild(t2);slList.appendChild(row);
-          });
-          slWrap.appendChild(slList);intelSec.appendChild(slWrap);
-        }
-
-        if(intelSec.children.length>1){wrap.insertBefore(intelSec,wrap.children[wrap.children.length-2]);}
-      } catch(e){ console.warn('Ticket intelligence:',e.message); }
-    })();
-
-  // ── SECTION 4: Calls vs Phone tickets ─────────────────────────
+  // ── SECTION 2: Calls answered vs phone tickets ─────────────────
   const callStats = getAgentCallStats(thisMonday, today);
   const hasCallData = Object.keys(callStats).length > 0;
-  const hasPhoneTickets = zdAgents && zdAgents.length && zdAgents.some(function(a){ return zdData[a.id]&&zdData[a.id].phone>0; });
+  const hasPhoneTickets = zdAgents && zdAgents.length &&
+    zdAgents.some(function(a){ return zdData[a.id]&&zdData[a.id].phone>0; });
 
   if (hasCallData || hasPhoneTickets) {
     const cvpSec = document.createElement('div');
     cvpSec.appendChild(sectionTitle('Calls answered vs phone tickets'));
-
     const cvpCard = document.createElement('div');
     cvpCard.style.cssText = 'background:var(--surface2);border-radius:10px;overflow:hidden;';
 
-    // Header
     const cvpHdr = document.createElement('div');
-    cvpHdr.style.cssText = 'display:grid;grid-template-columns:80px 52px 52px 60px;gap:4px;padding:6px 12px;border-bottom:1px solid var(--border);';
-    ['Agent','Calls','Tickets','Ratio'].forEach(function(h, i) {
-      const c = document.createElement('div');
-      c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i===0?'':'text-align:right;');
-      c.textContent = h;
-      cvpHdr.appendChild(c);
+    cvpHdr.style.cssText = 'display:grid;grid-template-columns:76px 52px 52px 60px;gap:4px;padding:5px 12px;border-bottom:1px solid var(--border);';
+    ['Agent','Calls','Tickets','Ratio'].forEach(function(h,i){
+      const c=document.createElement('div');
+      c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:right;':'');
+      c.textContent=h; cvpHdr.appendChild(c);
     });
     cvpCard.appendChild(cvpHdr);
 
-    // Per-agent rows — only agents with at least some data
     let cvpRows = 0;
-    MY_TEAM.forEach(function(name, idx) {
-      // Calls answered from Unifon
+    MY_TEAM.forEach(function(name) {
       const cs = resolveAgentCallStats(name, callStats);
       const callsAnswered = cs ? cs.answered : 0;
-
-      // Phone tickets from ZD cache
-      const zdAgent = zdAgents && zdAgents.find(function(a) {
-        return normName(a.name) === normName(name) ||
-               normName(a.name.split(' ')[0]) === normName(name.split(' ')[0]);
+      const zdAgent = zdAgents && zdAgents.find(function(a){
+        return normName(a.name.split(' ')[0])===normName(name.split(' ')[0]);
       });
-      const phoneTickets = zdAgent && zdData[zdAgent.id] ? (zdData[zdAgent.id].phone||0) : 0;
-
+      const phoneTickets = zdAgent&&zdData[zdAgent.id] ? (zdData[zdAgent.id].phone||0) : 0;
       if (!callsAnswered && !phoneTickets) return;
       cvpRows++;
 
       const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:80px 52px 52px 60px;gap:4px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);';
-
-      const nameEl = document.createElement('div');
-      nameEl.style.cssText = 'font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-      nameEl.textContent = name.split(' ')[0];
+      row.style.cssText = 'display:grid;grid-template-columns:76px 52px 52px 60px;gap:4px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);';
 
       function numCell(val, color) {
-        const c = document.createElement('div');
-        c.style.cssText = 'font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
-        c.textContent = val != null ? val : '—';
-        return c;
+        const c=document.createElement('div');
+        c.style.cssText='font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
+        c.textContent=val!=null?val:'—'; return c;
       }
 
-      // Ratio: calls per phone ticket — insight into call deflection
+      const nameEl=document.createElement('div');
+      nameEl.style.cssText='font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      nameEl.textContent=name.split(' ')[0];
+
       let ratioEl;
-      if (callsAnswered > 0 && phoneTickets > 0) {
-        const ratio = (callsAnswered / phoneTickets).toFixed(1);
-        // High ratio = many calls per ticket (low deflection), low = efficient ticketing
-        const ratioColor = +ratio > 5 ? 'var(--high-text)' : +ratio > 2 ? '#ffb74d' : 'var(--low-text)';
-        ratioEl = numCell(ratio+'×', ratioColor);
-        ratioEl.title = ratio+' calls answered per phone ticket solved';
-      } else if (callsAnswered > 0 && phoneTickets === 0) {
-        ratioEl = numCell('no tix', 'var(--text3)');
+      if (callsAnswered>0&&phoneTickets>0) {
+        const ratio=(callsAnswered/phoneTickets).toFixed(1);
+        const rc=+ratio>5?'var(--high-text)':+ratio>2?'#ffb74d':'var(--low-text)';
+        ratioEl=numCell(ratio+'×', rc);
       } else {
-        ratioEl = numCell('—', 'var(--text3)');
+        ratioEl=numCell(callsAnswered>0?'no tix':'—','var(--text3)');
       }
 
       row.appendChild(nameEl);
-      row.appendChild(numCell(callsAnswered||'—', 'var(--cal-text)'));
-      row.appendChild(numCell(phoneTickets||'—', 'var(--med-text)'));
+      row.appendChild(numCell(callsAnswered||'—','var(--cal-text)'));
+      row.appendChild(numCell(phoneTickets||'—','var(--med-text)'));
       row.appendChild(ratioEl);
       cvpCard.appendChild(row);
     });
 
-    // Remove border from last row
-    if (cvpCard.lastChild && cvpCard.lastChild !== cvpHdr) {
-      cvpCard.lastChild.style.borderBottom = 'none';
-    }
+    if (cvpCard.lastChild&&cvpCard.lastChild!==cvpHdr)
+      cvpCard.lastChild.style.borderBottom='none';
 
-    // Team totals footer
-    if (cvpRows > 1) {
-      const totalCalls = MY_TEAM.reduce(function(s, name) {
-        const cs = resolveAgentCallStats(name, callStats);
-        return s + (cs ? cs.answered : 0);
-      }, 0);
-      const totalPhoneTix = zdAgents ? zdAgents.reduce(function(s,a){ return s+(zdData[a.id]&&zdData[a.id].phone||0); }, 0) : 0;
-      const footer = document.createElement('div');
-      footer.style.cssText = 'display:grid;grid-template-columns:80px 52px 52px 60px;gap:4px;align-items:center;padding:6px 12px;border-top:1px solid var(--border);background:var(--surface);';
-      const totLabel = document.createElement('div');
-      totLabel.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);';
-      totLabel.textContent = 'Total';
-      function totCell(val, color) {
-        const c = document.createElement('div');
-        c.style.cssText = 'font-size:11px;font-weight:700;text-align:right;color:'+(color||'var(--text)')+';';
-        c.textContent = val || '—';
-        return c;
-      }
-      const totRatio = totalCalls > 0 && totalPhoneTix > 0 ? (totalCalls/totalPhoneTix).toFixed(1)+'×' : '—';
-      footer.appendChild(totLabel);
-      footer.appendChild(totCell(totalCalls||'—', 'var(--cal-text)'));
-      footer.appendChild(totCell(totalPhoneTix||'—', 'var(--med-text)'));
-      footer.appendChild(totCell(totRatio, 'var(--text2)'));
-      cvpCard.appendChild(footer);
-    }
-
-    if (cvpRows > 0) {
-      cvpSec.appendChild(cvpCard);
-      wrap.appendChild(cvpSec);
-    }
+    if (cvpRows>0) { cvpSec.appendChild(cvpCard); wrap.appendChild(cvpSec); }
   }
 
-  // ── SECTION 5: Alerts ─────────────────────────────────────────
+  // ── SECTION 3: Alerts ─────────────────────────────────────────
   const alertsSec = document.createElement('div');
   alertsSec.appendChild(sectionTitle('Attention needed'));
   const alertsWrap = document.createElement('div');
@@ -10316,65 +10017,63 @@ function renderWeeklyBriefingData(container) {
 
   const autoAlerts = [];
 
+  // Wait time
+  const avgWait = tw.totals.avgWait||0;
+  const lAvgWait = lw&&lw.totals&&lw.totals.avgWait||0;
   if (avgWait > 300) {
-    autoAlerts.push({ level:'danger', msg:'Avg wait '+fmtWait(avgWait)+' — customers waiting too long', sub:'Consider staffing review or callback option' });
-  } else if (lAvgWait > 0 && avgWait > lAvgWait * 1.2) {
-    autoAlerts.push({ level:'warn', msg:'Avg wait up '+(Math.round((avgWait-lAvgWait)/6)/10)+'m vs last week', sub:'Monitor closely this week' });
+    autoAlerts.push({ level:'danger', msg:'Avg wait '+Math.floor(avgWait/60)+'m '+avgWait%60+'s — customers waiting too long', sub:'Consider staffing review' });
+  } else if (lAvgWait>0 && avgWait>lAvgWait*1.2) {
+    autoAlerts.push({ level:'warn', msg:'Avg wait up vs last week', sub:'Monitor closely' });
   }
 
-  if (ansRate != null && lAnsRate != null) {
-    const drop = lAnsRate - ansRate;
-    if (drop >= 10) autoAlerts.push({ level:'danger', msg:'Answer rate dropped '+drop+'pp ('+ansRate+'% vs '+lAnsRate+'% last week)', sub:'Significant — check absence or call routing' });
-    else if (drop >= 5) autoAlerts.push({ level:'warn', msg:'Answer rate down '+drop+'pp this week', sub:ansRate+'% vs '+lAnsRate+'% last week' });
+  // Answer rate
+  const ansRate=tw.totals.ansRate, lAnsRate=lw&&lw.totals&&lw.totals.ansRate;
+  if (ansRate!==null&&lAnsRate!==null) {
+    const drop=lAnsRate-ansRate;
+    if (drop>=10) autoAlerts.push({ level:'danger', msg:'Answer rate dropped '+drop+'pp ('+ansRate+'% vs '+lAnsRate+'% last week)', sub:'Check absence or call routing' });
+    else if (drop>=5) autoAlerts.push({ level:'warn', msg:'Answer rate down '+drop+'pp this week', sub:ansRate+'% vs '+lAnsRate+'% last week' });
   }
 
-  if (lOffered > 0 && offered > 0) {
-    const spike = Math.round((offered-lOffered)/lOffered*100);
-    if (spike >= 30) autoAlerts.push({ level:'warn', msg:'Call volume up '+spike+'% vs last week', sub:'Check if staffing matches demand' });
-  }
-
-  // Only fire agent-drop alerts mid-week with enough data
-  const _todayD = new Date(today+'T00:00:00');
-  const _monD   = new Date(thisMonday+'T00:00:00');
-  const _daysEl = Math.round((_todayD - _monD)/86400000);
-  const _enoughDays  = _daysEl >= 2;
-  const _enoughCalls = (tw.totals.offered||0) >= 15;
-
-  if (_enoughDays && _enoughCalls) {
+  // Agent drops — only mid-week with enough data
+  const _todayD=new Date(today+'T00:00:00'), _monD=new Date(thisMonday+'T00:00:00');
+  const _daysEl=Math.round((_todayD-_monD)/86400000);
+  if (_daysEl>=2 && (tw.totals.offered||0)>=15) {
     MY_TEAM.forEach(function(name) {
-      const twA = tw.agents&&tw.agents[name]||{};
-      const lwA = lw&&lw.agents&&lw.agents[name]||{};
-      if ((lwA.answered||0) > 20 && (twA.answered||0) === 0) {
-        const OFF_S2 = new Set(['so','h','hd','os','abs','ol','']);
-        let sched2 = 0;
-        for (let i=0; i<=_daysEl; i++) {
-          const d2=new Date(_monD); d2.setDate(_monD.getDate()+i);
+      const twA=tw.agents&&tw.agents[name]||{};
+      const lwA=lw&&lw.agents&&lw.agents[name]||{};
+      if ((lwA.answered||0)>20 && (twA.answered||0)===0) {
+        const OFF_S2=new Set(['so','h','hd','os','abs','ol','']);
+        let sched2=0;
+        for (let i=0;i<=_daysEl;i++){
+          const d2=new Date(_monD);d2.setDate(_monD.getDate()+i);
           const ds2=fmtLocal(d2);
           const wk2=SCHEDULE.find(function(w){return w.dates&&w.dates.includes(ds2);});
           if(wk2){const p2=wk2.people.find(function(p){return p.name===name;});const idx2=wk2.dates.indexOf(ds2);const sh2=(p2&&idx2>=0?p2.shifts[idx2]:'')||'';if(!OFF_S2.has(sh2.toLowerCase()))sched2++;}
         }
-        if (sched2 >= 2) autoAlerts.push({ level:'warn', msg:name+' — 0 calls answered (had '+lwA.answered+' last week)', sub:'Absent or not logged in?' });
+        if (sched2>=2) autoAlerts.push({ level:'warn', msg:name+' — 0 calls (had '+lwA.answered+' last week)', sub:'Absent or not logged in?' });
       }
     });
   }
 
-  const improvers = MY_TEAM.filter(function(name) {
-    const twA = tw.agents&&tw.agents[name]&&tw.agents[name].answered||0;
-    const lwA = lw&&lw.agents&&lw.agents[name]&&lw.agents[name].answered||0;
-    return lwA > 0 && twA > lwA * 1.15;
+  // Top improvers
+  const improvers=MY_TEAM.filter(function(name){
+    const twA=tw.agents&&tw.agents[name]&&tw.agents[name].answered||0;
+    const lwA=lw&&lw.agents&&lw.agents[name]&&lw.agents[name].answered||0;
+    return lwA>0&&twA>lwA*1.15;
   });
   if (improvers.length) autoAlerts.push({ level:'good', msg:improvers.join(', ')+' — trending up this week', sub:'Worth a callout in standup' });
 
   if (!autoAlerts.length) autoAlerts.push({ level:'good', msg:'No major issues detected this week', sub:'All metrics within normal range' });
 
   autoAlerts.forEach(function(a) {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;background:var(--surface2);border-radius:10px;padding:10px 12px;';
-    const dot = document.createElement('div');
-    const dotColor = a.level==='danger' ? 'var(--high-text)' : a.level==='warn' ? '#ffb74d' : 'var(--low-text)';
-    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;background:'+dotColor+';flex-shrink:0;margin-top:4px;';
-    const txt = document.createElement('div');
-    txt.innerHTML = '<div style="font-size:12px;color:var(--text);">'+a.msg+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">'+(a.sub||'')+'</div>';
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:flex-start;gap:10px;background:var(--surface2);border-radius:10px;padding:10px 12px;';
+    const dot=document.createElement('div');
+    const dc=a.level==='danger'?'var(--high-text)':a.level==='warn'?'#ffb74d':'var(--low-text)';
+    dot.style.cssText='width:7px;height:7px;border-radius:50%;background:'+dc+';flex-shrink:0;margin-top:4px;';
+    const txt=document.createElement('div');
+    txt.innerHTML='<div style="font-size:12px;color:var(--text);">'+a.msg+'</div>'
+      +(a.sub?'<div style="font-size:10px;color:var(--text3);margin-top:1px;">'+a.sub+'</div>':'');
     row.appendChild(dot); row.appendChild(txt);
     alertsWrap.appendChild(row);
   });
@@ -10382,124 +10081,14 @@ function renderWeeklyBriefingData(container) {
   wrap.appendChild(alertsSec);
 
   // ── Footer ────────────────────────────────────────────────────
-  // ── SECTION 6: Operations Health ─────────────────────────────
-  (function() {
-    const ohSec = document.createElement('div');
-
-    const totalEmailAll = zdAgents ? zdAgents.reduce(function(s,a){return s+(zdData[a.id]&&zdData[a.id].email||0);},0) : 0;
-    const totalPhoneAll = zdAgents ? zdAgents.reduce(function(s,a){return s+(zdData[a.id]&&zdData[a.id].phone||0);},0) : 0;
-    const emailRatio = (totalEmailAll+totalPhoneAll) > 0 ? Math.round(totalEmailAll/(totalEmailAll+totalPhoneAll)*100) : null;
-    const callsThisWeek = tw.totals.offered||0;
-    const callsLastWeek = lw&&lw.totals&&lw.totals.offered||0;
-    const callTrend = callsLastWeek > 0 ? Math.round((callsThisWeek-callsLastWeek)/callsLastWeek*100) : 0;
-    const openPendingTotal = zdAgents ? zdAgents.reduce(function(s,a){return s+(zdData[a.id]&&(zdData[a.id].open||0)+(zdData[a.id].pending||0)||0);},0) : 0;
-
-    const signals = [];
-    if (openPendingTotal > 60) signals.push('red'); else if (openPendingTotal > 30) signals.push('amber');
-    if (emailRatio !== null && emailRatio < 30) signals.push('red'); else if (emailRatio !== null && emailRatio < 50) signals.push('amber');
-    if (callTrend >= 50) signals.push('red'); else if (callTrend >= 30) signals.push('amber');
-
-    const cycleRag = signals.includes('red') ? 'red' : signals.includes('amber') ? 'amber' : 'green';
-    const cycleMsg = cycleRag==='red' ? 'Vicious cycle active — email backlog driving call volume'
-      : cycleRag==='amber' ? 'Warning signs — monitor closely this week'
-      : 'Cycle broken — operations running well';
-    const cycleSub = cycleRag==='red' ? 'Customers not getting email responses fast enough → calling instead → inbox grows'
-      : cycleRag==='amber' ? 'Queue or call trend showing early pressure — act before it compounds'
-      : 'Email ratio healthy, queue manageable, call volume stable';
-
-    const ragColor = cycleRag==='red'?'var(--high-text)':cycleRag==='amber'?'#ffb74d':'var(--low-text)';
-    const ragBg    = cycleRag==='red'?'rgba(239,83,80,0.08)':cycleRag==='amber'?'rgba(255,183,77,0.08)':'rgba(52,211,153,0.08)';
-    const ragBorder= cycleRag==='red'?'rgba(239,83,80,0.25)':cycleRag==='amber'?'rgba(255,183,77,0.25)':'rgba(52,211,153,0.2)';
-
-    const cycleBanner = document.createElement('div');
-    cycleBanner.style.cssText = 'border:1px solid '+ragBorder+';border-radius:10px;padding:10px 14px;background:'+ragBg+';margin-bottom:10px;';
-    cycleBanner.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">'
-      +'<div style="width:8px;height:8px;border-radius:50%;background:'+ragColor+';flex-shrink:0;"></div>'
-      +'<div style="font-size:12px;font-weight:700;color:'+ragColor+';">'+cycleMsg+'</div>'
-      +'</div><div style="font-size:11px;color:var(--text3);margin-top:4px;padding-left:16px;">'+cycleSub+'</div>';
-
-    // 3 headline targets
-    const tGrid = document.createElement('div');
-    tGrid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;';
-    function tCard(label, val, target, dir, unit) {
-      unit=unit||'';
-      const met = val===null?null:(dir==='down'?val<=target:val>=target);
-      const col = val===null?'var(--text3)':met?'var(--low-text)':cycleRag==='red'?'var(--high-text)':'#ffb74d';
-      const c=document.createElement('div'); c.style.cssText='background:var(--surface2);border-radius:10px;padding:10px 12px;';
-      c.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:3px;">'+label+'</div>'
-        +'<div style="font-family:sans-serif;font-weight:900;sans-serif;font-size:20px;color:'+col+';line-height:1;letter-spacing:-0.02em;">'+(val!==null?val+unit:'—')+'</div>'
-        +'<div style="font-size:9px;color:var(--text3);margin-top:3px;">target '+(dir==='down'?'< ':'≥ ')+target+unit+'</div>';
-      return c;
-    }
-    const avgWaitMin = tw.totals.avgWait>0 ? Math.round(tw.totals.avgWait/60*10)/10 : null;
-    tGrid.appendChild(tCard('Open queue',  openPendingTotal, 30, 'down', ''));
-    tGrid.appendChild(tCard('Email %',     emailRatio,       50, 'up',   '%'));
-    tGrid.appendChild(tCard('Avg wait',    avgWaitMin,       3,  'down', 'm'));
-
-    // Agent performance tiers
-    if (!zdAgents || !zdAgents.length) return;
-
-    const agentSolveds = zdAgents.map(function(a){return zdData[a.id]&&zdData[a.id].solved||0;}).filter(Boolean);
-    const teamAvg = agentSolveds.length ? Math.round(agentSolveds.reduce(function(s,v){return s+v;},0)/agentSolveds.length) : 1;
-    const maxSolvedA = Math.max.apply(null, agentSolveds.concat([1]));
-
-    function getTier(s) {
-      if (!s) return {label:'—', color:'var(--text3)', bg:'transparent'};
-      if (s>=teamAvg*1.3) return {label:'S', color:'var(--low-text)',  bg:'rgba(52,211,153,0.12)'};
-      if (s>=teamAvg*0.9) return {label:'A', color:'var(--cal-text)',  bg:'rgba(77,171,247,0.12)'};
-      if (s>=teamAvg*0.5) return {label:'B', color:'#ffb74d',         bg:'rgba(255,183,77,0.12)'};
-      return                     {label:'C', color:'var(--high-text)', bg:'rgba(239,83,80,0.12)'};
-    }
-
-    const aCard = document.createElement('div'); aCard.style.cssText='background:var(--surface2);border-radius:10px;overflow:hidden;';
-    const aHdr = document.createElement('div'); aHdr.style.cssText='display:grid;grid-template-columns:80px 1fr 44px 44px 44px 44px;gap:4px;padding:5px 12px;border-bottom:1px solid var(--border);';
-    ['Agent','','Solved','Email','Phone','Tier'].forEach(function(h,i){
-      const c=document.createElement('div');c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);'+(i>0?'text-align:right;':'');c.textContent=h;aHdr.appendChild(c);
-    });
-    aCard.appendChild(aHdr);
-
-    const sortedA = zdAgents
-      .filter(function(a){return MY_TEAM.some(function(n){return normName(n.split(' ')[0])===normName(a.name.split(' ')[0]);});})
-      .sort(function(a,b){return (zdData[b.id]&&zdData[b.id].solved||0)-(zdData[a.id]&&zdData[a.id].solved||0);});
-
-    sortedA.forEach(function(agent, idx) {
-      const d=zdData[agent.id]||{};
-      const solved=d.solved||0, email=d.email!=null?d.email:null, phone=d.phone!=null?d.phone:null;
-      const tier=getTier(solved);
-      const row=document.createElement('div');
-      row.style.cssText='display:grid;grid-template-columns:80px 1fr 44px 44px 44px 44px;gap:4px;align-items:center;padding:6px 12px;'+(idx<sortedA.length-1?'border-bottom:1px solid var(--border);':'');
-      const nm=document.createElement('div');nm.style.cssText='font-size:11px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';nm.textContent=agent.name.split(' ')[0];
-      const bw=document.createElement('div');bw.style.cssText='height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px;';
-      const bf=document.createElement('div');bf.style.cssText='height:100%;width:'+Math.round(solved/maxSolvedA*100)+'%;background:'+(solved>=teamAvg?'var(--low-text)':'#ffb74d')+';border-radius:2px;';bw.appendChild(bf);
-      function ne(v,c){const e=document.createElement('div');e.style.cssText='font-size:11px;font-weight:700;text-align:right;color:'+(c||'var(--text)')+';';e.textContent=v!=null&&v!==''?v:'—';return e;}
-      const te=document.createElement('div');te.style.cssText='text-align:right;';
-      if(tier.label!=='—'){const b=document.createElement('span');b.style.cssText='font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:'+tier.bg+';color:'+tier.color+';';b.textContent=tier.label;te.appendChild(b);}
-      row.appendChild(nm);row.appendChild(bw);row.appendChild(ne(solved||'—'));row.appendChild(ne(email,'var(--cal-text)'));row.appendChild(ne(phone,'var(--med-text)'));row.appendChild(te);
-      aCard.appendChild(row);
-    });
-
-    const legend=document.createElement('div');legend.style.cssText='padding:5px 12px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;';
-    [['S','var(--low-text)','rgba(52,211,153,0.12)','130%+ avg'],['A','var(--cal-text)','rgba(77,171,247,0.12)','90%+ avg'],['B','#ffb74d','rgba(255,183,77,0.12)','50%+ avg'],['C','var(--high-text)','rgba(239,83,80,0.12)','Below 50%']].forEach(function(t){
-      const p=document.createElement('span');p.style.cssText='display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--text3);';
-      p.innerHTML='<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px;background:'+t[2]+';color:'+t[1]+';">'+t[0]+'</span>'+t[3];legend.appendChild(p);
-    });
-    aCard.appendChild(legend);
-
-    ohSec.appendChild(sectionTitle('Operations health'));
-    ohSec.appendChild(cycleBanner);
-    ohSec.appendChild(tGrid);
-    ohSec.appendChild(sectionTitle('Agent tiers'));
-    ohSec.appendChild(aCard);
-    wrap.appendChild(ohSec);
-  })();
-
-  const footer = document.createElement('div');
-  footer.style.cssText = 'font-size:10px;color:var(--text3);display:flex;justify-content:space-between;padding-top:2px;';
-  footer.innerHTML = '<span>Updated '+new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span><span>'+thisMonday+' – '+today+'</span>';
+  const footer=document.createElement('div');
+  footer.style.cssText='font-size:10px;color:var(--text3);display:flex;justify-content:space-between;padding-top:2px;';
+  footer.innerHTML='<span>Updated '+new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</span>'
+    +'<span>'+thisMonday+' – '+today+'</span>';
   wrap.appendChild(footer);
-
   container.appendChild(wrap);
 }
+
 
 function renderBriefingContent(container, text, fromDate, toDate) {
   renderWeeklyBriefingData(container);
@@ -11029,6 +10618,7 @@ function zdGetAbsentNames(fromDate, toDate) {
 }
 
 let _zdRefreshInFlight = false;
+let _zdTagsFetched = false;
 let _zdRefreshLastRun  = 0;
 const ZD_MIN_INTERVAL  = 30000; // ms — prevent hammering
 
@@ -11049,6 +10639,7 @@ async function zdRefresh() {
   _zdLastCacheKey = cacheKey;
   _zdRefreshLastRun = now;
   _zdRefreshInFlight = true;
+  _zdTagsFetched = false; // allow tag refresh after new ticket data
 
   const body = document.getElementById('zd-body');
   if (!body) return;
@@ -12065,9 +11656,11 @@ function loadUserData() {
       return;
     }
     renderDashboard(); renderPlanner(); renderAvailStrip(); checkCarryForward(); scheduleAllReminders(); renderSchedule();
-    // Seed history state so the back button has a baseline to return to
+    // Start on My Planner tab
+    switchTab('planner', document.querySelector('[onclick*="\'planner\'"]'));
+    // Seed history state
     if (!history.state?.tab) {
-      history.replaceState({ tab: 'dashboard' }, '', '#dashboard');
+      history.replaceState({ tab: 'planner' }, '', '#planner');
     }
   }
   // Auto-pull from GitHub — handled by startup sequence, not here
