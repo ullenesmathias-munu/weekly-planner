@@ -2831,7 +2831,16 @@ function renderSchedule() {
   const ALL_SHIFTS = ['', 'D1 (7-15)', 'D2 (8-16)', 'D3 (9-17)', 'E (17-6)', 'E2 (16-21)',
     'W1 (7-17)', 'W2 (17-6)', 'W3 (15-19)', 'H', 'SO', 'OS', 'ABS', 'HD'];
 
-  function saveSchedule() { localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE)); scheduleSyncSave(); }
+  function saveSchedule() {
+    localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE));
+    scheduleSyncSave();
+    // Re-save current week snapshot so isNight reflects updated schedule
+    try {
+      const _ssMon = fmtLocal(getMonday(0));
+      const _ssTod = localToday();
+      saveWeeklySnapshot(_ssMon, buildWeeklySnapshot(_ssMon, _ssTod));
+    } catch(_sse) {}
+  }
 
   let dragSrc = null;
   let swapHighlight = null;
@@ -8323,18 +8332,36 @@ async function renderOpsContent(fromDate, toDate, container) {
     // For past weeks: read from snapshot; for current week: read from live zdData
     let solved = 0, email = null, phone = null;
     if (useSnap) {
+      // Past week — read from saved snapshot
       const sa = savedSnap.agents[name] || {};
       solved = sa.zdSolved || 0;
       email  = sa.zdEmail  != null ? sa.zdEmail  : null;
       phone  = sa.zdPhone  != null ? sa.zdPhone  : null;
     } else {
+      // Current week — try live zdData first, fall back to snapshot if empty (after page refresh)
       const zdA = zdAgents && zdAgents.find(a => normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
       const d = zdA ? (zdData[zdA.id]||{}) : {};
-      solved = d.solved || 0;
-      email  = d.email  != null ? d.email  : null;
-      phone  = d.phone  != null ? d.phone  : null;
+      const hasLiveData = zdA && (d.solved > 0 || d.email != null || d.phone != null);
+      if (hasLiveData) {
+        solved = d.solved || 0;
+        email  = d.email  != null ? d.email  : null;
+        phone  = d.phone  != null ? d.phone  : null;
+      } else {
+        // Fall back to snapshot — data persists across page refreshes
+        const currSnap = getWeeklySnapshot(periodMonday);
+        const sa = currSnap && currSnap.agents && currSnap.agents[name] ? currSnap.agents[name] : {};
+        solved = sa.zdSolved || 0;
+        email  = sa.zdEmail  != null ? sa.zdEmail  : null;
+        phone  = sa.zdPhone  != null ? sa.zdPhone  : null;
+      }
     }
-    const { working, total, nightDays, dayDays, isNight } = scheduleProfile(name, fromDate, toDate);
+    const _sProf = scheduleProfile(name, fromDate, toDate);
+    const { working, total } = _sProf;
+    // Use live scheduleProfile for current week; for past weeks also try snapshot
+    // (in case schedule was changed after the period ended)
+    const nightDays = _sProf.nightDays;
+    const dayDays   = _sProf.dayDays;
+    const isNight   = _sProf.isNight;
     const fullyAbsent  = working === 0 && total > 0;
     const partlyAbsent = working > 0 && working < total;
     const trend = agentTrend(name);
@@ -10095,12 +10122,29 @@ function buildWeeklySnapshot(fromDate, toDate) {
   // Per-agent ZD data (use cached zdData if available and period matches)
   MY_TEAM.forEach(name => {
     const cs = resolveAgentCallStats(name, callStats);
+    // Compute schedule profile for this period — captures isNight at save time
+    const OFF_S_SN = new Set(['so','h','hd','os','abs','ol','']);
+    let _nightD=0, _dayD=0;
+    const _sd = new Date(fromDate+'T00:00:00'), _ed = new Date(toDate+'T00:00:00');
+    for (let _d=new Date(_sd); _d<=_ed; _d.setDate(_d.getDate()+1)) {
+      const _ds = fmtLocal(_d);
+      const _w = SCHEDULE.find(w => w.dates && w.dates.includes(_ds));
+      if (_w) {
+        const _p = _w.people.find(p => p.name === name);
+        const _i = _w.dates.indexOf(_ds);
+        const _sh = ((_p && _i>=0 ? _p.shifts[_i] : '')||'').toLowerCase();
+        if (!OFF_S_SN.has(_sh)) { if (_sh.startsWith('e')) _nightD++; else _dayD++; }
+      }
+    }
     snap.agents[name] = {
-      answered: cs?.answered || 0,
-      missed: cs?.missed || 0,
-      avgTalk: cs?.avgTalkSec || 0,
-      avgWait: cs?.avgWaitSec || 0,
-      zdSolved: 0, // filled below if zdData available
+      answered:  cs?.answered   || 0,
+      missed:    cs?.missed     || 0,
+      avgTalk:   cs?.avgTalkSec || 0,
+      avgWait:   cs?.avgWaitSec || 0,
+      zdSolved:  0,
+      isNight:   _nightD > 0 && _nightD >= _dayD,
+      nightDays: _nightD,
+      dayDays:   _dayD,
     };
   });
   // ZD data from current cache — save full channel breakdown for Operations heatmap
