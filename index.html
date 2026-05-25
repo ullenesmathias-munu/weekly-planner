@@ -8289,7 +8289,8 @@ async function renderOpsContent(fromDate, toDate, container) {
 
   // Determine if the selected period matches a saved snapshot
   // If so, use snapshot data instead of requiring a live ZD fetch
-  const periodMonday = fmtLocal(new Date(fromDate+'T00:00:00').setDate(new Date(fromDate+'T00:00:00').getDate() - ((new Date(fromDate+'T00:00:00').getDay()+6)%7)));
+  const _pDate = new Date(fromDate+'T00:00:00'); _pDate.setDate(_pDate.getDate() - ((_pDate.getDay()+6)%7));
+  const periodMonday = fmtLocal(_pDate);
   const savedSnap = getWeeklySnapshot(periodMonday);
   const isCurrentWeek = periodMonday === fmtLocal(getMonday(0));
   // Use live zdData for current week (most up to date), snapshot for past weeks
@@ -10355,7 +10356,6 @@ function renderWeeklyBriefingData(container) {
   wrap.appendChild(footer);
   container.appendChild(wrap);
 }
-
 
 function renderBriefingContent(container, text, fromDate, toDate) {
   renderWeeklyBriefingData(container);
@@ -12754,6 +12754,7 @@ function renderAddForm(day, colBody, addBtn) {
 }
 
 function renderPlanner() {
+  try {
   const mon = getMonday(weekOffset);
   const currentWeekStamp = mondayStamp(weekOffset);
 
@@ -12845,6 +12846,11 @@ function renderPlanner() {
       const todayCol = document.querySelector('.col.is-today');
       if (todayCol) todayCol.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
     }, 100);
+  }
+  } catch(e) {
+    console.error('renderPlanner error:', e);
+    const b = document.getElementById('board');
+    if (b) b.innerHTML = '<div style="padding:32px;color:var(--text3);font-size:12px;">Planner error: ' + e.message + '</div>';
   }
 }
 
