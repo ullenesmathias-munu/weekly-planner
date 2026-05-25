@@ -2859,29 +2859,30 @@ function renderSchedule() {
       e.stopPropagation();
       document.querySelectorAll('.shift-dropdown').forEach(d => d.remove());
       const dd = document.createElement('div'); dd.className = 'shift-dropdown';
-      dd.style.cssText = 'position:absolute;top:100%;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);z-index:200;min-width:140px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+      dd.style.cssText = 'position:fixed;visibility:hidden;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);z-index:9999;min-width:140px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.35);';
       const currentRole = (person.roles && person.roles[dayIdx]) || '';
       ALL_ROLES.forEach(code => {
-        const item = document.createElement('div'); item.style.cssText = 'padding:6px 12px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;';
+        const item = document.createElement('div'); item.style.cssText = 'padding:7px 14px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;user-select:none;';
         if (code === currentRole) item.style.background = 'var(--surface2)';
         if (code) { const p = document.createElement('span'); p.className = 'role-pill ' + roleClass(code); p.style.fontSize = '10px'; p.textContent = code; item.appendChild(p); }
         else { item.appendChild(document.createTextNode('— clear')); }
         item.onmouseover = () => item.style.background = 'var(--surface3)';
         item.onmouseout = () => item.style.background = code === currentRole ? 'var(--surface2)' : '';
-        item.onclick = () => { if (!person.roles) person.roles = ['','','','','','','']; person.roles[dayIdx] = code; saveSchedule(); dd.remove(); renderRole(); };
+        item.onmousedown = (ev) => { ev.stopPropagation(); if (!person.roles) person.roles = ['','','','','','','']; person.roles[dayIdx] = code; saveSchedule(); dd.remove(); renderRole(); };
         dd.appendChild(item);
       });
-      td.style.position = 'relative'; td.appendChild(dd);
-      // Flip upward if clipped
-      const rect = dd.getBoundingClientRect();
-      if (rect.bottom > window.innerHeight - 16) {
-        dd.style.top = 'auto';
-        dd.style.bottom = '100%';
-      }
-      const rect2 = dd.getBoundingClientRect();
-      if (rect2.left < 8) { dd.style.left = '0'; dd.style.transform = 'none'; }
-      else if (rect2.right > window.innerWidth - 8) { dd.style.left = 'auto'; dd.style.right = '0'; dd.style.transform = 'none'; }
-      setTimeout(() => document.addEventListener('click', () => dd.remove(), { once: true }), 0);
+      document.body.appendChild(dd);
+      requestAnimationFrame(() => {
+        const tdRect2 = td.getBoundingClientRect();
+        const ddH2 = dd.offsetHeight, ddW2 = Math.max(dd.offsetWidth, 140);
+        let top2 = tdRect2.bottom + 4, left2 = tdRect2.left + tdRect2.width/2 - ddW2/2;
+        if (top2 + ddH2 > window.innerHeight - 12) top2 = tdRect2.top - ddH2 - 4;
+        if (left2 < 8) left2 = 8;
+        if (left2 + ddW2 > window.innerWidth - 8) left2 = window.innerWidth - ddW2 - 8;
+        dd.style.top = Math.max(8, top2) + 'px'; dd.style.left = left2 + 'px'; dd.style.visibility = '';
+      });
+      const dismissR = (ev) => { if (!dd.contains(ev.target)) { dd.remove(); document.removeEventListener('mousedown', dismissR); } };
+      setTimeout(() => document.addEventListener('mousedown', dismissR), 50);
     });
     return td;
   }
@@ -2944,20 +2945,28 @@ function renderSchedule() {
         dd.appendChild(item);
       });
 
-      // Position relative to the cell using fixed coords
+      // Render off-screen first so we can measure height
+      dd.style.visibility = 'hidden';
       document.body.appendChild(dd);
-      const tdRect = td.getBoundingClientRect();
-      let top = tdRect.bottom + 2;
-      let left = tdRect.left + tdRect.width/2 - 70;
-      // Flip up if clips bottom
-      if (top + dd.offsetHeight > window.innerHeight - 12) top = tdRect.top - dd.offsetHeight - 2;
-      // Clamp horizontal
-      if (left < 8) left = 8;
-      if (left + 140 > window.innerWidth - 8) left = window.innerWidth - 148;
-      dd.style.top = top + 'px';
-      dd.style.left = left + 'px';
 
-      // Dismiss on click outside — use mousedown with slight delay so above handler fires first
+      // Position after layout so offsetHeight is accurate
+      requestAnimationFrame(() => {
+        const tdRect = td.getBoundingClientRect();
+        const ddH = dd.offsetHeight;
+        const ddW = Math.max(dd.offsetWidth, 140);
+        let top = tdRect.bottom + 4;
+        let left = tdRect.left + tdRect.width / 2 - ddW / 2;
+        // Flip up if would clip bottom of viewport
+        if (top + ddH > window.innerHeight - 12) top = tdRect.top - ddH - 4;
+        // Clamp left/right
+        if (left < 8) left = 8;
+        if (left + ddW > window.innerWidth - 8) left = window.innerWidth - ddW - 8;
+        dd.style.top = Math.max(8, top) + 'px';
+        dd.style.left = left + 'px';
+        dd.style.visibility = '';
+      });
+
+      // Dismiss on outside mousedown — 50ms delay so item onmousedown fires first
       const dismiss = (ev) => { if (!dd.contains(ev.target)) { dd.remove(); document.removeEventListener('mousedown', dismiss); } };
       setTimeout(() => document.addEventListener('mousedown', dismiss), 50);
     });
@@ -4612,7 +4621,7 @@ function renderUnifonMappingSettings() {
 const UNIFON_AGENT_KEY = 'wtp_unifon_agent_calls';
 
 function loadUnifonAgentCalls() { try { return JSON.parse(localStorage.getItem(UNIFON_AGENT_KEY)||'{}'); } catch { return {}; } }
-function saveUnifonAgentCalls(data) { localStorage.setItem(UNIFON_AGENT_KEY, JSON.stringify(data)); }
+function saveUnifonAgentCalls(data) { localStorage.setItem(UNIFON_AGENT_KEY, JSON.stringify(data)); scheduleSyncSave(); }
 
 async function handleUnifonCallsImport(file) {
   if (!file) return;
@@ -4768,7 +4777,7 @@ function resolveAgentCallStats(zdAgentName, agentCallStats) {
 const UNIFON_HOURLY_KEY = 'wtp_unifon_hourly';
 
 function loadUnifonHourly() { try { return JSON.parse(localStorage.getItem(UNIFON_HOURLY_KEY)||'{}'); } catch { return {}; } }
-function saveUnifonHourly(data) { localStorage.setItem(UNIFON_HOURLY_KEY, JSON.stringify(data)); }
+function saveUnifonHourly(data) { localStorage.setItem(UNIFON_HOURLY_KEY, JSON.stringify(data)); scheduleSyncSave(); }
 
 async function handleUnifonImport(file) {
   if (!file) return;
@@ -9810,6 +9819,11 @@ function getWeeklySnapshot(weekStamp) {
 }
 function saveWeeklySnapshot(weekStamp, data) {
   localStorage.setItem('wtp_intel_snap_' + weekStamp, JSON.stringify(data));
+  // Prune snapshots older than 26 weeks
+  const _cutoff = new Date(); _cutoff.setDate(_cutoff.getDate() - 26*7);
+  const _keys = [];
+  for (let i=0; i<localStorage.length; i++) { const k=localStorage.key(i); if(k&&k.startsWith('wtp_intel_snap_')) _keys.push(k); }
+  _keys.forEach(k => { const d=new Date(k.replace('wtp_intel_snap_','')+'T00:00:00'); if(!isNaN(d)&&d<_cutoff) localStorage.removeItem(k); });
   scheduleSyncSave();
 }
 function buildWeeklySnapshot(fromDate, toDate) {
@@ -13118,7 +13132,25 @@ function runMigrations() {
       if (changed) localStorage.setItem('wtp_users', JSON.stringify(users));
     }
   } catch {}
+
+  // One-time: back up any historical snapshots + Unifon data that exist locally
+  try {
+    if (!localStorage.getItem('wtp_migration_snap_sync_done') && ghToken) {
+      let hasData = false;
+      for (let i=0; i<localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('wtp_intel_snap_') || k === UNIFON_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_HOURLY_KEY)) {
+          hasData = true; break;
+        }
+      }
+      if (hasData) {
+        localStorage.setItem('wtp_migration_snap_sync_done', '1');
+        scheduleSyncSave();
+      }
+    }
+  } catch {}
 }
+
 function handoverKey(dateStr) { return 'wtp_handover_' + dateStr; }
 function loadHandover(dateStr) {
   try { return JSON.parse(localStorage.getItem(handoverKey(dateStr)) || 'null'); } catch { return null; }
