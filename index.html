@@ -5915,16 +5915,30 @@ function renderAdminDashboard(root, viewerMode=false) {
           const n=await zdCount('type:ticket group:'+gId+' status<solved assignee:none').catch(()=>null);
           if(n===null) return;
           let uEl=document.getElementById('db-q-unassigned');
+          const uColor = n > 5 ? 'var(--high-text)' : n > 0 ? '#ffb74d' : 'var(--low-text)';
           if(!uEl){
             const qGrid=document.getElementById('db-q-open')?.closest('.db-stat-grid')||document.getElementById('db-q-open')?.parentElement;
             if(qGrid){
               const cell=document.createElement('div');cell.className='db-stat-cell';
-              const v=document.createElement('div');v.id='db-q-unassigned';v.className='db-stat-val';v.style.color=n>0?'var(--high-text)':'var(--low-text)';v.textContent=n;
+              // Highlight the cell itself when unassigned > 0
+              if(n>0) cell.style.cssText='border:1px solid '+(n>5?'rgba(239,83,80,0.3)':'rgba(255,183,77,0.3)')+';border-radius:8px;background:'+(n>5?'rgba(239,83,80,0.04)':'rgba(255,183,77,0.04)')+';';
+              const v=document.createElement('div');v.id='db-q-unassigned';v.className='db-stat-val';v.style.color=uColor;v.textContent=n;
               const l=document.createElement('div');l.className='db-stat-label';l.textContent='Unassigned';
+              // Add a "→ Tickets" hint on hover when there are unassigned tickets
+              if(n>0){cell.style.cursor='pointer';cell.title='Open Tickets tab to see details';cell.onclick=()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]'));}
               cell.appendChild(v);cell.appendChild(l);qGrid.appendChild(cell);
               uEl=v;
             }
-          } else { uEl.textContent=n; uEl.style.color=n>0?'var(--high-text)':'var(--low-text)'; }
+          } else {
+            uEl.textContent=n;
+            uEl.style.color=uColor;
+            const uCell=uEl.closest('.db-stat-cell');
+            if(uCell&&n>0){
+              uCell.style.cssText='border:1px solid '+(n>5?'rgba(239,83,80,0.3)':'rgba(255,183,77,0.3)')+';border-radius:8px;background:'+(n>5?'rgba(239,83,80,0.04)':'rgba(255,183,77,0.04)')+';cursor:pointer;';
+              uCell.title='Open Tickets tab to see details';
+              uCell.onclick=()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]'));
+            }
+          }
         } catch(e){}
       })();
       zdCount('type:ticket status:pending').then(v=>{const el=document.getElementById('db-q-pending');if(el)el.textContent=v;}).catch(()=>{});
@@ -8189,14 +8203,22 @@ async function renderOpsContent(fromDate, toDate, container) {
   const callsNow = tw.totals.offered||0, callsPrev = lw&&lw.totals&&lw.totals.offered||0;
   const callTrend = callsPrev>0 ? Math.round((callsNow-callsPrev)/callsPrev*100) : 0;
 
+  // Unassigned count from snapshot or live zdData (assigned to group, no agent yet)
+  // We get this from zdGroupId + zdData — count tickets where no agent is set
+  // Use stored unassigned count if available (set by Tickets tab fetch)
+  const storedUnassigned = (() => { try { return parseInt(localStorage.getItem('wtp_unassigned_count')||'-1'); } catch { return -1; } })();
+  const unassignedQ = storedUnassigned >= 0 ? storedUnassigned : 0;
+
   const signals = [];
   if (openQ>60) signals.push('red'); else if (openQ>30) signals.push('amber');
   if (emailRatio!==null&&emailRatio<30) signals.push('red'); else if (emailRatio!==null&&emailRatio<50) signals.push('amber');
   if (callTrend>=50) signals.push('red'); else if (callTrend>=30) signals.push('amber');
+  if (unassignedQ>10) signals.push('red'); else if (unassignedQ>3) signals.push('amber');
 
   const cycleRag = signals.includes('red')?'red':signals.includes('amber')?'amber':'green';
   const cycleMsg = cycleRag==='red'?'Vicious cycle active — email backlog driving call volume':cycleRag==='amber'?'Warning signs — monitor closely this week':'Operations healthy — cycle broken';
-  const cycleSub = cycleRag==='red'?'Customers not getting email responses → calling instead → inbox grows':cycleRag==='amber'?'Queue or call trend showing early pressure — act before it compounds':'Email ratio healthy, queue manageable, call volume stable';
+  const unassignedNote = unassignedQ > 3 ? ' · ' + unassignedQ + ' tickets need agent pickup' : '';
+  const cycleSub = cycleRag==='red'?'Customers not getting email responses → calling instead → inbox grows'+unassignedNote:cycleRag==='amber'?'Queue or call trend showing early pressure — act before it compounds'+unassignedNote:'Email ratio healthy, queue manageable, call volume stable';
   const ragColor = cycleRag==='red'?'var(--high-text)':cycleRag==='amber'?'#ffb74d':'var(--low-text)';
   const ragBg    = cycleRag==='red'?'rgba(239,83,80,0.08)':cycleRag==='amber'?'rgba(255,183,77,0.08)':'rgba(52,211,153,0.08)';
   const ragBorder= cycleRag==='red'?'rgba(239,83,80,0.25)':cycleRag==='amber'?'rgba(255,183,77,0.25)':'rgba(52,211,153,0.2)';
@@ -11096,6 +11118,8 @@ function zdRender(agents, fromDate, toDate) {
       const query = 'type:ticket group:' + gId + ' status<solved assignee:none';
       const unassignedCount = await zdCount(query).catch(() => null);
       if (unassignedCount === null) return;
+      // Persist for Operations cycle status
+      try { localStorage.setItem('wtp_unassigned_count', String(unassignedCount)); } catch {}
 
       // Update pill colour based on count
       const upv = unassignedPill.querySelector('div');
@@ -11112,110 +11136,6 @@ function zdRender(agents, fromDate, toDate) {
           ? 'rgba(239,83,80,0.06)'
           : 'rgba(255,183,77,0.06)';
       }
-
-      if (unassignedCount === 0) return; // no detail panel needed
-
-      // Fetch the actual tickets — same query, sorted oldest first (most urgent)
-      const res = await zdFetch('/search.json?query=' + encodeURIComponent(query) + '&per_page=20&sort_by=created_at&sort_order=asc');
-      const tix = res.results || [];
-
-      // Build detail panel
-      const uPanel = document.createElement('div');
-      uPanel.style.cssText = 'margin-bottom:16px;border:1px solid '
-        + (unassignedCount > 5 ? 'rgba(239,83,80,0.25)' : 'rgba(255,183,77,0.25)')
-        + ';border-radius:var(--radius-lg);overflow:hidden;';
-
-      const uHdr = document.createElement('div');
-      uHdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 16px;'
-        + 'background:' + (unassignedCount > 5 ? 'rgba(239,83,80,0.05)' : 'rgba(255,183,77,0.05)')
-        + ';border-bottom:1px solid var(--border);';
-
-      const uTitle = document.createElement('div');
-      uTitle.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:13px;font-weight:900;letter-spacing:-0.01em;color:"
-        + (unassignedCount > 5 ? 'var(--high-text)' : '#ffb74d') + ';';
-      uTitle.textContent = '⚠ Unassigned — needs pickup';
-
-      const uBadge = document.createElement('div');
-      uBadge.style.cssText = 'font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;color:'
-        + (unassignedCount > 5 ? 'var(--high-text)' : '#ffb74d')
-        + ';background:' + (unassignedCount > 5 ? 'rgba(239,83,80,0.1)' : 'rgba(255,183,77,0.1)') + ';';
-      uBadge.textContent = unassignedCount + ' open';
-
-      uHdr.appendChild(uTitle); uHdr.appendChild(uBadge);
-      uPanel.appendChild(uHdr);
-
-      // Column header
-      const colHdr = document.createElement('div');
-      colHdr.style.cssText = 'display:grid;grid-template-columns:52px 1fr 50px 48px 50px;gap:6px;padding:5px 16px;border-bottom:1px solid var(--border);background:var(--surface2);';
-      ['#', 'Subject', 'Via', 'Age', 'Pri'].forEach((h, i) => {
-        const c = document.createElement('div');
-        c.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);' + (i > 0 ? '' : '');
-        c.textContent = h;
-        colHdr.appendChild(c);
-      });
-      uPanel.appendChild(colHdr);
-
-      const zdSubdomain = localStorage.getItem('wtp_zd_subdomain') || 'munu3272';
-      tix.forEach((t, ti) => {
-        const row = document.createElement('a');
-        row.href = 'https://' + zdSubdomain + '.zendesk.com/agent/tickets/' + t.id;
-        row.target = '_blank'; row.rel = 'noopener';
-        row.style.cssText = 'display:grid;grid-template-columns:52px 1fr 50px 48px 50px;gap:6px;align-items:center;padding:7px 16px;'
-          + 'border-bottom:1px solid var(--border);text-decoration:none;transition:background 0.1s;';
-        row.onmouseover = () => row.style.background = 'var(--surface2)';
-        row.onmouseout  = () => row.style.background = '';
-
-        const ms   = Date.now() - new Date(t.created_at).getTime();
-        const days = Math.floor(ms / 86400000);
-        const hrs  = Math.floor((ms % 86400000) / 3600000);
-        const ageStr   = days > 0 ? days + 'd' : hrs > 0 ? hrs + 'h' : '<1h';
-        const ageColor = days >= 2 ? 'var(--high-text)' : days >= 1 ? '#ffb74d' : 'var(--text3)';
-
-        const rawCh = (t.channel || (t.via && t.via.channel) || '').toLowerCase();
-        const chanLabel = rawCh === 'email' ? 'Email'
-                        : rawCh === 'voice' || rawCh === 'phone' ? 'Phone'
-                        : rawCh === 'web' || rawCh === 'api' ? 'Web'
-                        : rawCh || '—';
-
-        const pri = (t.priority || '').toLowerCase();
-        const priColor = pri === 'urgent' ? 'var(--high-text)' : pri === 'high' ? '#ffb74d' : 'var(--text3)';
-        const priLabel = pri === 'urgent' ? 'Urgent' : pri === 'high' ? 'High' : pri === 'normal' ? 'Normal' : pri || '—';
-
-        const idEl = document.createElement('div');
-        idEl.style.cssText = 'font-size:10px;color:var(--text3);';
-        idEl.textContent = '#' + t.id;
-
-        const subjEl = document.createElement('div');
-        subjEl.style.cssText = 'font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-        subjEl.textContent = t.subject || '(no subject)';
-
-        const chanEl = document.createElement('div');
-        chanEl.style.cssText = 'font-size:10px;color:var(--text3);';
-        chanEl.textContent = chanLabel;
-
-        const ageEl = document.createElement('div');
-        ageEl.style.cssText = 'font-size:10px;font-weight:700;color:' + ageColor + ';';
-        ageEl.textContent = ageStr;
-
-        const priEl = document.createElement('div');
-        priEl.style.cssText = 'font-size:10px;font-weight:600;color:' + priColor + ';';
-        priEl.textContent = priLabel;
-
-        row.appendChild(idEl); row.appendChild(subjEl); row.appendChild(chanEl);
-        row.appendChild(ageEl); row.appendChild(priEl);
-        if (ti === tix.length - 1) row.style.borderBottom = 'none';
-        uPanel.appendChild(row);
-      });
-
-      if (unassignedCount > tix.length) {
-        const more = document.createElement('div');
-        more.style.cssText = 'padding:7px 16px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);';
-        more.textContent = '+' + (unassignedCount - tix.length) + ' more not shown — open Zendesk to see all';
-        uPanel.appendChild(more);
-      }
-
-      // Insert right after summary bar
-      body.insertBefore(uPanel, bar.nextSibling);
 
     } catch(e) {
       console.warn('Unassigned tickets fetch failed:', e.message);
