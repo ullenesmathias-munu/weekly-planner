@@ -8412,7 +8412,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-25",
-    "generated": "2026-05-25T08:15:57.537Z",
+    "generated": "2026-05-25T08:20:48.403Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -8532,7 +8532,7 @@
         "zdSolved": 22,
         "zdEmail": 3,
         "zdPhone": 19,
-        "zdOpen": 9,
+        "zdOpen": 10,
         "zdPending": 4
       }
     },
