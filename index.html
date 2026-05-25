@@ -1937,12 +1937,11 @@ window.tryUnlock = async function() {
     <span id="tab-wordmark" style="font-family:'Fira Sans',sans-serif;font-weight:900;font-size:20px;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;">munu<span style="color:#F1B7F2;">.</span></span>
   </div>
   <button class="tab-btn active" onclick="switchTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn" id="tab-btn-opshealth" style="display:none" onclick="switchTab('opshealth', this)">Operations</button>
   <button class="tab-btn" onclick="switchTab('planner', this)">My Planner</button>
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
-  <button class="tab-btn" id="tab-btn-calendar" style="display:none" onclick="switchTab('calendar', this)">Calendar</button>
   <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">Tickets</button>
-  <button class="tab-btn" id="tab-btn-opshealth" style="display:none" onclick="switchTab('opshealth', this)">Operations</button>
   <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">Feedback</button>
   <button class="tab-btn" id="tab-btn-reports" style="display:none" onclick="switchTab('reports', this)">Reports</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">Settings</button>
@@ -2064,29 +2063,6 @@ window.tryUnlock = async function() {
   </div>
 </div>
 
-<!-- CALENDAR TAB -->
-<div id="tab-calendar" class="tab-content">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="cal-toolbar-left">
-        <button class="cal-today-btn" onclick="calGoToday()">Today</button>
-        <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
-        <button class="cal-nav-btn" onclick="calNav(1)">›</button>
-        <span class="cal-range-label" id="cal-range-label"></span>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <div class="cal-view-toggle">
-        <button class="cal-view-btn" id="cal-view-week" onclick="setCalView('week')">Week</button>
-        <button class="cal-view-btn" id="cal-view-day" onclick="setCalView('day')">Day</button>
-        <button class="cal-view-btn active" id="cal-view-month" onclick="setCalView('month')">Month</button>
-      </div>
-      <button class="cal-sync-btn" onclick="refreshOutlookCal()">↻ Sync Outlook</button>
-      <button class="cal-sync-btn" onclick="showCalSetup()" id="cal-setup-btn" style="color:var(--text3);">⚙ Setup</button>
-    </div>
-  </div>
-  <div id="cal-tab-body"></div>
-</div>
 
 <!-- FEEDBACK TAB -->
 <div id="tab-feedback" class="tab-content">
@@ -2582,7 +2558,6 @@ function switchTab(name, btn) {
   if (name === 'settings') { initSettingsTab(); }
   if (name === 'schedule') { renderSchedule(); }
   if (name === 'dashboard') { renderDashboard(); }
-  if (name === 'calendar') { initCalTab(); }
   if (name === 'onetoone') { renderOtoTab(); }
   const reportsBtn = document.getElementById('tab-btn-reports');
   if (reportsBtn) reportsBtn.style.display = (isAdmin() || hasPrivilege('manager_view')) ? '' : 'none';
@@ -8344,139 +8319,96 @@ function renderReportsTab() {
   const root = document.getElementById('reports-root');
   if (!root) return;
   root.innerHTML = '';
-  root.style.cssText = 'display:flex;flex-direction:column;min-height:calc(100vh - 52px);';
+  root.style.cssText = 'display:flex;flex-direction:column;height:100%;min-height:0;';
 
-  // ── Top bar ──────────────────────────────────────────────────
+  // ── Topbar ───────────────────────────────────────────────────
   const topbar = document.createElement('div');
-  topbar.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;flex-wrap:wrap;';
+  topbar.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;flex-wrap:wrap;';
 
-  // Title
-  const titleWrap = document.createElement('div'); titleWrap.style.cssText='display:flex;flex-direction:column;margin-right:8px;';
-  const title = document.createElement('div'); title.style.cssText="font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.02em;"; title.textContent='Reports';
-  const subtitle = document.createElement('div'); subtitle.style.cssText='font-size:10px;color:var(--text3);margin-top:1px;'; subtitle.textContent='Generate and export team performance reports';
-  titleWrap.appendChild(title); titleWrap.appendChild(subtitle);
-  topbar.appendChild(titleWrap);
+  const titleEl = document.createElement('div');
+  titleEl.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:15px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-right:6px;";
+  titleEl.textContent = 'Reports';
+  topbar.appendChild(titleEl);
 
-  // Divider
-  const div1 = document.createElement('div'); div1.style.cssText='width:1px;height:32px;background:var(--border);'; topbar.appendChild(div1);
+  const sep1 = document.createElement('div'); sep1.style.cssText='width:1px;height:24px;background:var(--border);'; topbar.appendChild(sep1);
 
-  // Period label
-  const periodLabel = document.createElement('div'); periodLabel.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);white-space:nowrap;'; periodLabel.textContent='Period';
-  topbar.appendChild(periodLabel);
-
-  // Month quick-select buttons
-  const prevMonth = new Date(); prevMonth.setDate(1); prevMonth.setMonth(prevMonth.getMonth()-1);
+  // Date inputs
   const fromInput = document.createElement('input'); fromInput.type='date';
-  fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 10px;outline:none;transition:border-color 0.15s;';
-  fromInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
-  fromInput.onfocus = () => fromInput.style.borderColor = 'var(--cal-text)';
-  fromInput.onblur  = () => fromInput.style.borderColor = '';
-
+  fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;';
   const toSep = document.createElement('span'); toSep.style.cssText='font-size:11px;color:var(--text3);'; toSep.textContent='→';
-
   const toInput = document.createElement('input'); toInput.type='date';
   toInput.style.cssText = fromInput.style.cssText;
-  toInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth()+1, 0));
-  toInput.onfocus = () => toInput.style.borderColor = 'var(--cal-text)';
-  toInput.onblur  = () => toInput.style.borderColor = '';
 
+  // Default to last month
+  const prevMonth = new Date(); prevMonth.setDate(1); prevMonth.setMonth(prevMonth.getMonth()-1);
+  fromInput.value = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
+  toInput.value   = fmtLocal(new Date(prevMonth.getFullYear(), prevMonth.getMonth()+1, 0));
   topbar.appendChild(fromInput); topbar.appendChild(toSep); topbar.appendChild(toInput);
 
   // Quick month chips
-  const chipRow = document.createElement('div'); chipRow.style.cssText='display:flex;gap:4px;';
+  const chipWrap = document.createElement('div'); chipWrap.style.cssText='display:flex;gap:4px;';
   for (let i=1; i<=4; i++) {
     const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-i);
     const chip = document.createElement('button');
-    chip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);letter-spacing:0.04em;transition:all 0.15s;white-space:nowrap;';
+    chip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);letter-spacing:0.04em;white-space:nowrap;';
     chip.textContent = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}).toUpperCase();
-    chip.onmouseover = () => { chip.style.borderColor='var(--cal-text)'; chip.style.color='var(--cal-text)'; };
-    chip.onmouseout  = () => { chip.style.borderColor='var(--border)'; chip.style.color='var(--text3)'; };
     chip.onclick = () => {
       fromInput.value = fmtLocal(new Date(d.getFullYear(), d.getMonth(), 1));
       toInput.value   = fmtLocal(new Date(d.getFullYear(), d.getMonth()+1, 0));
-      const active = chipRow.querySelector('[data-active]');
-      if (active) { active.style.borderColor='var(--border)'; active.style.color='var(--text3)'; active.style.background='none'; delete active.dataset.active; }
-      chip.style.borderColor='var(--cal-text)'; chip.style.color='var(--cal-text)'; chip.style.background='rgba(77,171,247,0.08)'; chip.dataset.active='1';
+      chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; b.style.borderColor='var(--border)'; });
+      chip.style.background='rgba(77,171,247,0.1)'; chip.style.color='var(--cal-text)'; chip.style.borderColor='var(--cal-text)';
+      genBtn.click();
     };
-    chipRow.appendChild(chip);
+    chipWrap.appendChild(chip);
   }
-  // Mark first chip active by default
-  chipRow.firstChild.click();
-  topbar.appendChild(chipRow);
+  chipWrap.firstChild.click(); // default to last month
+  topbar.appendChild(chipWrap);
 
-  // Spacer
   const spacer = document.createElement('div'); spacer.style.flex='1'; topbar.appendChild(spacer);
 
   // Export buttons
-  const exportBar = document.createElement('div'); exportBar.className='report-export-bar'; exportBar.style.cssText='display:flex;gap:6px;align-items:center;';
-
   const printBtn = document.createElement('button');
-  printBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);display:flex;align-items:center;gap:6px;transition:all 0.15s;letter-spacing:-0.01em;";
-  printBtn.innerHTML='<span>🖨</span> Print / PDF';
-  printBtn.onmouseover=()=>{printBtn.style.borderColor='var(--border2)';};
-  printBtn.onmouseout=()=>{printBtn.style.borderColor='var(--border)';};
-  printBtn.onclick=()=>window.print();
+  printBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);";
+  printBtn.innerHTML='🖨 Print / PDF'; printBtn.onclick=()=>window.print();
 
   const csvBtn = document.createElement('button');
-  csvBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;display:flex;align-items:center;gap:6px;transition:opacity 0.15s;letter-spacing:-0.01em;";
-  csvBtn.innerHTML='<span>⬇</span> Export CSV';
-  csvBtn.onmouseover=()=>csvBtn.style.opacity='0.85';
-  csvBtn.onmouseout=()=>csvBtn.style.opacity='1';
-  csvBtn.onclick=()=>{ const el=document.getElementById('report-csv-download'); if(el) el.click(); };
+  csvBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;";
+  csvBtn.innerHTML='⬇ CSV'; csvBtn.onclick=()=>{ const el=document.getElementById('report-csv-download'); if(el) el.click(); };
 
-  exportBar.appendChild(printBtn); exportBar.appendChild(csvBtn);
-  topbar.appendChild(exportBar);
-
-  // Generate button
   const genBtn = document.createElement('button');
-  genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;padding:8px 20px;border-radius:8px;cursor:pointer;border:none;background:linear-gradient(135deg,#4dabf7,#339af0);color:#000743;letter-spacing:-0.01em;transition:opacity 0.15s;box-shadow:0 2px 8px rgba(77,171,247,0.3);";
+  genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:6px 16px;border-radius:8px;cursor:pointer;border:none;background:linear-gradient(135deg,#4dabf7,#339af0);color:#000743;letter-spacing:-0.01em;";
   genBtn.textContent='↻ Generate';
-  genBtn.onmouseover=()=>genBtn.style.opacity='0.9';
-  genBtn.onmouseout=()=>genBtn.style.opacity='1';
-  genBtn.onclick=()=>{
-    genBtn.textContent='⟳ Generating…'; genBtn.style.opacity='0.7';
+  genBtn.onclick = () => {
+    genBtn.textContent='⟳…'; genBtn.disabled=true;
     setTimeout(()=>{
       generateReport(fromInput.value, toInput.value, reportBody);
-      genBtn.textContent='↻ Generate'; genBtn.style.opacity='1';
+      genBtn.textContent='↻ Generate'; genBtn.disabled=false;
     }, 50);
   };
-  topbar.appendChild(genBtn);
-  root.appendChild(topbar);
 
-  // ── Status bar ───────────────────────────────────────────────
-  const statusBar = document.createElement('div');
-  statusBar.id = 'report-status-bar';
-  statusBar.style.cssText = 'padding:8px 24px;background:rgba(77,171,247,0.05);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;';
-  const statusDot = document.createElement('span'); statusDot.style.cssText='width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;';
-  const statusText = document.createElement('span'); statusText.id='report-status-text'; statusText.style.cssText='font-size:11px;color:var(--text3);'; statusText.textContent='Ready to generate';
-  const statusPeriod = document.createElement('span'); statusPeriod.id='report-status-period'; statusPeriod.style.cssText='font-size:11px;font-weight:600;color:var(--text2);margin-left:auto;';
-  statusBar.appendChild(statusDot); statusBar.appendChild(statusText); statusBar.appendChild(statusPeriod);
-  root.appendChild(statusBar);
+  topbar.appendChild(printBtn); topbar.appendChild(csvBtn); topbar.appendChild(genBtn);
+  root.appendChild(topbar);
 
   // ── Report body ──────────────────────────────────────────────
   const reportBody = document.createElement('div');
   reportBody.id = 'report-body';
-  reportBody.style.cssText = 'flex:1;overflow-y:auto;padding:32px;';
+  reportBody.style.cssText = 'flex:1;overflow-y:auto;padding:28px 32px;';
 
-  // Empty state
-  const emptyState = document.createElement('div'); emptyState.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:16px;';
-  const emptyIcon = document.createElement('div'); emptyIcon.style.cssText='font-size:48px;opacity:0.3;'; emptyIcon.textContent='📊';
-  const emptyTitle = document.createElement('div'); emptyTitle.style.cssText="font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;color:var(--text3);letter-spacing:-0.02em;"; emptyTitle.textContent='No report generated yet';
-  const emptyDesc = document.createElement('div'); emptyDesc.style.cssText='font-size:12px;color:var(--text3);text-align:center;max-width:300px;line-height:1.6;'; emptyDesc.textContent='Select a period above and click Generate to build your report.';
-  const emptyBtn = document.createElement('button'); emptyBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:12px;font-weight:900;padding:10px 24px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;margin-top:8px;";
-  emptyBtn.textContent='Generate report'; emptyBtn.onclick=()=>genBtn.click();
-  emptyState.appendChild(emptyIcon); emptyState.appendChild(emptyTitle); emptyState.appendChild(emptyDesc); emptyState.appendChild(emptyBtn);
-  reportBody.appendChild(emptyState);
+  const loadingState = document.createElement('div');
+  loadingState.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:12px;';
+  loadingState.innerHTML='<div style="font-size:28px;animation:spin 1s linear infinite;">⟳</div><div style="font-size:13px;font-weight:600;color:var(--text3);">Loading report…</div>';
+  reportBody.appendChild(loadingState);
   root.appendChild(reportBody);
 
-  // ── Print tip note (hidden in screen) ────────────────────────
-  const note = document.createElement('div'); note.className='report-export-bar';
-  note.style.cssText='padding:10px 24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);flex-shrink:0;';
-  note.textContent='PDF tip: use browser Print → Save as PDF, set margins to None for best results';
+  // Print tip
+  const note = document.createElement('div');
+  note.className = 'report-export-bar';
+  note.style.cssText='padding:8px 24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);flex-shrink:0;';
+  note.textContent='PDF: browser Print → Save as PDF, margins None for best results';
   root.appendChild(note);
 
-  // Auto-generate
-  setTimeout(() => genBtn.click(), 100);
+  // Auto-generate on open
+  setTimeout(() => genBtn.click(), 80);
 }
 
 async function generateReport(fromDate, toDate, container) {
@@ -8529,6 +8461,7 @@ async function generateReport(fromDate, toDate, container) {
 
   const agentCalls  = getAgentCallStats(fromDate, toDate);
   const decisionsInRange = (()=>{ try{return JSON.parse(localStorage.getItem('wtp_decisions')||'[]').filter(d=>d.date>=fromDate&&d.date<=toDate);}catch{return [];} })();
+  const openPendingForSummary = zdAgents ? zdAgents.reduce(function(s,a){return s+((zdData[a.id]&&zdData[a.id].open||0)+(zdData[a.id]&&zdData[a.id].pending||0));},0) : 0;
   const daysInPeriod = Math.max(Math.round((toD-fromD)/86400000)+1,1);
 
   // ── ZD data ─────────────────────────────────────────────────
@@ -8709,6 +8642,25 @@ async function generateReport(fromDate, toDate, container) {
   // ── SECTION 1: EXECUTIVE SUMMARY ─────────────────────────────
   const s1=mkSection('1','Executive summary');
   const hasZD = zd.totalSolved !== undefined;
+
+  // Plain-language summary sentence
+  if (hasZD && uTotalOff > 0) {
+    const summaryEl = mk('div');
+    summaryEl.style.cssText = 'font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;padding:12px 16px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--cal-text);';
+    const emailPct = zd.emailTotal+zd.phoneTotal > 0 ? Math.round(zd.emailTotal/(zd.emailTotal+zd.phoneTotal)*100) : null;
+    const cycleRag = (openPendingForSummary > 60 || (emailPct !== null && emailPct < 30)) ? 'red' : (openPendingForSummary > 30 || (emailPct !== null && emailPct < 50)) ? 'amber' : 'green';
+    const cycleIcon = cycleRag==='red'?'🔴':cycleRag==='amber'?'🟡':'🟢';
+    summaryEl.innerHTML = '<strong>'+monthLabel+'</strong> — '
+      +'Team solved <strong>'+zd.totalSolved+'</strong> tickets ('+zd.dailyAvg+'/day avg) '
+      +(emailPct!==null?'with a <strong>'+emailPct+'% email / '+(100-emailPct)+'% phone</strong> channel split. ':'')
+      +'Answer rate was <strong>'+(uAnsRate!=null?uAnsRate+'%':'—')+'</strong> across '
+      +'<strong>'+uTotalOff+'</strong> calls. '
+      +(zd.csatPct!=null?'CSAT: <strong>'+zd.csatPct+'%</strong>. ':'')
+      +'Avg resolution time: <strong>'+fmtD(zd.mttrMean)+'</strong>. '
+      +cycleIcon+' Operations cycle: <strong>'+(cycleRag==='red'?'Active pressure — email backlog driving calls':cycleRag==='amber'?'Warning signs — monitor queue':'Healthy')+'</strong>.';
+    s1.appendChild(summaryEl);
+  }
+
   if (hasZD) {
     s1.appendChild(mkKpiGrid([
       {val:zd.totalSolved,        label:'Tickets solved',    color:'var(--low-text)',   sub:zd.dailyAvg+'/day avg'},
@@ -8849,7 +8801,15 @@ async function generateReport(fromDate, toDate, container) {
         {text:String(workDays)},
         {text:absDays>0?String(absDays):'—',color:absDays>3?'var(--high-text)':'var(--text2)'},
       ]);
-    s4.appendChild(mkTable(['Agent','Solved','CSAT','Calls ans.','Avg talk','Ans rate','Days worked','Days absent'],agentRows,['l','r','r','r','r','r','r','r']));
+    // Re-map rows to include email/phone split
+    const agentRowsWithChannel = agentRows.map((row, i) => {
+      const zdName = [...allAgentNames][i];
+      const em = zd.agentEmail?.[zdName]; const ph = zd.agentPhone?.[zdName];
+      const emailCell = em!=null ? {text:String(em), color:'var(--cal-text)'} : '—';
+      const phoneCell = ph!=null ? {text:String(ph), color:'var(--med-text)'} : '—';
+      return [...row.slice(0,2), emailCell, phoneCell, ...row.slice(2)];
+    });
+    s4.appendChild(mkTable(['Agent','Solved','Email','Phone','CSAT','Calls ans.','Avg talk','Ans rate','Days worked','Days absent'],agentRowsWithChannel,['l','r','r','r','r','r','r','r','r','r']));
     if(!Object.keys(agentCalls).length){s4.appendChild(mk('div','report-note','Call data not available — import calls report in Settings to see per-agent call stats.'));}
   } else {
     s4.appendChild(mk('div','report-note','No agent data available for this period.'));
