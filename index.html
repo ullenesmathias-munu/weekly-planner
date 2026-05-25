@@ -7487,6 +7487,63 @@ function _fetchWeather(targetEl) {
   })();
 }
 
+function _renderWeatherCards(data, el) {
+  const timeseries = data?.properties?.timeseries || [];
+  if (!timeseries.length) return;
+  const symbolEmoji = (code) => {
+    if (!code) return '🌡';
+    if (code.includes('clearsky'))     return '☀️';
+    if (code.includes('fair'))         return '🌤';
+    if (code.includes('partlycloudy')) return '⛅';
+    if (code.includes('cloudy'))       return '☁️';
+    if (code.includes('fog'))          return '🌫';
+    if (code.includes('heavyrain') || code.includes('heavysleet')) return '🌧';
+    if (code.includes('rain') || code.includes('sleet')) return '🌦';
+    if (code.includes('snow'))         return '🌨';
+    if (code.includes('thunder'))      return '⛈';
+    return '🌡';
+  };
+  const now = new Date();
+  const slots = [];
+  for (const ts of timeseries) {
+    const t = new Date(ts.time);
+    if (t < now) continue;
+    if (slots.length === 0 || (t - slots[slots.length-1].t) >= 2.5 * 3600000) {
+      const d = ts.data;
+      slots.push({ t, temp: d?.instant?.details?.air_temperature, wind: d?.instant?.details?.wind_speed,
+        symbol: d?.next_1_hours?.summary?.symbol_code || d?.next_6_hours?.summary?.symbol_code,
+        precip: d?.next_1_hours?.details?.precipitation_amount ?? d?.next_6_hours?.details?.precipitation_amount });
+      if (slots.length >= 5) break;
+    }
+  }
+  el.innerHTML = '';
+  const loc = document.createElement('span');
+  loc.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(214,243,255,0.4);margin-right:4px;white-space:nowrap;align-self:center;';
+  loc.textContent = 'Stavanger'; el.appendChild(loc);
+  slots.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.06);min-width:48px;';
+    const timeLbl = document.createElement('div');
+    timeLbl.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;';
+    timeLbl.textContent = i === 0 ? 'Now' : s.t.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+    const ico = document.createElement('div'); ico.style.cssText = 'font-size:18px;line-height:1.2;'; ico.textContent = symbolEmoji(s.symbol);
+    const tmp = document.createElement('div'); tmp.style.cssText = 'font-size:12px;font-weight:700;color:rgba(214,243,255,0.9);';
+    tmp.textContent = s.temp != null ? Math.round(s.temp) + '°' : '—';
+    card.appendChild(timeLbl); card.appendChild(ico); card.appendChild(tmp);
+    if (s.wind != null || (s.precip != null && s.precip > 0)) {
+      const sub = document.createElement('div'); sub.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.4);';
+      const parts = [];
+      if (s.wind != null) parts.push(Math.round(s.wind) + 'm/s');
+      if (s.precip != null && s.precip > 0) parts.push(s.precip.toFixed(1) + 'mm');
+      sub.textContent = parts.join(' · '); card.appendChild(sub);
+    }
+    el.appendChild(card);
+  });
+  const attr = document.createElement('a'); attr.href = 'https://www.yr.no'; attr.target = '_blank'; attr.rel = 'noopener';
+  attr.style.cssText = 'font-size:9px;color:rgba(214,243,255,0.25);text-decoration:none;align-self:flex-end;margin-left:4px;white-space:nowrap;';
+  attr.textContent = 'yr.no'; el.appendChild(attr);
+}
+
 function renderNonAdminBriefing(panel) {
   const todayStr = localToday();
   const hr = new Date().getHours();
