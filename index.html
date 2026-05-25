@@ -8229,6 +8229,13 @@ async function renderOpsContent(fromDate, toDate, container) {
   container.appendChild(tGrid);
 
   // ── 2. Agent scorecard ───────────────────────────────────────────
+  // Determine if we can use saved snapshot data for past weeks
+  const _pDate = new Date(fromDate+'T00:00:00'); _pDate.setDate(_pDate.getDate() - ((_pDate.getDay()+6)%7));
+  const periodMonday = fmtLocal(_pDate);
+  const savedSnap = getWeeklySnapshot(periodMonday);
+  const isCurrentWeek = periodMonday === fmtLocal(getMonday(0));
+  const useSnap = !isCurrentWeek && savedSnap && savedSnap.agents;
+
   const snapNote = useSnap
     ? '<span style="font-size:10px;font-weight:400;color:var(--low-text);margin-left:6px;">✓ from saved snapshot</span>'
     : (!isCurrentWeek ? '<span style="font-size:10px;font-weight:400;color:#ffb74d;margin-left:6px;">⚠ no snapshot — load Tickets tab for this week first</span>' : '');
@@ -8288,15 +8295,6 @@ async function renderOpsContent(fromDate, toDate, container) {
     const pct = Math.round((mainMetricLatest - mainMetricAvg) / mainMetricAvg * 100);
     return { pct, arrow: pct >= 10 ? '↑' : pct <= -10 ? '↓' : '→', color: pct >= 10 ? 'var(--low-text)' : pct <= -10 ? 'var(--high-text)' : '#ffb74d' };
   };
-
-  // Determine if the selected period matches a saved snapshot
-  // If so, use snapshot data instead of requiring a live ZD fetch
-  const _pDate = new Date(fromDate+'T00:00:00'); _pDate.setDate(_pDate.getDate() - ((_pDate.getDay()+6)%7));
-  const periodMonday = fmtLocal(_pDate);
-  const savedSnap = getWeeklySnapshot(periodMonday);
-  const isCurrentWeek = periodMonday === fmtLocal(getMonday(0));
-  // Use live zdData for current week (most up to date), snapshot for past weeks
-  const useSnap = !isCurrentWeek && savedSnap && savedSnap.agents;
 
   const agentData = MY_TEAM.map(name => {
     const cs = resolveAgentCallStats(name, callStats) || {};
@@ -11079,6 +11077,11 @@ function zdRender(agents, fromDate, toDate) {
     bar.appendChild(mkPill(uAR+'%', 'Answer rate', uAR>=90?'var(--low-text)':uAR>=80?'var(--med-text)':'var(--high-text)'));
   }
   // ── Unassigned group tickets — async fetch ────────────────────
+  const unassignedPill = mkPill('…', 'Unassigned', 'var(--high-text)');
+  unassignedPill.style.border = '1px solid rgba(239,83,80,0.3)';
+  unassignedPill.style.background = 'rgba(239,83,80,0.05)';
+  bar.appendChild(unassignedPill);
+
   (async()=>{
     try {
       let gId = zdGroupId;
