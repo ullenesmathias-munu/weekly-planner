@@ -302,25 +302,6 @@
       "done": false,
       "colour": "",
       "reminder": ""
-    },
-    {
-      "id": "1779685073522.647",
-      "day": "Monday",
-      "title": "Approve Hours POGO",
-      "priority": "",
-      "due": "",
-      "note": "Remember to add hours in POGO.",
-      "people": [],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "recurringFrom": "1777282594906",
-      "weekStamp": "2026-05-25",
-      "colour": "red",
-      "pendingName": "",
-      "reminder": "",
-      "done": false
     }
   ],
   "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
