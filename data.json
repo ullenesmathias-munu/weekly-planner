@@ -8547,7 +8547,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-26",
-    "generated": "2026-05-26T06:15:55.400Z",
+    "generated": "2026-05-26T06:16:26.420Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -10239,7 +10239,7 @@
           "name": "Benjamin",
           "shifts": [
             "H",
-            "SO",
+            "ABS",
             "D3 (9-17)",
             "D3 (9-17)",
             "D3 (9-17)",
