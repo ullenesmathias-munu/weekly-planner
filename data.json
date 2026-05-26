@@ -8788,13 +8788,13 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-26T21:31:18.148Z",
+    "generated": "2026-05-26T21:32:10.947Z",
     "agents": {
       "Jonas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "answered": 21,
+        "missed": 1,
+        "avgTalk": 420,
+        "avgWait": 151,
         "zdSolved": 21,
         "isNight": false,
         "nightDays": 0,
@@ -8819,10 +8819,10 @@
         "zdPending": 0
       },
       "Maylen": {
-        "answered": 0,
+        "answered": 12,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "avgTalk": 411,
+        "avgWait": 236,
         "zdSolved": 20,
         "isNight": false,
         "nightDays": 0,
@@ -8861,10 +8861,10 @@
         "zdPending": 0
       },
       "Cecilie": {
-        "answered": 3,
+        "answered": 14,
         "missed": 0,
-        "avgTalk": 518,
-        "avgWait": 14,
+        "avgTalk": 404,
+        "avgWait": 16,
         "zdSolved": 22,
         "isNight": true,
         "nightDays": 4,
@@ -8889,10 +8889,10 @@
         "zdPending": 0
       },
       "Marie": {
-        "answered": 19,
+        "answered": 38,
         "missed": 0,
-        "avgTalk": 174,
-        "avgWait": 15,
+        "avgTalk": 274,
+        "avgWait": 22,
         "zdSolved": 28,
         "isNight": false,
         "nightDays": 0,
@@ -8903,10 +8903,10 @@
         "zdPending": 8
       },
       "Andreas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "answered": 19,
+        "missed": 2,
+        "avgTalk": 483,
+        "avgWait": 104,
         "zdSolved": 39,
         "isNight": false,
         "nightDays": 0,
@@ -8931,10 +8931,10 @@
         "zdPending": 0
       },
       "Vetle": {
-        "answered": 0,
+        "answered": 1,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "avgTalk": 485,
+        "avgWait": 3,
         "zdSolved": 4,
         "isNight": false,
         "nightDays": 0,
@@ -8946,11 +8946,11 @@
       }
     },
     "totals": {
-      "offered": 23,
-      "answered": 22,
-      "missed": 1,
-      "ansRate": 96,
-      "avgWait": 15
+      "offered": 119,
+      "answered": 105,
+      "missed": 14,
+      "ansRate": 88,
+      "avgWait": 92
     }
   },
   "wtp_schedule": [
