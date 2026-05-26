@@ -8291,6 +8291,20 @@
         "totalWaitSec": 38,
         "missed": 0
       }
+    },
+    "2026-05-25": {
+      "Cecilie Steinkopf": {
+        "answered": 3,
+        "totalTalkSec": 1554,
+        "totalWaitSec": 42,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 19,
+        "totalTalkSec": 3298,
+        "totalWaitSec": 276,
+        "missed": 0
+      }
     }
   },
   "wtp_mood_vetle.bengtson@munu.cloud": [
