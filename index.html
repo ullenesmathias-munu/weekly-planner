@@ -7771,12 +7771,38 @@ function settingsNav(section, btn) {
   document.querySelectorAll('.settings-section[data-section]').forEach(el => {
     el.style.display = el.dataset.section === section ? '' : 'none';
   });
+  // Show admin-only cards in Data section
+  if (section === 'data' && isAdmin()) {
+    const uCard = document.getElementById('unifon-settings-card');
+    const uApi  = document.getElementById('unifon-api-card');
+    const uMap  = document.getElementById('unifon-map-card');
+    if (uCard) uCard.style.display = '';
+    if (uApi)  uApi.style.display  = '';
+    if (uMap)  { uMap.style.display = ''; renderUnifonMappingSettings(); }
+    // Populate unifon settings body if empty
+    const body = document.getElementById('unifon-settings-body');
+    if (body && !body.children.length) renderUnifonSettings(body);
+  }
+  // Show admin-only cards in Integrations section
+  if (section === 'integrations' && isAdmin()) {
+    const zdCard = document.getElementById('zd-settings-card');
+    if (zdCard) zdCard.style.display = '';
+  }
 }
 
 function renderSettings() {
   // Show account section by default
   const firstBtn = document.querySelector('.settings-nav-item');
   settingsNav('account', firstBtn);
+}
+
+
+// --- ANNOUNCEMENT STORAGE --------------------------------------------
+function loadAnnouncements() {
+  try { return JSON.parse(localStorage.getItem('wtp_announcements') || '[]'); } catch { return []; }
+}
+function saveAnnouncements(items) {
+  localStorage.setItem('wtp_announcements', JSON.stringify(items)); scheduleSyncSave();
 }
 
 
