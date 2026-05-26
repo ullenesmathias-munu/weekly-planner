@@ -7706,6 +7706,136 @@ const loadFbPosts  = (name) => { try { return JSON.parse(localStorage.getItem('w
 const saveFbPosts  = (name, posts) => { localStorage.setItem('wtp_fb_' + normalizeKey(name), JSON.stringify(posts)); scheduleSyncSave(); };
 const fbLastSeenKey = (name) => 'wtp_fb_seen_' + normalizeKey(name);
 const fbGetLastSeen = (name) => parseInt(localStorage.getItem(fbLastSeenKey(name)) || '0');
+// --- CORE UTILITY FUNCTIONS -------------------------------------------
+function normalizeKey(str) {
+  return (str||'').toLowerCase().replace(/[^a-z0-9]/g,'_');
+}
+
+function confirmDialog(message, onConfirm, confirmLabel) {
+  const ex = document.getElementById('confirm-dialog-overlay');
+  if (ex) ex.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'confirm-dialog-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  const box = document.createElement('div');
+  box.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;max-width:360px;width:90%;';
+  const msg = document.createElement('div');
+  msg.style.cssText = 'font-size:14px;color:var(--text);margin-bottom:20px;line-height:1.5;';
+  msg.textContent = message;
+  const btns = document.createElement('div');
+  btns.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
+  const cancel = document.createElement('button');
+  cancel.style.cssText = 'font-family:inherit;font-size:13px;padding:7px 16px;border-radius:var(--radius-md);border:1px solid var(--border);background:none;color:var(--text);cursor:pointer;';
+  cancel.textContent = 'Cancel'; cancel.onclick = () => overlay.remove();
+  const ok = document.createElement('button');
+  ok.style.cssText = 'font-family:inherit;font-size:13px;font-weight:700;padding:7px 16px;border-radius:var(--radius-md);border:none;background:var(--high-text);color:#fff;cursor:pointer;';
+  ok.textContent = confirmLabel || 'Confirm';
+  ok.onclick = () => { overlay.remove(); onConfirm(); };
+  btns.appendChild(cancel); btns.appendChild(ok);
+  box.appendChild(msg); box.appendChild(btns);
+  overlay.appendChild(box);
+  overlay.onclick = e => { if (e.target === overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+function fmtTenure(startDateStr) {
+  if (!startDateStr) return null;
+  const start = new Date(startDateStr + 'T00:00:00');
+  if (isNaN(start)) return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  if (start > now) {
+    const days = Math.round((start - now) / 86400000);
+    if (days <= 1) return 'Starts tomorrow';
+    if (days <= 14) return 'Starts in ' + days + ' days';
+    const wks = Math.round(days / 7);
+    if (wks <= 8) return 'Starts in ' + wks + (wks===1?' week':' weeks');
+    const mo2 = Math.round(days / 30);
+    return 'Starts in ' + mo2 + (mo2===1?' month':' months');
+  }
+  let yrs = now.getFullYear() - start.getFullYear();
+  let mos = now.getMonth() - start.getMonth();
+  if (mos < 0) { yrs--; mos += 12; }
+  if (yrs < 0) return null;
+  if (yrs === 0 && mos === 0) return 'Just started';
+  if (yrs === 0) return mos + (mos===1?' month':' months');
+  if (mos === 0) return yrs + (yrs===1?' year':' years');
+  return yrs + (yrs===1?' yr':' yrs') + ' ' + mos + (mos===1?' mo':' mo');
+}
+
+// --- REPORTS TAB -------------------------------------------------------
+function renderReportsTab() {
+  const root = document.getElementById('reports-root');
+  if (!root) return;
+  root.innerHTML = '';
+  root.style.cssText = 'display:flex;flex-direction:column;height:100%;min-height:0;';
+  const topbar = document.createElement('div');
+  topbar.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;flex-wrap:wrap;';
+  const titleEl = document.createElement('div');
+  titleEl.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:15px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-right:6px;";
+  titleEl.textContent = 'Reports'; topbar.appendChild(titleEl);
+  const fromInput = document.createElement('input'); fromInput.type='date';
+  fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;';
+  const toSep = document.createElement('span'); toSep.style.cssText='font-size:11px;color:var(--text3);'; toSep.textContent='to';
+  const toInput = document.createElement('input'); toInput.type='date'; toInput.style.cssText = fromInput.style.cssText;
+  const pm = new Date(); pm.setDate(1); pm.setMonth(pm.getMonth()-1);
+  fromInput.value = fmtLocal(new Date(pm.getFullYear(), pm.getMonth(), 1));
+  toInput.value   = fmtLocal(new Date(pm.getFullYear(), pm.getMonth()+1, 0));
+  topbar.appendChild(fromInput); topbar.appendChild(toSep); topbar.appendChild(toInput);
+  const chipWrap = document.createElement('div'); chipWrap.style.cssText='display:flex;gap:4px;';
+  const genBtn = document.createElement('button');
+  genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:6px 16px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;";
+  genBtn.textContent='Generate';
+  for (let i=1; i<=4; i++) {
+    const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-i);
+    const chip = document.createElement('button');
+    chip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);';
+    chip.textContent = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}).toUpperCase();
+    chip.dataset.yr = d.getFullYear(); chip.dataset.mo = d.getMonth();
+    chip.onclick = () => {
+      const yr = +chip.dataset.yr, mo = +chip.dataset.mo;
+      fromInput.value = fmtLocal(new Date(yr, mo, 1));
+      toInput.value   = fmtLocal(new Date(yr, mo+1, 0));
+      chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; });
+      chip.style.background='rgba(77,171,247,0.1)'; chip.style.color='var(--cal-text)';
+      genBtn.click();
+    };
+    chipWrap.appendChild(chip);
+  }
+  topbar.appendChild(chipWrap);
+  const spacer = document.createElement('div'); spacer.style.flex='1'; topbar.appendChild(spacer);
+  const printBtn = document.createElement('button');
+  printBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);";
+  printBtn.textContent='Print / PDF'; printBtn.onclick=()=>window.print();
+  genBtn.onclick = () => {
+    genBtn.textContent='...'; genBtn.disabled=true;
+    setTimeout(()=>{ generateReport(fromInput.value, toInput.value, reportBody); genBtn.textContent='Generate'; genBtn.disabled=false; }, 50);
+  };
+  topbar.appendChild(printBtn); topbar.appendChild(genBtn);
+  root.appendChild(topbar);
+  const reportBody = document.createElement('div');
+  reportBody.id = 'report-body';
+  reportBody.style.cssText = 'flex:1;overflow-y:auto;padding:28px 32px;';
+  reportBody.innerHTML = '<div style="padding:60px;text-align:center;font-size:13px;color:var(--text3);">Select a period and click Generate</div>';
+  root.appendChild(reportBody);
+  const note = document.createElement('div');
+  note.style.cssText='padding:8px 24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);flex-shrink:0;';
+  note.textContent='PDF: browser Print, Save as PDF, margins None';
+  root.appendChild(note);
+  if (chipWrap.firstChild) chipWrap.firstChild.click();
+}
+
+// --- SETTINGS TAB -------------------------------------------------------
+function renderSettingsTab() { initSettingsTab(); }
+
+function initSettingsTab() {
+  const root = document.getElementById('settings-root');
+  if (!root || !currentUser) return;
+  if (typeof renderSettings === 'function') { renderSettings(); return; }
+  root.innerHTML = '<div style="padding:32px;font-size:13px;color:var(--text3);">Settings loading...</div>';
+  setTimeout(() => { if (typeof renderSettings === 'function') renderSettings(); }, 300);
+}
+
+
 function fbMarkSeen(name) {
   const posts = loadFbPosts(name);
   if (posts.length) localStorage.setItem(fbLastSeenKey(name), String(new Date(posts[posts.length-1].ts).getTime() || Date.now()));
