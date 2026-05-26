@@ -7357,6 +7357,302 @@ function renderActionsOverview(container) {
   container.appendChild(section);
 }
 
+// ─── OTO DATA HELPERS ──────────────────────────────────────────────
+function getOtoData() {
+  try {
+    // Try admin-keyed storage first (current format)
+    const adminUser = getUsers().find(u => u.isAdmin);
+    const key = adminUser ? 'wtp_oto_' + adminUser.name.toLowerCase() : 'wtp_oto_data';
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    if (!data.sessions) data.sessions = [];
+    if (!data.notes) data.notes = {};
+    if (!data.people) data.people = MY_TEAM.map(name => ({ name }));
+    return data;
+  } catch { return { sessions: [], notes: {}, people: MY_TEAM.map(name => ({ name })) }; }
+}
+
+function saveOtoData(data) {
+  const adminUser = getUsers().find(u => u.isAdmin);
+  const key = adminUser ? 'wtp_oto_' + adminUser.name.toLowerCase() : 'wtp_oto_data';
+  localStorage.setItem(key, JSON.stringify(data));
+  scheduleSyncSave();
+}
+
+function loadProfile(name) {
+  try { return JSON.parse(localStorage.getItem('wtp_profile_' + normalizeKey(name)) || '{}'); } catch { return {}; }
+}
+function saveProfile(name, data) {
+  localStorage.setItem('wtp_profile_' + normalizeKey(name), JSON.stringify(data)); scheduleSyncSave();
+}
+
+// ─── OTO TAB RENDERING ─────────────────────────────────────────────
+let otoPerson = null;
+
+function renderOtoTab() {
+  const sidebar = document.getElementById('oto-sidebar');
+  const main    = document.getElementById('oto-main');
+  const empty   = document.getElementById('oto-empty');
+  if (!sidebar || !main) return;
+  const data = getOtoData();
+  const today = localToday();
+  sidebar.innerHTML = '';
+  const hdr = document.createElement('div'); hdr.className = 'oto-sidebar-header'; hdr.textContent = 'My Team';
+  sidebar.appendChild(hdr);
+
+  MY_TEAM.forEach(name => {
+    const sessions = (data.sessions || []).filter(s => s.person === name && s.date <= today);
+    const lastDate = sessions.sort((a,b) => b.date.localeCompare(a.date))[0]?.date || null;
+    const daysSince = lastDate ? Math.floor((new Date(today+'T00:00:00') - new Date(lastDate+'T00:00:00'))/86400000) : null;
+    const profile = loadProfile(name);
+    const rag = profile.rag || 'none';
+
+    const btn = document.createElement('button'); btn.className = 'oto-person-btn';
+    if (otoPerson === name) btn.style.background = 'var(--surface2)';
+    btn.onclick = () => { otoPerson = name; renderOtoTab(); renderOtoPersonMain(name); };
+
+    const av = document.createElement('div'); av.className = 'oto-person-av';
+    av.style.background = rag==='red'?'#ef5350':rag==='amber'?'#ffb74d':rag==='green'?'#4caf50':'var(--surface3)';
+    av.textContent = name.slice(0,2).toUpperCase();
+
+    const info = document.createElement('div'); info.style.flex='1';
+    const nm = document.createElement('div'); nm.className = 'oto-person-name'; nm.textContent = name;
+    const meta = document.createElement('div'); meta.className = 'oto-person-meta';
+    meta.textContent = daysSince === null ? 'No sessions' : daysSince > 21 ? `${daysSince}d ago — overdue` : `${daysSince}d ago`;
+    if (daysSince === null || daysSince > 21) meta.style.color = 'var(--high-text)';
+    info.appendChild(nm); info.appendChild(meta);
+    btn.appendChild(av); btn.appendChild(info);
+    sidebar.appendChild(btn);
+  });
+
+  if (empty) empty.style.display = otoPerson ? 'none' : '';
+  if (otoPerson) renderOtoPersonMain(otoPerson);
+}
+
+function renderOtoPersonMain(personName) {
+  const main = document.getElementById('oto-main');
+  const empty = document.getElementById('oto-empty');
+  const sidebar = document.getElementById('oto-sidebar');
+  if (!main) return;
+  sidebar?.querySelectorAll('.oto-person-btn').forEach(b => {
+    b.style.background = b.querySelector('.oto-person-name')?.textContent === personName ? 'var(--surface2)' : '';
+  });
+  if (empty) empty.style.display = 'none';
+  main.innerHTML = '';
+  const data = getOtoData();
+  const sessions = (data.sessions||[]).filter(s=>s.person===personName).sort((a,b)=>b.date.localeCompare(a.date));
+  const profile = loadProfile(personName);
+  const today = localToday();
+
+  // Header
+  const hdr = document.createElement('div'); hdr.style.cssText = 'padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0;';
+  const av = document.createElement('div');
+  av.style.cssText = `width:44px;height:44px;border-radius:50%;background:hsl(${(personName.charCodeAt(0)*47)%360},50%,35%);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;`;
+  av.textContent = personName.slice(0,2).toUpperCase();
+  const hInfo = document.createElement('div'); hInfo.style.flex='1';
+  const nm2 = document.createElement('div');
+  nm2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.02em;";
+  nm2.textContent = personName;
+  const chipRow = document.createElement('div'); chipRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;';
+  if (profile.phone) { const c=document.createElement('a');c.href='tel:'+profile.phone;c.style.cssText='font-size:10px;color:var(--cal-text);text-decoration:none;background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent='📞 '+profile.phone;c.onclick=e=>e.stopPropagation();chipRow.appendChild(c); }
+  if (profile.email) { const c=document.createElement('a');c.href='mailto:'+profile.email;c.style.cssText='font-size:10px;color:var(--cal-text);text-decoration:none;background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent='✉ '+profile.email;c.onclick=e=>e.stopPropagation();chipRow.appendChild(c); }
+  if (profile.title) { const c=document.createElement('span');c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent=profile.title;chipRow.appendChild(c); }
+  if (profile.birthday) { const c=document.createElement('span');c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent='🎂 '+profile.birthday;chipRow.appendChild(c); }
+  hInfo.appendChild(nm2); hInfo.appendChild(chipRow);
+
+  // RAG selector
+  const ragWrap = document.createElement('div'); ragWrap.style.cssText='display:flex;gap:6px;align-items:center;';
+  ['green','amber','red'].forEach(r => {
+    const rb = document.createElement('button');
+    rb.style.cssText = `width:20px;height:20px;border-radius:50%;border:2px solid ${profile.rag===r?'white':'transparent'};cursor:pointer;background:${r==='green'?'#4caf50':r==='amber'?'#ffb74d':'#ef5350'};transition:all 0.15s;`;
+    rb.title = r; rb.onclick = () => { profile.rag=r; saveProfile(personName,profile); renderOtoTab(); renderOtoPersonMain(personName); };
+    ragWrap.appendChild(rb);
+  });
+  hdr.appendChild(av); hdr.appendChild(hInfo); hdr.appendChild(ragWrap);
+  main.appendChild(hdr);
+
+  // Tabs
+  const tabs = ['Overview','1:1 Sessions','Profile'];
+  let activeOtoTab = 'Overview';
+  const tabBar = document.createElement('div'); tabBar.style.cssText='display:flex;border-bottom:1px solid var(--border);flex-shrink:0;';
+  const body2 = document.createElement('div'); body2.style.cssText='flex:1;overflow-y:auto;';
+  main.appendChild(tabBar); main.appendChild(body2);
+
+  function switchOtoTab(tab) {
+    activeOtoTab = tab;
+    tabBar.querySelectorAll('.oto-tab-btn').forEach(b => {
+      b.style.borderBottom = b.textContent===tab ? '2px solid var(--cal-text)' : '2px solid transparent';
+      b.style.color = b.textContent===tab ? 'var(--cal-text)' : 'var(--text3)';
+    });
+    body2.innerHTML = '';
+    if (tab==='Overview') renderOtoOverview(body2);
+    else if (tab==='1:1 Sessions') renderOtoSessions(body2);
+    else if (tab==='Profile') renderOtoProfile(body2);
+  }
+
+  tabs.forEach(t => {
+    const btn = document.createElement('button'); btn.className='oto-tab-btn';
+    btn.style.cssText = `padding:10px 16px;font-family:inherit;font-size:12px;font-weight:600;background:none;border:none;border-bottom:2px solid ${t===activeOtoTab?'var(--cal-text)':'transparent'};color:${t===activeOtoTab?'var(--cal-text)':'var(--text3)'};cursor:pointer;`;
+    btn.textContent = t; btn.onclick = () => switchOtoTab(t);
+    tabBar.appendChild(btn);
+  });
+
+  function renderOtoOverview(container) {
+    container.style.cssText = 'padding:16px 20px;display:flex;flex-direction:column;gap:14px;';
+    // Prep brief
+    renderPrepBrief(personName, container);
+    // Most recent session preview
+    if (sessions.length) {
+      const s0 = sessions[0];
+      const sec = document.createElement('div'); sec.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
+      const slbl = document.createElement('div'); slbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; slbl.textContent='Last 1:1 — '+s0.date;
+      const snotes = document.createElement('div'); snotes.style.cssText='font-size:12px;color:var(--text2);line-height:1.6;white-space:pre-wrap;'; snotes.textContent=s0.notes||'(no notes)';
+      sec.appendChild(slbl); sec.appendChild(snotes);
+      if ((s0.actions||[]).length) {
+        const albl = document.createElement('div'); albl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-top:10px;margin-bottom:6px;'; albl.textContent='Action items';
+        sec.appendChild(albl);
+        s0.actions.forEach(a => {
+          const ar = document.createElement('div'); ar.style.cssText='font-size:12px;color:var(--text2);padding:2px 0;'; ar.textContent='• '+a.text; sec.appendChild(ar);
+        });
+      }
+      container.appendChild(sec);
+    }
+    // Quick wins
+    const winsKey = 'wtp_oto_quickwins_'+normalizeKey(personName);
+    const wins2 = (() => { try{return JSON.parse(localStorage.getItem(winsKey)||'[]');}catch{return[];} })();
+    if (wins2.length) {
+      const ws = document.createElement('div'); ws.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
+      const wlbl = document.createElement('div'); wlbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; wlbl.textContent='Quick wins';
+      ws.appendChild(wlbl);
+      wins2.slice(0,3).forEach(w => { const wr=document.createElement('div');wr.style.cssText='font-size:12px;color:var(--text2);padding:2px 0;';wr.textContent='⭐ '+w.text;ws.appendChild(wr); });
+      container.appendChild(ws);
+    }
+  }
+
+  function renderOtoSessions(container) {
+    container.style.padding = '16px 20px';
+    const sHdr = document.createElement('div'); sHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;';
+    const sLbl = document.createElement('div'); sLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);';
+    sLbl.textContent = sessions.length+' session'+(sessions.length!==1?'s':'');
+    const addBtn = document.createElement('button'); addBtn.className='btn-save'; addBtn.style.cssText='font-size:11px;padding:4px 12px;'; addBtn.textContent='+ New session';
+    addBtn.onclick=()=>{const d=getOtoData();d.sessions=d.sessions||[];d.sessions.unshift({id:Date.now()+'',person:personName,date:today,notes:'',actions:[],wins:[]});saveOtoData(d);renderOtoPersonMain(personName);switchOtoTab('1:1 Sessions');};
+    sHdr.appendChild(sLbl); sHdr.appendChild(addBtn); container.appendChild(sHdr);
+    if (!sessions.length) { const e=document.createElement('div');e.style.cssText='font-size:13px;color:var(--text3);text-align:center;padding:40px 0;';e.textContent='No sessions yet';container.appendChild(e); return; }
+    sessions.forEach(session => appendSessionCard(container, session, false));
+  }
+
+  function renderOtoProfile(container) {
+    container.style.padding = '16px 20px';
+    const contactFields = [
+      { key:'phone', label:'Phone', placeholder:'+47 000 00 000', type:'tel' },
+      { key:'email', label:'Email', placeholder:'name@munu.cloud', type:'email' },
+      { key:'birthday', label:'Birthday', placeholder:'DD/MM', type:'text' },
+      { key:'title', label:'Job title', placeholder:'e.g. L1 Agent', type:'text' },
+      { key:'startDate', label:'Start date', placeholder:'YYYY-MM-DD', type:'date' },
+      { key:'notes', label:'Notes', placeholder:'Any info worth remembering…', type:'text' },
+    ];
+    contactFields.forEach(f => {
+      const wrap = document.createElement('div'); wrap.style.cssText='margin-bottom:12px;';
+      const lbl = document.createElement('label'); lbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);display:block;margin-bottom:4px;'; lbl.textContent=f.label;
+      const inp = document.createElement('input'); inp.type=f.type; inp.value=profile[f.key]||''; inp.placeholder=f.placeholder;
+      inp.style.cssText='width:100%;font-family:inherit;font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;box-sizing:border-box;';
+      let t2; inp.addEventListener('input',()=>{clearTimeout(t2);t2=setTimeout(()=>{profile[f.key]=inp.value;saveProfile(personName,profile);inp.style.borderColor='var(--low-text)';setTimeout(()=>inp.style.borderColor='',700);},600);});
+      wrap.appendChild(lbl); wrap.appendChild(inp); container.appendChild(wrap);
+    });
+    // Intelligence
+    const intWrap = document.createElement('div'); intWrap.style.cssText='margin-top:16px;';
+    const intLbl = document.createElement('div'); intLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; intLbl.textContent='Agent intelligence';
+    intWrap.appendChild(intLbl);
+    renderAgentIntelligence(personName, intWrap);
+    container.appendChild(intWrap);
+  }
+
+  renderOtoOverview(body2);
+}
+
+function appendSessionCard(container, session, expanded) {
+  const d2 = getOtoData();
+  const card = document.createElement('div'); card.className='oto-session-card'; card.style.cssText='border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden;';
+  const cHdr = document.createElement('div'); cHdr.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;background:var(--surface2);';
+  cHdr.onclick = () => { const b=card.querySelector('.oto-session-body'); if(b) b.style.display=b.style.display==='none'?'block':'none'; };
+  const datEl = document.createElement('div'); datEl.style.cssText='font-size:12px;font-weight:700;color:var(--text);flex:1;'; datEl.textContent=session.date;
+  const actCount = (session.actions||[]).filter(a=>!a.done).length;
+  if (actCount) { const badge=document.createElement('span');badge.style.cssText='font-size:10px;background:rgba(77,171,247,0.15);color:var(--cal-text);padding:1px 7px;border-radius:10px;';badge.textContent=actCount+' open';cHdr.appendChild(badge); }
+  const del = document.createElement('button'); del.style.cssText='font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 4px;'; del.textContent='✕';
+  del.onclick=(e)=>{e.stopPropagation();confirmDialog('Delete this session?',()=>{const d2b=getOtoData();d2b.sessions=d2b.sessions.filter(s=>s.id!==session.id);saveOtoData(d2b);renderOtoPersonMain(session.person);},'Delete');};
+  cHdr.appendChild(datEl); cHdr.appendChild(del);
+  const cBody = document.createElement('div'); cBody.className='oto-session-body'; cBody.style.cssText='padding:12px 14px;display:'+(expanded?'block':'none')+';';
+  // Notes
+  const notesArea = document.createElement('textarea'); notesArea.className='oto-notes-area'; notesArea.rows=4; notesArea.value=session.notes||''; notesArea.placeholder='Session notes…';
+  let nt; notesArea.addEventListener('input',()=>{clearTimeout(nt);nt=setTimeout(()=>{const d3=getOtoData();const s2=d3.sessions.find(s=>s.id===session.id);if(s2){s2.notes=notesArea.value;saveOtoData(d3);}},500);});
+  cBody.appendChild(notesArea);
+  // Actions
+  const aList = document.createElement('div'); aList.style.cssText='margin-top:10px;';
+  const aLbl = document.createElement('div'); aLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;'; aLbl.textContent='Action items';
+  aList.appendChild(aLbl);
+  (session.actions||[]).forEach(a => {
+    const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 0;';
+    const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!a.done;
+    cb.onchange=()=>{const d4=getOtoData();const s3=d4.sessions.find(s=>s.id===session.id);if(s3){const act=s3.actions.find(x=>x.id===a.id);if(act)act.done=cb.checked;saveOtoData(d4);}};
+    const txt = document.createElement('span'); txt.style.cssText='font-size:12px;color:var(--text2);flex:1;'; txt.textContent=a.text;
+    row.appendChild(cb); row.appendChild(txt); aList.appendChild(row);
+  });
+  const aRow = document.createElement('div'); aRow.style.cssText='display:flex;gap:8px;margin-top:6px;';
+  const aInp = document.createElement('input'); aInp.placeholder='Add action item…'; aInp.style.cssText='flex:1;font-family:inherit;font-size:12px;background:transparent;color:var(--text);border:none;outline:none;border-bottom:1px solid var(--border);padding:4px 0;';
+  const aAdd = document.createElement('button'); aAdd.className='btn-save'; aAdd.style.cssText='font-size:11px;padding:3px 10px;'; aAdd.textContent='Add';
+  const doAdd=()=>{const t3=aInp.value.trim();if(!t3)return;const d5=getOtoData();const s4=d5.sessions.find(s=>s.id===session.id);if(s4){if(!s4.actions)s4.actions=[];s4.actions.push({id:Date.now()+'',text:t3,done:false});saveOtoData(d5);renderOtoPersonMain(session.person);}aInp.value='';};
+  aAdd.onclick=doAdd; aInp.addEventListener('keydown',e=>{if(e.key==='Enter')doAdd();});
+  aRow.appendChild(aInp); aRow.appendChild(aAdd);
+  cBody.appendChild(mkLabel('Action items')); cBody.appendChild(aList); cBody.appendChild(aRow);
+  card.appendChild(cHdr); card.appendChild(cBody); container.appendChild(card);
+}
+
+// ─── ZD INSIGHTS (CSAT + MTTR in Tickets tab) ────────────────────
+async function zdRenderInsights(body, fromDate, toDate) {
+  if (!zdReady()) return;
+  try {
+    const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
+    const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
+    const [csatData, solvedData] = await Promise.all([
+      zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
+      zdFetch('/search.json?query='+encodeURIComponent('type:ticket status:solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100').catch(()=>({results:[]}))
+    ]);
+    const ratings = csatData.satisfaction_ratings || [];
+    const tickets = solvedData.results || [];
+    if (!ratings.length && !tickets.length) return;
+
+    const insWrap = document.createElement('div'); insWrap.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;';
+
+    // CSAT
+    if (ratings.length) {
+      const good = ratings.filter(r=>r.score==='good').length;
+      const total = ratings.filter(r=>r.score==='good'||r.score==='bad').length;
+      const pct = total>0 ? Math.round(good/total*100) : null;
+      const csatCard = document.createElement('div'); csatCard.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
+      const cl = document.createElement('div'); cl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; cl.textContent='CSAT';
+      const cv = document.createElement('div'); cv.style.cssText='font-size:28px;font-weight:900;color:'+(pct===null?'var(--text3)':pct>=90?'var(--low-text)':pct>=75?'#ffb74d':'var(--high-text)')+';font-family:\'Fira Sans\',sans-serif;'; cv.textContent=pct===null?'—':pct+'%';
+      const cs = document.createElement('div'); cs.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;'; cs.textContent=good+' good / '+(total-good)+' bad ('+total+' rated)';
+      csatCard.appendChild(cl); csatCard.appendChild(cv); csatCard.appendChild(cs);
+      insWrap.appendChild(csatCard);
+    }
+
+    // MTTR
+    if (tickets.length) {
+      const resTimes = tickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
+      const mttr = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
+      const fmtM = m => m<60?m+'m':m<1440?Math.floor(m/60)+'h '+Math.round(m%60)+'m':Math.floor(m/1440)+'d '+Math.floor((m%1440)/60)+'h';
+      const mttrCard = document.createElement('div'); mttrCard.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
+      const ml = document.createElement('div'); ml.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; ml.textContent='Avg resolution';
+      const mv = document.createElement('div'); mv.style.cssText='font-size:28px;font-weight:900;color:var(--text);font-family:\'Fira Sans\',sans-serif;'; mv.textContent=mttr?fmtM(mttr):'—';
+      const ms2 = document.createElement('div'); ms2.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;'; ms2.textContent='Based on '+resTimes.length+' tickets';
+      mttrCard.appendChild(ml); mttrCard.appendChild(mv); mttrCard.appendChild(ms2);
+      insWrap.appendChild(mttrCard);
+    }
+
+    body.insertBefore(insWrap, body.querySelector('.zd-chart-wrap') || body.firstChild);
+  } catch(e) { console.warn('zdRenderInsights error:', e.message); }
+}
+
+
 // ─── Keyboard shortcuts panel ──────────────────────────────────────
 function showKeyboardShortcuts() {
   document.getElementById('kbd-panel')?.remove();
