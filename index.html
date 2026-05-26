@@ -7762,6 +7762,24 @@ function fmtTenure(startDateStr) {
   return yrs + (yrs===1?' yr':' yrs') + ' ' + mos + (mos===1?' mo':' mo');
 }
 
+// --- SETTINGS NAV -------------------------------------------------------
+function settingsNav(section, btn) {
+  // Update nav active state
+  document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Show/hide sections
+  document.querySelectorAll('.settings-section[data-section]').forEach(el => {
+    el.style.display = el.dataset.section === section ? '' : 'none';
+  });
+}
+
+function renderSettings() {
+  // Show account section by default
+  const firstBtn = document.querySelector('.settings-nav-item');
+  settingsNav('account', firstBtn);
+}
+
+
 // --- REPORTS TAB -------------------------------------------------------
 function renderReportsTab() {
   const root = document.getElementById('reports-root');
@@ -7828,11 +7846,9 @@ function renderReportsTab() {
 function renderSettingsTab() { initSettingsTab(); }
 
 function initSettingsTab() {
-  const root = document.getElementById('settings-root');
-  if (!root || !currentUser) return;
-  if (typeof renderSettings === 'function') { renderSettings(); return; }
-  root.innerHTML = '<div style="padding:32px;font-size:13px;color:var(--text3);">Settings loading...</div>';
-  setTimeout(() => { if (typeof renderSettings === 'function') renderSettings(); }, 300);
+  if (!currentUser) return;
+  // Hide all sections except account on load
+  settingsNav('account', document.querySelector('.settings-nav-item'));
 }
 
 
