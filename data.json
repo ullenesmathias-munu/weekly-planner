@@ -8533,6 +8533,44 @@
         "totalWaitSec": 276,
         "missed": 0
       }
+    },
+    "2026-05-26": {
+      "Cecilie Steinkopf": {
+        "answered": 11,
+        "totalTalkSec": 4104,
+        "totalWaitSec": 187,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 19,
+        "totalTalkSec": 9171,
+        "totalWaitSec": 1981,
+        "missed": 2
+      },
+      "Jonas Johannes": {
+        "answered": 21,
+        "totalTalkSec": 8813,
+        "totalWaitSec": 3165,
+        "missed": 1
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 12,
+        "totalTalkSec": 4926,
+        "totalWaitSec": 2828,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 1,
+        "totalTalkSec": 485,
+        "totalWaitSec": 3,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 19,
+        "totalTalkSec": 7119,
+        "totalWaitSec": 553,
+        "missed": 0
+      }
     }
   },
   "wtp_mood_vetle.bengtson@munu.cloud": [
