@@ -7836,6 +7836,33 @@ function initSettingsTab() {
 }
 
 
+// --- AGENDA / NOTIFICATION HELPERS ------------------------------------
+function loadAgenda(username) {
+  try { return JSON.parse(localStorage.getItem('wtp_agenda_' + normalizeKey(username)) || '[]'); } catch { return []; }
+}
+function saveAgenda(username, items) {
+  localStorage.setItem('wtp_agenda_' + normalizeKey(username), JSON.stringify(items)); scheduleSyncSave();
+}
+function agendaKey(username) { return 'wtp_agenda_' + normalizeKey(username); }
+
+// --- ANNOUNCEMENT HELPERS ---------------------------------------------
+function annReadKey(username) { return 'wtp_ann_read_' + normalizeKey(username); }
+function markAnnouncementRead(username, id) {
+  const key = annReadKey(username);
+  try {
+    const read = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!read.includes(id)) { read.push(id); localStorage.setItem(key, JSON.stringify(read)); }
+  } catch {}
+}
+function getUnreadAnnouncements(username) {
+  try {
+    const all = JSON.parse(localStorage.getItem('wtp_announcements') || '[]');
+    const read = JSON.parse(localStorage.getItem(annReadKey(username)) || '[]');
+    return all.filter(a => !read.includes(a.id));
+  } catch { return []; }
+}
+
+
 function fbMarkSeen(name) {
   const posts = loadFbPosts(name);
   if (posts.length) localStorage.setItem(fbLastSeenKey(name), String(new Date(posts[posts.length-1].ts).getTime() || Date.now()));
