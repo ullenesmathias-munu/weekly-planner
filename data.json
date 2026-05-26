@@ -8546,8 +8546,8 @@
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
-    "toDate": "2026-05-31",
-    "generated": "2026-05-25T11:54:32.131Z",
+    "toDate": "2026-05-26",
+    "generated": "2026-05-26T06:15:50.795Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -8555,10 +8555,9 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 6,
-        "zdPending": 3
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 1
       },
       "Thomas": {
         "answered": 0,
@@ -8566,10 +8565,9 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 2,
-        "zdPending": 0
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 1
       },
       "Maylen": {
         "answered": 0,
@@ -8577,10 +8575,9 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 11,
-        "zdPending": 11
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 1
       },
       "Bernadett": {
         "answered": 0,
@@ -8588,10 +8585,9 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 10,
-        "zdPending": 3
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
       },
       "Benjamin": {
         "answered": 0,
@@ -8599,21 +8595,19 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 4,
-        "zdPending": 0
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
       },
       "Cecilie": {
-        "answered": 0,
+        "answered": 3,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "avgTalk": 518,
+        "avgWait": 14,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 7,
-        "zdPending": 5
+        "isNight": true,
+        "nightDays": 1,
+        "dayDays": 1
       },
       "Tord": {
         "answered": 0,
@@ -8621,21 +8615,19 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
       },
       "Marie": {
-        "answered": 0,
+        "answered": 19,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 8,
-        "zdEmail": 0,
-        "zdPhone": 8,
-        "zdOpen": 3,
-        "zdPending": 8
+        "avgTalk": 174,
+        "avgWait": 15,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 2
       },
       "Andreas": {
         "answered": 0,
@@ -8643,10 +8635,9 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 4,
-        "zdPending": 7
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 1
       },
       "Julie": {
         "answered": 0,
@@ -8654,10 +8645,9 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
       },
       "Vetle": {
         "answered": 0,
@@ -8665,18 +8655,17 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 10,
-        "zdPending": 4
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 1
       }
     },
     "totals": {
-      "offered": 0,
-      "answered": 0,
-      "missed": 0,
-      "ansRate": null,
-      "avgWait": 0
+      "offered": 23,
+      "answered": 22,
+      "missed": 1,
+      "ansRate": 96,
+      "avgWait": 15
     }
   },
   "wtp_schedule": [
@@ -10186,7 +10175,7 @@
         {
           "name": "Thomas",
           "shifts": [
-            "SO",
+            "H",
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
