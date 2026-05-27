@@ -8919,7 +8919,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-27T08:37:13.289Z",
+    "generated": "2026-05-27T08:38:28.553Z",
     "agents": {
       "Jonas": {
         "answered": 21,
@@ -8932,7 +8932,7 @@
         "dayDays": 4,
         "zdEmail": 5,
         "zdPhone": 18,
-        "zdOpen": 5,
+        "zdOpen": 6,
         "zdPending": 2
       },
       "Thomas": {
@@ -9044,7 +9044,7 @@
         "dayDays": 4,
         "zdEmail": 15,
         "zdPhone": 23,
-        "zdOpen": 1,
+        "zdOpen": 2,
         "zdPending": 13
       },
       "Julie": {
@@ -9072,7 +9072,7 @@
         "dayDays": 4,
         "zdEmail": 1,
         "zdPhone": 8,
-        "zdOpen": 8,
+        "zdOpen": 4,
         "zdPending": 2
       }
     },
