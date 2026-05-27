@@ -2408,26 +2408,27 @@ window.tryUnlock = async function() {
       <!-- Unifon API -->
       <div class="settings-card" id="unifon-api-card" style="display:none;">
         <div class="settings-card-inner">
-          <div class="settings-card-title">Unifon API</div>
-          <div class="settings-card-desc">Connect the Unifon API for live call data. Credentials stay on this device only — never synced.</div>
+          <div class="settings-card-title">Unifon API (BNAPI Service Auth)</div>
+          <div class="settings-card-desc">OAuth 2.0 client credentials for the Unifon BNAPI. Find these in Bedriftsnett Admin. Credentials stay on this device only.</div>
           <div class="settings-field-row">
-            <div class="settings-field-label">API base URL</div>
+            <div class="settings-field-label">Client ID</div>
             <div class="settings-field-value">
-              <input id="unifon-api-url" class="settings-input" type="text" placeholder="https://api.unifon.no/v1" />
+              <input id="unifon-client-id" class="settings-input" type="text" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" />
             </div>
           </div>
           <div class="settings-field-row">
-            <div class="settings-field-label">API key</div>
+            <div class="settings-field-label">Client Secret</div>
             <div class="settings-field-value">
-              <input id="unifon-api-key" class="settings-input" type="password" placeholder="Paste API key…" />
+              <input id="unifon-client-secret" class="settings-input" type="password" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" />
             </div>
           </div>
           <div class="settings-btn-row">
-            <button class="btn-save" onclick="saveUnifonApiKey()">Save</button>
-            <button class="btn-cancel" onclick="clearUnifonApiKey()">Clear</button>
+            <button class="btn-save" onclick="saveUnifonCredentials()">Save</button>
+            <button class="btn-cancel" onclick="clearUnifonCredentials()">Clear</button>
             <button class="btn-save" onclick="testUnifonApi()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);">Test connection</button>
           </div>
           <div id="unifon-api-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+          <div id="unifon-queue-info" style="font-size:11px;color:var(--text3);margin-top:4px;"></div>
         </div>
       </div>
 
@@ -4444,132 +4445,155 @@ function toggleNotepadMode() {
 }
 
 // ─── Unifon API ───────────────────────────────────────────────────
-const UNIFON_API_KEY_KEY  = 'wtp_unifon_api_key';
-const UNIFON_API_BASE_KEY = 'wtp_unifon_api_base';
-const UNIFON_API_CACHE_KEY = 'wtp_unifon_api_cache'; // {date, data, ts}
+// --- UNIFON BNAPI SERVICE AUTH -----------------------------------------
+// Uses OAuth 2.0 Client Credentials (BNAPI Service Auth)
+// Skill: unifon-api/references/authentication.md
+const UNIFON_CLIENT_ID_KEY     = 'wtp_unifon_client_id';
+const UNIFON_CLIENT_SECRET_KEY = 'wtp_unifon_client_secret';
+const UNIFON_TOKEN_CACHE_KEY   = 'wtp_unifon_token_cache';
+const UNIFON_QUEUE_CACHE_KEY   = 'wtp_unifon_queue_cache';
+const UNIFON_API_CACHE_KEY     = 'wtp_unifon_api_cache'; // legacy compat
 
-function getUnifonApiKey()  { return localStorage.getItem(UNIFON_API_KEY_KEY)  || ''; }
-function getUnifonApiBase() { return localStorage.getItem(UNIFON_API_BASE_KEY) || ''; }
-function hasUnifonApi()     { return !!(getUnifonApiKey() && getUnifonApiBase()); }
+const BNAPI_BASE = 'https://bnapi.unifon.no';
 
-function saveUnifonApiKey() {
-  const key  = document.getElementById('unifon-api-key')?.value?.trim();
-  const base = document.getElementById('unifon-api-base')?.value?.trim();
-  if (!key || !base) { showUnifonApiStatus('Enter both URL and key', 'var(--high-text)'); return; }
-  localStorage.setItem(UNIFON_API_KEY_KEY,  key);
-  localStorage.setItem(UNIFON_API_BASE_KEY, base.replace(/\/$/, ''));
-  showUnifonApiStatus('✓ Saved', 'var(--low-text)');
+function getUnifonClientId()     { return localStorage.getItem(UNIFON_CLIENT_ID_KEY)     || ''; }
+function getUnifonClientSecret() { return localStorage.getItem(UNIFON_CLIENT_SECRET_KEY) || ''; }
+function hasUnifonApi()          { return !!(getUnifonClientId() && getUnifonClientSecret()); }
+function getUnifonApiKey()       { return getUnifonClientId(); }
+function getUnifonApiBase()      { return BNAPI_BASE; }
+
+function saveUnifonCredentials() {
+  const id  = document.getElementById('unifon-client-id')?.value?.trim();
+  const sec = document.getElementById('unifon-client-secret')?.value?.trim();
+  if (!id || !sec) { showUnifonApiStatus('Enter both Client ID and Secret', 'var(--high-text)'); return; }
+  localStorage.setItem(UNIFON_CLIENT_ID_KEY,     id);
+  localStorage.setItem(UNIFON_CLIENT_SECRET_KEY, sec);
+  localStorage.removeItem(UNIFON_TOKEN_CACHE_KEY);
+  showUnifonApiStatus('Saved - testing...', 'var(--text3)');
+  testUnifonApi();
 }
+function saveUnifonApiKey() { saveUnifonCredentials(); }
 
-function clearUnifonApiKey() {
-  localStorage.removeItem(UNIFON_API_KEY_KEY);
-  localStorage.removeItem(UNIFON_API_BASE_KEY);
-  localStorage.removeItem(UNIFON_API_CACHE_KEY);
-  const ki = document.getElementById('unifon-api-key');   if (ki) ki.value = '';
-  const bi = document.getElementById('unifon-api-base');  if (bi) bi.value = '';
+function clearUnifonCredentials() {
+  [UNIFON_CLIENT_ID_KEY, UNIFON_CLIENT_SECRET_KEY, UNIFON_TOKEN_CACHE_KEY, UNIFON_QUEUE_CACHE_KEY, UNIFON_API_CACHE_KEY].forEach(k => localStorage.removeItem(k));
+  const ci = document.getElementById('unifon-client-id');     if (ci) ci.value = '';
+  const cs = document.getElementById('unifon-client-secret'); if (cs) cs.value = '';
   showUnifonApiStatus('Cleared', 'var(--text3)');
+  const qi = document.getElementById('unifon-queue-info'); if (qi) qi.textContent = '';
 }
+function clearUnifonApiKey() { clearUnifonCredentials(); }
 
 function showUnifonApiStatus(msg, color) {
   const el = document.getElementById('unifon-api-status');
   if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
 }
 
-// Called when settings tab opens — populate saved values
 function initUnifonApiSettings() {
-  const ki = document.getElementById('unifon-api-key');   if (ki && getUnifonApiKey())  ki.value = '••••••••';
-  const bi = document.getElementById('unifon-api-base');  if (bi && getUnifonApiBase()) bi.value = getUnifonApiBase();
-  if (hasUnifonApi()) showUnifonApiStatus('API key configured', 'var(--low-text)');
+  const ci = document.getElementById('unifon-client-id');
+  const cs = document.getElementById('unifon-client-secret');
+  if (ci && getUnifonClientId())     ci.value = getUnifonClientId().slice(0,8) + '...';
+  if (cs && getUnifonClientSecret()) cs.value = '****';
+  if (hasUnifonApi()) showUnifonApiStatus('Credentials configured', 'var(--low-text)');
+}
+
+// Token management - cache strictly to stay under the 20-token limit per client_id
+// Skill warning: NEVER request a new token per API call
+async function getUnifonToken() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(UNIFON_TOKEN_CACHE_KEY) || '{}');
+    if (cached.access_token && cached.expires_at && cached.expires_at > Date.now() + 5*60*1000) {
+      return cached.access_token;
+    }
+    const res = await fetch(BNAPI_BASE + '/bnapi/v1/session/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id:     getUnifonClientId(),
+        client_secret: getUnifonClientSecret(),
+        grant_type:    'client_credentials'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.access_token) {
+      throw new Error(data.error_description || data.error || 'Auth failed ' + res.status);
+    }
+    const expires_at = Date.now() + (data.expires_in || 28800) * 1000;
+    localStorage.setItem(UNIFON_TOKEN_CACHE_KEY, JSON.stringify({ access_token: data.access_token, expires_at }));
+    return data.access_token;
+  } catch(e) { throw new Error('Unifon token: ' + e.message); }
 }
 
 async function unifonApiFetch(path) {
-  const base = getUnifonApiBase();
-  const key  = getUnifonApiKey();
-  if (!base || !key) throw new Error('Unifon API not configured');
-  const res = await fetch(base + path, {
-    headers: { 'Authorization': 'Bearer ' + key, 'Accept': 'application/json' }
+  if (!hasUnifonApi()) throw new Error('Unifon credentials not configured');
+  const token = await getUnifonToken();
+  const res = await fetch(BNAPI_BASE + path, {
+    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
   });
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(json.message || json.error || 'HTTP ' + res.status);
+  if (!res.ok) throw new Error(json.message || json.error_description || json.error || 'HTTP ' + res.status);
   return json;
 }
 
 async function testUnifonApi() {
-  showUnifonApiStatus('Testing…', 'var(--text3)');
+  showUnifonApiStatus('Connecting...', 'var(--text3)');
   try {
-    // Try a lightweight endpoint — adjust path to match actual Unifon API
-    const data = await unifonApiFetch('/calls/summary?date=' + localToday());
-    showUnifonApiStatus('✓ Connected — ' + JSON.stringify(data).slice(0,60), 'var(--low-text)');
+    const info = await unifonApiFetch('/bnapi/v1/session/info');
+    showUnifonApiStatus('Connected: ' + (info.customer_name || info.name || 'OK'), 'var(--low-text)');
+    const queues = await unifonApiFetch('/bnapi/v1/queue/list');
+    const qi = document.getElementById('unifon-queue-info');
+    if (qi && queues.entries && queues.entries.length) {
+      qi.textContent = 'Queues: ' + queues.entries.map(q => q.description + ' (ID:' + q.queue_id + ')').join(', ');
+    }
   } catch(e) {
-    showUnifonApiStatus('✗ ' + e.message, 'var(--high-text)');
+    showUnifonApiStatus('Failed: ' + e.message, 'var(--high-text)');
   }
 }
 
-// Fetch today's call data from Unifon API and merge into local storage
-// Returns { offered, answered, missed, avgHandleSec, avgWaitSec } or null
-async function fetchUnifonApiToday() {
+// Live queue summary - cached 30s (skill: heavy endpoint, max every ~15s)
+// Returns { entries: [{ queue_id, description, keyfigures, members }] }
+async function fetchUnifonQueueSummary(forceRefresh) {
   if (!hasUnifonApi()) return null;
   try {
-    // Check cache — valid for 10 minutes
-    const cached = JSON.parse(localStorage.getItem(UNIFON_API_CACHE_KEY) || '{}');
-    if (cached.date === localToday() && cached.ts && Date.now() - cached.ts < 10 * 60 * 1000) {
+    const cached = JSON.parse(localStorage.getItem(UNIFON_QUEUE_CACHE_KEY) || '{}');
+    if (!forceRefresh && cached.data && cached.ts && Date.now() - cached.ts < 30*1000) {
       return cached.data;
     }
-    // Fetch from API — adjust endpoint/field names to match actual Unifon API response
-    const data = await unifonApiFetch('/calls/summary?date=' + localToday());
-    // Normalise response — common field name patterns for Unifon/telephony APIs:
-    const normalised = {
-      offered:      data.total_calls      ?? data.offered      ?? data.calls       ?? 0,
-      answered:     data.answered_calls   ?? data.answered     ?? data.connected   ?? 0,
-      missed:       data.missed_calls     ?? data.missed       ?? data.abandoned   ?? 0,
-      avgHandleSec: data.avg_handle_time  ?? data.avg_duration ?? data.aht         ?? 0, // in seconds
-      avgWaitSec:   data.avg_wait_time    ?? data.avg_queue    ?? data.avg_wait    ?? 0,
-    };
-    // Also save into the manual log so it appears in weekly views
-    const existing = loadUnifonData();
-    const idx = existing.findIndex(d => d.date === localToday());
-    const entry = { date: localToday(), ...normalised, avgWaitSec: normalised.avgWaitSec, savedAt: new Date().toISOString(), source: 'api' };
-    if (idx >= 0) existing[idx] = entry; else existing.push(entry);
-    saveUnifonData(existing);
-    // Cache
-    localStorage.setItem(UNIFON_API_CACHE_KEY, JSON.stringify({ date: localToday(), data: normalised, ts: Date.now() }));
-    return normalised;
-  } catch(e) {
-    console.warn('Unifon API fetch failed:', e.message);
-    return null;
-  }
+    const data = await unifonApiFetch('/bnapi/v1/queue/summary');
+    localStorage.setItem(UNIFON_QUEUE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+    return data;
+  } catch(e) { console.warn('Unifon queue summary:', e.message); return null; }
 }
 
-// Fetch call data for a date range from Unifon API (for Tickets tab agent cards)
-// Returns array of daily records or null
-async function fetchUnifonApiRange(fromDate, toDate) {
+// Live KPIs from queue summary: avg wait, agents ready/total
+async function fetchUnifonLiveKpis() {
   if (!hasUnifonApi()) return null;
   try {
-    const data = await unifonApiFetch(`/calls/summary?from=${fromDate}&to=${toDate}`);
-    // Handle both single summary and array of daily records
-    if (Array.isArray(data)) {
-      return data.map(d => ({
-        date:         d.date ?? d.day ?? fromDate,
-        offered:      d.total_calls    ?? d.offered    ?? d.calls      ?? 0,
-        answered:     d.answered_calls ?? d.answered   ?? d.connected  ?? 0,
-        missed:       d.missed_calls   ?? d.missed     ?? d.abandoned  ?? 0,
-        avgHandleSec: d.avg_handle_time ?? d.avg_duration ?? d.aht      ?? 0,
-        avgWaitSec:   d.avg_wait_time  ?? d.avg_queue  ?? d.avg_wait   ?? 0,
-      }));
-    }
-    // Single summary for range
-    return [{
-      date:         fromDate,
-      offered:      data.total_calls    ?? data.offered    ?? data.calls      ?? 0,
-      answered:     data.answered_calls ?? data.answered   ?? data.connected  ?? 0,
-      missed:       data.missed_calls   ?? data.missed     ?? data.abandoned  ?? 0,
-      avgHandleSec: data.avg_handle_time ?? data.avg_duration ?? data.aht      ?? 0,
-      avgWaitSec:   data.avg_wait_time  ?? data.avg_queue  ?? data.avg_wait   ?? 0,
-    }];
-  } catch(e) {
-    return null; // silently fall back to manual data
-  }
+    const summary = await fetchUnifonQueueSummary();
+    if (!summary || !summary.entries || !summary.entries.length) return null;
+    const totalWait = summary.entries.reduce((s, q) => s + (q.keyfigures?.answered_waittime || 0), 0);
+    const avgWait   = summary.entries.length ? Math.round(totalWait / summary.entries.length) : 0;
+    const agentsReady = summary.entries.reduce((s, q) =>
+      s + (q.members||[]).filter(m => m.fixed?.ready || m.mobile?.ready).length, 0);
+    const agentsTotal = summary.entries.reduce((s, q) => s + (q.members||[]).length, 0);
+    const kpis = { avgWaitSec: avgWait, agentsReady, agentsTotal, ts: Date.now() };
+    localStorage.setItem('wtp_unifon_live_kpis', JSON.stringify(kpis));
+    return kpis;
+  } catch(e) { return null; }
 }
+
+// fetchUnifonApiToday - uses live queue KPIs (only real-time REST data available)
+async function fetchUnifonApiToday() {
+  if (!hasUnifonApi()) return null;
+  return fetchUnifonLiveKpis();
+}
+
+// fetchUnifonApiRange - Unifon REST has no historical endpoint.
+// Historical per-agent data comes from queuelog WebSocket events (bridge service)
+// or manual .xlsx import. Return null so caller uses manual data.
+async function fetchUnifonApiRange(fromDate, toDate) {
+  return null;
+}
+
 // ─── Unifon name mapping ──────────────────────────────────────────
 // { 'Zendesk Name': 'Unifon Name' }
 const UNIFON_MAP_KEY = 'wtp_unifon_name_map';
