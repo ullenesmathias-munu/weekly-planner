@@ -7614,7 +7614,7 @@ async function zdRenderInsights(body, fromDate, toDate) {
     const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
     const [csatData, solvedData] = await Promise.all([
       zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
-      zdFetch('/search.json?query='+encodeURIComponent('type:ticket status:solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100').catch(()=>({results:[]}))
+      zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100').catch(()=>({results:[]}))
     ]);
     const ratings = csatData.satisfaction_ratings || [];
     const tickets = solvedData.results || [];
@@ -7872,10 +7872,10 @@ async function generateReport(fromDate, toDate, container) {
       const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
       const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
       const [totalSolvedData, openNowData, csatData, solvedTickets] = await Promise.all([
-        zdCount('type:ticket status:solved solved>='+fromDate+' solved<='+toDate).catch(()=>0),
+        zdCount('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate).catch(()=>0),
         zdCount('type:ticket status:open').catch(()=>0),
         zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
-        zdFetch('/search.json?query='+encodeURIComponent('type:ticket status:solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at').catch(()=>({results:[]})),
+        zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at').catch(()=>({results:[]})),
       ]);
       const tickets = solvedTickets.results || [];
       const ratings = csatData.satisfaction_ratings || [];
