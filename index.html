@@ -4454,7 +4454,8 @@ const UNIFON_TOKEN_CACHE_KEY   = 'wtp_unifon_token_cache';
 const UNIFON_QUEUE_CACHE_KEY   = 'wtp_unifon_queue_cache';
 const UNIFON_API_CACHE_KEY     = 'wtp_unifon_api_cache'; // legacy compat
 
-const BNAPI_BASE = 'https://bnapi.unifon.no';
+const BNAPI_BASE   = 'https://bnapi.unifon.no';       // direct (server-to-server)
+const BNAPI_PROXY  = 'https://zendesk-proxy.ullenesmathias.workers.dev/unifon'; // browser proxy
 
 function getUnifonClientId()     { return localStorage.getItem(UNIFON_CLIENT_ID_KEY)     || ''; }
 function getUnifonClientSecret() { return localStorage.getItem(UNIFON_CLIENT_SECRET_KEY) || ''; }
@@ -4504,7 +4505,7 @@ async function getUnifonToken() {
     if (cached.access_token && cached.expires_at && cached.expires_at > Date.now() + 5*60*1000) {
       return cached.access_token;
     }
-    const res = await fetch(BNAPI_BASE + '/bnapi/v1/session/token', {
+    const res = await fetch(BNAPI_PROXY + '/bnapi/v1/session/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -4526,7 +4527,7 @@ async function getUnifonToken() {
 async function unifonApiFetch(path) {
   if (!hasUnifonApi()) throw new Error('Unifon credentials not configured');
   const token = await getUnifonToken();
-  const res = await fetch(BNAPI_BASE + path, {
+  const res = await fetch(BNAPI_PROXY + path, {
     headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
   });
   const json = await res.json().catch(() => ({}));
