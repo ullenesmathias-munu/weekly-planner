@@ -342,10 +342,10 @@
       "done": false
     }
   ],
+  "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_profile_benjamin": {
     "rag": "green"
   },
-  "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_profile_thomas": {
     "log": [
       {
@@ -5425,71 +5425,6 @@
     ],
     "sessions": []
   },
-  "wtp_wingman": [
-    {
-      "dates": "27/4 - 28/4",
-      "days": "Mon-Tue",
-      "person": "Maylen",
-      "from": "2026-04-27",
-      "to": "2026-04-28"
-    },
-    {
-      "dates": "29/4 - 30/4",
-      "days": "Wed-Thu",
-      "person": "Benjamin",
-      "from": "2026-04-29",
-      "to": "2026-04-30"
-    },
-    {
-      "dates": "4/5 - 5/5",
-      "days": "Mon-Tue",
-      "person": "Cecilie",
-      "from": "2026-05-04",
-      "to": "2026-05-05"
-    },
-    {
-      "dates": "6/5 - 7/5",
-      "days": "Wed-Thu",
-      "person": "Marie",
-      "from": "2026-05-06",
-      "to": "2026-05-07"
-    },
-    {
-      "person": "Thomas",
-      "days": "Mon-Tue",
-      "dates": "11/5 - 12/5",
-      "from": "2026-05-11",
-      "to": "2026-05-12"
-    },
-    {
-      "person": "Thomas",
-      "days": "Mon-Tue",
-      "dates": "18/5 - 19/5",
-      "from": "2026-05-18",
-      "to": "2026-05-19"
-    },
-    {
-      "dates": "1/6 - 2/6",
-      "days": "Mon-Tue",
-      "person": "Jonas",
-      "from": "2026-06-01",
-      "to": "2026-06-02"
-    },
-    {
-      "dates": "15/6 - 16/6",
-      "days": "Mon-Tue",
-      "person": "Vetle",
-      "from": "2026-06-15",
-      "to": "2026-06-16"
-    },
-    {
-      "dates": "22/6 - 23/6",
-      "days": "Mon-Tue",
-      "person": "Julie",
-      "from": "2026-06-22",
-      "to": "2026-06-23"
-    }
-  ],
   "wtp_oto_data": {
     "sessions": [
       {
@@ -5543,15 +5478,6 @@
       }
     ]
   },
-  "wtp_fb_kate.rooke@munu.cloud": [],
-  "wtp_oto_prep_vetle": "",
-  "wtp_profile_jonas": {
-    "log": [],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": true
-  },
   "wtp_tasks_kate.rooke@munu.cloud": [
     {
       "id": "1778342571989",
@@ -5574,6 +5500,8 @@
       "done": false
     }
   ],
+  "wtp_fb_kate.rooke@munu.cloud": [],
+  "wtp_oto_prep_vetle": "",
   "wtp_outlook_events": [
     {
       "subject": "Exit-samtale Bernadett, Mathias & Elisabet",
@@ -6098,6 +6026,20 @@
       "title": "Weekly customer support meeting"
     }
   ],
+  "wtp_profile_jonas": {
+    "log": [],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_profile_cecilie": {
+    "log": [],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": false
+  },
   "wtp_unifon_agent_calls": {
     "2026-05-16": {
       "Andreas Bergevik": {
@@ -7838,13 +7780,6 @@
       }
     }
   },
-  "wtp_profile_cecilie": {
-    "log": [],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": false
-  },
   "wtp_ql_shared": [
     {
       "id": "1778621200640",
@@ -8519,6 +8454,71 @@
       "source": "import"
     }
   ],
+  "wtp_wingman": [
+    {
+      "dates": "27/4 - 28/4",
+      "days": "Mon-Tue",
+      "person": "Maylen",
+      "from": "2026-04-27",
+      "to": "2026-04-28"
+    },
+    {
+      "dates": "29/4 - 30/4",
+      "days": "Wed-Thu",
+      "person": "Benjamin",
+      "from": "2026-04-29",
+      "to": "2026-04-30"
+    },
+    {
+      "dates": "4/5 - 5/5",
+      "days": "Mon-Tue",
+      "person": "Cecilie",
+      "from": "2026-05-04",
+      "to": "2026-05-05"
+    },
+    {
+      "dates": "6/5 - 7/5",
+      "days": "Wed-Thu",
+      "person": "Marie",
+      "from": "2026-05-06",
+      "to": "2026-05-07"
+    },
+    {
+      "person": "Thomas",
+      "days": "Mon-Tue",
+      "dates": "11/5 - 12/5",
+      "from": "2026-05-11",
+      "to": "2026-05-12"
+    },
+    {
+      "person": "Thomas",
+      "days": "Mon-Tue",
+      "dates": "18/5 - 19/5",
+      "from": "2026-05-18",
+      "to": "2026-05-19"
+    },
+    {
+      "dates": "1/6 - 2/6",
+      "days": "Mon-Tue",
+      "person": "Jonas",
+      "from": "2026-06-01",
+      "to": "2026-06-02"
+    },
+    {
+      "dates": "15/6 - 16/6",
+      "days": "Mon-Tue",
+      "person": "Vetle",
+      "from": "2026-06-15",
+      "to": "2026-06-16"
+    },
+    {
+      "dates": "22/6 - 23/6",
+      "days": "Mon-Tue",
+      "person": "Julie",
+      "from": "2026-06-22",
+      "to": "2026-06-23"
+    }
+  ],
   "wtp_mood_vetle.bengtson@munu.cloud": [
     {
       "week": "2026-W19",
@@ -8526,11 +8526,11 @@
       "ts": "2026-05-09T16:17:23.255Z"
     }
   ],
+  "wtp_notepad_persistent": "Test",
+  "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_profile_tord": {
     "rag": "green"
   },
-  "wtp_notepad_persistent": "Test",
-  "wtp_agenda_seen_vetle.bengtson@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_users": [
     {
       "name": "Mathias",
@@ -8902,14 +8902,8 @@
       "avgWait": 376
     }
   },
+  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_profile_andreas": {
-    "log": [],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_profile_maylen": {
     "log": [],
     "goals": [],
     "rag": "green",
@@ -8919,20 +8913,20 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-27T08:38:28.553Z",
+    "generated": "2026-05-27T13:43:39.398Z",
     "agents": {
       "Jonas": {
         "answered": 21,
         "missed": 1,
         "avgTalk": 420,
         "avgWait": 151,
-        "zdSolved": 23,
+        "zdSolved": 31,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
-        "zdEmail": 5,
-        "zdPhone": 18,
-        "zdOpen": 6,
+        "zdEmail": 9,
+        "zdPhone": 22,
+        "zdOpen": 7,
         "zdPending": 2
       },
       "Thomas": {
@@ -8940,42 +8934,42 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 6,
+        "zdSolved": 12,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
         "zdEmail": 2,
-        "zdPhone": 4,
-        "zdOpen": 3,
-        "zdPending": 0
+        "zdPhone": 10,
+        "zdOpen": 6,
+        "zdPending": 3
       },
       "Maylen": {
         "answered": 12,
         "missed": 0,
         "avgTalk": 411,
         "avgWait": 236,
-        "zdSolved": 20,
+        "zdSolved": 28,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
-        "zdEmail": 6,
-        "zdPhone": 14,
-        "zdOpen": 14,
-        "zdPending": 11
+        "zdEmail": 9,
+        "zdPhone": 19,
+        "zdOpen": 7,
+        "zdPending": 12
       },
       "Bernadett": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 5,
+        "zdSolved": 13,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
-        "zdEmail": 0,
-        "zdPhone": 5,
-        "zdOpen": 6,
-        "zdPending": 3
+        "zdEmail": 3,
+        "zdPhone": 10,
+        "zdOpen": 2,
+        "zdPending": 4
       },
       "Benjamin": {
         "answered": 0,
@@ -9024,28 +9018,28 @@
         "missed": 0,
         "avgTalk": 274,
         "avgWait": 22,
-        "zdSolved": 38,
+        "zdSolved": 47,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
-        "zdEmail": 3,
-        "zdPhone": 35,
-        "zdOpen": 3,
-        "zdPending": 10
+        "zdEmail": 6,
+        "zdPhone": 41,
+        "zdOpen": 4,
+        "zdPending": 8
       },
       "Andreas": {
         "answered": 19,
         "missed": 2,
         "avgTalk": 483,
         "avgWait": 104,
-        "zdSolved": 38,
+        "zdSolved": 64,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
-        "zdEmail": 15,
-        "zdPhone": 23,
+        "zdEmail": 34,
+        "zdPhone": 30,
         "zdOpen": 2,
-        "zdPending": 13
+        "zdPending": 15
       },
       "Julie": {
         "answered": 0,
@@ -9066,14 +9060,14 @@
         "missed": 0,
         "avgTalk": 485,
         "avgWait": 3,
-        "zdSolved": 9,
+        "zdSolved": 13,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
-        "zdEmail": 1,
-        "zdPhone": 8,
-        "zdOpen": 4,
-        "zdPending": 2
+        "zdEmail": 4,
+        "zdPhone": 9,
+        "zdOpen": 3,
+        "zdPending": 4
       }
     },
     "totals": {
@@ -9084,7 +9078,14 @@
       "avgWait": 92
     }
   },
-  "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
+  "wtp_profile_maylen": {
+    "log": [],
+    "goals": [],
+    "rag": "green",
+    "focus": "",
+    "_open": true
+  },
+  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
   "wtp_schedule": [
     {
       "week": "Week 16",
@@ -11782,7 +11783,6 @@
       ]
     }
   ],
-  "wtp_ann_read_vetle.bengtson@munu.cloud": [],
   "wtp_oto_notes_vetle": "",
   "wtp_tasks_michael": [
     {
