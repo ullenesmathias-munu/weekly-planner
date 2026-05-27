@@ -7838,6 +7838,14 @@ function mk(tag, className, text) {
   if (text !== undefined) el.textContent = text;
   return el;
 }
+function fmtSec(seconds) {
+  if (!seconds || seconds <= 0) return '--';
+  if (seconds < 60) return seconds + 's';
+  const m = Math.floor(seconds / 60), s = seconds % 60;
+  if (m < 60) return m + 'm' + (s ? s + 's' : '');
+  return Math.floor(m/60) + 'h ' + (m%60) + 'm';
+}
+
 function fmtD(minutes) {
   if (!minutes || minutes <= 0) return '--';
   if (minutes < 60) return Math.round(minutes) + 'm';
