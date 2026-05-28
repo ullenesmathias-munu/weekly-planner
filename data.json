@@ -9165,6 +9165,38 @@
         "totalWaitSec": 11,
         "missed": 0
       }
+    },
+    "2026-05-28": {
+      "Vetle Bengtson": {
+        "answered": 1,
+        "totalTalkSec": 324,
+        "totalWaitSec": 19,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 7,
+        "totalTalkSec": 1909,
+        "totalWaitSec": 75,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 4,
+        "totalTalkSec": 1395,
+        "totalWaitSec": 44,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 4,
+        "totalTalkSec": 1603,
+        "totalWaitSec": 71,
+        "missed": 1
+      },
+      "Bernadett Costea": {
+        "answered": 1,
+        "totalTalkSec": 156,
+        "totalWaitSec": 12,
+        "missed": 0
+      }
     }
   },
   "wtp_mood_vetle.bengtson@munu.cloud": [
