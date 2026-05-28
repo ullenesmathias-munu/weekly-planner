@@ -5184,7 +5184,17 @@
         "addedAt": "2026-05-04"
       }
     ],
-    "sessions": []
+    "sessions": [
+      {
+        "id": "1779954523068",
+        "person": "Vetle",
+        "date": "2026-05-28",
+        "notes": "",
+        "actions": [],
+        "wins": []
+      }
+    ],
+    "notes": {}
   },
   "wtp_oto_data": {
     "sessions": [
