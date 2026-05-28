@@ -4594,13 +4594,23 @@ async function fetchUnifonQueueSummary(forceRefresh) {
   if (!hasUnifonApi()) return null;
   try {
     const cached = JSON.parse(localStorage.getItem(UNIFON_QUEUE_CACHE_KEY) || '{}');
-    if (!forceRefresh && cached.data && cached.ts && Date.now() - cached.ts < 30*1000) {
-      return cached.data;
+    // Use cache if fresh (30s) — also use stale cache if last attempt failed recently (60s cooldown)
+    if (!forceRefresh && cached.ts && Date.now() - cached.ts < 30*1000) {
+      return cached.data || null; // data may be null if last attempt failed
+    }
+    if (!forceRefresh && cached.failed && cached.failedAt && Date.now() - cached.failedAt < 60*1000) {
+      return null; // cooldown — don't hammer a failing endpoint
     }
     const data = await unifonApiFetch('/bnapi/v1/queue/summary');
     localStorage.setItem(UNIFON_QUEUE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
     return data;
-  } catch(e) { console.warn('Unifon queue summary:', e.message); return null; }
+  } catch(e) {
+    // Cache the failure so we don't retry immediately
+    const existing = JSON.parse(localStorage.getItem(UNIFON_QUEUE_CACHE_KEY) || '{}');
+    localStorage.setItem(UNIFON_QUEUE_CACHE_KEY, JSON.stringify({ ...existing, failed: true, failedAt: Date.now() }));
+    console.warn('Unifon queue summary:', e.message);
+    return null;
+  }
 }
 
 // Live KPIs from queue summary: avg wait, agents ready/total
@@ -6373,32 +6383,30 @@ function renderAdminDashboard(root, viewerMode=false) {
 }
 
   // ── Right panel: SATISFACTION + MEDIAN RESOLUTION + VOLUME TREND ──
-  // These live in col3 of the original dashboard (see screenshot May 12)
+  // These sections are created here but appended to col3 after col3 is declared below
+  const _zdRightSections = [];
   if (zdReady()) {
-    const rightPanel = document.createElement('div');
-    rightPanel.style.cssText = 'display:flex;flex-direction:column;gap:0;';
-
     // ── SATISFACTION ──────────────────────────────────────────────
     const satSec = dbSection('Satisfaction (30d)', 'Tickets', ()=>switchTab('zendesk', document.querySelector('[onclick*="zendesk"]')));
     const satBody = document.createElement('div');
     satBody.style.cssText = 'display:flex;align-items:center;gap:16px;padding:8px 0;';
     satBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
     satSec.appendChild(satBody);
-    col3.appendChild(satSec);
+    _zdRightSections.push(satSec);
 
     // ── MEDIAN RESOLUTION ─────────────────────────────────────────
     const mttrSec = dbSection('Median resolution (30d)');
     const mttrBody = document.createElement('div');
     mttrBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
     mttrSec.appendChild(mttrBody);
-    col3.appendChild(mttrSec);
+    _zdRightSections.push(mttrSec);
 
     // ── VOLUME TREND ──────────────────────────────────────────────
     const volSec = dbSection('Volume trend');
     const volBody = document.createElement('div');
     volBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
     volSec.appendChild(volBody);
-    col3.appendChild(volSec);
+    _zdRightSections.push(volSec);
 
     // Fetch and populate all three async
     (async () => {
@@ -6661,6 +6669,11 @@ function renderAdminDashboard(root, viewerMode=false) {
   csatBody2.style.cssText = 'height:160px;';
   csatSec.appendChild(csatBody2);
   col3.appendChild(csatSec);
+
+  // Append the deferred sat/mttr/vol sections now that col3 exists
+  if (typeof _zdRightSections !== 'undefined') {
+    _zdRightSections.forEach(sec => col3.appendChild(sec));
+  }
 
   body.appendChild(col3);
 
