@@ -7898,6 +7898,74 @@
         "totalWaitSec": 553,
         "missed": 0
       }
+    },
+    "2026-05-27": {
+      "Cecilie Steinkopf": {
+        "answered": 18,
+        "totalTalkSec": 8001,
+        "totalWaitSec": 317,
+        "missed": 2
+      },
+      "Andreas Bergevik": {
+        "answered": 11,
+        "totalTalkSec": 5987,
+        "totalWaitSec": 524,
+        "missed": 1
+      },
+      "Jonas Johannes": {
+        "answered": 18,
+        "totalTalkSec": 7040,
+        "totalWaitSec": 2768,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 9,
+        "totalTalkSec": 2569,
+        "totalWaitSec": 250,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 13,
+        "totalTalkSec": 7860,
+        "totalWaitSec": 546,
+        "missed": 0
+      },
+      "Bernadett Costea": {
+        "answered": 9,
+        "totalTalkSec": 4797,
+        "totalWaitSec": 380,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 15,
+        "totalTalkSec": 4614,
+        "totalWaitSec": 268,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 1,
+        "totalTalkSec": 438,
+        "totalWaitSec": 20,
+        "missed": 0
+      },
+      "Mads Iversen": {
+        "answered": 2,
+        "totalTalkSec": 1116,
+        "totalWaitSec": 22,
+        "missed": 0
+      },
+      "Elisabet S\u00f8yland": {
+        "answered": 3,
+        "totalTalkSec": 927,
+        "totalWaitSec": 21,
+        "missed": 0
+      },
+      "Andrea Torland": {
+        "answered": 1,
+        "totalTalkSec": 285,
+        "totalWaitSec": 11,
+        "missed": 0
+      }
     }
   },
   "wtp_ql_shared": [
