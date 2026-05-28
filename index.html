@@ -4537,13 +4537,51 @@ async function unifonApiFetch(path) {
 
 async function testUnifonApi() {
   showUnifonApiStatus('Connecting...', 'var(--text3)');
+  const qi = document.getElementById('unifon-queue-info');
   try {
-    const info = await unifonApiFetch('/bnapi/v1/session/info');
+    // Step 1: fetch token and log its scope
+    localStorage.removeItem(UNIFON_TOKEN_CACHE_KEY); // force fresh token
+    const tokenRes = await fetch(BNAPI_PROXY + '/bnapi/v1/session/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id:     getUnifonClientId(),
+        client_secret: getUnifonClientSecret(),
+        grant_type:    'client_credentials'
+      })
+    });
+    const tokenData = await tokenRes.json().catch(() => ({}));
+    if (!tokenRes.ok || !tokenData.access_token) {
+      showUnifonApiStatus('Token failed: ' + (tokenData.error_description || tokenData.error || 'HTTP ' + tokenRes.status), 'var(--high-text)');
+      if (qi) qi.textContent = 'Full response: ' + JSON.stringify(tokenData);
+      return;
+    }
+    // Cache the token
+    const expires_at = Date.now() + (tokenData.expires_in || 28800) * 1000;
+    localStorage.setItem(UNIFON_TOKEN_CACHE_KEY, JSON.stringify({ access_token: tokenData.access_token, expires_at }));
+
+    showUnifonApiStatus('Token OK — scope: ' + (tokenData.scope || 'none returned'), 'var(--text3)');
+    if (qi) qi.textContent = 'expires_in: ' + tokenData.expires_in + 's, token_type: ' + tokenData.token_type;
+
+    // Step 2: try session/info
+    const infoRes = await fetch(BNAPI_PROXY + '/bnapi/v1/session/info', {
+      headers: { 'Authorization': 'Bearer ' + tokenData.access_token }
+    });
+    const infoText = await infoRes.text();
+    if (!infoRes.ok) {
+      showUnifonApiStatus('Token OK but /session/info returned ' + infoRes.status + ' — check scope in Bedriftsnett Admin', 'var(--high-text)');
+      if (qi) qi.textContent = 'Response: ' + infoText.slice(0, 200);
+      return;
+    }
+    const info = JSON.parse(infoText);
     showUnifonApiStatus('Connected: ' + (info.customer_name || info.name || 'OK'), 'var(--low-text)');
+
+    // Step 3: queue list
     const queues = await unifonApiFetch('/bnapi/v1/queue/list');
-    const qi = document.getElementById('unifon-queue-info');
     if (qi && queues.entries && queues.entries.length) {
       qi.textContent = 'Queues: ' + queues.entries.map(q => q.description + ' (ID:' + q.queue_id + ')').join(', ');
+    } else if (qi) {
+      qi.textContent = 'No queues visible for this client';
     }
   } catch(e) {
     showUnifonApiStatus('Failed: ' + e.message, 'var(--high-text)');
@@ -6217,34 +6255,8 @@ function renderAdminDashboard(root, viewerMode=false) {
     }
   };
 
-  // Initial render with active period
-  const { from: initFrom, to: initTo } = (() => {
-    const t=localToday();
-    if(activePeriod==='week') return{from:fmtLocal(getMonday(0)),to:t};
-    if(activePeriod==='7d'){const d=new Date();d.setDate(d.getDate()-6);return{from:fmtLocal(d),to:t};}
-    if(activePeriod==='30d'){const d=new Date();d.setDate(d.getDate()-29);return{from:fmtLocal(d),to:t};}
-    return{from:t,to:t};
-  })();
-  renderChart1(initFrom, initTo);
+  // renderQueuePanel end — renderChart2 for CSAT trend
   renderChart2();
-
-  // Hook into period picker to update chart 1
-  const origPickerBtns = pickerRow.querySelectorAll('button');
-  PERF_PERIODS.forEach(({key}, idx) => {
-    const btn = origPickerBtns[idx]; if (!btn) return;
-    const prev = btn.onclick;
-    btn.onclick = (e) => {
-      if (prev) prev.call(btn, e);
-      if (typeof renderCallPerf === 'function') renderCallPerf(key);
-      const t3=localToday();
-      let f,t2;
-      if(key==='week'){f=fmtLocal(getMonday(0));t2=t3;}
-      else if(key==='7d'){const d=new Date();d.setDate(d.getDate()-6);f=fmtLocal(d);t2=t3;}
-      else if(key==='30d'){const d=new Date();d.setDate(d.getDate()-29);f=fmtLocal(d);t2=t3;}
-      else{f=t3;t2=t3;}
-      renderChart1(f,t2);
-    };
-  });
 }
 }
 async function renderTeamMemberDashboard(root) {
