@@ -6015,6 +6015,10 @@ function renderAdminDashboard(root, viewerMode=false) {
   const queueBody=document.createElement('div');
   queueSec.appendChild(queueBody);
 
+  // Initial render — called immediately so col2 isn't empty on load
+  // (button clicks re-render with the selected period)
+  setTimeout(() => renderQueuePanel(queueBody, queuePeriod), 0);
+
   const mkQStat=(id,label,color)=>{const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;cell.appendChild(val);cell.appendChild(lbl);return cell;};
   const mkUC=(v,l,c)=>{const cel=document.createElement('div');cel.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const vv=document.createElement('div');vv.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${c||'var(--text)'};`;vv.textContent=v;const ll=document.createElement('div');ll.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';ll.textContent=l;cel.appendChild(vv);cel.appendChild(ll);return cel;};
 
@@ -6920,11 +6924,11 @@ function renderAdminDashboard(root, viewerMode=false) {
       const harea = document.createElement('textarea');
       harea.placeholder = 'Notes for the next shift...';
       harea.style.cssText = 'width:100%;min-height:70px;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;outline:none;resize:vertical;box-sizing:border-box;';
-      const savedNote = (() => { try { const d = loadHandover ? loadHandover() : null; return d && d.notes ? d.notes : ''; } catch { return ''; } })();
+      const savedNote = (() => { try { const d = loadHandover ? loadHandover(todayStr) : null; return d && d.text ? d.text : ''; } catch { return ''; } })();
       harea.value = savedNote;
       let ht; harea.addEventListener('input', () => {
         clearTimeout(ht); ht = setTimeout(() => {
-          try { if (saveHandover) saveHandover({ notes: harea.value, ts: new Date().toISOString() }); } catch {}
+          try { if (saveHandover) saveHandover(todayStr, harea.value, getUserDisplayName()); } catch {}
         }, 800);
       });
       hwrap.appendChild(harea);
@@ -6933,7 +6937,7 @@ function renderAdminDashboard(root, viewerMode=false) {
     }
 
     // Quick links
-    const links5 = (() => { try { return getAllQuickLinks ? getAllQuickLinks() : []; } catch { return []; } })();
+    const links5 = (() => { try { return getAllQuickLinks ? getAllQuickLinks(currentUser?.username || currentUser?.name || '') : []; } catch { return []; } })();
     if (links5.length) {
       const linkSec5 = dbSection('Quick links');
       links5.slice(0,6).forEach(lnk => {
