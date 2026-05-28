@@ -9115,13 +9115,13 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-28T03:51:25.283Z",
+    "generated": "2026-05-28T03:58:48.233Z",
     "agents": {
       "Jonas": {
-        "answered": 21,
+        "answered": 39,
         "missed": 1,
-        "avgTalk": 420,
-        "avgWait": 151,
+        "avgTalk": 406,
+        "avgWait": 152,
         "zdSolved": 34,
         "isNight": false,
         "nightDays": 0,
@@ -9132,10 +9132,10 @@
         "zdPending": 2
       },
       "Thomas": {
-        "answered": 0,
+        "answered": 13,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "avgTalk": 605,
+        "avgWait": 42,
         "zdSolved": 13,
         "isNight": false,
         "nightDays": 0,
@@ -9146,10 +9146,10 @@
         "zdPending": 3
       },
       "Maylen": {
-        "answered": 12,
+        "answered": 21,
         "missed": 0,
-        "avgTalk": 411,
-        "avgWait": 236,
+        "avgTalk": 357,
+        "avgWait": 147,
         "zdSolved": 31,
         "isNight": false,
         "nightDays": 0,
@@ -9160,10 +9160,10 @@
         "zdPending": 10
       },
       "Bernadett": {
-        "answered": 0,
+        "answered": 9,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "avgTalk": 533,
+        "avgWait": 42,
         "zdSolved": 12,
         "isNight": false,
         "nightDays": 0,
@@ -9188,10 +9188,10 @@
         "zdPending": 0
       },
       "Cecilie": {
-        "answered": 14,
-        "missed": 0,
-        "avgTalk": 404,
-        "avgWait": 16,
+        "answered": 32,
+        "missed": 2,
+        "avgTalk": 427,
+        "avgWait": 17,
         "zdSolved": 38,
         "isNight": true,
         "nightDays": 4,
@@ -9216,10 +9216,10 @@
         "zdPending": 0
       },
       "Marie": {
-        "answered": 38,
+        "answered": 53,
         "missed": 0,
-        "avgTalk": 274,
-        "avgWait": 22,
+        "avgTalk": 284,
+        "avgWait": 21,
         "zdSolved": 46,
         "isNight": false,
         "nightDays": 0,
@@ -9230,10 +9230,10 @@
         "zdPending": 8
       },
       "Andreas": {
-        "answered": 19,
-        "missed": 2,
-        "avgTalk": 483,
-        "avgWait": 104,
+        "answered": 30,
+        "missed": 3,
+        "avgTalk": 505,
+        "avgWait": 84,
         "zdSolved": 91,
         "isNight": false,
         "nightDays": 0,
@@ -9258,10 +9258,10 @@
         "zdPending": 0
       },
       "Vetle": {
-        "answered": 1,
+        "answered": 2,
         "missed": 0,
-        "avgTalk": 485,
-        "avgWait": 3,
+        "avgTalk": 462,
+        "avgWait": 12,
         "zdSolved": 13,
         "isNight": false,
         "nightDays": 0,
@@ -9273,11 +9273,11 @@
       }
     },
     "totals": {
-      "offered": 119,
-      "answered": 105,
-      "missed": 14,
-      "ansRate": 88,
-      "avgWait": 92
+      "offered": 240,
+      "answered": 205,
+      "missed": 35,
+      "ansRate": 85,
+      "avgWait": 127
     }
   },
   "wtp_profile_maylen": {
