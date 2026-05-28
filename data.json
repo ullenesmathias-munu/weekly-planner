@@ -9115,19 +9115,19 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-28T04:04:32.738Z",
+    "generated": "2026-05-28T07:23:44.332Z",
     "agents": {
       "Jonas": {
         "answered": 39,
         "missed": 1,
         "avgTalk": 406,
         "avgWait": 152,
-        "zdSolved": 34,
+        "zdSolved": 35,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 9,
-        "zdPhone": 25,
+        "zdPhone": 26,
         "zdOpen": 7,
         "zdPending": 2
       },
@@ -9136,26 +9136,26 @@
         "missed": 0,
         "avgTalk": 605,
         "avgWait": 42,
-        "zdSolved": 13,
+        "zdSolved": 19,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
-        "zdEmail": 2,
-        "zdPhone": 11,
-        "zdOpen": 6,
-        "zdPending": 3
+        "zdEmail": 5,
+        "zdPhone": 14,
+        "zdOpen": 5,
+        "zdPending": 4
       },
       "Maylen": {
         "answered": 21,
         "missed": 0,
         "avgTalk": 357,
         "avgWait": 147,
-        "zdSolved": 31,
+        "zdSolved": 32,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 9,
-        "zdPhone": 22,
+        "zdPhone": 23,
         "zdOpen": 8,
         "zdPending": 10
       },
@@ -9164,14 +9164,14 @@
         "missed": 0,
         "avgTalk": 533,
         "avgWait": 42,
-        "zdSolved": 12,
+        "zdSolved": 13,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
         "zdEmail": 2,
-        "zdPhone": 10,
-        "zdOpen": 3,
-        "zdPending": 4
+        "zdPhone": 11,
+        "zdOpen": 2,
+        "zdPending": 3
       },
       "Benjamin": {
         "answered": 0,
@@ -9220,14 +9220,14 @@
         "missed": 0,
         "avgTalk": 284,
         "avgWait": 21,
-        "zdSolved": 46,
+        "zdSolved": 53,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
-        "zdEmail": 5,
-        "zdPhone": 41,
-        "zdOpen": 7,
-        "zdPending": 8
+        "zdEmail": 8,
+        "zdPhone": 45,
+        "zdOpen": 5,
+        "zdPending": 9
       },
       "Andreas": {
         "answered": 30,
@@ -9240,8 +9240,8 @@
         "dayDays": 4,
         "zdEmail": 55,
         "zdPhone": 36,
-        "zdOpen": 3,
-        "zdPending": 20
+        "zdOpen": 5,
+        "zdPending": 16
       },
       "Julie": {
         "answered": 0,
