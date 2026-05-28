@@ -6258,6 +6258,111 @@ function renderAdminDashboard(root, viewerMode=false) {
   // renderQueuePanel end — renderChart2 for CSAT trend
   renderChart2();
 }
+  col2.appendChild(queueSec);
+  body.appendChild(col2);
+
+  // ── Col 3: 1:1 Actions + Decisions ───────────────────────────
+  const col3 = document.createElement('div'); col3.className = 'db-col';
+
+  // Open 1:1 action items across all team members
+  const actionSec3 = dbSection('Open actions','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+  const otoData3 = getOtoData();
+  const openActions3 = (otoData3.sessions||[]).flatMap(s =>
+    (s.actions||[]).filter(a => !a.done).map(a => ({ ...a, person: s.person, sessionDate: s.date }))
+  ).sort((a,b) => (a.sessionDate||'').localeCompare(b.sessionDate||''));
+
+  if (!openActions3.length) {
+    const e = document.createElement('div'); e.className='db-empty'; e.textContent='No open action items.';
+    actionSec3.appendChild(e);
+  } else {
+    openActions3.slice(0,8).forEach(a => {
+      const row = document.createElement('div'); row.className='db-row';
+      const dot = document.createElement('div');
+      dot.style.cssText='width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;margin-top:2px;';
+      const lbl = document.createElement('div'); lbl.className='db-row-label'; lbl.textContent=a.text;
+      const who = document.createElement('div'); who.className='db-row-meta'; who.textContent=a.person;
+      row.appendChild(dot); row.appendChild(lbl); row.appendChild(who);
+      actionSec3.appendChild(row);
+    });
+    if (openActions3.length > 8) {
+      const more = document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;';
+      more.textContent='+'+(openActions3.length-8)+' more'; actionSec3.appendChild(more);
+    }
+  }
+  col3.appendChild(actionSec3);
+
+  // Decision log — recent 5
+  const decisions3 = loadDecisions().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
+  if (decisions3.length) {
+    const decSec = dbSection('Recent decisions','Log',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
+    decisions3.forEach(d => {
+      const row = document.createElement('div'); row.className='db-row';
+      const lbl = document.createElement('div'); lbl.className='db-row-label'; lbl.textContent=d.title||d.text||'Decision';
+      const meta = document.createElement('div'); meta.className='db-row-meta'; meta.textContent=d.date||'';
+      row.appendChild(lbl); row.appendChild(meta); decSec.appendChild(row);
+    });
+    col3.appendChild(decSec);
+  }
+
+  // Overdue 1:1s
+  if (overdue1on1.length && !viewerMode) {
+    const odSec = dbSection('Overdue 1:1s','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+    overdue1on1.slice(0,5).forEach(name => {
+      const row = document.createElement('div'); row.className='db-row';
+      const lbl = document.createElement('div'); lbl.className='db-row-label'; lbl.textContent=name;
+      const badge = document.createElement('span'); badge.className='db-row-badge';
+      badge.style.cssText='background:var(--high-bg);color:var(--high-text);';
+      badge.textContent='overdue'; row.appendChild(lbl); row.appendChild(badge); odSec.appendChild(row);
+    });
+    col3.appendChild(odSec);
+  }
+
+  body.appendChild(col3);
+
+  // ── Col 4: Team health + CSAT chart ──────────────────────────
+  const col4 = document.createElement('div'); col4.className = 'db-col';
+
+  // Team health (RAG) summary
+  const healthSec = dbSection('Team health','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+  let greenC=0, amberC=0, redC2=0;
+  MY_TEAM.forEach(n => { const p=loadProfile(n); if(p.rag==='red') redC2++; else if(p.rag==='amber') amberC++; else greenC++; });
+  const ragGrid = document.createElement('div'); ragGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;';
+  const mkRag = (count, label, color) => {
+    const c = document.createElement('div'); c.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px;text-align:center;';
+    const v = document.createElement('div'); v.style.cssText="font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;color:"+color+";";
+    v.textContent=count;
+    const l = document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';
+    l.textContent=label; c.appendChild(v); c.appendChild(l); return c;
+  };
+  ragGrid.appendChild(mkRag(greenC,'Green','var(--low-text)'));
+  ragGrid.appendChild(mkRag(amberC,'Amber','#ffb74d'));
+  ragGrid.appendChild(mkRag(redC2,'Red','var(--high-text)'));
+  healthSec.appendChild(ragGrid);
+
+  // Individual RAG list
+  MY_TEAM.forEach(name => {
+    const prof = loadProfile(name);
+    const rag = prof.rag || 'none';
+    if (rag === 'red' || rag === 'amber') {
+      const row = document.createElement('div'); row.className='db-row';
+      const nm = document.createElement('div'); nm.className='db-row-label'; nm.textContent=name;
+      const dot = document.createElement('div');
+      dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(rag==='red'?'var(--high-text)':'#ffb74d')+';';
+      row.appendChild(nm); row.appendChild(dot); healthSec.appendChild(row);
+    }
+  });
+  col4.appendChild(healthSec);
+
+  // CSAT chart placeholder
+  const csatSec = dbSection('CSAT trend (8 weeks)');
+  const csatBody = document.createElement('div');
+  csatBody.id = 'db-chart2-body';
+  csatBody.style.cssText = 'height:160px;';
+  csatSec.appendChild(csatBody);
+  col4.appendChild(csatSec);
+
+  body.appendChild(col4);
+  renderChart2(); // now db-chart2-body exists in DOM
 }
 async function renderTeamMemberDashboard(root) {
   try {
