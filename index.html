@@ -5562,19 +5562,79 @@ function renderFireBanner(container, syncAlerts, zdAlerts) {
   container.innerHTML = '';
   const all = [...syncAlerts, ...zdAlerts];
   if (!all.length) return;
+
+  // Split into ops (ZD/Unifon) and people (1:1, RAG, staffing) alerts
+  const opsKeywords = ['queue','ticket','unassigned','call','wait','cycle'];
+  const opsAlerts    = all.filter(a => opsKeywords.some(k => a.msg.toLowerCase().includes(k)));
+  const peopleAlerts = all.filter(a => !opsKeywords.some(k => a.msg.toLowerCase().includes(k)));
+  const dangerCount  = all.filter(a => a.level==='danger').length;
+
   const bannerEl = document.createElement('div');
-  bannerEl.style.cssText = 'padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid rgba(255,107,107,0.15);background:rgba(255,107,107,0.04);';
+  bannerEl.style.cssText = 'padding:8px 28px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid '+(dangerCount?'rgba(255,107,107,0.15)':'rgba(252,211,77,0.15)')+';background:'+(dangerCount?'rgba(255,107,107,0.04)':'rgba(252,211,77,0.03)')+';';
+
   const lbl = document.createElement('div');
-  lbl.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--high-text);flex-shrink:0;';
+  lbl.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+(dangerCount?'var(--high-text)':'var(--med-text)')+';flex-shrink:0;margin-right:4px;';
   lbl.textContent = 'Needs attention';
   bannerEl.appendChild(lbl);
-  all.forEach(a => {
+
+  // Ops group label if mixed
+  const hasGroups = opsAlerts.length > 0 && peopleAlerts.length > 0;
+
+  const mkPill = (a) => {
     const pill = document.createElement('div');
-    pill.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;${a.level==='danger'?'background:rgba(255,107,107,0.12);color:var(--high-text);border:1px solid rgba(255,107,107,0.25);':'background:rgba(252,211,77,0.10);color:var(--med-text);border:1px solid rgba(252,211,77,0.2);'}`;
-    const icon = document.createElement('span'); icon.textContent = a.level==='danger'?'🔴':'🟡';
+    pill.style.cssText = 'display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:default;'
+      + (a.level==='danger'
+        ? 'background:rgba(255,107,107,0.12);color:var(--high-text);border:1px solid rgba(255,107,107,0.25);'
+        : 'background:rgba(252,211,77,0.10);color:var(--med-text);border:1px solid rgba(252,211,77,0.2);');
+    const dot = document.createElement('span');
+    dot.style.cssText = 'width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(a.level==='danger'?'var(--high-text)':'#ffb74d')+';';
     const txt = document.createElement('span'); txt.textContent = a.msg;
-    pill.appendChild(icon); pill.appendChild(txt); bannerEl.appendChild(pill);
-  });
+    pill.appendChild(dot); pill.appendChild(txt);
+    return pill;
+  };
+
+  // Collapse when > 4 alerts — show count badge + expandable
+  const COLLAPSE_AT = 4;
+  const shown = all.slice(0, COLLAPSE_AT);
+  const hidden = all.slice(COLLAPSE_AT);
+
+  // Add group separators if both groups present
+  if (hasGroups) {
+    const opsPills = opsAlerts.slice(0, Math.ceil(COLLAPSE_AT/2));
+    const peoplePills = peopleAlerts.slice(0, Math.floor(COLLAPSE_AT/2));
+    if (opsPills.length) {
+      const grpLbl=document.createElement('span');grpLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);padding:0 4px;flex-shrink:0;';
+      grpLbl.textContent='Ops';bannerEl.appendChild(grpLbl);
+      opsPills.forEach(a=>bannerEl.appendChild(mkPill(a)));
+    }
+    if (peoplePills.length) {
+      const grpLbl2=document.createElement('span');grpLbl2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);padding:0 4px 0 8px;flex-shrink:0;border-left:1px solid var(--border);margin-left:4px;';
+      grpLbl2.textContent='People';bannerEl.appendChild(grpLbl2);
+      peoplePills.forEach(a=>bannerEl.appendChild(mkPill(a)));
+    }
+  } else {
+    shown.forEach(a => bannerEl.appendChild(mkPill(a)));
+  }
+
+  // Overflow badge
+  if (hidden.length > 0) {
+    const moreBadge = document.createElement('div');
+    moreBadge.style.cssText = 'display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:var(--surface2);color:var(--text3);border:1px solid var(--border);cursor:pointer;';
+    moreBadge.textContent = '+' + hidden.length + ' more';
+    let expanded = false;
+    moreBadge.onclick = () => {
+      expanded = !expanded;
+      if (expanded) {
+        hidden.forEach(a => { const p = mkPill(a); p.id='fire-extra'; bannerEl.insertBefore(p, moreBadge); });
+        moreBadge.textContent = 'Show less';
+      } else {
+        bannerEl.querySelectorAll('#fire-extra').forEach(el=>el.remove());
+        moreBadge.textContent = '+' + hidden.length + ' more';
+      }
+    };
+    bannerEl.appendChild(moreBadge);
+  }
+
   container.appendChild(bannerEl);
 }
 
@@ -5743,7 +5803,32 @@ function renderAdminDashboard(root, viewerMode=false) {
   // Live ZD KPIs
   const zdOpenKpi=mkKpi('…','Open tickets','neutral',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
   const zdSolvedKpi=mkKpi('…','Solved today','ok',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
-  if(zdReady()){kpis.appendChild(zdOpenKpi);kpis.appendChild(zdSolvedKpi);}
+  const zdUnassignedKpi=mkKpi('…','Unassigned','neutral',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+  const uniAnsRateKpi=mkKpi('…','Answer rate','neutral',null);
+  if(zdReady()){kpis.appendChild(zdOpenKpi);kpis.appendChild(zdSolvedKpi);kpis.appendChild(zdUnassignedKpi);}
+  // Answer rate from Unifon live KPIs or cached
+  (()=>{
+    try {
+      const cached=JSON.parse(localStorage.getItem('wtp_unifon_live_kpis')||'null');
+      if(cached&&cached.agentsReady!=null){
+        const v=cached.agentsReady+' ready';
+        uniAnsRateKpi.querySelector('.db-kpi-val').textContent=v;
+        kpis.appendChild(uniAnsRateKpi);
+      }
+    } catch{}
+    // Also fetch live if Unifon configured
+    if(hasUnifonApi()){
+      fetchUnifonLiveKpis().then(k=>{
+        if(!k) return;
+        const v=k.agentsReady+'/'+k.agentsTotal+' ready';
+        uniAnsRateKpi.querySelector('.db-kpi-val').textContent=v;
+        uniAnsRateKpi.querySelector('.db-kpi-label').textContent='Queue agents';
+        const cls=k.agentsReady===0?'danger':k.agentsReady<3?'warn':'ok';
+        uniAnsRateKpi.querySelector('.db-kpi-val').className='db-kpi-val '+cls;
+        if(!kpis.contains(uniAnsRateKpi)) kpis.appendChild(uniAnsRateKpi);
+      }).catch(()=>{});
+    }
+  })();
   // Weekly Review button — moved here from planner topbar
   const reviewBtn = document.createElement('button');
   reviewBtn.id = 'weekly-review-btn';
@@ -5774,10 +5859,18 @@ function renderAdminDashboard(root, viewerMode=false) {
 
   if(zdReady()){
     const t=localToday();
-    Promise.all([zdCount('type:ticket status:open').catch(()=>'?'),zdCount(`type:ticket status>=solved solved>=${t} solved<=${t}`).catch(()=>'?')]).then(([open,solved])=>{
+    Promise.all([
+      zdCount('type:ticket status:open').catch(()=>'?'),
+      zdCount('type:ticket status>=solved solved>='+t+' solved<='+t).catch(()=>'?'),
+      (async()=>{ try{ const gId=zdGroupId||(await zdGetGroupId().catch(()=>null)); if(!gId) return '?'; return await zdCount('type:ticket group:'+gId+' status<solved assignee:none').catch(()=>'?'); } catch{return '?';} })(),
+    ]).then(([open,solved,unassigned])=>{
       zdOpenKpi.querySelector('.db-kpi-val').textContent=open;
       zdOpenKpi.querySelector('.db-kpi-val').className='db-kpi-val '+(+open>100?'danger':+open>60?'warn':'ok');
       zdSolvedKpi.querySelector('.db-kpi-val').textContent=solved;
+      if(unassigned!=='?'&&zdUnassignedKpi){
+        zdUnassignedKpi.querySelector('.db-kpi-val').textContent=unassigned;
+        zdUnassignedKpi.querySelector('.db-kpi-val').className='db-kpi-val '+(+unassigned>10?'danger':+unassigned>3?'warn':'ok');
+      }
     });
   }
 
@@ -5927,6 +6020,24 @@ function renderAdminDashboard(root, viewerMode=false) {
   function renderQueuePanel(container,key){
     container.innerHTML='';
     const {from,to}=getQueueDates(key);
+
+    // MON-FRI / SAT-SUN toggle (only show on today/week views)
+    if(key==='today'||key==='week'){
+      const dowToggle=document.createElement('div');dowToggle.style.cssText='display:flex;gap:6px;margin-bottom:10px;';
+      let dowView=localStorage.getItem('wtp_db_dow_view')||'weekday';
+      const mkDowBtn=(label,val)=>{
+        const b=document.createElement('button');
+        const a=dowView===val;
+        b.style.cssText='font-family:inherit;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid;'
+          +(a?'background:var(--cal-text);color:#000743;border-color:var(--cal-text);':'background:var(--surface2);color:var(--text3);border-color:var(--border);');
+        b.textContent=label;
+        b.onclick=()=>{dowView=val;localStorage.setItem('wtp_db_dow_view',val);renderQueuePanel(container,key);};
+        return b;
+      };
+      dowToggle.appendChild(mkDowBtn('Mon–Fri','weekday'));
+      dowToggle.appendChild(mkDowBtn('Sat–Sun','weekend'));
+      container.appendChild(dowToggle);
+    }
 
     // ZD stats grid
     const qGrid=document.createElement('div');qGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
@@ -6260,6 +6371,183 @@ function renderAdminDashboard(root, viewerMode=false) {
   // renderQueuePanel end — renderChart2 for CSAT trend
   renderChart2();
 }
+
+  // ── Right panel: SATISFACTION + MEDIAN RESOLUTION + VOLUME TREND ──
+  // These live in col3 of the original dashboard (see screenshot May 12)
+  if (zdReady()) {
+    const rightPanel = document.createElement('div');
+    rightPanel.style.cssText = 'display:flex;flex-direction:column;gap:0;';
+
+    // ── SATISFACTION ──────────────────────────────────────────────
+    const satSec = dbSection('Satisfaction (30d)', 'Tickets', ()=>switchTab('zendesk', document.querySelector('[onclick*="zendesk"]')));
+    const satBody = document.createElement('div');
+    satBody.style.cssText = 'display:flex;align-items:center;gap:16px;padding:8px 0;';
+    satBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
+    satSec.appendChild(satBody);
+    col3.appendChild(satSec);
+
+    // ── MEDIAN RESOLUTION ─────────────────────────────────────────
+    const mttrSec = dbSection('Median resolution (30d)');
+    const mttrBody = document.createElement('div');
+    mttrBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
+    mttrSec.appendChild(mttrBody);
+    col3.appendChild(mttrSec);
+
+    // ── VOLUME TREND ──────────────────────────────────────────────
+    const volSec = dbSection('Volume trend');
+    const volBody = document.createElement('div');
+    volBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
+    volSec.appendChild(volBody);
+    col3.appendChild(volSec);
+
+    // Fetch and populate all three async
+    (async () => {
+      try {
+        const t = localToday();
+        const d30 = new Date(); d30.setDate(d30.getDate()-29);
+        const from30 = fmtLocal(d30);
+        const fromTs = Math.floor(new Date(from30+'T00:00:00').getTime()/1000);
+        const toTs   = Math.floor(Date.now()/1000);
+
+        // CSAT
+        const [csatData, solvedData] = await Promise.all([
+          zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
+          zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+from30+' solved<='+t)+'&per_page=100').catch(()=>({results:[]})),
+        ]);
+
+        const ratings = csatData.satisfaction_ratings || [];
+        const good    = ratings.filter(r=>r.score==='good').length;
+        const bad     = ratings.filter(r=>r.score==='bad').length;
+        const total   = good + bad;
+        const pct     = total > 0 ? Math.round(good/total*100) : null;
+
+        // CSAT donut SVG
+        satBody.innerHTML = '';
+        if (pct !== null) {
+          const donutSize = 70, r = 28, cx = 35, cy = 35;
+          const circ = 2 * Math.PI * r;
+          const dashGood = circ * pct / 100;
+          const donutColor = pct >= 90 ? '#34d399' : pct >= 75 ? '#ffb74d' : '#ef5350';
+          const svgD = document.createElementNS('http://www.w3.org/2000/svg','svg');
+          svgD.setAttribute('width', donutSize); svgD.setAttribute('height', donutSize);
+          svgD.setAttribute('viewBox','0 0 70 70');
+          // Background circle
+          const bgC = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          bgC.setAttribute('cx',cx);bgC.setAttribute('cy',cy);bgC.setAttribute('r',r);
+          bgC.setAttribute('fill','none');bgC.setAttribute('stroke','var(--border)');bgC.setAttribute('stroke-width','8');
+          svgD.appendChild(bgC);
+          // Foreground arc
+          const fgC = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          fgC.setAttribute('cx',cx);fgC.setAttribute('cy',cy);fgC.setAttribute('r',r);
+          fgC.setAttribute('fill','none');fgC.setAttribute('stroke',donutColor);fgC.setAttribute('stroke-width','8');
+          fgC.setAttribute('stroke-dasharray',dashGood+' '+circ);
+          fgC.setAttribute('stroke-linecap','round');
+          fgC.setAttribute('transform','rotate(-90 35 35)');
+          svgD.appendChild(fgC);
+          // Percentage text
+          const pctT = document.createElementNS('http://www.w3.org/2000/svg','text');
+          pctT.setAttribute('x',cx);pctT.setAttribute('y',cy+5);
+          pctT.setAttribute('text-anchor','middle');pctT.setAttribute('font-size','13');
+          pctT.setAttribute('font-weight','700');pctT.setAttribute('fill',donutColor);
+          pctT.textContent = pct+'%'; svgD.appendChild(pctT);
+          satBody.appendChild(svgD);
+        }
+        // Stats side
+        const statSide = document.createElement('div'); statSide.style.cssText='flex:1;display:flex;flex-direction:column;gap:6px;';
+        const mkStatRow = (label, val, color) => {
+          const row = document.createElement('div'); row.style.cssText='display:flex;justify-content:space-between;font-size:12px;';
+          const l=document.createElement('span');l.style.color='var(--text2)';l.textContent=label;
+          const v=document.createElement('span');v.style.cssText='font-weight:700;color:'+(color||'var(--text)');v.textContent=val;
+          row.appendChild(l);row.appendChild(v);return row;
+        };
+        statSide.appendChild(mkStatRow('Good / Total', good+' / '+total, 'var(--low-text)'));
+        statSide.appendChild(mkStatRow('Bad', bad, bad>0?'var(--high-text)':'var(--text3)'));
+        satBody.appendChild(statSide);
+
+        // MEDIAN RESOLUTION
+        const tickets = solvedData.results || [];
+        const resTimes = tickets.map(t2=>{
+          return t2.solved_at ? (new Date(t2.solved_at)-new Date(t2.created_at))/60000 : null;
+        }).filter(v=>v>0).sort((a,b)=>a-b);
+        const mean   = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
+        const median = resTimes.length ? resTimes[Math.floor(resTimes.length/2)] : null;
+
+        mttrBody.innerHTML = '';
+        if (mean !== null) {
+          const meanHr = Math.floor(mean/60), meanMin = mean%60;
+          const big = document.createElement('div');
+          big.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:32px;font-weight:900;color:var(--cal-text);letter-spacing:-0.04em;line-height:1;margin-bottom:4px;";
+          big.textContent = (meanHr>0?meanHr+'h ':'')+meanMin+'m';
+          const sub = document.createElement('div'); sub.style.cssText='font-size:11px;color:var(--text3);margin-bottom:8px;';
+          sub.textContent = 'mean · '+tickets.length+' tickets';
+          mttrBody.appendChild(big); mttrBody.appendChild(sub);
+          if (median !== null) {
+            const medRow = document.createElement('div'); medRow.style.cssText='display:flex;justify-content:space-between;font-size:12px;border-top:1px solid var(--border);padding-top:6px;';
+            const ml=document.createElement('span');ml.style.color='var(--text2)';ml.textContent='Median';
+            const mv=document.createElement('span');mv.style.cssText='font-weight:700;color:var(--text)';
+            const medMin=Math.round(median); mv.textContent=(medMin>=60?(Math.floor(medMin/60)+'h'+(medMin%60?medMin%60+'m':'')):(medMin+'m'));
+            medRow.appendChild(ml);medRow.appendChild(mv);mttrBody.appendChild(medRow);
+          }
+        } else {
+          mttrBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">No resolution data</div>';
+        }
+
+        // VOLUME TREND — solved/day this week vs last week
+        const mon = getMonday(0);
+        const lastMon = getMonday(-1);
+        const lastSun = new Date(mon.getTime()-86400000);
+        const daysElapsed = Math.max(1, Math.ceil((new Date(t+'T00:00:00')-mon)/86400000)+1);
+        const [twSolved, lwSolved, openNow] = await Promise.all([
+          zdCount('type:ticket status>=solved solved>='+fmtLocal(mon)+' solved<='+t).catch(()=>null),
+          zdCount('type:ticket status>=solved solved>='+fmtLocal(lastMon)+' solved<='+fmtLocal(lastSun)).catch(()=>null),
+          zdCount('type:ticket status:open').catch(()=>null),
+        ]);
+
+        // Old open (created before last week)
+        const twoWksAgo = new Date(lastMon); twoWksAgo.setDate(twoWksAgo.getDate()-1);
+        const oldOpen = await zdCount('type:ticket status:open created<='+fmtLocal(twoWksAgo)).catch(()=>null);
+
+        volBody.innerHTML = '';
+        const lwDays = 7;
+        const lwAvg  = lwSolved !== null ? Math.round(lwSolved/lwDays) : null;
+        const twRate = twSolved !== null ? Math.round(twSolved/daysElapsed) : null;
+        const delta  = (twRate !== null && lwAvg !== null) ? twRate - lwAvg : null;
+
+        // Big number
+        if (twRate !== null) {
+          const bigV = document.createElement('div'); bigV.style.cssText='display:flex;align-items:baseline;gap:8px;margin-bottom:6px;';
+          const bigN = document.createElement('div');
+          bigN.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:36px;font-weight:900;color:var(--low-text);letter-spacing:-0.04em;line-height:1;";
+          bigN.textContent = twRate;
+          const bigL = document.createElement('div'); bigL.style.cssText='font-size:11px;color:var(--text3);line-height:1.3;';
+          bigL.innerHTML = 'solved/day this wk<br><span style="font-size:10px;">('+daysElapsed+'d elapsed)</span>';
+          if (delta !== null) {
+            const arr = document.createElement('span');
+            arr.style.cssText='font-size:16px;color:'+(delta>0?'var(--low-text)':delta<0?'var(--high-text)':'var(--text3)')+';margin-left:4px;';
+            arr.textContent = delta>0?'↑':delta<0?'↓':'→';
+            bigL.appendChild(arr);
+          }
+          bigV.appendChild(bigN); bigV.appendChild(bigL);
+          volBody.appendChild(bigV);
+        }
+
+        const mkVolRow = (label, val, color) => {
+          const row=document.createElement('div');row.style.cssText='display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-top:1px solid var(--border);';
+          const l=document.createElement('span');l.style.color='var(--text2)';l.textContent=label;
+          const v=document.createElement('span');v.style.cssText='font-weight:700;color:'+(color||'var(--text)');v.textContent=val??'—';
+          row.appendChild(l);row.appendChild(v);return row;
+        };
+        if (lwAvg!==null)  volBody.appendChild(mkVolRow('Last week avg', lwAvg+'/day', 'var(--text)'));
+        if (delta!==null)  volBody.appendChild(mkVolRow('vs last week', (delta>0?'+':'')+delta+' / day', delta>0?'var(--low-text)':delta<0?'var(--high-text)':'var(--text3)'));
+        if (openNow!==null) volBody.appendChild(mkVolRow('Open now', openNow, +openNow>60?'var(--high-text)':+openNow>30?'#ffb74d':'var(--low-text)'));
+        if (oldOpen!==null && oldOpen>0) volBody.appendChild(mkVolRow('Old open (pre-last-wk)', oldOpen, 'var(--high-text)'));
+
+      } catch(e) {
+        console.warn('Dashboard right panel error:', e.message);
+      }
+    })();
+  }
+
   col2.appendChild(queueSec);
   body.appendChild(col2);
 
@@ -6377,9 +6665,78 @@ function renderAdminDashboard(root, viewerMode=false) {
   body.appendChild(col3);
 
   // ═══════════════════════════════════════════════════════════════
-  // COL 4: My work — tasks + 1:1 actions + overdue
+  // COL 4: My work — today at a glance + tasks + 1:1 actions
   // ═══════════════════════════════════════════════════════════════
   const col4 = document.createElement('div'); col4.className = 'db-col';
+
+  // ── Today at a glance — synthesised priority card ─────────────
+  if (!viewerMode) {
+    const glanceSec = dbSection('Today at a glance');
+    const glanceItems = [];
+
+    // Staffing gaps — any unexpected absences?
+    const absentUnexpected = absPeople.filter(p => {
+      // Check if this person was scheduled to be in today
+      const sched = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
+      if (!sched) return false;
+      const idx2 = sched.dates.indexOf(todayStr);
+      const shift = (sched.people.find(sp => sp.name===p.name)?.shifts[idx2]||'').toLowerCase();
+      return !['so','h','os','ol','hd'].includes(shift); // absent but not scheduled off
+    });
+    if (absentUnexpected.length) {
+      glanceItems.push({ level:'danger', text: absentUnexpected.map(p=>p.name.split(' ')[0]).join(', ')+' absent — not scheduled off' });
+    }
+
+    // Overdue 1:1s > 21 days (critical)
+    const critical1on1 = overdue1on1.filter(name => {
+      try {
+        const d = getOtoData();
+        const sessions = (d.sessions||[]).filter(s=>s.person===name).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+        if (!sessions.length) return true; // never had one
+        const daysSince = Math.floor((Date.now()-new Date(sessions[0].date+'T00:00:00').getTime())/86400000);
+        return daysSince > 21;
+      } catch { return false; }
+    });
+    if (critical1on1.length) {
+      glanceItems.push({ level:'danger', text: critical1on1.slice(0,3).map(n=>n.split(' ')[0]).join(', ')+' — 1:1 overdue >21 days' });
+    }
+
+    // High priority tasks due today
+    const highPrioToday = todayTasks.filter(t=>t.priority==='high');
+    if (highPrioToday.length) {
+      glanceItems.push({ level:'warn', text: highPrioToday.length+' high-priority task'+(highPrioToday.length>1?'s':'')+' today' });
+    }
+
+    // Overdue tasks
+    if (overdueTasks.length) {
+      glanceItems.push({ level:'warn', text: overdueTasks.length+' overdue task'+(overdueTasks.length>1?'s':'')+' from previous days' });
+    }
+
+    // Red RAG team members
+    if (redCount > 0) {
+      const redNames = MY_TEAM.filter(n => (loadProfile(n).rag||'')  === 'red');
+      glanceItems.push({ level:'danger', text: redNames.map(n=>n.split(' ')[0]).join(', ')+' — Red RAG' });
+    }
+
+    if (!glanceItems.length) {
+      const ok = document.createElement('div');
+      ok.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--low-text);font-weight:600;';
+      ok.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:var(--low-text);flex-shrink:0;display:inline-block;"></span>All clear — nothing urgent today';
+      glanceSec.appendChild(ok);
+    } else {
+      glanceItems.forEach(item => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);';
+        const dot = document.createElement('div');
+        dot.style.cssText = 'width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+(item.level==='danger'?'var(--high-text)':'#ffb74d')+';';
+        const txt = document.createElement('div');
+        txt.style.cssText = 'font-size:12px;color:var(--text2);line-height:1.4;';
+        txt.textContent = item.text;
+        row.appendChild(dot); row.appendChild(txt); glanceSec.appendChild(row);
+      });
+    }
+    col4.appendChild(glanceSec);
+  }
 
   // Today's tasks
   if (!viewerMode) {
@@ -6462,16 +6819,83 @@ function renderAdminDashboard(root, viewerMode=false) {
   ragGrid5.appendChild(mkRag5(amberC,'Amber','#ffb74d'));
   ragGrid5.appendChild(mkRag5(redC2,'Red','var(--high-text)'));
   healthSec5.appendChild(ragGrid5);
+  // Show amber/red agents with their last note — actionable, not just a dot
   MY_TEAM.forEach(name=>{
     const prof=loadProfile(name);const rag=prof.rag||'none';
     if(rag==='red'||rag==='amber'){
-      const row=document.createElement('div');row.className='db-row';
-      const nm=document.createElement('div');nm.className='db-row-label';nm.textContent=name;
+      const row=document.createElement('div');
+      row.style.cssText='padding:6px 0;border-bottom:1px solid var(--border);';
+      // Name row with RAG dot
+      const nameRow=document.createElement('div');nameRow.style.cssText='display:flex;align-items:center;gap:7px;margin-bottom:2px;';
       const dot=document.createElement('div');dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(rag==='red'?'var(--high-text)':'#ffb74d')+';';
-      row.appendChild(nm);row.appendChild(dot);healthSec5.appendChild(row);
+      const nm=document.createElement('div');nm.style.cssText='font-size:12px;font-weight:700;color:var(--text);';nm.textContent=name.split(' ')[0];
+      // Days since last 1:1
+      let lastNote='', daysSince=null;
+      try {
+        const d=getOtoData();
+        const sessions=(d.sessions||[]).filter(s=>s.person===name).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+        if(sessions.length){
+          daysSince=Math.floor((Date.now()-new Date(sessions[0].date+'T00:00:00').getTime())/86400000);
+          // Get the most recent note from ongoing notes or wins
+          lastNote=sessions[0].notes||(sessions[0].wins&&sessions[0].wins[0])||'';
+        }
+      } catch{}
+      nameRow.appendChild(dot);nameRow.appendChild(nm);
+      if(daysSince!==null){
+        const since=document.createElement('span');since.style.cssText='font-size:10px;color:var(--text3);margin-left:auto;';
+        since.textContent=daysSince+'d ago';
+        nameRow.appendChild(since);
+      }
+      row.appendChild(nameRow);
+      // Last note (one line)
+      if(lastNote){
+        const note=document.createElement('div');
+        note.style.cssText='font-size:11px;color:var(--text3);line-height:1.3;padding-left:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+        note.title=lastNote; // show full on hover
+        note.textContent=lastNote.length>55?lastNote.slice(0,55)+'…':lastNote;
+        row.appendChild(note);
+      }
+      healthSec5.appendChild(row);
     }
   });
   col5.appendChild(healthSec5);
+
+  // ── Upcoming 1:1s (next 7 days) ─────────────────────────────
+  if (!viewerMode) {
+    const upcoming1on1 = [];
+    const todayD = new Date(todayStr+'T00:00:00');
+    MY_TEAM.forEach(name => {
+      try {
+        const d = getOtoData();
+        // Find the scheduled next 1:1 from planner tasks or estimate from cadence
+        const sessions = (d.sessions||[]).filter(s=>s.person===name).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+        if (sessions.length) {
+          const lastDate = new Date(sessions[0].date+'T00:00:00');
+          const daysSinceLast = Math.floor((todayD-lastDate)/86400000);
+          // If last 1:1 was 10-14 days ago, it's likely coming up soon (biweekly cadence)
+          if (daysSinceLast >= 10 && daysSinceLast <= 21) {
+            const dueIn = 14 - daysSinceLast; // assuming biweekly
+            if (dueIn >= 0 && dueIn <= 7) {
+              upcoming1on1.push({ name, dueIn, lastDate: sessions[0].date });
+            }
+          }
+        }
+      } catch {}
+    });
+    upcoming1on1.sort((a,b)=>a.dueIn-b.dueIn);
+    if (upcoming1on1.length) {
+      const upSec = dbSection('Upcoming 1:1s','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
+      upcoming1on1.slice(0,5).forEach(item => {
+        const row = document.createElement('div'); row.className='db-row';
+        const nm = document.createElement('div'); nm.className='db-row-label'; nm.textContent=item.name.split(' ')[0];
+        const due = document.createElement('div'); due.className='db-row-meta';
+        due.textContent = item.dueIn===0?'Today':item.dueIn===1?'Tomorrow':'In '+item.dueIn+'d';
+        due.style.color = item.dueIn===0?'var(--high-text)':item.dueIn<=2?'#ffb74d':'var(--text3)';
+        row.appendChild(nm); row.appendChild(due); upSec.appendChild(row);
+      });
+      col5.appendChild(upSec);
+    }
+  }
 
   // Handover notes (contextual — show when relevant: afternoon/evening or if there are active handovers)
   if (!viewerMode) {
