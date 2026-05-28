@@ -6142,63 +6142,6 @@ function renderAdminDashboard(root, viewerMode=false) {
   }
 
   // ── Render Chart 2: CSAT trend ────────────────────────────────
-  // renderChart1 — solved per day bars for selected period
-  const renderChart1 = (fromDate, toDate) => {
-    const el = document.getElementById('db-chart1-body'); if (!el) return;
-    if (!zdReady()) { el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:16px 0;">Zendesk not configured</div>'; return; }
-    el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Loading...</div>';
-    // Build daily date range
-    const days=[];
-    const fD=new Date(fromDate+'T00:00:00'), tD=new Date(toDate+'T00:00:00');
-    for(let d=new Date(fD);d<=tD;d.setDate(d.getDate()+1)) days.push(fmtLocal(new Date(d)));
-    if(!days.length){el.innerHTML='';return;}
-    // Fetch solved per day
-    const promises = days.map(day =>
-      zdCount('type:ticket status>=solved solved>='+day+' solved<='+day).catch(()=>0)
-    );
-    Promise.all(promises).then(counts => {
-      el.innerHTML='';
-      const maxC = Math.max(...counts, 1);
-      const W=el.offsetWidth||220, H=100;
-      const barW=Math.max(4, Math.floor((W-20)/days.length)-2);
-      const gap=Math.max(1, Math.floor((W-20-barW*days.length)/(days.length)));
-      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svg.setAttribute('viewBox','0 0 '+W+' '+H);
-      svg.setAttribute('width','100%');svg.setAttribute('height',H);
-      days.forEach((day,i)=>{
-        const v=counts[i]||0;
-        const bH=Math.max(2,Math.round(v/maxC*(H-24)));
-        const x=10+i*(barW+gap);
-        const isToday2=day===localToday();
-        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-        rect.setAttribute('x',x);rect.setAttribute('y',H-20-bH);
-        rect.setAttribute('width',barW);rect.setAttribute('height',bH);
-        rect.setAttribute('rx','2');
-        rect.setAttribute('fill',isToday2?'var(--cal-text)':'rgba(77,171,247,0.5)');
-        const title=document.createElementNS('http://www.w3.org/2000/svg','title');
-        title.textContent=day+': '+v+' solved';rect.appendChild(title);
-        svg.appendChild(rect);
-        // Value label if space
-        if(v>0&&barW>=12){
-          const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-          lbl.setAttribute('x',x+barW/2);lbl.setAttribute('y',H-20-bH-3);
-          lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-size','9');
-          lbl.setAttribute('fill','var(--text3)');lbl.textContent=v;svg.appendChild(lbl);
-        }
-        // Day label
-        if(days.length<=14||(i===0||i===days.length-1||isToday2)){
-          const dlbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-          dlbl.setAttribute('x',x+barW/2);dlbl.setAttribute('y',H-4);
-          dlbl.setAttribute('text-anchor','middle');dlbl.setAttribute('font-size','8');
-          dlbl.setAttribute('fill',isToday2?'var(--cal-text)':'var(--text3)');
-          const d2=new Date(day+'T00:00:00');
-          dlbl.textContent=d2.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-          svg.appendChild(dlbl);
-        }
-      });
-      el.appendChild(svg);
-    }).catch(()=>{el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Could not load</div>';});
-  };
 
 
   const renderChart2 = async () => {
@@ -6319,6 +6262,64 @@ function renderAdminDashboard(root, viewerMode=false) {
 }
   col2.appendChild(queueSec);
   body.appendChild(col2);
+
+  // renderChart1 — solved per day bars for selected period
+  const renderChart1 = (fromDate, toDate) => {
+    const el = document.getElementById('db-chart1-body'); if (!el) return;
+    if (!zdReady()) { el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:16px 0;">Zendesk not configured</div>'; return; }
+    el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Loading...</div>';
+    // Build daily date range
+    const days=[];
+    const fD=new Date(fromDate+'T00:00:00'), tD=new Date(toDate+'T00:00:00');
+    for(let d=new Date(fD);d<=tD;d.setDate(d.getDate()+1)) days.push(fmtLocal(new Date(d)));
+    if(!days.length){el.innerHTML='';return;}
+    // Fetch solved per day
+    const promises = days.map(day =>
+      zdCount('type:ticket status>=solved solved>='+day+' solved<='+day).catch(()=>0)
+    );
+    Promise.all(promises).then(counts => {
+      el.innerHTML='';
+      const maxC = Math.max(...counts, 1);
+      const W=el.offsetWidth||220, H=100;
+      const barW=Math.max(4, Math.floor((W-20)/days.length)-2);
+      const gap=Math.max(1, Math.floor((W-20-barW*days.length)/(days.length)));
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('viewBox','0 0 '+W+' '+H);
+      svg.setAttribute('width','100%');svg.setAttribute('height',H);
+      days.forEach((day,i)=>{
+        const v=counts[i]||0;
+        const bH=Math.max(2,Math.round(v/maxC*(H-24)));
+        const x=10+i*(barW+gap);
+        const isToday2=day===localToday();
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',x);rect.setAttribute('y',H-20-bH);
+        rect.setAttribute('width',barW);rect.setAttribute('height',bH);
+        rect.setAttribute('rx','2');
+        rect.setAttribute('fill',isToday2?'var(--cal-text)':'rgba(77,171,247,0.5)');
+        const title=document.createElementNS('http://www.w3.org/2000/svg','title');
+        title.textContent=day+': '+v+' solved';rect.appendChild(title);
+        svg.appendChild(rect);
+        // Value label if space
+        if(v>0&&barW>=12){
+          const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+          lbl.setAttribute('x',x+barW/2);lbl.setAttribute('y',H-20-bH-3);
+          lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-size','9');
+          lbl.setAttribute('fill','var(--text3)');lbl.textContent=v;svg.appendChild(lbl);
+        }
+        // Day label
+        if(days.length<=14||(i===0||i===days.length-1||isToday2)){
+          const dlbl=document.createElementNS('http://www.w3.org/2000/svg','text');
+          dlbl.setAttribute('x',x+barW/2);dlbl.setAttribute('y',H-4);
+          dlbl.setAttribute('text-anchor','middle');dlbl.setAttribute('font-size','8');
+          dlbl.setAttribute('fill',isToday2?'var(--cal-text)':'var(--text3)');
+          const d2=new Date(day+'T00:00:00');
+          dlbl.textContent=d2.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+          svg.appendChild(dlbl);
+        }
+      });
+      el.appendChild(svg);
+    }).catch(()=>{el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Could not load</div>';});
+  };
 
   // ═══════════════════════════════════════════════════════════════
   // COL 3: Performance metrics (ZD CSAT + trends)
