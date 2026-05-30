@@ -6985,8 +6985,30 @@
       "answered": 475,
       "missed": 92,
       "ansRate": 84,
-      "avgWait": 182
-    }
+      "avgWait": 182,
+      "zdTotalSolved": 614,
+      "zdOpenEow": 119,
+      "zdCsatGood": 23,
+      "zdCsatBad": 1,
+      "zdCsatTotal": 24,
+      "zdCsatPct": 96,
+      "zdMttrMean": 22635,
+      "zdMttrMedian": 20215,
+      "zdEmailTotal": 136,
+      "zdPhoneTotal": 478,
+      "zdTicketCount": 614,
+      "zdSolvedPerDay": {
+        "2026-04-27": 0,
+        "2026-04-28": 0,
+        "2026-04-29": 0,
+        "2026-04-30": 0,
+        "2026-05-01": 0,
+        "2026-05-02": 0,
+        "2026-05-03": 0
+      }
+    },
+    "zdEnriched": true,
+    "zdEnrichedAt": "2026-05-30T12:45:41.828Z"
   },
   "wtp_profile_andreas": {
     "log": [],
