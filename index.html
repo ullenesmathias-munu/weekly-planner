@@ -10071,36 +10071,49 @@ function getUserZdAgentId(username) {
   return match ? match.id : null;
 }
 
+// Returns the name to use for Unifon lookups (schedule name — same as heatmap uses)
 function getUserUnifonAgentNum(username) {
-  const profile = loadProfile(username || currentUser?.name || '');
-  if (profile.unifonAgentNum) return profile.unifonAgentNum;
-  // Fallback: check name map
-  const schedName = (() => {
-    const users = getUsers();
-    const u = users.find(x => x.name === (username || currentUser?.name));
-    return u ? (getScheduleName(u) || getUserDisplayName(u)) : null;
-  })();
-  if (!schedName) return null;
-  const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
-  const entry = Object.entries(nameMap).find(([,n]) => n === schedName);
-  return entry ? entry[0] : null;
+  // We use the schedule name as the lookup key — getUnifonAgentStats handles name matching
+  const users = getUsers();
+  const u = users.find(x => x.name === (username || currentUser?.name));
+  return u ? (getScheduleName(u) || getUserDisplayName(u)) : null;
 }
 
-// Fetch agent call stats for a specific Unifon agent number for a date range
-function getUnifonAgentStats(agentNum, fromDate, toDate) {
-  if (!agentNum) return null;
+// Fetch agent call stats for a team member name for a date range
+// Uses name-based lookup from imported Unifon data (same as heatmap/reports)
+function getUnifonAgentStats(agentName, fromDate, toDate) {
+  if (!agentName) return null;
   try {
-    const agentCalls = JSON.parse(localStorage.getItem(UNIFON_AGENT_KEY) || '{}');
+    const agentCalls = loadUnifonAgentCalls();
+    // Build per-date totals for this agent using resolveAgentCallStats logic
+    const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const map = loadUnifonNameMap ? loadUnifonNameMap() : {};
+    const mappedName = map[agentName] || map[(agentName.split(' ')[0])];
+    const firstName = agentName.split(' ')[0];
+    const normFull  = norm(agentName);
+    const normFirst = norm(firstName);
+
     let answered = 0, missed = 0, totalTalk = 0, talkCount = 0, totalWait = 0, waitCount = 0;
     Object.entries(agentCalls).forEach(([date, agents]) => {
       if (date < fromDate || date > toDate) return;
-      const a = agents[agentNum] || agents[String(agentNum)];
+      // Find this agent in the day's data using the same matching as resolveAgentCallStats
+      let a = null;
+      if (mappedName && agents[mappedName]) a = agents[mappedName];
+      else if (agents[agentName]) a = agents[agentName];
+      else if (agents[firstName]) a = agents[firstName];
+      else {
+        const match = Object.entries(agents).find(([n]) =>
+          norm(n) === normFull || norm(n.split(' ')[0]) === normFirst
+        );
+        if (match) a = match[1];
+      }
       if (!a) return;
       answered += a.answered || 0;
       missed   += a.missed   || 0;
       if (a.totalTalkSec && a.answered) { totalTalk += a.totalTalkSec; talkCount += a.answered; }
       if (a.totalWaitSec && a.answered) { totalWait += a.totalWaitSec; waitCount += a.answered; }
     });
+    if (answered === 0 && missed === 0) return null; // no data for this agent
     return {
       answered, missed,
       avgTalkSec: talkCount > 0 ? Math.round(totalTalk / talkCount) : 0,
@@ -10220,56 +10233,22 @@ async function renderAgentIdentityMapping() {
     zdRow.appendChild(zdLbl); zdRow.appendChild(zdSel);
     row.appendChild(zdRow);
 
-    // Unifon agent selector
+    // Unifon — automatic via name matching from imported reports
     const uniRow = document.createElement('div');
     uniRow.style.cssText = 'display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;';
     const uniLbl = document.createElement('div');
     uniLbl.style.cssText = 'font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;';
     uniLbl.textContent = 'Unifon';
-    const uniSel = document.createElement('select');
-    uniSel.style.cssText = 'font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;';
-    const uniBlank = document.createElement('option'); uniBlank.value=''; uniBlank.textContent='— not mapped —'; uniSel.appendChild(uniBlank);
-    unifonMembers.forEach(m => {
-      const opt = document.createElement('option');
-      opt.value = m.num; opt.textContent = m.fullName + ' (#'+m.num+')';
-      if (profile.unifonAgentNum === m.num) opt.selected = true;
-      uniSel.appendChild(opt);
-    });
-    // Auto-suggest by first name
-    if (!profile.unifonAgentNum && unifonMembers.length) {
-      const auto = unifonMembers.find(m =>
-        m.fullName.split(' ')[0].toLowerCase() === schedName.split(' ')[0].toLowerCase()
-      );
-      if (auto) {
-        uniSel.value = auto.num;
-        uniSel.style.borderColor = '#fbbf24';
-        uniSel.title = 'Auto-suggested — confirm this is correct';
-      }
+    // Check if this agent has data in the imported reports
+    const testStats = getUnifonAgentStats(schedName, fmtLocal(getMonday(-4)), localToday());
+    const uniStatus = document.createElement('div');
+    uniStatus.style.cssText = 'font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;';
+    if (testStats && (testStats.answered > 0 || testStats.missed > 0)) {
+      uniStatus.innerHTML = '<span style="color:#34d399;font-weight:700;">✓</span> Auto-matched from imported reports (' + (testStats.answered+testStats.missed) + ' calls in last 4 weeks)';
+    } else {
+      uniStatus.innerHTML = '<span style="color:var(--text3);">—</span> No call data yet — import a Unifon report in Settings → Data & Import';
     }
-    if (!unifonMembers.length) {
-      uniSel.innerHTML = '<option value="">— Unifon not connected or no members found —</option>';
-    }
-    uniSel.onchange = () => {
-      profile.unifonAgentNum = uniSel.value || null;
-      saveProfile(schedName, profile);
-      uniSel.style.borderColor = uniSel.value ? '#34d399' : 'var(--border)';
-      // Also update the Unifon name map for backwards compatibility
-      if (typeof loadUnifonNameMap === 'function') {
-        const nameMap = loadUnifonNameMap();
-        // Remove old entries for this person
-        Object.keys(nameMap).forEach(k => { if (nameMap[k]===schedName) delete nameMap[k]; });
-        if (uniSel.value) nameMap[uniSel.value] = schedName;
-        localStorage.setItem(UNIFON_MAP_KEY, JSON.stringify(nameMap));
-        scheduleSyncSave();
-      }
-    };
-    if (!profile.unifonAgentNum) {
-      // Check existing name map as fallback display
-      const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
-      const existing = Object.entries(nameMap).find(([,n]) => n === schedName);
-      if (existing) uniSel.value = existing[0];
-    }
-    uniRow.appendChild(uniLbl); uniRow.appendChild(uniSel);
+    uniRow.appendChild(uniLbl); uniRow.appendChild(uniStatus);
     row.appendChild(uniRow);
 
     list.appendChild(row);
