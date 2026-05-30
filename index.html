@@ -3091,6 +3091,13 @@ function renderSchedule() {
       const _ssTod = localToday();
       saveWeeklySnapshot(_ssMon, buildWeeklySnapshot(_ssMon, _ssTod));
     } catch(_sse) {}
+    // Re-render the dashboard immediately so changes are visible without reload
+    try {
+      const _dashRoot = document.getElementById('tab-dashboard');
+      if (_dashRoot && _dashRoot.style.display !== 'none') {
+        renderDashboard();
+      }
+    } catch(_dre) {}
   }
 
   let dragSrc = null;
@@ -11850,6 +11857,11 @@ async function ghReadOnlyLoad() {
     const savedCal = localStorage.getItem('wtp_outlook_events');
     if (savedCal) { try { outlookEvents = JSON.parse(savedCal); } catch(e) {} }
     renderSchedule();
+    // Re-render dashboard so team today / absent / week-ahead reflects latest schedule
+    try {
+      const _dTab = document.getElementById('tab-dashboard');
+      if (_dTab && _dTab.style.display !== 'none') renderDashboard();
+    } catch(_e) {}
     setSyncStatus('✓ Up to date', 'var(--low-text)');
     setTimeout(() => setSyncStatus('', ''), 3000);
   } catch(e) {
