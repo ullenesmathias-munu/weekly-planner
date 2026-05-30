@@ -5037,7 +5037,7 @@ function renderUnifonHeatmap(container, fromDate, toDate) {
 const UNIFON_KEY = 'wtp_unifon_calls';
 function loadUnifonData() { try { return JSON.parse(localStorage.getItem(UNIFON_KEY)||'[]'); } catch { return []; } }
 function saveUnifonData(data) {
-  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-90);
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-730); // 2 years — storage is cheap (~860KB/2yr)
   localStorage.setItem(UNIFON_KEY, JSON.stringify(data.filter(d=>new Date(d.date)>=cutoff)));
   scheduleSyncSave();
 }
@@ -5947,6 +5947,81 @@ function renderAdminDashboard(root, viewerMode=false) {
       if(ratio>40) zdAlerts.push({level:'danger',msg:'High queue: ~'+ratio+' open tickets per agent'});
       else if(ratio>25) zdAlerts.push({level:'warn',msg:'Elevated queue: ~'+ratio+' open tickets per agent'});
       renderFireBanner(fireEl, syncAlerts, zdAlerts);
+
+      // ── Unifon live alerts (async, after ZD alerts) ─────────────
+      if (hasUnifonApi()) {
+        fetchUnifonQueueSummary().then(summary => {
+          if (!summary || !summary.entries) return;
+
+          const uniAlerts = [];
+
+          // ── Alert 1: High wait time ───────────────────────────────
+          // Use the main inbound queue (KØ - innenfor åpningstid, ID 43500)
+          // and average across all queues
+          const mainQueues = summary.entries.filter(q => q.queue_id === 43500 || q.queue_id === 43499);
+          const checkQueues = mainQueues.length ? mainQueues : summary.entries;
+          checkQueues.forEach(q => {
+            const wait = q.keyfigures?.answered_waittime || 0;
+            if (wait > 180) {
+              uniAlerts.push({ level:'danger', msg: (q.description||'Queue')+': '+Math.round(wait)+'s avg wait' });
+            } else if (wait > 90) {
+              uniAlerts.push({ level:'warn', msg: (q.description||'Queue')+': '+Math.round(wait)+'s avg wait' });
+            }
+          });
+
+          // ── Alert 2: No agents ready in main queue ────────────────
+          checkQueues.forEach(q => {
+            const members = q.members || [];
+            const ready = members.filter(m => m.fixed?.ready || m.mobile?.ready).length;
+            if (ready === 0 && members.length > 0) {
+              uniAlerts.push({ level:'danger', msg: (q.description||'Queue')+': no agents ready' });
+            }
+          });
+
+          // ── Alert 3: Scheduled agents not in queue ────────────────
+          const todayD = localToday();
+          const todayWeekSched = SCHEDULE.find(w => w.dates && w.dates.includes(todayD));
+          if (todayWeekSched) {
+            const di = todayWeekSched.dates.indexOf(todayD);
+            const OFF = new Set(['so','h','hd','os','abs','ol','']);
+            const scheduledToday = todayWeekSched.people
+              .filter(p => MY_TEAM.includes(p.name))
+              .filter(p => {
+                const sh = (p.shifts[di]||'').toLowerCase();
+                return !OFF.has(sh) && !isNightShift(sh);
+              })
+              .map(p => p.name);
+
+            const allMembers = summary.entries.flatMap(q => q.members || []);
+            const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
+
+            const notLogged = scheduledToday.filter(name => {
+              const mapped = Object.entries(nameMap).find(([num, n]) => n === name);
+              if (mapped) {
+                return !allMembers.some(m =>
+                  (m.fixed?.agent === mapped[0] && m.fixed?.ready) ||
+                  (m.mobile?.agent === mapped[0] && m.mobile?.ready)
+                );
+              }
+              const firstName = name.split(' ')[0].toLowerCase();
+              return !allMembers.some(m => {
+                const mName = ((m.firstname||'') + ' ' + (m.lastname||'')).toLowerCase();
+                return mName.includes(firstName);
+              });
+            });
+
+            if (notLogged.length === 1) {
+              uniAlerts.push({ level:'warn', msg: notLogged[0].split(' ')[0]+' scheduled but not in queue' });
+            } else if (notLogged.length > 1) {
+              uniAlerts.push({ level:'danger', msg: notLogged.map(n=>n.split(' ')[0]).join(', ')+' not in queue' });
+            }
+          }
+
+          if (uniAlerts.length) {
+            renderFireBanner(fireEl, [...syncAlerts, ...uniAlerts], zdAlerts);
+          }
+        }).catch(() => {});
+      }
     });
   }
 
@@ -6028,6 +6103,134 @@ function renderAdminDashboard(root, viewerMode=false) {
   const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
 
   const queueSec=dbSection('Queue & calls','Tickets',()=>switchTab('zendesk',document.querySelector('[onclick*="zendesk"]')));
+
+  // ── Live Unifon queue widget (async, loads after render) ───────
+  if (hasUnifonApi()) {
+    const uLive = document.createElement('div');
+    uLive.id = 'db-unifon-live';
+    uLive.style.cssText = 'margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface2);overflow:hidden;';
+    uLive.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--text3);">Loading queue status…</div>';
+    queueSec.appendChild(uLive);
+
+    // Async fill — non-blocking
+    fetchUnifonQueueSummary().then(summary => {
+      if (!summary || !summary.entries) {
+        uLive.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--text3);">Queue data unavailable</div>';
+        return;
+      }
+
+      uLive.innerHTML = '';
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);';
+      const htitle = document.createElement('div');
+      htitle.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);';
+      htitle.textContent = 'Live queue status';
+      const htime = document.createElement('div');
+      htime.style.cssText = 'font-size:9px;color:var(--text3);';
+      htime.textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      hdr.appendChild(htitle); hdr.appendChild(htime);
+      uLive.appendChild(hdr);
+
+      // Per-queue rows
+      const MAIN_QUEUES = [43500, 43499]; // KØ innenfor + Vakt
+      const entries = summary.entries.filter(q => MAIN_QUEUES.includes(q.queue_id) || MAIN_QUEUES.length === 0);
+      const showEntries = entries.length ? entries : summary.entries;
+
+      showEntries.forEach(q => {
+        const members = q.members || [];
+        const ready   = members.filter(m => m.fixed?.ready || m.mobile?.ready).length;
+        const total   = members.length;
+        const wait    = q.keyfigures?.answered_waittime || 0;
+        const waitColor = wait > 120 ? 'var(--high-text)' : wait > 60 ? '#ffb74d' : 'var(--low-text)';
+        const readyColor = ready === 0 ? 'var(--high-text)' : ready < 2 ? '#ffb74d' : 'var(--low-text)';
+
+        const row = document.createElement('div');
+        row.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);';
+
+        const qname = document.createElement('div');
+        qname.style.cssText = 'font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+        qname.textContent = q.description || 'Queue '+q.queue_id;
+
+        const readyEl = document.createElement('div');
+        readyEl.style.cssText = 'font-size:11px;font-weight:700;color:'+readyColor+';text-align:right;white-space:nowrap;';
+        readyEl.textContent = ready+'/'+total+' ready';
+
+        const waitEl = document.createElement('div');
+        waitEl.style.cssText = 'font-size:11px;font-weight:700;color:'+waitColor+';text-align:right;white-space:nowrap;min-width:40px;';
+        waitEl.textContent = wait > 0 ? Math.round(wait)+'s wait' : '—';
+        waitEl.title = 'Average answered wait time';
+
+        row.appendChild(qname); row.appendChild(readyEl); row.appendChild(waitEl);
+        uLive.appendChild(row);
+      });
+
+      // Not logged in — cross-reference scheduled agents vs queue members
+      const todayScheduled = (() => {
+        try {
+          const todayD = localToday();
+          const week = SCHEDULE.find(w => w.dates && w.dates.includes(todayD));
+          if (!week) return [];
+          const di = week.dates.indexOf(todayD);
+          const OFF = new Set(['so','h','hd','os','abs','ol','e','e2','e (17-6)','']);
+          return week.people
+            .filter(p => MY_TEAM.includes(p.name))
+            .filter(p => {
+              const sh = (p.shifts[di]||'').toLowerCase();
+              return !OFF.has(sh) && !isNightShift(sh);
+            })
+            .map(p => p.name);
+        } catch { return []; }
+      })();
+
+      // Collect all agent numbers in the queue
+      const allMembers = summary.entries.flatMap(q => q.members || []);
+      const readyAgentNums = new Set(
+        allMembers
+          .filter(m => m.fixed?.ready || m.mobile?.ready)
+          .map(m => m.fixed?.agent || m.mobile?.agent)
+          .filter(Boolean)
+      );
+
+      // Match scheduled agents to queue members using the name map
+      const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
+      const notLogged = todayScheduled.filter(name => {
+        // Check if any queue member maps to this agent name
+        const mapped = Object.entries(nameMap).find(([num, n]) => n === name);
+        if (mapped) return !readyAgentNums.has(mapped[0]);
+        // Fallback: check first name against member names
+        const firstName = name.split(' ')[0].toLowerCase();
+        return !allMembers.some(m => {
+          const mName = ((m.firstname||'') + ' ' + (m.lastname||'')).toLowerCase();
+          return mName.includes(firstName);
+        });
+      });
+
+      if (notLogged.length) {
+        const warnRow = document.createElement('div');
+        warnRow.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,107,107,0.06);';
+        const warnDot = document.createElement('div');
+        warnDot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:var(--high-text);flex-shrink:0;';
+        const warnTxt = document.createElement('div');
+        warnTxt.style.cssText = 'font-size:11px;color:var(--high-text);font-weight:600;';
+        warnTxt.textContent = 'Not in queue: ' + notLogged.map(n=>n.split(' ')[0]).join(', ');
+        warnRow.appendChild(warnDot); warnRow.appendChild(warnTxt);
+        uLive.appendChild(warnRow);
+      } else if (todayScheduled.length > 0) {
+        const okRow = document.createElement('div');
+        okRow.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 12px;';
+        const okDot = document.createElement('div');
+        okDot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:var(--low-text);flex-shrink:0;';
+        const okTxt = document.createElement('div');
+        okTxt.style.cssText = 'font-size:11px;color:var(--low-text);';
+        okTxt.textContent = 'All scheduled agents in queue';
+        okRow.appendChild(okDot); okRow.appendChild(okTxt);
+        uLive.appendChild(okRow);
+      }
+
+    }).catch(() => {
+      uLive.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--text3);">Queue data unavailable</div>';
+    });
+  }
 
   // Period toggle: Today / This week / Last 7d / Last 30d
   const Q_PERIODS=[{key:'today',label:'Today'},{key:'week',label:'This week'},{key:'7d',label:'7 days'},{key:'30d',label:'30 days'}];
