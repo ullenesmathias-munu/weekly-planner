@@ -734,45 +734,77 @@
   .db-notif-pill:hover { background: rgba(214,243,255,0.16); }
   .db-notif-dot { width: 6px; height: 6px; border-radius: 50%; background: #D6F3FF; flex-shrink: 0; }
 
-  /* Column layout — column accent colors create visual scannability */
+  /* ── 2-row dashboard grid ──────────────────────────────────
+     Row 1: 3 wide panels (ops + charts + stats)
+     Row 2: 4 detail panels (team + tasks + actions + health)
+     This avoids equal-column cramping and gives charts room to breathe */
   .db-body {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr;
     flex: 1;
-    align-items: stretch;
     border-top: 1px solid var(--border);
-    min-height: 500px;
   }
-  .db-body.cols-5 { grid-template-columns: repeat(5, 1fr); }
-  @media (max-width: 1400px) { .db-body.cols-5 { grid-template-columns: repeat(3, 1fr); } }
+  /* Top row — 3 wide panels */
+  .db-row-top {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  /* Bottom row — 4 detail panels */
+  .db-row-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
   .db-col {
     border-right: 1px solid var(--border);
-    padding: 26px 28px;
+    padding: 20px 24px;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 16px;
     min-width: 0;
-    min-height: 400px;
     position: relative;
     animation: dbFadeIn 0.55s cubic-bezier(0.5,0,0,1) both;
   }
-  .db-col:nth-child(1) { animation-delay: 0.08s; }
-  .db-col:nth-child(2) { animation-delay: 0.14s; }
-  .db-col:nth-child(3) { animation-delay: 0.20s; }
-  .db-col:nth-child(4) { animation-delay: 0.26s; }
-  /* Thin color accent at top of each column */
+  .db-row-top .db-col { min-height: 340px; }
+  .db-row-bottom .db-col { min-height: 280px; }
+  .db-col:last-child { border-right: none; }
+  /* Stagger animations per column */
+  .db-row-top .db-col:nth-child(1) { animation-delay: 0.06s; }
+  .db-row-top .db-col:nth-child(2) { animation-delay: 0.12s; }
+  .db-row-top .db-col:nth-child(3) { animation-delay: 0.18s; }
+  .db-row-bottom .db-col:nth-child(1) { animation-delay: 0.10s; }
+  .db-row-bottom .db-col:nth-child(2) { animation-delay: 0.16s; }
+  .db-row-bottom .db-col:nth-child(3) { animation-delay: 0.22s; }
+  .db-row-bottom .db-col:nth-child(4) { animation-delay: 0.28s; }
+  /* Thin top accent per column */
   .db-col::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+    top: 0; left: 0; right: 0; height: 2px;
   }
-  .db-col:nth-child(1)::before { background: rgba(214,243,255,0.25); }
-  .db-col:nth-child(2)::before { background: rgba(214,243,255,0.15); }
-  .db-col:nth-child(3)::before { background: rgba(96,165,250,0.3); }
-  .db-col:nth-child(4)::before { background: rgba(167,139,250,0.25); }
-  .db-col:nth-child(5)::before { background: rgba(241,183,242,0.25); }
-  .db-col:last-child { border-right: none; }
+  .db-row-top .db-col:nth-child(1)::before  { background: rgba(96,165,250,0.4); }
+  .db-row-top .db-col:nth-child(2)::before  { background: rgba(52,211,153,0.35); }
+  .db-row-top .db-col:nth-child(3)::before  { background: rgba(167,139,250,0.35); }
+  .db-row-bottom .db-col:nth-child(1)::before { background: rgba(214,243,255,0.25); }
+  .db-row-bottom .db-col:nth-child(2)::before { background: rgba(251,191,36,0.3); }
+  .db-row-bottom .db-col:nth-child(3)::before { background: rgba(241,183,242,0.3); }
+  .db-row-bottom .db-col:nth-child(4)::before { background: rgba(167,139,250,0.3); }
+  .db-row-bottom .db-col:nth-child(5)::before { background: rgba(52,211,153,0.25); }
+
+  /* Chart containers — bigger than before */
+  #db-chart1-body { min-height: 180px; }
+  #db-chart2-body { height: 200px; }
+
+  /* Responsive */
+  @media (max-width: 1300px) {
+    .db-row-top    { grid-template-columns: 1fr 1fr; }
+    .db-row-bottom { grid-template-columns: 1fr 1fr; }
+    .db-row-top .db-col:nth-child(3) { grid-column: span 2; border-top: 1px solid var(--border); }
+  }
+  @media (max-width: 900px) {
+    .db-row-top, .db-row-bottom { grid-template-columns: 1fr; }
+    .db-row-top .db-col:nth-child(3) { grid-column: auto; }
+  }
 
   /* Section headers */
   .db-section-title {
@@ -871,8 +903,7 @@
   .light-mode .db-team-chip:hover { background: #e4eaff; }
   .light-mode .ql-link:hover { background: #000743; border-color: #000743; color: #D6F3FF; }
 
-  @media (max-width: 1100px) { .db-body, .db-body.cols-5 { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 700px) { .db-body, .db-body.cols-5 { grid-template-columns: 1fr; } .db-hero { padding: 20px 20px 18px; } .db-col { padding: 18px 20px; } }
+  @media (max-width: 700px) { .db-hero { padding: 20px 20px 18px; } .db-col { padding: 14px 16px; } }
 
   /* ─── Grafana-style stat panels ──────────────────────────── */
   .db-stat-grid {
@@ -6202,8 +6233,13 @@ function renderAdminDashboard(root, viewerMode=false) {
           // ── Alert 1: High wait time ───────────────────────────────
           // Use the main inbound queue (KØ - innenfor åpningstid, ID 43500)
           // and average across all queues
-          const mainQueues = summary.entries.filter(q => q.queue_id === 43500 || q.queue_id === 43499);
-          const checkQueues = mainQueues.length ? mainQueues : summary.entries;
+          // Only alert on the active queue for current time
+          const _n2 = new Date(), _d2 = _n2.getDay(), _h2 = _n2.getHours();
+          const _activeQ = (_d2 === 0 || _d2 === 6 || _h2 < 7 || _h2 >= 17) ? 43499 : 43500;
+          const allMainQ = summary.entries.filter(q => q.queue_id === 43500 || q.queue_id === 43499);
+          const checkQueues = allMainQ.filter(q => q.queue_id === _activeQ).length
+            ? allMainQ.filter(q => q.queue_id === _activeQ)
+            : allMainQ;
           checkQueues.forEach(q => {
             const wait = q.keyfigures?.answered_waittime || 0;
             if (wait > 180) {
@@ -6345,11 +6381,16 @@ function renderAdminDashboard(root, viewerMode=false) {
   }
   weekSec.appendChild(weekStrip);
   col1.appendChild(weekSec);
-  body.appendChild(col1);
+  // col1 (team today) goes to bottom row — appended later
 
   // ═══════════════════════════════════════════════════════════════
-  // COL 2: Queue & calls — with period picker
+  // TOP ROW: Queue & Ops | ZD Charts | ZD Stats
+  // BOTTOM ROW: Team today | Tasks/Actions | 1:1/Decisions | Health
   // ═══════════════════════════════════════════════════════════════
+  const rowTop = document.createElement('div'); rowTop.className = 'db-row-top';
+  const rowBottom = document.createElement('div'); rowBottom.className = 'db-row-bottom';
+
+  // COL A (top row 1): Queue & calls + Unifon live
   const col2=document.createElement('div'); col2.className='db-col';
   const zdSubdomain=localStorage.getItem('wtp_zd_subdomain');
 
@@ -6375,7 +6416,7 @@ function renderAdminDashboard(root, viewerMode=false) {
       hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);';
       const htitle = document.createElement('div');
       htitle.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);';
-      htitle.textContent = 'Live queue status';
+      htitle.textContent = _isOpenHours ? 'Queue — opening hours' : _isWeekend ? 'Queue — weekend (Vakt)' : 'Queue — after hours (Vakt)';
       const htime = document.createElement('div');
       htime.style.cssText = 'font-size:9px;color:var(--text3);';
       htime.textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
@@ -6383,9 +6424,23 @@ function renderAdminDashboard(root, viewerMode=false) {
       uLive.appendChild(hdr);
 
       // Per-queue rows
-      const MAIN_QUEUES = [43500, 43499]; // KØ innenfor + Vakt
-      const entries = summary.entries.filter(q => MAIN_QUEUES.includes(q.queue_id) || MAIN_QUEUES.length === 0);
-      const showEntries = entries.length ? entries : summary.entries;
+      // Determine active queue based on current time and day
+      // KØ - Innenfor åpningstid (43500): Mon–Fri 07:00–17:00
+      // KØ - Vakt (43499):                Mon–Fri 17:00–07:00 + all day Sat/Sun
+      const _now = new Date();
+      const _dow = _now.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+      const _hr  = _now.getHours();
+      const _isWeekend   = _dow === 0 || _dow === 6;
+      const _isOpenHours = !_isWeekend && _hr >= 7 && _hr < 17;
+      const ACTIVE_QUEUE_ID   = _isOpenHours ? 43500 : 43499;
+      const INACTIVE_QUEUE_ID = _isOpenHours ? 43499 : 43500;
+      const MAIN_QUEUES = [43500, 43499];
+      const allEntries = summary.entries.filter(q => MAIN_QUEUES.includes(q.queue_id));
+      // Show active queue first, then inactive as secondary
+      const showEntries = [
+        ...allEntries.filter(q => q.queue_id === ACTIVE_QUEUE_ID),
+        ...allEntries.filter(q => q.queue_id === INACTIVE_QUEUE_ID),
+      ];
 
       // Helper to check if a queue member belongs to MY_TEAM
       const nameMapW = (typeof loadUnifonNameMap === 'function') ? loadUnifonNameMap() : {};
@@ -6396,34 +6451,59 @@ function renderAdminDashboard(root, viewerMode=false) {
         return MY_TEAM.some(t => t.split(' ')[0].toLowerCase() === mFirst);
       };
 
-      // Stat grid per queue
-      const qStatGrid = document.createElement('div'); qStatGrid.className = 'db-stat-grid'; qStatGrid.style.padding = '8px 12px 6px';
-      showEntries.forEach(q => {
-        const members = (q.members || []).filter(isMyTeamMember);
-        const ready   = members.filter(m => m.fixed?.ready || m.mobile?.ready).length;
-        const total   = members.length;
-        const wait    = q.keyfigures?.answered_waittime || 0;
-        const waitCls = wait > 120 ? 'danger' : wait > 60 ? 'warn' : wait > 0 ? 'ok' : '';
-        const readyCls = ready === 0 ? 'danger' : ready < 2 ? 'warn' : 'ok';
+      // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
+      showEntries.forEach((q, qi) => {
+        const isActive = q.queue_id === ACTIVE_QUEUE_ID;
+        const members  = (q.members || []).filter(isMyTeamMember);
+        const ready    = members.filter(m => m.fixed?.ready || m.mobile?.ready).length;
+        const total    = members.length;
+        const wait     = q.keyfigures?.answered_waittime || 0;
+        const waitCls  = wait > 120 ? 'danger' : wait > 60 ? 'warn' : wait > 0 ? 'ok' : '';
+        const readyCls = ready === 0 && total > 0 ? 'danger' : ready < 2 && total > 0 ? 'warn' : 'ok';
+        const qLabel   = (q.description || 'Queue').replace('KØ - ', '').replace('Vakt', 'Vakt (after-hours)');
 
-        // Ready panel
-        const rPanel = document.createElement('div'); rPanel.className = 'db-stat-panel ' + readyCls;
-        const rLbl = document.createElement('div'); rLbl.className = 'db-stat-label';
-        rLbl.textContent = (q.description||'Queue').split(' ')[0] + ' ready';
-        const rVal = document.createElement('div'); rVal.className = 'db-stat-value small ' + readyCls;
-        rVal.textContent = ready + '/' + total;
-        rPanel.appendChild(rLbl); rPanel.appendChild(rVal);
+        if (isActive) {
+          // Active queue — prominent stat grid
+          const activeHdr = document.createElement('div');
+          activeHdr.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px 4px;';
+          const activeDot = document.createElement('div');
+          activeDot.style.cssText = 'width:6px;height:6px;border-radius:50%;background:#34d399;flex-shrink:0;';
+          const activeLabel = document.createElement('span');
+          activeLabel.style.cssText = 'font-size:10px;font-weight:700;color:var(--text2);';
+          activeLabel.textContent = qLabel;
+          const activeBadge = document.createElement('span');
+          activeBadge.style.cssText = 'font-size:9px;background:rgba(52,211,153,0.12);color:#34d399;border-radius:20px;padding:1px 7px;font-weight:700;margin-left:auto;';
+          activeBadge.textContent = 'ACTIVE';
+          activeHdr.appendChild(activeDot); activeHdr.appendChild(activeLabel); activeHdr.appendChild(activeBadge);
+          uLive.appendChild(activeHdr);
 
-        // Wait panel
-        const wPanel = document.createElement('div'); wPanel.className = 'db-stat-panel ' + waitCls;
-        const wLbl = document.createElement('div'); wLbl.className = 'db-stat-label'; wLbl.textContent = 'Avg wait';
-        const wVal = document.createElement('div'); wVal.className = 'db-stat-value small ' + waitCls;
-        wVal.textContent = wait > 0 ? Math.round(wait) + 's' : '—';
-        wPanel.appendChild(wLbl); wPanel.appendChild(wVal);
-
-        qStatGrid.appendChild(rPanel); qStatGrid.appendChild(wPanel);
+          const qGrid = document.createElement('div'); qGrid.className = 'db-stat-grid'; qGrid.style.padding = '4px 12px 8px';
+          const rPanel = document.createElement('div'); rPanel.className = 'db-stat-panel ' + readyCls;
+          const rLbl = document.createElement('div'); rLbl.className = 'db-stat-label'; rLbl.textContent = 'Agents ready';
+          const rVal = document.createElement('div'); rVal.className = 'db-stat-value small ' + readyCls; rVal.textContent = ready + '/' + total;
+          rPanel.appendChild(rLbl); rPanel.appendChild(rVal);
+          const wPanel = document.createElement('div'); wPanel.className = 'db-stat-panel ' + waitCls;
+          const wLbl = document.createElement('div'); wLbl.className = 'db-stat-label'; wLbl.textContent = 'Avg wait';
+          const wVal = document.createElement('div'); wVal.className = 'db-stat-value small ' + waitCls; wVal.textContent = wait > 0 ? Math.round(wait) + 's' : '—';
+          wPanel.appendChild(wLbl); wPanel.appendChild(wVal);
+          qGrid.appendChild(rPanel); qGrid.appendChild(wPanel);
+          uLive.appendChild(qGrid);
+        } else {
+          // Inactive queue — compact dimmed row
+          const inactiveRow = document.createElement('div');
+          inactiveRow.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 12px 8px;border-top:1px solid var(--border);';
+          const inDot = document.createElement('div');
+          inDot.style.cssText = 'width:5px;height:5px;border-radius:50%;background:var(--border2);flex-shrink:0;';
+          const inLabel = document.createElement('span');
+          inLabel.style.cssText = 'font-size:10px;color:var(--text3);flex:1;';
+          inLabel.textContent = qLabel;
+          const inStats = document.createElement('span');
+          inStats.style.cssText = 'font-size:10px;color:var(--text3);';
+          inStats.textContent = ready + '/' + total + ' ready' + (wait > 0 ? ' · ' + Math.round(wait) + 's' : '');
+          inactiveRow.appendChild(inDot); inactiveRow.appendChild(inLabel); inactiveRow.appendChild(inStats);
+          uLive.appendChild(inactiveRow);
+        }
       });
-      uLive.appendChild(qStatGrid);
 
       // Not logged in — cross-reference scheduled agents vs queue members
       const todayScheduled = (() => {
@@ -7111,34 +7191,33 @@ function renderAdminDashboard(root, viewerMode=false) {
   }
 
   col2.appendChild(queueSec);
-  body.appendChild(col2);
+  rowTop.appendChild(col2);
 
-  // renderChart1 — solved per day bars for selected period
+  // renderChart1 — solved per day bars (full-height in new layout)
   const renderChart1 = (fromDate, toDate) => {
     const el = document.getElementById('db-chart1-body'); if (!el) return;
     if (!zdReady()) { el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:16px 0;">Zendesk not configured</div>'; return; }
     el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Loading...</div>';
-    // Build daily date range
     const days=[];
     const fD=new Date(fromDate+'T00:00:00'), tD=new Date(toDate+'T00:00:00');
     for(let d=new Date(fD);d<=tD;d.setDate(d.getDate()+1)) days.push(fmtLocal(new Date(d)));
     if(!days.length){el.innerHTML='';return;}
-    // Fetch solved per day
     const promises = days.map(day =>
       zdCount('type:ticket status>=solved solved>='+day+' solved<='+day).catch(()=>0)
     );
     Promise.all(promises).then(counts => {
       el.innerHTML='';
       const maxC = Math.max(...counts, 1);
-      const W=el.offsetWidth||220, H=100;
+      const W=el.offsetWidth||300, H=160;
       const barW=Math.max(4, Math.floor((W-20)/days.length)-2);
       const gap=Math.max(1, Math.floor((W-20-barW*days.length)/(days.length)));
       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
       svg.setAttribute('viewBox','0 0 '+W+' '+H);
-      svg.setAttribute('width','100%');svg.setAttribute('height',H);
+      svg.setAttribute('width','100%');svg.setAttribute('height','100%');
+      svg.style.cssText='display:block;width:100%;height:'+H+'px;';
       days.forEach((day,i)=>{
         const v=counts[i]||0;
-        const bH=Math.max(2,Math.round(v/maxC*(H-24)));
+        const bH=Math.max(3,Math.round(v/maxC*(H-30)));
         const x=10+i*(barW+gap);
         const isToday2=day===localToday();
         const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -7224,12 +7303,15 @@ function renderAdminDashboard(root, viewerMode=false) {
   csatSec.appendChild(csatBody2);
   col3.appendChild(csatSec);
 
-  // Append the deferred sat/mttr/vol sections now that col3 exists
-  if (typeof _zdRightSections !== 'undefined') {
-    _zdRightSections.forEach(sec => col3.appendChild(sec));
-  }
+  // sat/mttr/vol go to colStats (top row 3rd panel) — see below
 
-  body.appendChild(col3);
+  // ── ZD Stats col (sat/mttr/vol) — 3rd panel in top row ─────────
+  const colStats = document.createElement('div'); colStats.className = 'db-col';
+  if (typeof _zdRightSections !== 'undefined') {
+    _zdRightSections.forEach(sec => colStats.appendChild(sec));
+  }
+  rowTop.appendChild(colStats);
+  body.appendChild(rowTop);
 
   // ═══════════════════════════════════════════════════════════════
   // COL 4: My work — today at a glance + tasks + 1:1 actions
@@ -7327,7 +7409,10 @@ function renderAdminDashboard(root, viewerMode=false) {
     });
     col4.appendChild(taskSec4);
 
-    // Open 1:1 actions
+      // Open 1:1 actions + Overdue 1:1s + Decisions → separate column (col4b)
+  }
+  const col4b = document.createElement('div'); col4b.className = 'db-col';
+  if (!viewerMode) {
     const otoData4 = getOtoData();
     const openActions4 = (otoData4.sessions||[]).flatMap(s =>
       (s.actions||[]).filter(a => !a.done).map(a => ({ ...a, person: s.person }))
@@ -7341,10 +7426,8 @@ function renderAdminDashboard(root, viewerMode=false) {
         const who=document.createElement('div');who.className='db-row-meta';who.textContent=a.person;
         row.appendChild(dot);row.appendChild(lbl);row.appendChild(who);actSec4.appendChild(row);
       });
-      col4.appendChild(actSec4);
+      col4b.appendChild(actSec4);
     }
-
-    // Overdue 1:1s
     if (overdue1on1.length) {
       const odSec4 = dbSection('Overdue 1:1s','My Team',()=>switchTab('onetoone',document.querySelector('[onclick*="onetoone"]')));
       overdue1on1.slice(0,5).forEach(name => {
@@ -7353,10 +7436,8 @@ function renderAdminDashboard(root, viewerMode=false) {
         const badge=document.createElement('span');badge.className='db-row-badge';badge.style.cssText='background:var(--high-bg);color:var(--high-text);';badge.textContent='overdue';
         row.appendChild(lbl);row.appendChild(badge);odSec4.appendChild(row);
       });
-      col4.appendChild(odSec4);
+      col4b.appendChild(odSec4);
     }
-
-    // Recent decisions
     const decisions4 = loadDecisions().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,4);
     if (decisions4.length) {
       const decSec4 = dbSection('Recent decisions');
@@ -7366,10 +7447,12 @@ function renderAdminDashboard(root, viewerMode=false) {
         const meta=document.createElement('div');meta.className='db-row-meta';meta.textContent=d.date||'';
         row.appendChild(lbl);row.appendChild(meta);decSec4.appendChild(row);
       });
-      col4.appendChild(decSec4);
+      col4b.appendChild(decSec4);
     }
   }
-  body.appendChild(col4);
+  rowBottom.appendChild(col1);
+  rowBottom.appendChild(col4);
+  rowBottom.appendChild(col4b);
 
   // ═══════════════════════════════════════════════════════════════
   // COL 5: Team health + Handover + Quick links
@@ -7549,7 +7632,8 @@ function renderAdminDashboard(root, viewerMode=false) {
       col5.appendChild(linkSec5);
     }
   }
-  body.appendChild(col5);
+  rowBottom.appendChild(col5);
+  body.appendChild(rowBottom);
 
   // ── Render charts now that containers exist in DOM ─────────────
   const { from: initFrom, to: initTo } = (() => {
