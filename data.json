@@ -7319,7 +7319,7 @@
   "wtp_intel_snap_2026-01-12": {
     "fromDate": "2026-01-12",
     "toDate": "2026-01-18",
-    "generated": "2026-05-30T18:37:45.949Z",
+    "generated": "2026-05-30T18:37:53.536Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -7460,7 +7460,7 @@
       }
     },
     "zdEnriched": true,
-    "zdEnrichedAt": "2026-05-30T18:38:04.328Z"
+    "zdEnrichedAt": "2026-05-30T18:38:09.752Z"
   },
   "wtp_oto_notes_vetle": "",
   "wtp_tasks_michael": [
