@@ -11053,7 +11053,7 @@
   "wtp_intel_snap_2026-05-18": {
     "fromDate": "2026-05-18",
     "toDate": "2026-05-24",
-    "generated": "2026-05-30T11:48:10.295Z",
+    "generated": "2026-05-30T13:00:58.237Z",
     "agents": {
       "Jonas": {
         "answered": 95,
@@ -11067,7 +11067,7 @@
         "zdEmail": 10,
         "zdPhone": 77,
         "zdOpen": 9,
-        "zdPending": 5
+        "zdPending": 6
       },
       "Thomas": {
         "answered": 91,
@@ -11215,30 +11215,8 @@
       "answered": 625,
       "missed": 126,
       "ansRate": 83,
-      "avgWait": 567,
-      "zdTotalSolved": 675,
-      "zdOpenEow": 119,
-      "zdCsatGood": 34,
-      "zdCsatBad": 0,
-      "zdCsatTotal": 34,
-      "zdCsatPct": 100,
-      "zdMttrMean": 5019,
-      "zdMttrMedian": 102,
-      "zdEmailTotal": 157,
-      "zdPhoneTotal": 518,
-      "zdTicketCount": 675,
-      "zdSolvedPerDay": {
-        "2026-05-18": 0,
-        "2026-05-19": 0,
-        "2026-05-20": 0,
-        "2026-05-21": 0,
-        "2026-05-22": 0,
-        "2026-05-23": 0,
-        "2026-05-24": 0
-      }
-    },
-    "zdEnriched": true,
-    "zdEnrichedAt": "2026-05-30T12:45:48.548Z"
+      "avgWait": 567
+    }
   },
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_intel_snap_2026-05-25": {
