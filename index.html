@@ -1129,6 +1129,79 @@
   .db-donut-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
 
+  /* ─── Reports tab ────────────────────────────────────────────── */
+  .report-page { max-width:960px;margin:0 auto;padding:28px 32px 48px;display:flex;flex-direction:column;gap:24px;font-variant-numeric:tabular-nums; }
+  .report-hero { background:#000743;background-image:radial-gradient(ellipse at 10% 0%,rgba(214,243,255,0.08) 0%,transparent 55%),radial-gradient(ellipse at 90% 100%,rgba(241,183,242,0.05) 0%,transparent 50%);border-radius:14px;padding:28px 32px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap; }
+  .report-hero-period { font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;margin-bottom:6px; }
+  .report-hero-sub { font-size:11px;color:rgba(214,243,255,0.45);font-weight:600;text-transform:uppercase;letter-spacing:0.10em; }
+  .report-hero-kpis { display:flex;gap:6px;flex-wrap:wrap; }
+  .report-hero-kpi { background:rgba(214,243,255,0.08);border:1px solid rgba(214,243,255,0.14);border-radius:10px;padding:10px 16px;min-width:80px;text-align:center; }
+  .report-hero-kpi-val { font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;color:#D6F3FF;letter-spacing:-0.03em;line-height:1; }
+  .report-hero-kpi-val.ok{color:#6ee7b7;} .report-hero-kpi-val.warn{color:#fcd34d;} .report-hero-kpi-val.danger{color:#fca5a5;}
+  .report-hero-kpi-label { font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(214,243,255,0.38);margin-top:4px;white-space:nowrap; }
+  .report-panel { background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden; }
+  .report-panel-header { display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border); }
+  .report-panel-title { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text3);display:flex;align-items:center;gap:8px; }
+  .report-panel-title-icon { width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0; }
+  .report-panel-body { padding:18px; }
+  .report-stat-row { display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px; }
+  .report-stat { background:var(--surface2);border-radius:8px;padding:10px 12px;border-left:3px solid var(--border); }
+  .report-stat.ok{border-left-color:#34d399;} .report-stat.warn{border-left-color:#fbbf24;} .report-stat.danger{border-left-color:#f87171;} .report-stat.blue{border-left-color:#60a5fa;}
+  .report-stat-val { font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:var(--text); }
+  .report-stat-val.ok{color:#34d399;} .report-stat-val.warn{color:#fbbf24;} .report-stat-val.danger{color:#f87171;} .report-stat-val.blue{color:#60a5fa;}
+  .report-stat-label { font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:3px; }
+  .report-stat-sub { font-size:10px;color:var(--text3);margin-top:2px; }
+  .report-agent-row { display:grid;grid-template-columns:90px 1fr 48px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border); }
+  .report-agent-row:last-child{border-bottom:none;}
+  .report-agent-name { font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .report-bar-track { background:var(--border);border-radius:4px;height:8px;overflow:hidden; }
+  .report-bar-fill { height:100%;border-radius:4px;transition:width 0.6s cubic-bezier(0.5,0,0,1); }
+  .report-agent-val { font-size:12px;font-weight:700;color:var(--text);text-align:right; }
+  .report-table { width:100%;border-collapse:collapse;font-size:12px; }
+  .report-table th { font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap; }
+  .report-table th.r{text-align:right;}
+  .report-table td { padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text2);vertical-align:middle; }
+  .report-table td.r{text-align:right;font-variant-numeric:tabular-nums;}
+  .report-table tr:last-child td{border-bottom:none;} .report-table tr:hover td{background:var(--surface2);}
+  .report-ai-btn { display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;border:1px solid rgba(214,243,255,0.2);background:rgba(214,243,255,0.07);color:rgba(214,243,255,0.7);transition:all 0.15s; }
+  .report-ai-btn:hover{background:rgba(214,243,255,0.13);color:#D6F3FF;border-color:rgba(214,243,255,0.3);}
+
+  .report-page{max-width:960px;margin:0 auto;padding:28px 32px 48px;display:flex;flex-direction:column;gap:24px;font-variant-numeric:tabular-nums;}
+  .report-hero{background:#000743;background-image:radial-gradient(ellipse at 10% 0%,rgba(214,243,255,0.08) 0%,transparent 55%),radial-gradient(ellipse at 90% 100%,rgba(241,183,242,0.05) 0%,transparent 50%);border-radius:14px;padding:28px 32px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .report-hero-period{font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;margin-bottom:6px;}
+  .report-hero-sub{font-size:11px;color:rgba(214,243,255,0.45);font-weight:600;text-transform:uppercase;letter-spacing:0.10em;}
+  .report-hero-kpis{display:flex;gap:6px;flex-wrap:wrap;}
+  .report-hero-kpi{background:rgba(214,243,255,0.08);border:1px solid rgba(214,243,255,0.14);border-radius:10px;padding:10px 16px;min-width:80px;text-align:center;}
+  .report-hero-kpi-val{font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;color:#D6F3FF;letter-spacing:-0.03em;line-height:1;}
+  .report-hero-kpi-val.ok{color:#6ee7b7;} .report-hero-kpi-val.warn{color:#fcd34d;} .report-hero-kpi-val.danger{color:#fca5a5;}
+  .report-hero-kpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(214,243,255,0.38);margin-top:4px;white-space:nowrap;}
+  .report-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .report-panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+  .report-panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text3);display:flex;align-items:center;gap:8px;}
+  .report-panel-title-icon{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+  .report-panel-body{padding:18px;}
+  .report-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;}
+  .report-stat{background:var(--surface2);border-radius:8px;padding:10px 12px;border-left:3px solid var(--border);}
+  .report-stat.ok{border-left-color:#34d399;} .report-stat.warn{border-left-color:#fbbf24;} .report-stat.danger{border-left-color:#f87171;} .report-stat.blue{border-left-color:#60a5fa;}
+  .report-stat-val{font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:var(--text);}
+  .report-stat-val.ok{color:#34d399;} .report-stat-val.warn{color:#fbbf24;} .report-stat-val.danger{color:#f87171;} .report-stat-val.blue{color:#60a5fa;}
+  .report-stat-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:3px;}
+  .report-stat-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+  .report-agent-row{display:grid;grid-template-columns:90px 1fr 48px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
+  .report-agent-row:last-child{border-bottom:none;}
+  .report-agent-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .report-bar-track{background:var(--border);border-radius:4px;height:8px;overflow:hidden;}
+  .report-bar-fill{height:100%;border-radius:4px;transition:width 0.6s cubic-bezier(0.5,0,0,1);}
+  .report-agent-val{font-size:12px;font-weight:700;color:var(--text);text-align:right;}
+  .report-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .report-table th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .report-table th.r{text-align:right;}
+  .report-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text2);vertical-align:middle;}
+  .report-table td.r{text-align:right;font-variant-numeric:tabular-nums;}
+  .report-table tr:last-child td{border-bottom:none;} .report-table tr:hover td{background:var(--surface2);}
+  .report-ai-btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;border:1px solid rgba(214,243,255,0.2);background:rgba(214,243,255,0.07);color:rgba(214,243,255,0.7);transition:all 0.15s;}
+  .report-ai-btn:hover{background:rgba(214,243,255,0.13);color:#D6F3FF;border-color:rgba(214,243,255,0.3);}
+
   .tabs { border-bottom: 1px solid var(--border); }
   .tab-btn { position: relative; }
   .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
@@ -9557,197 +9630,452 @@ function mkTable(headers, rows, aligns) {
 // --- GENERATE REPORT --------------------------------------------------
 async function generateReport(fromDate, toDate, container) {
   if (!container) return;
-  container.innerHTML = '<div style="padding:40px;text-align:center;font-size:13px;color:var(--text3);">Generating report...</div>';
+  container.innerHTML = '<div style="padding:60px;text-align:center;font-size:13px;color:var(--text3);">Generating report\u2026</div>';
 
-  const monthLabel = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const today        = localToday();
+  const isPast       = toDate < today;
   const daysInPeriod = Math.max(1, Math.round((new Date(toDate+'T00:00:00')-new Date(fromDate+'T00:00:00'))/86400000)+1);
-  const today = localToday();
-  const isPast = toDate < today; // closed period — can use/build snapshot
+  const periodLabel  = (() => {
+    const f = new Date(fromDate+'T00:00:00'), t = new Date(toDate+'T00:00:00');
+    if (f.getFullYear()===t.getFullYear() && f.getMonth()===t.getMonth())
+      return f.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    return f.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' \u2013 '+t.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  })();
 
-  // ── Check if period maps to a single closed week snapshot ────────────
-  // If the range is exactly Mon-Sun of a past week, use/build a snapshot
-  let zdFromSnap = null;
+  // ── Helpers ──────────────────────────────────────────────────
+  const m  = (tag, cls) => { const e=document.createElement(tag); if(cls) e.className=cls; return e; };
+  const tx = (el, t) => { el.textContent=t; return el; };
 
+  const mkHeroKpi = (val, label, cls) => {
+    const d=m('div','report-hero-kpi');
+    const v=m('div','report-hero-kpi-val'+(cls?' '+cls:'')); v.textContent=val!=null?val:'\u2014';
+    const l=m('div','report-hero-kpi-label'); l.textContent=label;
+    d.appendChild(v); d.appendChild(l); return d;
+  };
 
-  // ── Gather ZD data ──────────────────────────────────────────
+  const mkStatBox = (val, label, sub, cls) => {
+    const d=m('div','report-stat'+(cls?' '+cls:''));
+    const v=m('div','report-stat-val'+(cls?' '+cls:'')); v.textContent=val!=null?val:'\u2014';
+    const l=m('div','report-stat-label'); l.textContent=label;
+    d.appendChild(v); d.appendChild(l);
+    if(sub){ const s=m('div','report-stat-sub'); s.textContent=sub; d.appendChild(s); }
+    return d;
+  };
+
+  const mkPanel = (title, icon, iconBg) => {
+    const panel=m('div','report-panel');
+    const hdr=m('div','report-panel-header');
+    const titleEl=m('div','report-panel-title');
+    if(icon){ const ic=m('div','report-panel-title-icon'); ic.style.background=iconBg||'var(--surface2)'; ic.textContent=icon; titleEl.appendChild(ic); }
+    const sp=document.createElement('span'); sp.textContent=title; titleEl.appendChild(sp);
+    hdr.appendChild(titleEl); panel.appendChild(hdr);
+    const body=m('div','report-panel-body'); panel.appendChild(body);
+    return { panel, body, hdr };
+  };
+
+  const mkAgentBar = (name, val, maxVal, color) => {
+    const row=m('div','report-agent-row');
+    const nm=m('div','report-agent-name'); nm.textContent=name.split(' ')[0];
+    const track=m('div','report-bar-track');
+    const fill=m('div','report-bar-fill');
+    fill.style.width=maxVal>0?Math.round(val/maxVal*100)+'%':'0%';
+    fill.style.background=color||'var(--cal-text)';
+    track.appendChild(fill);
+    const valEl=m('div','report-agent-val'); valEl.textContent=String(val);
+    row.appendChild(nm); row.appendChild(track); row.appendChild(valEl);
+    return row;
+  };
+
+  const mkSVGBar = (labels, values, H) => {
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    const maxV=Math.max(...values,1);
+    const W=900, pb=22, pt=10;
+    const bW=Math.max(2,Math.floor((W)/labels.length)-2);
+    const gap=Math.max(1,Math.floor((W-bW*labels.length)/labels.length));
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.setAttribute('preserveAspectRatio','none');
+    svg.style.cssText='width:100%;height:'+H+'px;display:block;';
+    labels.forEach((lbl,i) => {
+      const v=values[i]||0;
+      const bH=Math.max(2,Math.round(v/maxV*(H-pt-pb)));
+      const x=i*(bW+gap);
+      const isToday2=lbl===today;
+      const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x',x); rect.setAttribute('y',H-pb-bH);
+      rect.setAttribute('width',bW); rect.setAttribute('height',bH); rect.setAttribute('rx','2');
+      rect.setAttribute('fill',isToday2?'var(--cal-text)':'rgba(77,171,247,0.58)');
+      const title=document.createElementNS('http://www.w3.org/2000/svg','title');
+      title.textContent=new Date(lbl+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+': '+v+' solved';
+      rect.appendChild(title); svg.appendChild(rect);
+      if(v>0&&bH>14&&bW>8){
+        const lt=document.createElementNS('http://www.w3.org/2000/svg','text');
+        lt.setAttribute('x',x+bW/2); lt.setAttribute('y',H-pb-bH-3);
+        lt.setAttribute('text-anchor','middle'); lt.setAttribute('font-size','8');
+        lt.setAttribute('fill','var(--text3)'); lt.textContent=v; svg.appendChild(lt);
+      }
+      const d2=new Date(lbl+'T00:00:00'), dow=d2.getDay();
+      const showLbl=labels.length<=14||dow===1||dow===5||isToday2||i===0||i===labels.length-1;
+      if(showLbl){
+        const xt=document.createElementNS('http://www.w3.org/2000/svg','text');
+        xt.setAttribute('x',x+bW/2); xt.setAttribute('y',H-4);
+        xt.setAttribute('text-anchor','middle'); xt.setAttribute('font-size','8');
+        xt.setAttribute('fill',isToday2?'var(--cal-text)':'var(--text3)');
+        xt.textContent=d2.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+        svg.appendChild(xt);
+      }
+    });
+    return svg;
+  };
+
+  const mkDonut = (pct, size, color) => {
+    const r=size*0.38, cx=size/2, cy=size/2, circ=2*Math.PI*r;
+    const dash=circ*(pct||0)/100;
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('width',size); svg.setAttribute('height',size);
+    svg.setAttribute('viewBox','0 0 '+size+' '+size);
+    const bg=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    bg.setAttribute('cx',cx); bg.setAttribute('cy',cy); bg.setAttribute('r',r);
+    bg.setAttribute('fill','none'); bg.setAttribute('stroke','var(--border)'); bg.setAttribute('stroke-width',size*0.1);
+    svg.appendChild(bg);
+    const fg=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    fg.setAttribute('cx',cx); fg.setAttribute('cy',cy); fg.setAttribute('r',r);
+    fg.setAttribute('fill','none'); fg.setAttribute('stroke',color||'var(--cal-text)'); fg.setAttribute('stroke-width',size*0.1);
+    fg.setAttribute('stroke-dasharray',dash+' '+circ);
+    fg.setAttribute('stroke-linecap','round');
+    fg.setAttribute('transform','rotate(-90 '+cx+' '+cy+')');
+    svg.appendChild(fg);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',cx); t.setAttribute('y',cy+5);
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size',size*0.18);
+    t.setAttribute('font-weight','900');
+    t.setAttribute('fill',color||'var(--cal-text)');
+    t.setAttribute('font-family','Fira Sans,sans-serif');
+    t.textContent=pct!=null?pct+'%':'\u2014';
+    svg.appendChild(t);
+    return svg;
+  };
+
+  // ── Gather data ────────────────────────────────────────────────
   let zd = {};
+  const decisions = (typeof loadDecisions==='function')
+    ? loadDecisions().filter(d=>d.date>=fromDate&&d.date<=toDate).sort((a,b)=>b.date.localeCompare(a.date))
+    : [];
+  const uniData = loadUnifonData().filter(d=>d.date>=fromDate&&d.date<=toDate);
+  const uniTotals = {
+    offered:  uniData.reduce((s,d)=>s+(d.offered||0),0),
+    answered: uniData.reduce((s,d)=>s+(d.answered||0),0),
+    missed:   uniData.reduce((s,d)=>s+(d.missed||0),0),
+    avgTalk:  uniData.filter(d=>d.avgTalkSec>0).length
+      ? Math.round(uniData.filter(d=>d.avgTalkSec>0).reduce((s,d)=>s+d.avgTalkSec,0)/uniData.filter(d=>d.avgTalkSec>0).length) : null,
+    avgWait:  uniData.filter(d=>d.avgWaitSec>0).length
+      ? Math.round(uniData.filter(d=>d.avgWaitSec>0).reduce((s,d)=>s+d.avgWaitSec,0)/uniData.filter(d=>d.avgWaitSec>0).length) : null,
+  };
+  uniTotals.ansRate = uniTotals.offered>0 ? Math.round(uniTotals.answered/uniTotals.offered*100) : null;
+
+  let callStats = {};
+  try { callStats = getAgentCallStats(fromDate, toDate) || {}; } catch(e) {}
+
   if (zdReady()) {
     try {
-      // For past periods: try to aggregate from weekly snapshots first
-      // This avoids the 100-ticket limit and is instant for cached data
       if (isPast) {
-        // Collect all week snapshots covering this range
-        const weekSnaps = [];
-        const startMon = new Date(fromDate+'T00:00:00');
-        // Walk back to nearest Monday (day=1)
-        while (startMon.getDay() !== 1) startMon.setDate(startMon.getDate()-1);
-        for (let w=new Date(startMon); fmtLocal(new Date(w))<=toDate; w.setDate(w.getDate()+7)) {
-          const wMon = fmtLocal(new Date(w));
-          const wSun = fmtLocal(new Date(new Date(wMon+'T00:00:00').getTime()+6*86400000));
-          if (wSun < today) { // only closed weeks
-            const snap = await getOrBuildSnapshot(wMon);
-            if (snap) weekSnaps.push(snap);
-          }
+        const weekSnaps=[];
+        const startMon=new Date(fromDate+'T00:00:00');
+        while(startMon.getDay()!==1) startMon.setDate(startMon.getDate()-1);
+        for(let w=new Date(startMon);fmtLocal(new Date(w))<=toDate;w.setDate(w.getDate()+7)){
+          const wMon=fmtLocal(new Date(w));
+          const wSun=fmtLocal(new Date(new Date(wMon+'T00:00:00').getTime()+6*86400000));
+          if(wSun<today){ const snap=await getOrBuildSnapshot(wMon); if(snap) weekSnaps.push(snap); }
         }
-        if (weekSnaps.length > 0 && weekSnaps.every(s=>s.zdEnriched)) {
-          // All weeks enriched — aggregate from snapshots (accurate, instant)
-          const totalSolved = weekSnaps.reduce((s,w)=>s+(w.totals.zdTotalSolved||0),0);
-          const csatGood    = weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatGood||0),0);
-          const csatBad     = weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatBad||0),0);
-          const csatTotal   = csatGood+csatBad;
-          const csatPct     = csatTotal>0?Math.round(csatGood/csatTotal*100):null;
-          // Weighted mean MTTR
-          const mttrWeights = weekSnaps.filter(s=>s.totals.zdMttrMean&&s.totals.zdTicketCount);
-          const mttrMean = mttrWeights.length
-            ? Math.round(mttrWeights.reduce((s,w)=>s+w.totals.zdMttrMean*w.totals.zdTicketCount,0)/mttrWeights.reduce((s,w)=>s+w.totals.zdTicketCount,0))
-            : null;
-          const emailTotal  = weekSnaps.reduce((s,w)=>s+(w.totals.zdEmailTotal||0),0);
-          const phoneTotal  = weekSnaps.reduce((s,w)=>s+(w.totals.zdPhoneTotal||0),0);
-          const openNow     = weekSnaps[weekSnaps.length-1].totals.zdOpenEow || 0;
-          // Merge per-day solved
-          const solvedPerDay = {};
-          weekSnaps.forEach(s=>{ if(s.totals.zdSolvedPerDay) Object.assign(solvedPerDay, s.totals.zdSolvedPerDay); });
-          zd = {
-            totalSolved, openNow, csatPct, csatGood, csatTotal: csatTotal, csatBad,
-            mttrMean, emailTotal, phoneTotal, daysInPeriod,
-            dailyAvg: Math.round(totalSolved/daysInPeriod),
-            solvedPerDay, fromSnapshot: true,
-            snapshotWeeks: weekSnaps.length
-          };
-          // Per-agent solved from snapshots
-          zd.agentSolved = {};
-          MY_TEAM.forEach(name => {
-            zd.agentSolved[name] = weekSnaps.reduce((s,w)=>s+((w.agents[name]&&w.agents[name].zdSolved)||0),0);
-          });
+        if(weekSnaps.length&&weekSnaps.every(s=>s.zdEnriched)){
+          const totalSolved=weekSnaps.reduce((s,w)=>s+(w.totals.zdTotalSolved||0),0);
+          const csatGood=weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatGood||0),0);
+          const csatBad=weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatBad||0),0);
+          const csatTotal=csatGood+csatBad;
+          const mttrWeights=weekSnaps.filter(s=>s.totals.zdMttrMean&&s.totals.zdTicketCount);
+          const mttrMean=mttrWeights.length?Math.round(mttrWeights.reduce((s,w)=>s+w.totals.zdMttrMean*w.totals.zdTicketCount,0)/mttrWeights.reduce((s,w)=>s+w.totals.zdTicketCount,0)):null;
+          const solvedPerDay={};
+          weekSnaps.forEach(s=>{ if(s.totals.zdSolvedPerDay) Object.assign(solvedPerDay,s.totals.zdSolvedPerDay); });
+          const agentSolved={};
+          MY_TEAM.forEach(name=>{ agentSolved[name]=weekSnaps.reduce((s,w)=>s+((w.agents[name]&&w.agents[name].zdSolved)||0),0); });
+          zd={totalSolved,csatGood,csatBad,csatTotal,csatPct:csatTotal>0?Math.round(csatGood/csatTotal*100):null,
+            mttrMean,mttrMedian:weekSnaps[weekSnaps.length-1]?.totals?.zdMttrMedian||null,
+            emailTotal:weekSnaps.reduce((s,w)=>s+(w.totals.zdEmailTotal||0),0),
+            phoneTotal:weekSnaps.reduce((s,w)=>s+(w.totals.zdPhoneTotal||0),0),
+            openNow:weekSnaps[weekSnaps.length-1]?.totals?.zdOpenEow||null,
+            solvedPerDay,agentSolved,fromSnapshot:true,snapshotWeeks:weekSnaps.length,
+            dailyAvg:Math.round(totalSolved/daysInPeriod)};
         }
       }
-
-      // Fallback: live ZD fetch (current week or missing snapshots)
-      // Uses full pagination for accuracy
-      if (!zd.totalSolved && !zd.fromSnapshot) {
-        const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
-        const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
-        const [totalSolvedData, openNowData, csatData] = await Promise.all([
+      if(!zd.totalSolved&&!zd.fromSnapshot){
+        const fromTs=Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
+        const toTs=Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
+        const [totalSolved,openNow,csatData]=await Promise.all([
           zdCount('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate).catch(()=>0),
           zdCount('type:ticket status:open').catch(()=>0),
           zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
         ]);
-        // Paginated ticket fetch — up to 2000
-        let allTickets = [];
-        let tkUrl = '/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
-        for (let p=0; p<20&&tkUrl; p++) {
-          const r = await zdFetch(tkUrl).catch(()=>({results:[]}));
-          allTickets = allTickets.concat(r.results||[]);
-          tkUrl = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+        let allTickets=[];
+        let tkUrl='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
+        for(let p=0;p<20&&tkUrl;p++){
+          const r=await zdFetch(tkUrl).catch(()=>({results:[]}));
+          allTickets=allTickets.concat(r.results||[]);
+          tkUrl=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
         }
-        const ratings = csatData.satisfaction_ratings || [];
-        const csatGood  = ratings.filter(r=>r.score==='good').length;
-        const csatTotal2 = ratings.filter(r=>r.score==='good'||r.score==='bad').length;
-        const csatPct   = csatTotal2>0?Math.round(csatGood/csatTotal2*100):null;
-        const resTimes  = allTickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
-        const mttrMean  = resTimes.length?Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length):null;
-        const emailTotal = allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length;
-        const phoneTotal = allTickets.length - emailTotal;
-        zd = {
-          totalSolved: totalSolvedData, openNow: openNowData, csatPct, csatGood,
-          csatTotal: csatTotal2, mttrMean, emailTotal, phoneTotal,
-          tickets: allTickets, daysInPeriod, dailyAvg: Math.round(totalSolvedData/daysInPeriod),
-          fromSnapshot: false
-        };
+        const ratings=csatData.satisfaction_ratings||[];
+        const csatGood=ratings.filter(r=>r.score==='good').length;
+        const csatBad=ratings.filter(r=>r.score==='bad').length;
+        const csatTotal=csatGood+csatBad;
+        const resTimes=allTickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(v=>v>0).sort((a,b)=>a-b);
+        const solvedPerDay={};
+        const days2=[];
+        for(let d=new Date(fromDate+'T00:00:00');fmtLocal(new Date(d))<=toDate;d.setDate(d.getDate()+1)) days2.push(fmtLocal(new Date(d)));
+        days2.forEach(d=>{ solvedPerDay[d]=0; });
+        allTickets.forEach(t=>{const d=t.solved_at?fmtLocal(new Date(t.solved_at)):null;if(d&&solvedPerDay[d]!==undefined)solvedPerDay[d]++;});
+        const agentSolved={};
+        if(zdAgents&&zdAgents.length){
+          allTickets.forEach(t=>{
+            const agent=zdAgents.find(a=>a.id===t.assignee_id);
+            if(!agent)return;
+            const teamName=MY_TEAM.find(n=>normName(n.split(' ')[0])===normName(agent.name.split(' ')[0]));
+            if(teamName) agentSolved[teamName]=(agentSolved[teamName]||0)+1;
+          });
+        }
+        zd={totalSolved,openNow,csatGood,csatBad,csatTotal,csatPct:csatTotal>0?Math.round(csatGood/csatTotal*100):null,
+          mttrMean:resTimes.length?Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length):null,
+          mttrMedian:resTimes.length?Math.round(resTimes[Math.floor(resTimes.length/2)]):null,
+          emailTotal:allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length,
+          phoneTotal:allTickets.length-allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length,
+          solvedPerDay,agentSolved,dailyAvg:Math.round(totalSolved/daysInPeriod),fromSnapshot:false};
       }
-    } catch(e) { console.warn('Report ZD error:', e.message); }
+    } catch(e) { console.warn('Report ZD error:',e.message); }
   }
 
-  // ── Gather call data ─────────────────────────────────────────
-  const callStats = getAgentCallStats(fromDate, toDate);
-  const totalAnswered = Object.values(callStats).reduce((s,a)=>s+(a.answered||0),0);
-  const totalOffered  = Object.values(callStats).reduce((s,a)=>s+(a.offered||0),0);
-  const ansRate = totalOffered > 0 ? Math.round(totalAnswered/totalOffered*100) : null;
+  // ── Render ─────────────────────────────────────────────────────
+  container.innerHTML='';
+  const page=m('div','report-page');
 
-  // ── Render ───────────────────────────────────────────────────
-  container.innerHTML = '';
+  // HERO
+  const hero=m('div','report-hero');
+  const heroLeft=m('div');
+  tx(m('div','report-hero-period'),periodLabel).then ? null : heroLeft.appendChild(tx(m('div','report-hero-period'),periodLabel));
+  const heroPeriodEl=m('div','report-hero-period'); heroPeriodEl.textContent=periodLabel;
+  const heroSubEl=m('div','report-hero-sub');
+  heroSubEl.textContent=daysInPeriod+'d \u00b7 '+(zd.fromSnapshot?zd.snapshotWeeks+' cached weeks':'live data');
+  heroLeft.appendChild(heroPeriodEl); heroLeft.appendChild(heroSubEl);
+  hero.appendChild(heroLeft);
+  const heroKpis=m('div','report-hero-kpis');
+  const csatCls=zd.csatPct>=90?'ok':zd.csatPct>=75?'warn':'danger';
+  const mttrHr=zd.mttrMean?Math.floor(zd.mttrMean/60):null;
+  const mttrMin=zd.mttrMean?zd.mttrMean%60:null;
+  const mttrStr=zd.mttrMean?(mttrHr>0?mttrHr+'h ':'')+mttrMin+'m':'\u2014';
+  const ansRateCls=uniTotals.ansRate>=90?'ok':uniTotals.ansRate>=80?'warn':uniTotals.ansRate!=null?'danger':null;
+  heroKpis.appendChild(mkHeroKpi(zd.totalSolved!=null?zd.totalSolved:'\u2014','Solved'));
+  heroKpis.appendChild(mkHeroKpi(zd.csatPct!=null?zd.csatPct+'%':'\u2014','CSAT',zd.csatPct!=null?csatCls:null));
+  heroKpis.appendChild(mkHeroKpi(mttrStr,'Avg resolution'));
+  if(uniTotals.offered>0) heroKpis.appendChild(mkHeroKpi(uniTotals.ansRate!=null?uniTotals.ansRate+'%':'\u2014','Answer rate',ansRateCls));
+  hero.appendChild(heroKpis);
+  page.appendChild(hero);
 
-  // Executive summary
-  const s1 = mkSection('1','Executive summary');
-  if (zd.totalSolved !== undefined) {
-    const summaryEl = mk('div');
-    summaryEl.style.cssText = 'font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;padding:12px 16px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--cal-text);';
-    const emailPct = (zd.emailTotal+zd.phoneTotal)>0 ? Math.round(zd.emailTotal/(zd.emailTotal+zd.phoneTotal)*100) : null;
-    const _ep = emailPct!==null?' with <strong>'+emailPct+'% email / '+(100-emailPct)+'% phone</strong>':'';
-    const _ar = ansRate!==null?' Answer rate: <strong>'+ansRate+'%</strong> ('+totalAnswered+' of '+totalOffered+' calls).':'';
-    const _cs = zd.csatPct!=null?' CSAT: <strong>'+zd.csatPct+'%</strong>.':'';
-    const _mt = zd.mttrMean!=null?' Avg resolution: <strong>'+fmtD(zd.mttrMean)+'</strong>.':'';
-    summaryEl.innerHTML = '<strong>'+monthLabel+'</strong> — Team solved <strong>'+(zd.totalSolved||0)+'</strong> tickets ('+(zd.dailyAvg||0)+'/day)'+_ep+'.'+_ar+_cs+_mt;
-    s1.appendChild(summaryEl);
-    s1.appendChild(mkKpiGrid([
-      { val: zd.totalSolved||0, label:'Tickets solved', sub: (zd.dailyAvg||0)+'/day avg' },
-      { val: zd.openNow||0, label:'Open now', color: zd.openNow>60?'var(--high-text)':zd.openNow>30?'#ffb74d':undefined },
-      { val: zd.csatPct!=null?zd.csatPct+'%':'--', label:'CSAT', color: zd.csatPct>=90?'var(--low-text)':zd.csatPct>=75?'#ffb74d':'var(--high-text)' },
-      { val: zd.mttrMean?fmtD(zd.mttrMean):'--', label:'Avg resolution' },
-      { val: ansRate!=null?ansRate+'%':'--', label:'Answer rate' },
-      { val: totalAnswered||0, label:'Calls answered' },
-    ]));
+  // PANEL 1 — Daily volume
+  const {panel:p1,body:b1}=mkPanel('Ticket volume \u2014 solved per day','📊','rgba(96,165,250,0.15)');
+  if(zd.solvedPerDay&&Object.keys(zd.solvedPerDay).length){
+    const days3=Object.keys(zd.solvedPerDay).sort();
+    const vals3=days3.map(d=>zd.solvedPerDay[d]||0);
+    const peakIdx=vals3.indexOf(Math.max(...vals3));
+    const statRow=m('div','report-stat-row');
+    statRow.appendChild(mkStatBox(zd.totalSolved||0,'Total solved',(zd.dailyAvg||0)+'/day avg'));
+    statRow.appendChild(mkStatBox(Math.max(...vals3),'Peak day',days3[peakIdx]?new Date(days3[peakIdx]+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}):''));
+    statRow.appendChild(mkStatBox(zd.dailyAvg||0,'Daily avg',days3.length+'d period'));
+    const openCls=zd.openNow>80?'danger':zd.openNow>50?'warn':zd.openNow!=null?'ok':null;
+    statRow.appendChild(mkStatBox(zd.openNow!=null?zd.openNow:'\u2014','Open now',null,openCls));
+    b1.appendChild(statRow);
+    const cw=m('div'); cw.style.marginTop='8px';
+    cw.appendChild(mkSVGBar(days3,vals3,130));
+    b1.appendChild(cw);
   } else {
-    s1.appendChild(mk('div','report-note','No Zendesk data available — configure integration in Settings.'));
+    const nd=m('div'); nd.style.cssText='padding:20px;font-size:12px;color:var(--text3);font-style:italic;';
+    nd.textContent='No daily data. Run backfill in Settings \u2192 Data & Import to populate historical snapshots.';
+    b1.appendChild(nd);
   }
-  container.appendChild(s1);
+  page.appendChild(p1);
 
-  // Call statistics
-  const s3 = mkSection('2','Call statistics');
-  const agentRows = MY_TEAM.map(name => {
-    const cs = resolveAgentCallStats(name, callStats) || {};
-    const ar = cs.offered > 0 ? Math.round(cs.answered/cs.offered*100)+'%' : '--';
-    return [name, cs.answered||0, cs.offered||0, ar, cs.avgTalkSec?fmtSec(cs.avgTalkSec):'--', cs.avgWaitSec?fmtSec(cs.avgWaitSec):'--'];
-  }).filter(r => r[1] > 0);
-  if (agentRows.length) {
-    s3.appendChild(mkTable(['Agent','Answered','Offered','Ans rate','Avg talk','Avg wait'], agentRows, ['l','r','r','r','r','r']));
+  // PANEL 2 — CSAT + MTTR
+  const {panel:p2,body:b2}=mkPanel('Customer satisfaction & resolution time','⭐','rgba(52,211,153,0.15)');
+  const p2grid=m('div'); p2grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:20px;';
+  // CSAT
+  const csatWrap=m('div');
+  const csatTitleEl=m('div'); csatTitleEl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:12px;'; csatTitleEl.textContent='CSAT';
+  csatWrap.appendChild(csatTitleEl);
+  if(zd.csatPct!=null){
+    const csatRow=m('div'); csatRow.style.cssText='display:flex;align-items:center;gap:16px;';
+    const donutColor=zd.csatPct>=90?'#34d399':zd.csatPct>=75?'#fbbf24':'#f87171';
+    csatRow.appendChild(mkDonut(zd.csatPct,80,donutColor));
+    const leg=m('div'); leg.style.cssText='display:flex;flex-direction:column;gap:6px;';
+    const mkLR=(lbl,val,color)=>{const r=m('div');r.style.cssText='display:flex;justify-content:space-between;gap:20px;font-size:12px;';const l=m('div');l.style.color='var(--text2)';l.textContent=lbl;const v=m('div');v.style.cssText='font-weight:700;color:'+(color||'var(--text)');v.textContent=val;r.appendChild(l);r.appendChild(v);return r;};
+    leg.appendChild(mkLR('Good',zd.csatGood||0,'#34d399'));
+    leg.appendChild(mkLR('Bad',zd.csatBad||0,(zd.csatBad||0)>0?'#f87171':'var(--text3)'));
+    leg.appendChild(mkLR('Total rated',zd.csatTotal||0));
+    csatRow.appendChild(leg);
+    csatWrap.appendChild(csatRow);
   } else {
-    s3.appendChild(mk('div','report-note','No call data for this period. Import Unifon data in Settings.'));
+    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No CSAT data';csatWrap.appendChild(nd);
   }
-  container.appendChild(s3);
-
-  // Agent performance (ZD)
-  if (zdAgents && zdAgents.length && zd.tickets && zd.tickets.length) {
-    const s4 = mkSection('3','Agent performance');
-    const agentZdRows = MY_TEAM.map(name => {
-      const zdA = zdAgents.find(a=>normName(a.name.split(' ')[0])===normName(name.split(' ')[0]));
-      const d = zdA ? (zdData[zdA.id]||{}) : {};
-      if (!d.solved) return null;
-      return [name, d.solved||0, d.email!=null?d.email:'--', d.phone!=null?d.phone:'--'];
-    }).filter(Boolean);
-    if (agentZdRows.length) {
-      s4.appendChild(mkTable(['Agent','Solved','Email','Phone'], agentZdRows, ['l','r','r','r']));
+  p2grid.appendChild(csatWrap);
+  // MTTR
+  const mttrWrap=m('div');
+  const mttrTitleEl=m('div');mttrTitleEl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:12px;';mttrTitleEl.textContent='Resolution time';
+  mttrWrap.appendChild(mttrTitleEl);
+  if(zd.mttrMean){
+    const sr=m('div','report-stat-row');
+    const mCls=zd.mttrMean<240?'ok':zd.mttrMean<480?'warn':'danger';
+    sr.appendChild(mkStatBox(mttrStr,'Mean (target <4h)',null,mCls));
+    if(zd.mttrMedian){const medMin=zd.mttrMedian,medStr=medMin>=60?(Math.floor(medMin/60)+'h'+(medMin%60?medMin%60+'m':'')):(medMin+'m');sr.appendChild(mkStatBox(medStr,'Median'));}
+    mttrWrap.appendChild(sr);
+    const chTotal=(zd.emailTotal||0)+(zd.phoneTotal||0);
+    if(chTotal>0){
+      const emailPct=Math.round((zd.emailTotal||0)/chTotal*100);
+      const chW=m('div');chW.style.cssText='margin-top:12px;';
+      const chL=m('div');chL.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';chL.textContent='Channel split';
+      const chB=m('div');chB.style.cssText='display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:6px;';
+      const eF=m('div');eF.style.cssText='background:#60a5fa;width:'+emailPct+'%;';
+      const pF=m('div');pF.style.cssText='background:#a78bfa;flex:1;';
+      chB.appendChild(eF);chB.appendChild(pF);
+      const chLg=m('div');chLg.style.cssText='display:flex;gap:12px;font-size:11px;color:var(--text2);';
+      const eLg=m('div');eLg.innerHTML='<span style="color:#60a5fa;font-weight:700;">\u25cf</span> Email: '+(zd.emailTotal||0)+' ('+emailPct+'%)';
+      const pLg=m('div');pLg.innerHTML='<span style="color:#a78bfa;font-weight:700;">\u25cf</span> Phone: '+(zd.phoneTotal||0)+' ('+(100-emailPct)+'%)';
+      chLg.appendChild(eLg);chLg.appendChild(pLg);
+      chW.appendChild(chL);chW.appendChild(chB);chW.appendChild(chLg);
+      mttrWrap.appendChild(chW);
     }
-    container.appendChild(s4);
+  } else {
+    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No resolution data';mttrWrap.appendChild(nd);
   }
+  p2grid.appendChild(mttrWrap);
+  b2.appendChild(p2grid);
+  page.appendChild(p2);
 
-  // Decisions
-  const decisions = loadDecisions().filter(d=>d.date>=fromDate&&d.date<=toDate);
-  if (decisions.length) {
-    const s5 = mkSection('4','Decisions logged');
-    const dRows = decisions.map(d => [d.date, d.title||'', d.owner||'--', d.status||'--']);
-    s5.appendChild(mkTable(['Date','Decision','Owner','Status'], dRows, ['l','l','l','l']));
-    container.appendChild(s5);
+  // PANEL 3 — Agent performance
+  const {panel:p3,body:b3}=mkPanel('Agent performance','👤','rgba(167,139,250,0.15)');
+  const p3grid=m('div');p3grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:24px;';
+  const AGENT_COLORS=['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  // ZD solved
+  const zdSW=m('div');
+  const zdST=m('div');zdST.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:10px;';zdST.textContent='Tickets solved';zdSW.appendChild(zdST);
+  if(zd.agentSolved&&Object.keys(zd.agentSolved).length){
+    const sorted=MY_TEAM.map(n=>({name:n,v:zd.agentSolved[n]||0})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+    const maxV=sorted[0]?.v||1;
+    sorted.forEach((x,i)=>zdSW.appendChild(mkAgentBar(x.name,x.v,maxV,AGENT_COLORS[i%AGENT_COLORS.length])));
+    if(!sorted.length){const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No data \u2014 run backfill';zdSW.appendChild(nd);}
+  } else {
+    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No ZD data \u2014 run backfill in Settings';zdSW.appendChild(nd);
+  }
+  p3grid.appendChild(zdSW);
+  // Calls
+  const cW=m('div');
+  const cT=m('div');cT.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:10px;';cT.textContent='Calls answered';cW.appendChild(cT);
+  if(Object.keys(callStats).length){
+    const sorted2=MY_TEAM.map(n=>({name:n,...(callStats[n]||{})})).filter(x=>(x.answered||0)>0).sort((a,b)=>(b.answered||0)-(a.answered||0));
+    const maxV2=sorted2[0]?.answered||1;
+    sorted2.forEach((x,i)=>{
+      cW.appendChild(mkAgentBar(x.name,x.answered||0,maxV2,AGENT_COLORS[i%AGENT_COLORS.length]));
+      if(x.offered>0){const arEl=m('div');arEl.style.cssText='font-size:10px;color:var(--text3);padding:0 0 4px 100px;margin-top:-4px;';arEl.textContent=Math.round(x.answered/x.offered*100)+'% answer rate';cW.appendChild(arEl);}
+    });
+    if(!sorted2.length){const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No call data \u2014 import Unifon .xlsx';cW.appendChild(nd);}
+  } else {
+    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No call data \u2014 import Unifon .xlsx from Settings';cW.appendChild(nd);
+  }
+  p3grid.appendChild(cW);
+  b3.appendChild(p3grid);
+  page.appendChild(p3);
+
+  // PANEL 4 — AI export
+  const {panel:p4,body:b4,hdr:h4}=mkPanel('Copy report for AI analysis','✦','rgba(214,243,255,0.08)');
+  h4.style.background='rgba(0,7,67,0.4)';
+  const aiDesc=m('div');aiDesc.style.cssText='font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;';
+  aiDesc.innerHTML='No API key needed. Click <strong style="color:var(--text);">Copy report</strong> to get a structured plain-text summary, then paste it into any Claude conversation and ask your questions.';
+  b4.appendChild(aiDesc);
+  const suggestions=['What are the main trends this period?','Which agents need attention and why?','Is anything unusual compared to typical performance?','What should be the top 3 priorities for next month?'];
+  const sugW=m('div');sugW.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;';
+  suggestions.forEach(s=>{const c=m('div');c.style.cssText='font-size:11px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;';c.textContent='\u2192 "'+s+'"';sugW.appendChild(c);});
+  b4.appendChild(sugW);
+  const copyBtn=m('button','report-ai-btn');
+  copyBtn.innerHTML='<span style="font-size:14px;">\u2736</span> Copy report for Claude';
+  copyBtn.onclick=()=>{
+    const lines=[];
+    lines.push('# Munu Support Report \u2014 '+periodLabel);
+    lines.push('Period: '+fromDate+' to '+toDate+' ('+daysInPeriod+' days)');
+    lines.push('');
+    lines.push('## Ticket Volume');
+    lines.push('Total solved: '+(zd.totalSolved||'N/A'));
+    lines.push('Daily average: '+(zd.dailyAvg||'N/A')+'/day');
+    lines.push('Open now: '+(zd.openNow!=null?zd.openNow:'N/A'));
+    if(zd.solvedPerDay){lines.push('Daily breakdown:');Object.entries(zd.solvedPerDay).sort().forEach(([d,v])=>lines.push('  '+d+' ('+new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short'})+'): '+v));}
+    lines.push('');
+    lines.push('## Satisfaction');
+    lines.push('CSAT: '+(zd.csatPct!=null?zd.csatPct+'%':'N/A')+' ('+( zd.csatGood||0)+' good, '+(zd.csatBad||0)+' bad, '+(zd.csatTotal||0)+' rated)');
+    lines.push('');
+    lines.push('## Resolution Time');
+    lines.push('Mean: '+mttrStr+(zd.mttrMedian?', Median: '+(zd.mttrMedian>=60?(Math.floor(zd.mttrMedian/60)+'h'+zd.mttrMedian%60+'m'):(zd.mttrMedian+'m')):''));
+    lines.push('');
+    lines.push('## Channel Split');
+    lines.push('Email: '+(zd.emailTotal||0)+', Phone/chat: '+(zd.phoneTotal||0));
+    lines.push('');
+    lines.push('## Phone (Unifon)');
+    if(uniTotals.offered>0){lines.push('Offered: '+uniTotals.offered+', Answered: '+uniTotals.answered+', Missed: '+uniTotals.missed+', Answer rate: '+(uniTotals.ansRate||'N/A')+'%');if(uniTotals.avgTalk)lines.push('Avg talk: '+fmtSec(uniTotals.avgTalk)+', Avg wait: '+(uniTotals.avgWait||'N/A')+'s');}else{lines.push('No Unifon data imported for this period.');}
+    lines.push('');
+    lines.push('## Agent Tickets Solved');
+    if(zd.agentSolved){MY_TEAM.map(n=>({name:n,v:zd.agentSolved[n]||0})).sort((a,b)=>b.v-a.v).forEach(x=>{if(x.v>0)lines.push('  '+x.name+': '+x.v);});}else{lines.push('  No data');}
+    lines.push('');
+    lines.push('## Agent Calls');
+    if(Object.keys(callStats).length){MY_TEAM.map(n=>({name:n,...(callStats[n]||{})})).sort((a,b)=>(b.answered||0)-(a.answered||0)).forEach(x=>{if((x.answered||0)>0){const ar=x.offered>0?Math.round(x.answered/x.offered*100)+'%':'?';lines.push('  '+x.name+': '+x.answered+' answered/'+x.offered+' offered ('+ar+') talk: '+(x.avgTalkSec?fmtSec(x.avgTalkSec):'?'));} });}else{lines.push('  No call data.');}
+    if(decisions.length){lines.push('');lines.push('## Decisions');decisions.forEach(d=>lines.push('  '+d.date+': '+d.title+(d.owner?' ('+d.owner+')':'')));}
+    lines.push('');
+    lines.push('Suggested questions:');
+    lines.push('- What are the main trends and concerns?');
+    lines.push('- Which agents are over/under-performing?');
+    lines.push('- What should be top priorities next month?');
+    navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+      copyBtn.innerHTML='\u2713 Copied! Paste into Claude';
+      copyBtn.style.background='rgba(52,211,153,0.15)';copyBtn.style.borderColor='rgba(52,211,153,0.3)';copyBtn.style.color='#34d399';
+      setTimeout(()=>{copyBtn.innerHTML='<span style="font-size:14px;">\u2736</span> Copy report for Claude';copyBtn.style.background='';copyBtn.style.borderColor='';copyBtn.style.color='';},3000);
+    }).catch(()=>showToast('Copy failed'));
+  };
+  b4.appendChild(copyBtn);
+  page.appendChild(p4);
+
+  // PANEL 5 — Decisions
+  if(decisions.length){
+    const {panel:p5,body:b5}=mkPanel('Decisions logged this period','📋','rgba(251,191,36,0.12)');
+    const tbl=m('table','report-table');
+    const thead=m('thead');const hr2=m('tr');
+    [['Date',''],['Decision',''],['Owner','r'],['Status','r']].forEach(([h,cls])=>{const th=m('th');th.textContent=h;if(cls)th.className=cls;hr2.appendChild(th);});
+    thead.appendChild(hr2);tbl.appendChild(thead);
+    const tbody=m('tbody');
+    decisions.forEach(d=>{
+      const tr=m('tr');
+      const td1=m('td');td1.textContent=d.date||'';
+      const td2=m('td');td2.textContent=d.title||'';td2.style.fontWeight='500';td2.style.color='var(--text)';
+      const td3=m('td');td3.className='r';td3.textContent=d.owner||'\u2014';
+      const td4=m('td');td4.className='r';
+      const badge=m('span');badge.style.cssText='font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--surface2);color:var(--text3);';badge.textContent=d.status||'Open';td4.appendChild(badge);
+      tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);tr.appendChild(td4);tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);b5.appendChild(tbl);page.appendChild(p5);
   }
 
   // Footer
-  const footer = mk('div');
-  footer.style.cssText='margin-top:24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;';
-  const footerLeft = mk('span'); footerLeft.textContent = 'Generated '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  const footerRight = mk('span'); footerRight.textContent = fromDate+' to '+toDate;
-  footer.appendChild(footerLeft);
-  if (zd.fromSnapshot) {
-    const badge = mk('span');
-    badge.style.cssText='background:rgba(77,171,247,0.1);color:var(--cal-text);border:1px solid rgba(77,171,247,0.2);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;';
-    badge.textContent = '⚡ '+zd.snapshotWeeks+' cached week'+(zd.snapshotWeeks!==1?'s':'')+' — instant';
-    footer.appendChild(badge);
-  }
-  footer.appendChild(footerRight);
-  container.appendChild(footer);
+  const footer=m('div');footer.style.cssText='font-size:10px;color:var(--text3);border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;';
+  const fL=m('span');fL.textContent='Generated '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const fR=m('span');fR.textContent=fromDate+' \u2192 '+toDate;
+  footer.appendChild(fL);
+  if(zd.fromSnapshot){const badge=m('span');badge.style.cssText='background:rgba(77,171,247,0.1);color:var(--cal-text);border:1px solid rgba(77,171,247,0.2);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;';badge.textContent='\u26a1 '+zd.snapshotWeeks+' cached week'+(zd.snapshotWeeks!==1?'s':'')+' \u2014 instant';footer.appendChild(badge);}
+  footer.appendChild(fR);
+  page.appendChild(footer);
+  container.appendChild(page);
 }
 
 
-// --- REPORTS TAB -------------------------------------------------------
 function renderReportsTab() {
   const root = document.getElementById('reports-root');
   if (!root) return;
