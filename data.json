@@ -12237,8 +12237,30 @@
       "answered": 625,
       "missed": 126,
       "ansRate": 83,
-      "avgWait": 567
-    }
+      "avgWait": 567,
+      "zdTotalSolved": 675,
+      "zdOpenEow": 120,
+      "zdCsatGood": 34,
+      "zdCsatBad": 0,
+      "zdCsatTotal": 34,
+      "zdCsatPct": 100,
+      "zdMttrMean": 5045,
+      "zdMttrMedian": 104,
+      "zdEmailTotal": 157,
+      "zdPhoneTotal": 518,
+      "zdTicketCount": 675,
+      "zdSolvedPerDay": {
+        "2026-05-18": 0,
+        "2026-05-19": 0,
+        "2026-05-20": 0,
+        "2026-05-21": 0,
+        "2026-05-22": 0,
+        "2026-05-23": 0,
+        "2026-05-24": 0
+      }
+    },
+    "zdEnriched": true,
+    "zdEnrichedAt": "2026-05-30T18:38:35.231Z"
   },
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_intel_snap_2026-05-25": {
