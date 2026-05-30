@@ -3193,14 +3193,13 @@ function renderSchedule() {
     td.dataset.name = person.name;
     td.dataset.day = dayIdx;
 
-    const shift = person.shifts[dayIdx] || '';
-
     function renderPill() {
       td.innerHTML = '';
-      if (shift) {
+      const currentShift = person.shifts[dayIdx] || '';
+      if (currentShift) {
         const pill = document.createElement('span');
-        pill.className = 'shift-pill ' + shiftClass(person.shifts[dayIdx]);
-        pill.textContent = person.shifts[dayIdx];
+        pill.className = 'shift-pill ' + shiftClass(currentShift);
+        pill.textContent = currentShift;
         td.appendChild(pill);
       } else {
         td.innerHTML = '<span style="color:var(--text3);font-size:11px;">—</span>';
@@ -3233,8 +3232,10 @@ function renderSchedule() {
         item.onmouseover = () => item.style.background = 'var(--surface3)';
         item.onmouseout = () => item.style.background = code === person.shifts[dayIdx] ? 'var(--surface2)' : '';
         item.onmousedown = (ev) => {
-          // Use mousedown so it fires before the document click dismiss
           ev.stopPropagation();
+          ev.preventDefault();
+          // Ensure shifts array is long enough (weekend days are index 5/6)
+          while (person.shifts.length <= dayIdx) person.shifts.push('');
           person.shifts[dayIdx] = code;
           saveSchedule();
           dd.remove();
