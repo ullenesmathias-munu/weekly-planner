@@ -11221,8 +11221,8 @@
   "wtp_encrypted_token": "1qLcmpPwfO1f8A3Z8mDKHHP3iq+y0J3M+udDQ6Tyg7iRoNl5tIjUhulJBVHEiAroYuO174hpBGCNaOoa9ioRp2ozSCw=",
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
-    "toDate": "2026-05-31",
-    "generated": "2026-05-30T13:38:28.788Z",
+    "toDate": "2026-05-30",
+    "generated": "2026-05-30T13:38:46.660Z",
     "agents": {
       "Jonas": {
         "answered": 43,
@@ -11288,7 +11288,7 @@
         "zdSolved": 29,
         "isNight": false,
         "nightDays": 1,
-        "dayDays": 3,
+        "dayDays": 2,
         "zdEmail": 3,
         "zdPhone": 26,
         "zdOpen": 2,
@@ -12879,7 +12879,7 @@
             "D3 (9-17)",
             "D3 (9-17)",
             "W1 (7-17)",
-            ""
+            "W1 (7-17)"
           ],
           "roles": [
             "SLA Sherpa",
