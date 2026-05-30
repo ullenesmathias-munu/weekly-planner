@@ -10261,6 +10261,45 @@ function updateZdNameMap() {
 }
 
 
+// ─── ANNOUNCEMENTS FOR TEAM MEMBER DASHBOARD ────────────────────────────
+function renderAnnouncementsForTeamMember(container, username) {
+  const all    = loadAnnouncements ? loadAnnouncements() : [];
+  const unread = getUnreadAnnouncements ? getUnreadAnnouncements(username) : [];
+  if (!all.length) return 0;
+
+  const sec = dbSection('Updates');
+  all.slice(0, 5).sort((a,b) => (b.date||'').localeCompare(a.date||'')).forEach(ann => {
+    const isUnread = unread.some(u => u.id === ann.id);
+    const card = document.createElement('div');
+    card.className = 'ann-card' + (isUnread ? ' unread' : '');
+    card.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:background 0.12s;'
+      + (isUnread ? 'border-left:3px solid var(--cal-text);' : '');
+    card.onmouseover = () => card.style.background = 'var(--surface3)';
+    card.onmouseout  = () => card.style.background = isUnread ? 'var(--surface2)' : 'var(--surface2)';
+
+    const hdr = document.createElement('div'); hdr.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:4px;';
+    if (isUnread) {
+      const dot = document.createElement('div'); dot.style.cssText='width:6px;height:6px;border-radius:50%;background:var(--cal-text);flex-shrink:0;'; hdr.appendChild(dot);
+    }
+    const dateEl = document.createElement('span'); dateEl.style.cssText='font-size:10px;color:var(--text3);'; dateEl.textContent = ann.date||'';
+    hdr.appendChild(dateEl);
+
+    const txt = document.createElement('div'); txt.style.cssText='font-size:12px;color:var(--text2);line-height:1.5;'; txt.textContent = ann.text||'';
+
+    card.onclick = () => {
+      if (markAnnouncementRead) markAnnouncementRead(username, ann.id);
+      card.style.borderLeft = '';
+      card.classList.remove('unread');
+    };
+
+    card.appendChild(hdr); card.appendChild(txt);
+    sec.appendChild(card);
+  });
+  container.appendChild(sec);
+  return unread.length;
+}
+
+
 // --- SNAPSHOT BACKFILL ------------------------------------------------
 async function runSnapshotBackfill() {
   if (!zdReady()) {
