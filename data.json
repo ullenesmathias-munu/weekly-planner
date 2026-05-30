@@ -11197,21 +11197,21 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-30T11:45:23.636Z",
+    "generated": "2026-05-30T12:41:29.160Z",
     "agents": {
       "Jonas": {
         "answered": 43,
         "missed": 1,
         "avgTalk": 401,
         "avgWait": 139,
-        "zdSolved": 78,
+        "zdSolved": 87,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 13,
-        "zdPhone": 65,
+        "zdPhone": 74,
         "zdOpen": 9,
-        "zdPending": 5
+        "zdPending": 6
       },
       "Thomas": {
         "answered": 17,
