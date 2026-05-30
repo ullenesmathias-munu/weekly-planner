@@ -1202,6 +1202,353 @@
   .report-ai-btn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;border:1px solid rgba(214,243,255,0.2);background:rgba(214,243,255,0.07);color:rgba(214,243,255,0.7);transition:all 0.15s;}
   .report-ai-btn:hover{background:rgba(214,243,255,0.13);color:#D6F3FF;border-color:rgba(214,243,255,0.3);}
 
+  /* ─── My Team (1:1) tab overhaul ────────────────────────────── */
+
+  /* Sidebar — agent roster */
+  .oto-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .oto-sidebar-header {
+    padding: 14px 16px 10px;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .oto-sidebar-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .oto-person-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: none;
+    text-align: left;
+    width: 100%;
+    transition: background 0.1s;
+    position: relative;
+  }
+  .oto-person-btn:hover { background: var(--surface2); }
+  .oto-person-btn.active { background: var(--surface2); box-shadow: inset 2px 0 0 var(--cal-text); }
+  .oto-person-av {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+  .oto-person-av::after {
+    content: '';
+    position: absolute;
+    bottom: 1px; right: 1px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--surface);
+    background: var(--border);
+  }
+  .oto-person-av.rag-green::after  { background: #34d399; }
+  .oto-person-av.rag-amber::after  { background: #fbbf24; }
+  .oto-person-av.rag-red::after    { background: #f87171; }
+  .oto-person-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .oto-person-meta {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 1px;
+  }
+  .oto-person-meta.overdue { color: #f87171; font-weight: 600; }
+
+  /* Main panel */
+  .oto-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Profile header */
+  .oto-profile-hdr {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: linear-gradient(180deg, var(--surface2) 0%, var(--surface) 100%);
+  }
+  .oto-profile-av-lg {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+  .oto-profile-name {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .oto-profile-chips {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .oto-chip {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.12s;
+  }
+  .oto-chip:hover { background: var(--surface3); }
+  .oto-rag-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .oto-rag-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .oto-rag-dot:hover { transform: scale(1.15); }
+  .oto-rag-dot.active { border-color: white; transform: scale(1.1); }
+
+  /* Tab bar */
+  .oto-tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+  .oto-tab-btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 14px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text3);
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s;
+  }
+  .oto-tab-btn:hover { color: var(--text2); }
+  .oto-tab-btn.active { color: var(--cal-text); border-bottom-color: var(--cal-text); }
+
+  /* Overview tab */
+  .oto-overview-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* Stat row in overview */
+  .oto-stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .oto-stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .oto-stat-val {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .oto-stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text3);
+    margin-top: 3px;
+  }
+
+  /* Sections inside panels */
+  .oto-section {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .oto-section-hdr {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: var(--text3);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .oto-section-body { padding: 12px 14px; }
+
+  /* Session cards */
+  .oto-session-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.12s;
+  }
+  .oto-session-card:hover { border-color: var(--border2); }
+  .oto-session-hdr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    background: var(--surface2);
+  }
+  .oto-session-hdr:hover { background: var(--surface3); }
+  .oto-session-date {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+  .oto-session-body { padding: 12px 14px; }
+  .oto-notes-area {
+    width: 100%;
+    font-family: inherit;
+    font-size: 12px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    resize: vertical;
+    outline: none;
+    min-height: 80px;
+    box-sizing: border-box;
+    line-height: 1.5;
+  }
+  .oto-notes-area:focus { border-color: var(--cal-text); }
+
+  /* Profile form */
+  .oto-profile-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .oto-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .oto-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .oto-field label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+  }
+  .oto-field input {
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .oto-field input:focus { border-color: var(--cal-text); }
+
+  /* ZD/Unifon match indicator */
+  .oto-match-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+  .oto-match-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .oto-match-dot.ok     { background: #34d399; }
+  .oto-match-dot.warn   { background: #fbbf24; }
+  .oto-match-dot.miss   { background: #f87171; }
+
+
   .tabs { border-bottom: 1px solid var(--border); }
   .tab-btn { position: relative; }
   .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
@@ -8891,187 +9238,403 @@ function renderOtoTab() {
   const main    = document.getElementById('oto-main');
   const empty   = document.getElementById('oto-empty');
   if (!sidebar || !main) return;
-  const data = getOtoData();
+
+  const data  = getOtoData();
   const today = localToday();
+
+  // ── Sidebar ──────────────────────────────────────────────────
   sidebar.innerHTML = '';
-  const hdr = document.createElement('div'); hdr.className = 'oto-sidebar-header'; hdr.textContent = 'My Team';
+  sidebar.className = 'oto-sidebar';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'oto-sidebar-header';
+  hdr.textContent = 'My Team';
   sidebar.appendChild(hdr);
 
+  const list = document.createElement('div');
+  list.className = 'oto-sidebar-list';
+
   MY_TEAM.forEach(name => {
-    const sessions = (data.sessions || []).filter(s => s.person === name && s.date <= today);
-    const lastDate = sessions.sort((a,b) => b.date.localeCompare(a.date))[0]?.date || null;
-    const daysSince = lastDate ? Math.floor((new Date(today+'T00:00:00') - new Date(lastDate+'T00:00:00'))/86400000) : null;
+    const sessions = (data.sessions || [])
+      .filter(s => s.person === name && s.date <= today)
+      .sort((a,b) => b.date.localeCompare(a.date));
+    const lastDate  = sessions[0]?.date || null;
+    const daysSince = lastDate
+      ? Math.floor((new Date(today+'T00:00:00') - new Date(lastDate+'T00:00:00')) / 86400000)
+      : null;
     const profile = loadProfile(name);
     const rag = profile.rag || 'none';
+    const hue = (name.charCodeAt(0) * 47) % 360;
 
-    const btn = document.createElement('button'); btn.className = 'oto-person-btn';
-    if (otoPerson === name) btn.style.background = 'var(--surface2)';
+    const btn = document.createElement('button');
+    btn.className = 'oto-person-btn' + (otoPerson === name ? ' active' : '');
     btn.onclick = () => { otoPerson = name; renderOtoTab(); renderOtoPersonMain(name); };
 
-    const av = document.createElement('div'); av.className = 'oto-person-av';
-    av.style.background = rag==='red'?'#ef5350':rag==='amber'?'#ffb74d':rag==='green'?'#4caf50':'var(--surface3)';
-    av.textContent = name.slice(0,2).toUpperCase();
+    const av = document.createElement('div');
+    av.className = 'oto-person-av rag-' + rag;
+    av.style.background = `hsl(${hue},45%,32%)`;
+    av.textContent = name.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
 
-    const info = document.createElement('div'); info.style.flex='1';
-    const nm = document.createElement('div'); nm.className = 'oto-person-name'; nm.textContent = name;
-    const meta = document.createElement('div'); meta.className = 'oto-person-meta';
-    meta.textContent = daysSince === null ? 'No sessions' : daysSince > 21 ? `${daysSince}d ago — overdue` : `${daysSince}d ago`;
-    if (daysSince === null || daysSince > 21) meta.style.color = 'var(--high-text)';
+    const info = document.createElement('div'); info.style.flex = '1';
+    const nm   = document.createElement('div'); nm.className = 'oto-person-name'; nm.textContent = name.split(' ')[0];
+    const meta = document.createElement('div');
+    meta.className = 'oto-person-meta' + (daysSince !== null && daysSince > 21 ? ' overdue' : '');
+    meta.textContent = daysSince === null
+      ? 'No sessions yet'
+      : daysSince === 0 ? 'Today'
+      : daysSince === 1 ? 'Yesterday'
+      : daysSince > 21 ? daysSince+'d — overdue'
+      : daysSince+'d ago';
+
     info.appendChild(nm); info.appendChild(meta);
     btn.appendChild(av); btn.appendChild(info);
-    sidebar.appendChild(btn);
+    list.appendChild(btn);
   });
+
+  sidebar.appendChild(list);
 
   if (empty) empty.style.display = otoPerson ? 'none' : '';
   if (otoPerson) renderOtoPersonMain(otoPerson);
 }
 
 function renderOtoPersonMain(personName) {
-  const main = document.getElementById('oto-main');
-  const empty = document.getElementById('oto-empty');
+  const main    = document.getElementById('oto-main');
+  const empty   = document.getElementById('oto-empty');
   const sidebar = document.getElementById('oto-sidebar');
   if (!main) return;
+
+  // Update sidebar active state
   sidebar?.querySelectorAll('.oto-person-btn').forEach(b => {
-    b.style.background = b.querySelector('.oto-person-name')?.textContent === personName ? 'var(--surface2)' : '';
+    b.classList.toggle('active', b.querySelector('.oto-person-name')?.textContent === personName.split(' ')[0]);
   });
   if (empty) empty.style.display = 'none';
   main.innerHTML = '';
-  const data = getOtoData();
-  const sessions = (data.sessions||[]).filter(s=>s.person===personName).sort((a,b)=>b.date.localeCompare(a.date));
-  const profile = loadProfile(personName);
-  const today = localToday();
+  main.className = 'oto-main';
 
-  // Header
-  const hdr = document.createElement('div'); hdr.style.cssText = 'padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-shrink:0;';
+  const data     = getOtoData();
+  const sessions = (data.sessions||[]).filter(s=>s.person===personName).sort((a,b)=>b.date.localeCompare(a.date));
+  const profile  = loadProfile(personName);
+  const today    = localToday();
+  const hue      = (personName.charCodeAt(0) * 47) % 360;
+
+  // ── Profile header ─────────────────────────────────────────────
+  const phdr = document.createElement('div');
+  phdr.className = 'oto-profile-hdr';
+
   const av = document.createElement('div');
-  av.style.cssText = `width:44px;height:44px;border-radius:50%;background:hsl(${(personName.charCodeAt(0)*47)%360},50%,35%);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;`;
-  av.textContent = personName.slice(0,2).toUpperCase();
-  const hInfo = document.createElement('div'); hInfo.style.flex='1';
-  const nm2 = document.createElement('div');
-  nm2.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:16px;font-weight:900;color:var(--text);letter-spacing:-0.02em;";
-  nm2.textContent = personName;
-  const chipRow = document.createElement('div'); chipRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;';
-  if (profile.phone) { const c=document.createElement('a');c.href='tel:'+profile.phone;c.style.cssText='font-size:10px;color:var(--cal-text);text-decoration:none;background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent='📞 '+profile.phone;c.onclick=e=>e.stopPropagation();chipRow.appendChild(c); }
-  if (profile.email) { const c=document.createElement('a');c.href='mailto:'+profile.email;c.style.cssText='font-size:10px;color:var(--cal-text);text-decoration:none;background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent='✉ '+profile.email;c.onclick=e=>e.stopPropagation();chipRow.appendChild(c); }
-  if (profile.title) { const c=document.createElement('span');c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent=profile.title;chipRow.appendChild(c); }
-  if (profile.birthday) { const c=document.createElement('span');c.style.cssText='font-size:10px;color:var(--text3);background:var(--surface2);padding:1px 6px;border-radius:10px;';c.textContent='🎂 '+profile.birthday;chipRow.appendChild(c); }
-  hInfo.appendChild(nm2); hInfo.appendChild(chipRow);
+  av.className = 'oto-profile-av-lg';
+  av.style.background = `hsl(${hue},45%,32%)`;
+  av.textContent = personName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+
+  const pinfo = document.createElement('div'); pinfo.style.flex = '1';
+
+  const pname = document.createElement('div');
+  pname.className = 'oto-profile-name';
+  pname.textContent = personName;
+
+  const chips = document.createElement('div');
+  chips.className = 'oto-profile-chips';
+  if (profile.phone) {
+    const c = document.createElement('a'); c.href='tel:'+profile.phone; c.className='oto-chip';
+    c.innerHTML='📞 '+profile.phone; c.onclick=e=>e.stopPropagation(); chips.appendChild(c);
+  }
+  if (profile.email) {
+    const c = document.createElement('a'); c.href='mailto:'+profile.email; c.className='oto-chip';
+    c.innerHTML='✉ '+profile.email; c.onclick=e=>e.stopPropagation(); chips.appendChild(c);
+  }
+  if (profile.title) {
+    const c = document.createElement('span'); c.className='oto-chip'; c.textContent=profile.title; chips.appendChild(c);
+  }
+  if (profile.startDate) {
+    const tenure = fmtTenure(profile.startDate);
+    if (tenure) { const c=document.createElement('span');c.className='oto-chip';c.textContent='⏱ '+tenure;chips.appendChild(c); }
+  }
+  if (profile.birthday) {
+    const c = document.createElement('span'); c.className='oto-chip'; c.textContent='🎂 '+profile.birthday; chips.appendChild(c);
+  }
+
+  // Days since last 1:1
+  const lastSess = sessions[0];
+  const daysSince = lastSess
+    ? Math.floor((new Date(today+'T00:00:00')-new Date(lastSess.date+'T00:00:00'))/86400000)
+    : null;
+  const dSince = document.createElement('span');
+  dSince.className = 'oto-chip';
+  dSince.style.color = daysSince !== null && daysSince > 21 ? '#f87171' : 'var(--text3)';
+  dSince.textContent = daysSince === null ? 'No sessions'
+    : daysSince === 0 ? '1:1 today'
+    : '1:1 '+daysSince+'d ago';
+  chips.appendChild(dSince);
 
   // RAG selector
-  const ragWrap = document.createElement('div'); ragWrap.style.cssText='display:flex;gap:6px;align-items:center;';
+  const ragRow = document.createElement('div'); ragRow.className = 'oto-rag-row';
+  const ragLabel = document.createElement('span'); ragLabel.style.cssText='font-size:10px;color:var(--text3);'; ragLabel.textContent='Health:';
+  ragRow.appendChild(ragLabel);
   ['green','amber','red'].forEach(r => {
-    const rb = document.createElement('button');
-    rb.style.cssText = `width:20px;height:20px;border-radius:50%;border:2px solid ${profile.rag===r?'white':'transparent'};cursor:pointer;background:${r==='green'?'#4caf50':r==='amber'?'#ffb74d':'#ef5350'};transition:all 0.15s;`;
-    rb.title = r; rb.onclick = () => { profile.rag=r; saveProfile(personName,profile); renderOtoTab(); renderOtoPersonMain(personName); };
-    ragWrap.appendChild(rb);
+    const btn = document.createElement('button'); btn.className = 'oto-rag-dot' + (profile.rag===r?' active':'');
+    btn.style.background = r==='green'?'#34d399':r==='amber'?'#fbbf24':'#f87171';
+    btn.title = r.charAt(0).toUpperCase() + r.slice(1);
+    btn.onclick = () => {
+      profile.rag = r; saveProfile(personName, profile);
+      renderOtoTab(); renderOtoPersonMain(personName);
+    };
+    ragRow.appendChild(btn);
   });
-  hdr.appendChild(av); hdr.appendChild(hInfo); hdr.appendChild(ragWrap);
-  main.appendChild(hdr);
+  const clearRag = document.createElement('button');
+  clearRag.style.cssText='font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 4px;';
+  clearRag.textContent='clear'; clearRag.onclick=()=>{ delete profile.rag; saveProfile(personName,profile); renderOtoTab(); renderOtoPersonMain(personName); };
+  ragRow.appendChild(clearRag);
 
-  // Tabs
-  const tabs = ['Overview','1:1 Sessions','Profile'];
-  let activeOtoTab = 'Overview';
-  const tabBar = document.createElement('div'); tabBar.style.cssText='display:flex;border-bottom:1px solid var(--border);flex-shrink:0;';
-  const body2 = document.createElement('div'); body2.style.cssText='flex:1;overflow-y:auto;';
+  pinfo.appendChild(pname); pinfo.appendChild(chips); pinfo.appendChild(ragRow);
+  phdr.appendChild(av); phdr.appendChild(pinfo);
+
+  // Session count badge on the right
+  const sessCount = document.createElement('div');
+  sessCount.style.cssText='display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;';
+  const scNum = document.createElement('div');
+  scNum.style.cssText="font-family:'Fira Sans',sans-serif;font-size:24px;font-weight:900;color:var(--text);letter-spacing:-0.04em;line-height:1;";
+  scNum.textContent = sessions.length;
+  const scLbl = document.createElement('div');
+  scLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);';
+  scLbl.textContent = 'session'+(sessions.length!==1?'s':'');
+  sessCount.appendChild(scNum); sessCount.appendChild(scLbl);
+  phdr.appendChild(sessCount);
+  main.appendChild(phdr);
+
+  // ── Tab bar ────────────────────────────────────────────────────
+  const tabBar = document.createElement('div'); tabBar.className = 'oto-tab-bar';
+  const body2  = document.createElement('div'); body2.style.cssText='flex:1;overflow-y:auto;';
   main.appendChild(tabBar); main.appendChild(body2);
+
+  let activeOtoTab = 'Overview';
 
   function switchOtoTab(tab) {
     activeOtoTab = tab;
-    tabBar.querySelectorAll('.oto-tab-btn').forEach(b => {
-      b.style.borderBottom = b.textContent===tab ? '2px solid var(--cal-text)' : '2px solid transparent';
-      b.style.color = b.textContent===tab ? 'var(--cal-text)' : 'var(--text3)';
-    });
+    tabBar.querySelectorAll('.oto-tab-btn').forEach(b => b.classList.toggle('active', b.textContent===tab));
     body2.innerHTML = '';
-    if (tab==='Overview') renderOtoOverview(body2);
+    if (tab==='Overview')    renderOtoOverview(body2);
     else if (tab==='1:1 Sessions') renderOtoSessions(body2);
-    else if (tab==='Profile') renderOtoProfile(body2);
+    else if (tab==='Profile')  renderOtoProfile(body2);
   }
 
-  tabs.forEach(t => {
-    const btn = document.createElement('button'); btn.className='oto-tab-btn';
-    btn.style.cssText = `padding:10px 16px;font-family:inherit;font-size:12px;font-weight:600;background:none;border:none;border-bottom:2px solid ${t===activeOtoTab?'var(--cal-text)':'transparent'};color:${t===activeOtoTab?'var(--cal-text)':'var(--text3)'};cursor:pointer;`;
-    btn.textContent = t; btn.onclick = () => switchOtoTab(t);
+  ['Overview','1:1 Sessions','Profile'].forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'oto-tab-btn' + (t===activeOtoTab?' active':'');
+    btn.textContent = t;
+    btn.onclick = () => switchOtoTab(t);
     tabBar.appendChild(btn);
   });
 
+  // ── Tab: Overview ──────────────────────────────────────────────
   function renderOtoOverview(container) {
-    container.style.cssText = 'padding:16px 20px;display:flex;flex-direction:column;gap:14px;';
-    // Prep brief
+    container.className = 'oto-overview-body';
+
+    // ── Performance stats from snapshots ──────────────────────
+    const weeks4 = [];
+    for (let i=3; i>=0; i--) {
+      const mon = fmtLocal(getMonday(-i));
+      const snap = getWeeklySnapshot(mon);
+      if (snap && snap.agents && snap.agents[personName]) {
+        weeks4.push({ week: mon, ...snap.agents[personName] });
+      }
+    }
+    if (weeks4.length) {
+      const statRow = document.createElement('div'); statRow.className = 'oto-stat-row';
+      const latest = weeks4[weeks4.length-1];
+      const prev   = weeks4.length > 1 ? weeks4[weeks4.length-2] : null;
+
+      const mkStat = (val, label, trend) => {
+        const card = document.createElement('div'); card.className = 'oto-stat-card';
+        const v = document.createElement('div'); v.className = 'oto-stat-val'; v.textContent = val!=null?val:'—';
+        const l = document.createElement('div'); l.className = 'oto-stat-label'; l.textContent = label;
+        card.appendChild(v); card.appendChild(l);
+        if (trend !== null && trend !== undefined) {
+          const t = document.createElement('div');
+          t.style.cssText = 'font-size:10px;margin-top:2px;color:'+(trend>0?'#34d399':trend<0?'#f87171':'var(--text3)')+';';
+          t.textContent = (trend>0?'+':'')+trend+' vs prev wk';
+          card.appendChild(t);
+        }
+        return card;
+      };
+      const trendOrNull = (curr, p) => p ? (curr||0)-(p||0) : null;
+      statRow.appendChild(mkStat(latest.answered||0, 'Calls this wk', trendOrNull(latest.answered,prev?.answered)));
+      statRow.appendChild(mkStat(latest.zdSolved||0, 'Tickets this wk', trendOrNull(latest.zdSolved,prev?.zdSolved)));
+      statRow.appendChild(mkStat(latest.missed||0, 'Missed calls', trendOrNull(latest.missed,prev?.missed)));
+      statRow.appendChild(mkStat(latest.avgTalk?fmtSec(latest.avgTalk):'—', 'Avg talk time', null));
+      container.appendChild(statRow);
+    }
+
+    // ── Prep brief ────────────────────────────────────────────
     renderPrepBrief(personName, container);
-    // Most recent session preview
+
+    // ── Last session preview ──────────────────────────────────
     if (sessions.length) {
       const s0 = sessions[0];
-      const sec = document.createElement('div'); sec.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
-      const slbl = document.createElement('div'); slbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; slbl.textContent='Last 1:1 — '+s0.date;
-      const snotes = document.createElement('div'); snotes.style.cssText='font-size:12px;color:var(--text2);line-height:1.6;white-space:pre-wrap;'; snotes.textContent=s0.notes||'(no notes)';
-      sec.appendChild(slbl); sec.appendChild(snotes);
+      const sec = document.createElement('div'); sec.className = 'oto-section';
+      const sh = document.createElement('div'); sh.className = 'oto-section-hdr';
+      sh.innerHTML = 'Last 1:1 <span style="font-weight:400;font-size:9px;color:var(--text3);">' + s0.date + '</span>';
+      const sb = document.createElement('div'); sb.className = 'oto-section-body';
+      const notes = document.createElement('div');
+      notes.style.cssText = 'font-size:12px;color:var(--text2);line-height:1.6;white-space:pre-wrap;';
+      notes.textContent = s0.notes || '(no notes)';
+      sb.appendChild(notes);
       if ((s0.actions||[]).length) {
-        const albl = document.createElement('div'); albl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-top:10px;margin-bottom:6px;'; albl.textContent='Action items';
-        sec.appendChild(albl);
+        const al = document.createElement('div'); al.style.marginTop = '10px';
+        const albl = document.createElement('div'); albl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;'; albl.textContent='Actions';
+        al.appendChild(albl);
         s0.actions.forEach(a => {
-          const ar = document.createElement('div'); ar.style.cssText='font-size:12px;color:var(--text2);padding:2px 0;'; ar.textContent='• '+a.text; sec.appendChild(ar);
+          const ar = document.createElement('div'); ar.style.cssText='font-size:12px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:6px;';
+          const dot = document.createElement('div'); dot.style.cssText='width:5px;height:5px;border-radius:50%;background:'+(a.done?'#34d399':'var(--cal-text)')+';flex-shrink:0;';
+          ar.appendChild(dot); ar.appendChild(document.createTextNode(a.text));
+          if (a.done) ar.style.opacity='0.4';
+          al.appendChild(ar);
         });
+        sb.appendChild(al);
       }
+      sec.appendChild(sh); sec.appendChild(sb);
       container.appendChild(sec);
     }
-    // Quick wins
-    const winsKey = 'wtp_oto_quickwins_'+normalizeKey(personName);
-    const wins2 = (() => { try{return JSON.parse(localStorage.getItem(winsKey)||'[]');}catch{return[];} })();
-    if (wins2.length) {
-      const ws = document.createElement('div'); ws.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
-      const wlbl = document.createElement('div'); wlbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; wlbl.textContent='Quick wins';
-      ws.appendChild(wlbl);
-      wins2.slice(0,3).forEach(w => { const wr=document.createElement('div');wr.style.cssText='font-size:12px;color:var(--text2);padding:2px 0;';wr.textContent='⭐ '+w.text;ws.appendChild(wr); });
-      container.appendChild(ws);
-    }
+
+    // ── Agent intelligence ────────────────────────────────────
+    const intWrap = document.createElement('div');
+    renderAgentIntelligence(personName, intWrap);
+    if (intWrap.children.length) container.appendChild(intWrap);
+
+    // ── AI coaching card ──────────────────────────────────────
+    if (zdReady()) renderAgentCoachingCard(personName, container);
   }
 
+  // ── Tab: 1:1 Sessions ─────────────────────────────────────────
   function renderOtoSessions(container) {
-    container.style.padding = '16px 20px';
-    const sHdr = document.createElement('div'); sHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;';
-    const sLbl = document.createElement('div'); sLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);';
-    sLbl.textContent = sessions.length+' session'+(sessions.length!==1?'s':'');
-    const addBtn = document.createElement('button'); addBtn.className='btn-save'; addBtn.style.cssText='font-size:11px;padding:4px 12px;'; addBtn.textContent='+ New session';
-    addBtn.onclick=()=>{const d=getOtoData();d.sessions=d.sessions||[];d.sessions.unshift({id:Date.now()+'',person:personName,date:today,notes:'',actions:[],wins:[]});saveOtoData(d);renderOtoPersonMain(personName);switchOtoTab('1:1 Sessions');};
+    container.style.cssText = 'padding:16px 20px;flex:1;overflow-y:auto;';
+
+    const sHdr = document.createElement('div'); sHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;';
+    const sLbl = document.createElement('div'); sLbl.style.cssText='font-size:13px;font-weight:700;color:var(--text);';
+    sLbl.textContent = sessions.length + ' session'+(sessions.length!==1?'s':'');
+    const addBtn = document.createElement('button'); addBtn.className='btn-save'; addBtn.style.cssText='font-size:11px;padding:5px 14px;';
+    addBtn.textContent='+ New session';
+    addBtn.onclick = () => {
+      const d = getOtoData(); d.sessions = d.sessions||[];
+      d.sessions.unshift({ id:Date.now()+'', person:personName, date:today, notes:'', actions:[], wins:[] });
+      saveOtoData(d); renderOtoPersonMain(personName); switchOtoTab('1:1 Sessions');
+    };
     sHdr.appendChild(sLbl); sHdr.appendChild(addBtn); container.appendChild(sHdr);
-    if (!sessions.length) { const e=document.createElement('div');e.style.cssText='font-size:13px;color:var(--text3);text-align:center;padding:40px 0;';e.textContent='No sessions yet';container.appendChild(e); return; }
+
+    if (!sessions.length) {
+      const e = document.createElement('div');
+      e.style.cssText='font-size:13px;color:var(--text3);text-align:center;padding:48px 0;';
+      e.innerHTML='<div style="font-size:32px;margin-bottom:10px;">💬</div>No sessions yet<div style="font-size:11px;margin-top:6px;">Click + New session to start</div>';
+      container.appendChild(e); return;
+    }
     sessions.forEach(session => appendSessionCard(container, session, false));
   }
 
+  // ── Tab: Profile ───────────────────────────────────────────────
   function renderOtoProfile(container) {
-    container.style.padding = '16px 20px';
-    const contactFields = [
-      { key:'phone', label:'Phone', placeholder:'+47 000 00 000', type:'tel' },
-      { key:'email', label:'Email', placeholder:'name@munu.cloud', type:'email' },
-      { key:'birthday', label:'Birthday', placeholder:'DD/MM', type:'text' },
-      { key:'title', label:'Job title', placeholder:'e.g. L1 Agent', type:'text' },
-      { key:'startDate', label:'Start date', placeholder:'YYYY-MM-DD', type:'date' },
-      { key:'notes', label:'Notes', placeholder:'Any info worth remembering…', type:'text' },
+    container.className = 'oto-profile-body';
+
+    // ── ZD + Unifon match status ──────────────────────────────
+    const matchSec = document.createElement('div'); matchSec.className = 'oto-section';
+    const mh = document.createElement('div'); mh.className = 'oto-section-hdr'; mh.textContent = 'System integrations';
+    const mb = document.createElement('div'); mb.className = 'oto-section-body';
+    mb.style.display = 'flex'; mb.style.flexDirection = 'column'; mb.style.gap = '6px';
+
+    // ZD match
+    const zdAgent = zdAgents && zdAgents.find(a =>
+      normName(a.name.split(' ')[0]) === normName(personName.split(' ')[0]) ||
+      normName(a.name) === normName(personName)
+    );
+    const zdRow = document.createElement('div'); zdRow.className = 'oto-match-row';
+    const zdDot = document.createElement('div'); zdDot.className = 'oto-match-dot ' + (zdAgent ? 'ok' : 'warn');
+    const zdTxt = document.createElement('div'); zdTxt.style.flex = '1'; zdTxt.style.color = 'var(--text2)';
+    zdTxt.innerHTML = '<strong>Zendesk:</strong> ' + (zdAgent
+      ? '<span style="color:#34d399;">✓ Matched to ' + zdAgent.name + '</span>'
+      : '<span style="color:#fbbf24;">⚠ No match — name may differ</span>');
+    zdRow.appendChild(zdDot); zdRow.appendChild(zdTxt);
+    mb.appendChild(zdRow);
+
+    // Unifon match (via name map)
+    const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
+    const uniMatch = Object.entries(nameMap).find(([,n]) => n === personName);
+    const uniRow = document.createElement('div'); uniRow.className = 'oto-match-row';
+    const uniDot = document.createElement('div'); uniDot.className = 'oto-match-dot ' + (uniMatch ? 'ok' : 'miss');
+    const uniTxt = document.createElement('div'); uniTxt.style.flex = '1'; uniTxt.style.color = 'var(--text2)';
+    uniTxt.innerHTML = '<strong>Unifon:</strong> ' + (uniMatch
+      ? '<span style="color:#34d399;">✓ Agent #' + uniMatch[0] + '</span>'
+      : '<span style="color:var(--text3);">Not mapped — set in Settings → Data & Import → Unifon agent mapping</span>');
+    uniRow.appendChild(uniDot); uniRow.appendChild(uniTxt);
+    mb.appendChild(uniRow);
+
+    matchSec.appendChild(mh); matchSec.appendChild(mb);
+    container.appendChild(matchSec);
+
+    // ── Contact fields in a grid ──────────────────────────────
+    const fieldsSec = document.createElement('div'); fieldsSec.className = 'oto-section';
+    const fh = document.createElement('div'); fh.className = 'oto-section-hdr'; fh.textContent = 'Contact & details';
+    fieldsSec.appendChild(fh);
+    const fb = document.createElement('div'); fb.className = 'oto-section-body';
+
+    const fields = [
+      { key:'phone',     label:'Phone',      placeholder:'+47 000 00 000', type:'tel',   cols:1 },
+      { key:'email',     label:'Email',       placeholder:'name@munu.cloud', type:'email', cols:1 },
+      { key:'title',     label:'Job title',   placeholder:'e.g. L1 Agent',   type:'text',  cols:1 },
+      { key:'birthday',  label:'Birthday',    placeholder:'DD/MM',            type:'text',  cols:1 },
+      { key:'startDate', label:'Start date',  placeholder:'YYYY-MM-DD',       type:'date',  cols:1 },
+      { key:'notes',     label:'Notes',       placeholder:'Info worth remembering…', type:'text', cols:2 },
     ];
-    contactFields.forEach(f => {
-      const wrap = document.createElement('div'); wrap.style.cssText='margin-bottom:12px;';
-      const lbl = document.createElement('label'); lbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);display:block;margin-bottom:4px;'; lbl.textContent=f.label;
-      const inp = document.createElement('input'); inp.type=f.type; inp.value=profile[f.key]||''; inp.placeholder=f.placeholder;
-      inp.style.cssText='width:100%;font-family:inherit;font-size:13px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-md);padding:7px 10px;outline:none;box-sizing:border-box;';
-      let t2; inp.addEventListener('input',()=>{clearTimeout(t2);t2=setTimeout(()=>{profile[f.key]=inp.value;saveProfile(personName,profile);inp.style.borderColor='var(--low-text)';setTimeout(()=>inp.style.borderColor='',700);},600);});
-      wrap.appendChild(lbl); wrap.appendChild(inp); container.appendChild(wrap);
+
+    let rowDiv = null;
+    fields.forEach((f, fi) => {
+      if (f.cols === 2 || rowDiv === null) {
+        rowDiv = document.createElement('div');
+        rowDiv.className = f.cols===2 ? 'oto-field' : 'oto-field-row';
+        rowDiv.style.marginBottom = '10px';
+        fb.appendChild(rowDiv);
+      }
+      const wrap = document.createElement('div'); wrap.className = 'oto-field';
+      const lbl = document.createElement('label'); lbl.textContent = f.label;
+      const inp = document.createElement('input');
+      inp.type = f.type; inp.value = profile[f.key]||''; inp.placeholder = f.placeholder;
+      let t2;
+      inp.addEventListener('input', () => {
+        clearTimeout(t2); t2 = setTimeout(() => {
+          profile[f.key] = inp.value; saveProfile(personName, profile);
+          inp.style.borderColor = 'var(--low-text)';
+          setTimeout(() => inp.style.borderColor = '', 700);
+          // Re-render header chips if key fields changed
+          if (['phone','email','title','startDate','birthday'].includes(f.key)) {
+            const chipsEl = phdr.querySelector('.oto-profile-chips');
+            if (chipsEl) {
+              // Update tenure chip
+              const tenureChip = Array.from(chipsEl.children).find(c => c.textContent.startsWith('⏱'));
+              const newTenure = fmtTenure(profile.startDate);
+              if (tenureChip && newTenure) tenureChip.textContent = '⏱ '+newTenure;
+            }
+          }
+        }, 600);
+      });
+      wrap.appendChild(lbl); wrap.appendChild(inp);
+      if (f.cols === 2) { rowDiv.appendChild(wrap); rowDiv = null; }
+      else rowDiv.appendChild(wrap);
     });
-    // Intelligence
-    const intWrap = document.createElement('div'); intWrap.style.cssText='margin-top:16px;';
-    const intLbl = document.createElement('div'); intLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; intLbl.textContent='Agent intelligence';
+
+    fieldsSec.appendChild(fb);
+    container.appendChild(fieldsSec);
+
+    // ── Intelligence section ──────────────────────────────────
+    const intWrap = document.createElement('div');
+    const intLbl  = document.createElement('div');
+    intLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';
+    intLbl.textContent = 'Agent intelligence';
     intWrap.appendChild(intLbl);
     renderAgentIntelligence(personName, intWrap);
-
-    // ── AI Coaching Card ─────────────────────────────────────────
-    if (zdReady()) {
-      renderAgentCoachingCard(personName, intWrap);
-    }
-
+    if (zdReady()) renderAgentCoachingCard(personName, intWrap);
     container.appendChild(intWrap);
   }
 
   renderOtoOverview(body2);
 }
+
 
 function appendSessionCard(container, session, expanded) {
   const d2 = getOtoData();
@@ -10094,10 +10657,51 @@ function renderReportsTab() {
   fromInput.value = fmtLocal(new Date(pm.getFullYear(), pm.getMonth(), 1));
   toInput.value   = fmtLocal(new Date(pm.getFullYear(), pm.getMonth()+1, 0));
   topbar.appendChild(fromInput); topbar.appendChild(toSep); topbar.appendChild(toInput);
-  const chipWrap = document.createElement('div'); chipWrap.style.cssText='display:flex;gap:4px;';
+  const chipWrap = document.createElement('div'); chipWrap.style.cssText='display:flex;gap:4px;flex-wrap:wrap;';
   const genBtn = document.createElement('button');
   genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:6px 16px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;";
   genBtn.textContent='Generate';
+
+  // ── This week chip ────────────────────────────────────────────
+  const thisWkChip = document.createElement('button');
+  thisWkChip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);';
+  thisWkChip.textContent='THIS WK';
+  thisWkChip.onclick = () => {
+    const mon = getMonday(0);
+    fromInput.value = fmtLocal(mon);
+    toInput.value   = localToday();
+    chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; });
+    thisWkChip.style.background='rgba(77,171,247,0.1)'; thisWkChip.style.color='var(--cal-text)';
+    genBtn.click();
+  };
+  chipWrap.appendChild(thisWkChip);
+
+  // ── Previous week chips (last 4 weeks) ────────────────────────
+  for (let i=1; i<=4; i++) {
+    const mon = getMonday(-i);
+    const sun = new Date(mon.getTime() + 6*86400000);
+    const wkChip = document.createElement('button');
+    wkChip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);';
+    const monStr = mon.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    wkChip.textContent = 'W-'+i+' '+monStr;
+    wkChip.dataset.from = fmtLocal(mon);
+    wkChip.dataset.to   = fmtLocal(sun);
+    wkChip.onclick = () => {
+      fromInput.value = wkChip.dataset.from;
+      toInput.value   = wkChip.dataset.to;
+      chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; });
+      wkChip.style.background='rgba(77,171,247,0.1)'; wkChip.style.color='var(--cal-text)';
+      genBtn.click();
+    };
+    chipWrap.appendChild(wkChip);
+  }
+
+  // ── Divider ───────────────────────────────────────────────────
+  const chipDiv = document.createElement('div');
+  chipDiv.style.cssText='width:1px;background:var(--border);margin:0 2px;align-self:stretch;';
+  chipWrap.appendChild(chipDiv);
+
+  // ── Month chips ───────────────────────────────────────────────
   for (let i=1; i<=4; i++) {
     const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-i);
     const chip = document.createElement('button');
