@@ -2384,6 +2384,30 @@ window.tryUnlock = async function() {
         </div>
       </div>
 
+      <!-- Snapshot backfill -->
+      <div class="settings-card" id="snapshot-backfill-card">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Historical snapshot backfill</div>
+          <div class="settings-card-desc">Fetch and cache Zendesk stats for past weeks so the Reports tab loads instantly for historical periods. Runs once — takes ~30 seconds per month of history.</div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+            <select id="backfill-weeks" style="font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;">
+              <option value="4">4 weeks back</option>
+              <option value="8" selected>8 weeks back</option>
+              <option value="13">3 months back</option>
+              <option value="26">6 months back</option>
+              <option value="52">1 year back</option>
+            </select>
+            <button class="btn-save" onclick="runSnapshotBackfill()">Run backfill</button>
+          </div>
+          <div id="backfill-status" style="font-size:11px;color:var(--text3);margin-top:8px;"></div>
+          <div id="backfill-progress" style="display:none;margin-top:8px;">
+            <div style="background:var(--border);border-radius:4px;height:4px;overflow:hidden;">
+              <div id="backfill-bar" style="background:var(--cal-text);height:4px;width:0%;transition:width 0.3s;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Backup & restore -->
       <div class="settings-card">
         <div class="settings-card-inner">
@@ -8503,6 +8527,74 @@ function fmtTenure(startDateStr) {
   return yrs + (yrs===1?' yr':' yrs') + ' ' + mos + (mos===1?' mo':' mo');
 }
 
+// --- SNAPSHOT BACKFILL ------------------------------------------------
+async function runSnapshotBackfill() {
+  if (!zdReady()) {
+    const s = document.getElementById('backfill-status');
+    if (s) { s.textContent = 'Zendesk not configured — set up ZD credentials first.'; s.style.color='var(--high-text)'; }
+    return;
+  }
+  const weeksEl  = document.getElementById('backfill-weeks');
+  const statusEl = document.getElementById('backfill-status');
+  const progressEl = document.getElementById('backfill-progress');
+  const barEl    = document.getElementById('backfill-bar');
+  const btn      = document.querySelector('[onclick="runSnapshotBackfill()"]');
+
+  const weeks = parseInt(weeksEl?.value || '8');
+  if (btn) { btn.disabled = true; btn.textContent = 'Running…'; }
+  if (progressEl) progressEl.style.display = '';
+  if (barEl) barEl.style.width = '0%';
+
+  const today = localToday();
+  // Find all Mondays going back `weeks` weeks, skipping current week
+  const mondays = [];
+  for (let i=1; i<=weeks; i++) {
+    const m = getMonday(-i);
+    const mStr = fmtLocal(m);
+    const sunStr = fmtLocal(new Date(m.getTime()+6*86400000));
+    if (sunStr < today) mondays.push({ mon: mStr, sun: sunStr });
+  }
+
+  let done = 0, skipped = 0, errors = 0;
+  const total = mondays.length;
+
+  for (const { mon, sun } of mondays) {
+    if (statusEl) {
+      statusEl.style.color = 'var(--text3)';
+      statusEl.textContent = `Week of ${mon} (${done+1}/${total})…`;
+    }
+    try {
+      const existing = getWeeklySnapshot(mon);
+      if (existing && existing.zdEnriched) {
+        skipped++; // already done
+      } else {
+        const snap = existing || buildWeeklySnapshot(mon, sun);
+        const enriched = await enrichSnapshotWithZD(snap);
+        saveWeeklySnapshot(mon, enriched);
+        done++;
+      }
+    } catch(e) {
+      console.warn('Backfill error for', mon, e.message);
+      errors++;
+    }
+    if (barEl) barEl.style.width = Math.round((done+skipped+errors)/total*100)+'%';
+    // Small delay to avoid ZD rate limits
+    await new Promise(r => setTimeout(r, 400));
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Run backfill'; }
+  if (barEl) barEl.style.width = '100%';
+  if (statusEl) {
+    const msg = `Done — ${done} weeks fetched, ${skipped} already cached, ${errors} errors.`;
+    statusEl.textContent = msg;
+    statusEl.style.color = errors ? 'var(--high-text)' : 'var(--low-text)';
+  }
+  // Trigger a sync save so snapshots are preserved in data.json
+  scheduleSyncSave();
+  showToast('Backfill complete — ' + done + ' weeks cached');
+}
+
+
 // --- SETTINGS NAV -------------------------------------------------------
 function settingsNav(section, btn) {
   // Update nav active state
@@ -8517,12 +8609,29 @@ function settingsNav(section, btn) {
     const uCard = document.getElementById('unifon-settings-card');
     const uApi  = document.getElementById('unifon-api-card');
     const uMap  = document.getElementById('unifon-map-card');
+    const bfCard = document.getElementById('snapshot-backfill-card');
     if (uCard) uCard.style.display = '';
     if (uApi)  uApi.style.display  = '';
     if (uMap)  { uMap.style.display = ''; renderUnifonMappingSettings(); }
+    if (bfCard) bfCard.style.display = '';
     // Populate unifon settings body if empty
     const body = document.getElementById('unifon-settings-body');
     if (body && !body.children.length) renderUnifonSettings(body);
+    // Show how many snapshots are cached
+    const bfStatus = document.getElementById('backfill-status');
+    if (bfStatus && !bfStatus.textContent) {
+      let snapCount = 0;
+      for (let i=0; i<localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('wtp_intel_snap_')) {
+          try { const s = JSON.parse(localStorage.getItem(k)); if (s&&s.zdEnriched) snapCount++; } catch{}
+        }
+      }
+      bfStatus.textContent = snapCount > 0
+        ? snapCount + ' week'+(snapCount!==1?'s':'')+' cached and ready.'
+        : 'No snapshots cached yet — run backfill to enable instant historical reports.';
+      bfStatus.style.color = snapCount > 0 ? 'var(--low-text)' : 'var(--text3)';
+    }
   }
   // Show admin-only cards in Integrations section
   if (section === 'integrations' && isAdmin()) {
@@ -8613,29 +8722,100 @@ async function generateReport(fromDate, toDate, container) {
 
   const monthLabel = new Date(fromDate+'T00:00:00').toLocaleDateString('en-GB',{month:'long',year:'numeric'});
   const daysInPeriod = Math.max(1, Math.round((new Date(toDate+'T00:00:00')-new Date(fromDate+'T00:00:00'))/86400000)+1);
+  const today = localToday();
+  const isPast = toDate < today; // closed period — can use/build snapshot
+
+  // ── Check if period maps to a single closed week snapshot ────────────
+  // If the range is exactly Mon-Sun of a past week, use/build a snapshot
+  let zdFromSnap = null;
+
 
   // ── Gather ZD data ──────────────────────────────────────────
   let zd = {};
   if (zdReady()) {
     try {
-      const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
-      const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
-      const [totalSolvedData, openNowData, csatData, solvedTickets] = await Promise.all([
-        zdCount('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate).catch(()=>0),
-        zdCount('type:ticket status:open').catch(()=>0),
-        zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
-        zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at').catch(()=>({results:[]})),
-      ]);
-      const tickets = solvedTickets.results || [];
-      const ratings = csatData.satisfaction_ratings || [];
-      const csatGood = ratings.filter(r=>r.score==='good').length;
-      const csatTotal = ratings.filter(r=>r.score==='good'||r.score==='bad').length;
-      const csatPct = csatTotal > 0 ? Math.round(csatGood/csatTotal*100) : null;
-      const resTimes = tickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
-      const mttrMean = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
-      const emailTotal = tickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length;
-      const phoneTotal = tickets.length - emailTotal;
-      zd = { totalSolved: totalSolvedData, openNow: openNowData, csatPct, csatGood, csatTotal, mttrMean, emailTotal, phoneTotal, tickets, daysInPeriod, dailyAvg: Math.round(totalSolvedData/daysInPeriod) };
+      // For past periods: try to aggregate from weekly snapshots first
+      // This avoids the 100-ticket limit and is instant for cached data
+      if (isPast) {
+        // Collect all week snapshots covering this range
+        const weekSnaps = [];
+        const startMon = new Date(fromDate+'T00:00:00');
+        // Walk back to nearest Monday (day=1)
+        while (startMon.getDay() !== 1) startMon.setDate(startMon.getDate()-1);
+        for (let w=new Date(startMon); fmtLocal(new Date(w))<=toDate; w.setDate(w.getDate()+7)) {
+          const wMon = fmtLocal(new Date(w));
+          const wSun = fmtLocal(new Date(new Date(wMon+'T00:00:00').getTime()+6*86400000));
+          if (wSun < today) { // only closed weeks
+            const snap = await getOrBuildSnapshot(wMon);
+            if (snap) weekSnaps.push(snap);
+          }
+        }
+        if (weekSnaps.length > 0 && weekSnaps.every(s=>s.zdEnriched)) {
+          // All weeks enriched — aggregate from snapshots (accurate, instant)
+          const totalSolved = weekSnaps.reduce((s,w)=>s+(w.totals.zdTotalSolved||0),0);
+          const csatGood    = weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatGood||0),0);
+          const csatBad     = weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatBad||0),0);
+          const csatTotal   = csatGood+csatBad;
+          const csatPct     = csatTotal>0?Math.round(csatGood/csatTotal*100):null;
+          // Weighted mean MTTR
+          const mttrWeights = weekSnaps.filter(s=>s.totals.zdMttrMean&&s.totals.zdTicketCount);
+          const mttrMean = mttrWeights.length
+            ? Math.round(mttrWeights.reduce((s,w)=>s+w.totals.zdMttrMean*w.totals.zdTicketCount,0)/mttrWeights.reduce((s,w)=>s+w.totals.zdTicketCount,0))
+            : null;
+          const emailTotal  = weekSnaps.reduce((s,w)=>s+(w.totals.zdEmailTotal||0),0);
+          const phoneTotal  = weekSnaps.reduce((s,w)=>s+(w.totals.zdPhoneTotal||0),0);
+          const openNow     = weekSnaps[weekSnaps.length-1].totals.zdOpenEow || 0;
+          // Merge per-day solved
+          const solvedPerDay = {};
+          weekSnaps.forEach(s=>{ if(s.totals.zdSolvedPerDay) Object.assign(solvedPerDay, s.totals.zdSolvedPerDay); });
+          zd = {
+            totalSolved, openNow, csatPct, csatGood, csatTotal: csatTotal, csatBad,
+            mttrMean, emailTotal, phoneTotal, daysInPeriod,
+            dailyAvg: Math.round(totalSolved/daysInPeriod),
+            solvedPerDay, fromSnapshot: true,
+            snapshotWeeks: weekSnaps.length
+          };
+          // Per-agent solved from snapshots
+          zd.agentSolved = {};
+          MY_TEAM.forEach(name => {
+            zd.agentSolved[name] = weekSnaps.reduce((s,w)=>s+((w.agents[name]&&w.agents[name].zdSolved)||0),0);
+          });
+        }
+      }
+
+      // Fallback: live ZD fetch (current week or missing snapshots)
+      // Uses full pagination for accuracy
+      if (!zd.totalSolved && !zd.fromSnapshot) {
+        const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
+        const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
+        const [totalSolvedData, openNowData, csatData] = await Promise.all([
+          zdCount('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate).catch(()=>0),
+          zdCount('type:ticket status:open').catch(()=>0),
+          zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
+        ]);
+        // Paginated ticket fetch — up to 2000
+        let allTickets = [];
+        let tkUrl = '/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
+        for (let p=0; p<20&&tkUrl; p++) {
+          const r = await zdFetch(tkUrl).catch(()=>({results:[]}));
+          allTickets = allTickets.concat(r.results||[]);
+          tkUrl = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+        }
+        const ratings = csatData.satisfaction_ratings || [];
+        const csatGood  = ratings.filter(r=>r.score==='good').length;
+        const csatTotal2 = ratings.filter(r=>r.score==='good'||r.score==='bad').length;
+        const csatPct   = csatTotal2>0?Math.round(csatGood/csatTotal2*100):null;
+        const resTimes  = allTickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
+        const mttrMean  = resTimes.length?Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length):null;
+        const emailTotal = allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length;
+        const phoneTotal = allTickets.length - emailTotal;
+        zd = {
+          totalSolved: totalSolvedData, openNow: openNowData, csatPct, csatGood,
+          csatTotal: csatTotal2, mttrMean, emailTotal, phoneTotal,
+          tickets: allTickets, daysInPeriod, dailyAvg: Math.round(totalSolvedData/daysInPeriod),
+          fromSnapshot: false
+        };
+      }
     } catch(e) { console.warn('Report ZD error:', e.message); }
   }
 
@@ -8713,8 +8893,17 @@ async function generateReport(fromDate, toDate, container) {
 
   // Footer
   const footer = mk('div');
-  footer.style.cssText='margin-top:24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;';
-  footer.innerHTML='<span>Generated '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'</span><span>'+fromDate+' to '+toDate+'</span>';
+  footer.style.cssText='margin-top:24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;';
+  const footerLeft = mk('span'); footerLeft.textContent = 'Generated '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const footerRight = mk('span'); footerRight.textContent = fromDate+' to '+toDate;
+  footer.appendChild(footerLeft);
+  if (zd.fromSnapshot) {
+    const badge = mk('span');
+    badge.style.cssText='background:rgba(77,171,247,0.1);color:var(--cal-text);border:1px solid rgba(77,171,247,0.2);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;';
+    badge.textContent = '⚡ '+zd.snapshotWeeks+' cached week'+(zd.snapshotWeeks!==1?'s':'')+' — instant';
+    footer.appendChild(badge);
+  }
+  footer.appendChild(footerRight);
   container.appendChild(footer);
 }
 
@@ -9364,7 +9553,7 @@ function getWeeklySnapshot(weekStamp) {
 }
 function saveWeeklySnapshot(weekStamp, data) {
   localStorage.setItem('wtp_intel_snap_' + weekStamp, JSON.stringify(data));
-  const _cutoff = new Date(); _cutoff.setDate(_cutoff.getDate() - 26*7);
+  const _cutoff = new Date(); _cutoff.setDate(_cutoff.getDate() - 52*7);
   const _keys = [];
   for (let i=0; i<localStorage.length; i++) { const k=localStorage.key(i); if(k&&k.startsWith('wtp_intel_snap_')) _keys.push(k); }
   _keys.forEach(k => { const d=new Date(k.replace('wtp_intel_snap_','')+'T00:00:00'); if(!isNaN(d)&&d<_cutoff) localStorage.removeItem(k); });
@@ -9426,6 +9615,125 @@ function buildWeeklySnapshot(fromDate, toDate) {
   snap.totals.avgWait = waitEntries.length ? Math.round(waitEntries.reduce((s,d) => s+(d.avgWaitSec||0), 0)/waitEntries.length) : 0;
   return snap;
 }
+
+// Enrich a snapshot with full ZD data fetched from API (paginated, accurate)
+// Called at week-close time or during backfill. Returns enriched snap.
+async function enrichSnapshotWithZD(snap) {
+  if (!zdReady() || !snap) return snap;
+  const { fromDate, toDate } = snap;
+  try {
+    const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
+    const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
+
+    // ── Total solved (accurate count, not paginated) ──────────────
+    const totalSolved = await zdCount('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate).catch(()=>0);
+
+    // ── Open at end of period ─────────────────────────────────────
+    const openEow = await zdCount('type:ticket status:open').catch(()=>null);
+
+    // ── CSAT — paginated up to 1000 ratings ──────────────────────
+    let allRatings = [];
+    let ratUrl = '/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100&sort_by=id&sort_order=asc';
+    for (let p=0; p<10&&ratUrl; p++) {
+      const r = await zdFetch(ratUrl).catch(()=>({satisfaction_ratings:[]}));
+      allRatings = allRatings.concat(r.satisfaction_ratings||[]);
+      ratUrl = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+    }
+    const csatGood  = allRatings.filter(r=>r.score==='good').length;
+    const csatBad   = allRatings.filter(r=>r.score==='bad').length;
+    const csatTotal = csatGood + csatBad;
+    const csatPct   = csatTotal > 0 ? Math.round(csatGood/csatTotal*100) : null;
+
+    // ── Solved tickets for MTTR + channel split — paginated ───────
+    let allTickets = [];
+    let tkUrl = '/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
+    for (let p=0; p<20&&tkUrl; p++) {
+      const r = await zdFetch(tkUrl).catch(()=>({results:[]}));
+      allTickets = allTickets.concat(r.results||[]);
+      tkUrl = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+    }
+    const resTimes = allTickets.map(t=>{
+      const sv=t.solved_at||t.updated_at;
+      return sv ? (new Date(sv)-new Date(t.created_at))/60000 : null;
+    }).filter(v=>v>0).sort((a,b)=>a-b);
+    const mttrMean   = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
+    const mttrMedian = resTimes.length ? Math.round(resTimes[Math.floor(resTimes.length/2)]) : null;
+    const emailTotal = allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length;
+    const phoneTotal = allTickets.length - emailTotal;
+
+    // ── Per-agent solved from paginated tickets ───────────────────
+    const agentSolvedMap = {};
+    allTickets.forEach(t => {
+      if (!t.assignee_id) return;
+      agentSolvedMap[t.assignee_id] = (agentSolvedMap[t.assignee_id]||0) + 1;
+    });
+    if (zdAgents && zdAgents.length) {
+      zdAgents.forEach(agent => {
+        const teamName = MY_TEAM.find(n =>
+          normName(n) === normName(agent.name) ||
+          normName(n.split(' ')[0]) === normName(agent.name.split(' ')[0])
+        );
+        if (teamName && snap.agents[teamName]) {
+          snap.agents[teamName].zdSolved = agentSolvedMap[agent.id] || snap.agents[teamName].zdSolved || 0;
+        }
+      });
+    }
+
+    // ── Solved per day (for bar charts) ──────────────────────────
+    const solvedPerDay = {};
+    const days = [];
+    const fd = new Date(fromDate+'T00:00:00'), td = new Date(toDate+'T00:00:00');
+    for (let d=new Date(fd); d<=td; d.setDate(d.getDate()+1)) days.push(fmtLocal(new Date(d)));
+    days.forEach(day => { solvedPerDay[day] = 0; });
+    allTickets.forEach(t => {
+      const day = t.solved_at ? fmtLocal(new Date(t.solved_at)) : null;
+      if (day && solvedPerDay[day] !== undefined) solvedPerDay[day]++;
+    });
+
+    // ── Store enriched ZD totals ──────────────────────────────────
+    snap.totals.zdTotalSolved  = totalSolved;
+    snap.totals.zdOpenEow      = openEow;
+    snap.totals.zdCsatGood     = csatGood;
+    snap.totals.zdCsatBad      = csatBad;
+    snap.totals.zdCsatTotal    = csatTotal;
+    snap.totals.zdCsatPct      = csatPct;
+    snap.totals.zdMttrMean     = mttrMean;
+    snap.totals.zdMttrMedian   = mttrMedian;
+    snap.totals.zdEmailTotal   = emailTotal;
+    snap.totals.zdPhoneTotal   = phoneTotal;
+    snap.totals.zdTicketCount  = allTickets.length;
+    snap.totals.zdSolvedPerDay = solvedPerDay;
+    snap.zdEnriched            = true;
+    snap.zdEnrichedAt          = new Date().toISOString();
+
+  } catch(e) {
+    console.warn('enrichSnapshotWithZD error:', e.message);
+  }
+  return snap;
+}
+
+// Get or build+enrich a snapshot for a past closed week.
+// Returns cached snapshot if already enriched, otherwise fetches from ZD.
+async function getOrBuildSnapshot(weekMonday) {
+  const weekSunday = fmtLocal(new Date(new Date(weekMonday+'T00:00:00').getTime() + 6*86400000));
+  const today = localToday();
+  // Only use snapshot path for closed weeks (not current week)
+  if (weekMonday > today || weekSunday >= today) return null;
+
+  let snap = getWeeklySnapshot(weekMonday);
+  if (snap && snap.zdEnriched) return snap; // already enriched
+
+  // Build base snapshot from local data
+  snap = snap || buildWeeklySnapshot(weekMonday, weekSunday);
+
+  // Enrich with ZD if available
+  if (zdReady()) {
+    snap = await enrichSnapshotWithZD(snap);
+    saveWeeklySnapshot(weekMonday, snap);
+  }
+  return snap;
+}
+
 
 function getTrendArrow(curr, prev, higherIsBetter=true) {
   if (!prev || prev === 0) return { arrow: '—', color: 'var(--text3)', pct: null };
