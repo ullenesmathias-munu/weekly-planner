@@ -11222,7 +11222,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-30",
-    "generated": "2026-05-30T13:38:46.660Z",
+    "generated": "2026-05-30T13:38:49.514Z",
     "agents": {
       "Jonas": {
         "answered": 43,
@@ -11246,7 +11246,7 @@
         "zdSolved": 47,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 4,
+        "dayDays": 3,
         "zdEmail": 12,
         "zdPhone": 35,
         "zdOpen": 12,
@@ -12899,7 +12899,7 @@
             "D2 (8-16)",
             "D2 (8-16)",
             "D2 (8-16)",
-            "W1 (7-17)",
+            "",
             ""
           ],
           "roles": [
