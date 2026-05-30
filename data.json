@@ -11244,19 +11244,19 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-30T12:41:29.160Z",
+    "generated": "2026-05-30T12:59:41.359Z",
     "agents": {
       "Jonas": {
         "answered": 43,
         "missed": 1,
         "avgTalk": 401,
         "avgWait": 139,
-        "zdSolved": 87,
+        "zdSolved": 88,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 13,
-        "zdPhone": 74,
+        "zdPhone": 75,
         "zdOpen": 9,
         "zdPending": 6
       },
