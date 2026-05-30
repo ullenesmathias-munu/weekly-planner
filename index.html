@@ -2951,6 +2951,18 @@ window.tryUnlock = async function() {
         <div class="settings-section-title">Team</div>
       </div>
 
+      <!-- Agent identity mapping -->
+      <div class="settings-card" id="agent-identity-card" style="display:none;">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Agent identity mapping</div>
+          <div class="settings-card-desc">Map each team member to their Zendesk agent and Unifon agent number. This enables personal stats in the agent portal. Click Refresh to load live data from each system.</div>
+          <div style="display:flex;gap:8px;margin:10px 0;">
+            <button class="btn-save" onclick="renderAgentIdentityMapping()" style="font-size:11px;padding:5px 12px;">↻ Refresh from ZD + Unifon</button>
+          </div>
+          <div id="agent-identity-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+
       <!-- Users -->
       <div class="settings-card" id="users-card">
         <div class="settings-card-inner">
@@ -8082,6 +8094,19 @@ async function renderTeamMemberDashboard(root) {
   const weekStamp = mondayStamp(0);
   const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
 
+  // ── Personal identity — ZD + Unifon ──────────────────────────
+  const myZdAgentId    = getUserZdAgentId(currentUser.name);
+  const myUnifonNum    = getUserUnifonAgentNum(currentUser.name);
+  const thisMonday     = fmtLocal(getMonday(0));
+  const todayStr2      = localToday();
+  const myCallsThisWk  = myUnifonNum ? getUnifonAgentStats(myUnifonNum, thisMonday, todayStr2) : null;
+  const myCallsLastWk  = myUnifonNum ? getUnifonAgentStats(myUnifonNum, fmtLocal(getMonday(-1)), fmtLocal(new Date(getMonday(0).getTime()-86400000))) : null;
+  // ZD personal stats from snapshot
+  const mySnapThisWk   = getWeeklySnapshot(thisMonday);
+  const mySnapLastWk   = getWeeklySnapshot(fmtLocal(getMonday(-1)));
+  const myZdThisWk     = mySnapThisWk?.agents?.[scheduleName] || null;
+  const myZdLastWk     = mySnapLastWk?.agents?.[scheduleName] || null;
+
   // ── Notifications from manager ────────────────────────────────
   const adminUser = getUsers().find(u=>u.isAdmin);
   const adminOtoKey = adminUser ? 'wtp_oto_'+adminUser.name.toLowerCase() : null;
@@ -8184,6 +8209,37 @@ async function renderTeamMemberDashboard(root) {
     } else {
       _qKpi.querySelector('.db-kpi-val').textContent='—';
     }
+  }
+
+  // ── Personal performance stats row ──────────────────────────
+  if (myCallsThisWk || myZdThisWk) {
+    const statsHero = document.createElement('div');
+    statsHero.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);';
+
+    const mkPStat = (val, label, sub, cls) => {
+      const p = document.createElement('div');
+      p.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;border-left:3px solid '+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--border)')+';';
+      const v = document.createElement('div');
+      v.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:"+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--text)')+';';
+      v.textContent = val!=null?String(val):'—';
+      const l = document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:3px;'; l.textContent=label;
+      p.appendChild(v); p.appendChild(l);
+      if (sub) { const s=document.createElement('div');s.style.cssText='font-size:10px;color:var(--text3);margin-top:2px;';s.textContent=sub;p.appendChild(s); }
+      return p;
+    };
+
+    if (myCallsThisWk) {
+      const ar = myCallsThisWk.ansRate;
+      statsHero.appendChild(mkPStat(myCallsThisWk.answered, 'Calls answered', myCallsLastWk?'prev wk: '+myCallsLastWk.answered:null, ar>=90?'ok':ar>=80?'warn':'danger'));
+      statsHero.appendChild(mkPStat(myCallsThisWk.missed, 'Missed', null, myCallsThisWk.missed===0?'ok':myCallsThisWk.missed>5?'danger':'warn'));
+      if (myCallsThisWk.avgTalkSec>0) statsHero.appendChild(mkPStat(fmtSec(myCallsThisWk.avgTalkSec), 'Avg talk', null, null));
+      statsHero.appendChild(mkPStat(ar!=null?ar+'%':'—', 'Answer rate', null, ar>=90?'ok':ar>=80?'warn':ar!=null?'danger':null));
+    }
+    if (myZdThisWk) {
+      const solved = myZdThisWk.zdSolved||0;
+      statsHero.appendChild(mkPStat(solved, 'Tickets solved', myZdLastWk?'prev wk: '+(myZdLastWk.zdSolved||0):null, solved>0?'ok':null));
+    }
+    if (statsHero.children.length) root.appendChild(statsHero);
   }
 
   // ── Notification bar — announcements + manager notes ─────────
@@ -9994,6 +10050,238 @@ Respond with this exact JSON structure:
 }
 
 
+// ─── IDENTITY HELPERS ────────────────────────────────────────────────────
+// Each user can have zdAgentId and unifonAgentNum stored in their profile.
+// These are set by the admin in Settings → Team.
+
+function getUserZdAgentId(username) {
+  const profile = loadProfile(username || currentUser?.name || '');
+  if (profile.zdAgentId) return profile.zdAgentId;
+  // Fallback: match by first name from loaded zdAgents
+  const schedName = (() => {
+    const users = getUsers();
+    const u = users.find(x => x.name === (username || currentUser?.name));
+    return u ? (getScheduleName(u) || getUserDisplayName(u)) : null;
+  })();
+  if (!schedName || !zdAgents || !zdAgents.length) return null;
+  const match = zdAgents.find(a =>
+    normName(a.name.split(' ')[0]) === normName(schedName.split(' ')[0]) ||
+    normName(a.name) === normName(schedName)
+  );
+  return match ? match.id : null;
+}
+
+function getUserUnifonAgentNum(username) {
+  const profile = loadProfile(username || currentUser?.name || '');
+  if (profile.unifonAgentNum) return profile.unifonAgentNum;
+  // Fallback: check name map
+  const schedName = (() => {
+    const users = getUsers();
+    const u = users.find(x => x.name === (username || currentUser?.name));
+    return u ? (getScheduleName(u) || getUserDisplayName(u)) : null;
+  })();
+  if (!schedName) return null;
+  const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
+  const entry = Object.entries(nameMap).find(([,n]) => n === schedName);
+  return entry ? entry[0] : null;
+}
+
+// Fetch agent call stats for a specific Unifon agent number for a date range
+function getUnifonAgentStats(agentNum, fromDate, toDate) {
+  if (!agentNum) return null;
+  try {
+    const agentCalls = JSON.parse(localStorage.getItem(UNIFON_AGENT_KEY) || '{}');
+    let answered = 0, missed = 0, totalTalk = 0, talkCount = 0, totalWait = 0, waitCount = 0;
+    Object.entries(agentCalls).forEach(([date, agents]) => {
+      if (date < fromDate || date > toDate) return;
+      const a = agents[agentNum] || agents[String(agentNum)];
+      if (!a) return;
+      answered += a.answered || 0;
+      missed   += a.missed   || 0;
+      if (a.totalTalkSec && a.answered) { totalTalk += a.totalTalkSec; talkCount += a.answered; }
+      if (a.totalWaitSec && a.answered) { totalWait += a.totalWaitSec; waitCount += a.answered; }
+    });
+    return {
+      answered, missed,
+      avgTalkSec: talkCount > 0 ? Math.round(totalTalk / talkCount) : 0,
+      avgWaitSec: waitCount > 0 ? Math.round(totalWait / waitCount) : 0,
+      offered: answered + missed,
+      ansRate: (answered + missed) > 0 ? Math.round(answered / (answered + missed) * 100) : null,
+    };
+  } catch { return null; }
+}
+
+
+// ─── AGENT IDENTITY MAPPING (Settings → Team) ────────────────────────────
+async function renderAgentIdentityMapping() {
+  const list = document.getElementById('agent-identity-list');
+  if (!list) return;
+  list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0;">Loading ZD agents and Unifon members…</div>';
+
+  // Fetch ZD agents if not already loaded
+  let zdAgentList = zdAgents && zdAgents.length ? zdAgents : [];
+  if (!zdAgentList.length && zdReady()) {
+    try {
+      let gId = zdGroupId;
+      if (!gId) gId = await zdGetGroupId().catch(()=>null);
+      if (gId) zdAgentList = await zdGetAgents(gId).catch(()=>[]);
+    } catch(e) { console.warn('ZD agents fetch:', e.message); }
+  }
+
+  // Fetch Unifon queue members if API is configured
+  let unifonMembers = []; // [{num, name, fullName}]
+  if (hasUnifonApi()) {
+    try {
+      const summary = await fetchUnifonQueueSummary(true).catch(()=>null);
+      if (summary && summary.entries) {
+        const seen = new Set();
+        summary.entries.forEach(q => {
+          (q.members || []).forEach(m => {
+            const num = m.fixed?.agent || m.mobile?.agent;
+            if (!num || seen.has(num)) return;
+            seen.add(num);
+            const fullName = ((m.firstname||'') + ' ' + (m.lastname||'')).trim();
+            unifonMembers.push({ num: String(num), fullName });
+          });
+        });
+        unifonMembers.sort((a,b) => a.fullName.localeCompare(b.fullName));
+      }
+    } catch(e) { console.warn('Unifon members fetch:', e.message); }
+  }
+
+  list.innerHTML = '';
+  const users = getUsers().filter(u => !u.isAdmin && !u.tvOnly);
+
+  if (!users.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);">No non-admin users yet. Add users above first.</div>';
+    return;
+  }
+
+  users.forEach(u => {
+    const schedName = getScheduleName(u) || getUserDisplayName(u);
+    const profile   = loadProfile(schedName);
+
+    const row = document.createElement('div');
+    row.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;';
+
+    // Agent header
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;gap:10px;';
+    const hue = (schedName.charCodeAt(0)*47)%360;
+    const av = document.createElement('div');
+    av.style.cssText = `width:32px;height:32px;border-radius:50%;background:hsl(${hue},45%,32%);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;`;
+    av.textContent = schedName.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+    const nameEl = document.createElement('div');
+    nameEl.style.cssText = 'font-size:13px;font-weight:700;color:var(--text);';
+    nameEl.textContent = getUserDisplayName(u) + (schedName !== getUserDisplayName(u) ? ' ('+schedName+')' : '');
+    const loginEl = document.createElement('div');
+    loginEl.style.cssText = 'font-size:10px;color:var(--text3);margin-left:auto;';
+    loginEl.textContent = 'login: ' + u.name;
+    hdr.appendChild(av); hdr.appendChild(nameEl); hdr.appendChild(loginEl);
+    row.appendChild(hdr);
+
+    // ZD agent selector
+    const zdRow = document.createElement('div');
+    zdRow.style.cssText = 'display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;';
+    const zdLbl = document.createElement('div');
+    zdLbl.style.cssText = 'font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;';
+    zdLbl.textContent = 'Zendesk';
+    const zdSel = document.createElement('select');
+    zdSel.style.cssText = 'font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;';
+    const zdBlank = document.createElement('option'); zdBlank.value=''; zdBlank.textContent='— not mapped —'; zdSel.appendChild(zdBlank);
+    zdAgentList.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = String(a.id); opt.textContent = a.name + ' (' + (a.email||'') + ')';
+      if (String(profile.zdAgentId) === String(a.id)) opt.selected = true;
+      zdSel.appendChild(opt);
+    });
+    // Auto-suggest by first name match
+    if (!profile.zdAgentId && zdAgentList.length) {
+      const auto = zdAgentList.find(a =>
+        normName(a.name.split(' ')[0]) === normName(schedName.split(' ')[0])
+      );
+      if (auto) {
+        zdSel.value = String(auto.id);
+        // Mark as auto-suggested (not confirmed)
+        zdSel.style.borderColor = '#fbbf24';
+        zdSel.title = 'Auto-suggested — confirm this is correct';
+      }
+    }
+    if (!zdAgentList.length) {
+      zdSel.innerHTML = '<option value="">— Load Tickets tab first to see ZD agents —</option>';
+    }
+    zdSel.onchange = () => {
+      profile.zdAgentId = zdSel.value || null;
+      saveProfile(schedName, profile);
+      zdSel.style.borderColor = zdSel.value ? '#34d399' : 'var(--border)';
+      // Also update the name map
+      updateZdNameMap();
+    };
+    zdRow.appendChild(zdLbl); zdRow.appendChild(zdSel);
+    row.appendChild(zdRow);
+
+    // Unifon agent selector
+    const uniRow = document.createElement('div');
+    uniRow.style.cssText = 'display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;';
+    const uniLbl = document.createElement('div');
+    uniLbl.style.cssText = 'font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;';
+    uniLbl.textContent = 'Unifon';
+    const uniSel = document.createElement('select');
+    uniSel.style.cssText = 'font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;';
+    const uniBlank = document.createElement('option'); uniBlank.value=''; uniBlank.textContent='— not mapped —'; uniSel.appendChild(uniBlank);
+    unifonMembers.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.num; opt.textContent = m.fullName + ' (#'+m.num+')';
+      if (profile.unifonAgentNum === m.num) opt.selected = true;
+      uniSel.appendChild(opt);
+    });
+    // Auto-suggest by first name
+    if (!profile.unifonAgentNum && unifonMembers.length) {
+      const auto = unifonMembers.find(m =>
+        m.fullName.split(' ')[0].toLowerCase() === schedName.split(' ')[0].toLowerCase()
+      );
+      if (auto) {
+        uniSel.value = auto.num;
+        uniSel.style.borderColor = '#fbbf24';
+        uniSel.title = 'Auto-suggested — confirm this is correct';
+      }
+    }
+    if (!unifonMembers.length) {
+      uniSel.innerHTML = '<option value="">— Unifon not connected or no members found —</option>';
+    }
+    uniSel.onchange = () => {
+      profile.unifonAgentNum = uniSel.value || null;
+      saveProfile(schedName, profile);
+      uniSel.style.borderColor = uniSel.value ? '#34d399' : 'var(--border)';
+      // Also update the Unifon name map for backwards compatibility
+      if (typeof loadUnifonNameMap === 'function') {
+        const nameMap = loadUnifonNameMap();
+        // Remove old entries for this person
+        Object.keys(nameMap).forEach(k => { if (nameMap[k]===schedName) delete nameMap[k]; });
+        if (uniSel.value) nameMap[uniSel.value] = schedName;
+        localStorage.setItem(UNIFON_MAP_KEY, JSON.stringify(nameMap));
+        scheduleSyncSave();
+      }
+    };
+    if (!profile.unifonAgentNum) {
+      // Check existing name map as fallback display
+      const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
+      const existing = Object.entries(nameMap).find(([,n]) => n === schedName);
+      if (existing) uniSel.value = existing[0];
+    }
+    uniRow.appendChild(uniLbl); uniRow.appendChild(uniSel);
+    row.appendChild(uniRow);
+
+    list.appendChild(row);
+  });
+}
+
+function updateZdNameMap() {
+  // Keep profile zdAgentId in sync — nothing else needed since we use getUserZdAgentId()
+  scheduleSyncSave();
+}
+
+
 // --- SNAPSHOT BACKFILL ------------------------------------------------
 async function runSnapshotBackfill() {
   if (!zdReady()) {
@@ -10100,6 +10388,17 @@ function settingsNav(section, btn) {
       bfStatus.style.color = snapCount > 0 ? 'var(--low-text)' : 'var(--text3)';
     }
   }
+  // Show agent identity card in Team section (admin only)
+  if (section === 'team' && isAdmin()) {
+    const aiCard = document.getElementById('agent-identity-card');
+    if (aiCard) {
+      aiCard.style.display = '';
+      // Render if empty
+      const aiList = document.getElementById('agent-identity-list');
+      if (aiList && !aiList.children.length) renderAgentIdentityMapping();
+    }
+  }
+
   // Show admin-only cards in Integrations section
   if (section === 'integrations' && isAdmin()) {
     const zdCard = document.getElementById('zd-settings-card');
@@ -13468,6 +13767,9 @@ function loadUserData() {
   // Show non-admin sync card
   const nonAdminCard = document.getElementById('nonadmin-sync-card');
   if (nonAdminCard) nonAdminCard.style.display = (!currentUser?.isAdmin) ? '' : 'none';
+  // Ensure Settings tab is always visible for all users (password change, profile)
+  const settingsBtn = document.getElementById('tab-btn-settings');
+  if (settingsBtn) settingsBtn.style.display = '';
   if (isMobile()) { buildMobileNav(); openMobileNotes(); }
   else {
     // TV-only user: hide everything except Tickets tab and enter TV mode
