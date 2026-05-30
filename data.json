@@ -14822,6 +14822,152 @@
     "focus": "",
     "_open": true
   },
+  "wtp_intel_snap_2025-12-29": {
+    "fromDate": "2025-12-29",
+    "toDate": "2026-01-04",
+    "generated": "2026-05-30T18:37:13.669Z",
+    "agents": {
+      "Jonas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Thomas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Maylen": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Bernadett": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Benjamin": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Cecilie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Tord": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Marie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Andreas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Julie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Vetle": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      }
+    },
+    "totals": {
+      "offered": 0,
+      "answered": 0,
+      "missed": 0,
+      "ansRate": null,
+      "avgWait": 0,
+      "zdTotalSolved": 299,
+      "zdOpenEow": 120,
+      "zdCsatGood": 10,
+      "zdCsatBad": 2,
+      "zdCsatTotal": 12,
+      "zdCsatPct": 83,
+      "zdMttrMean": 12515,
+      "zdMttrMedian": 5820,
+      "zdEmailTotal": 73,
+      "zdPhoneTotal": 226,
+      "zdTicketCount": 299,
+      "zdSolvedPerDay": {
+        "2025-12-29": 0,
+        "2025-12-30": 0,
+        "2025-12-31": 0,
+        "2026-01-01": 0,
+        "2026-01-02": 0,
+        "2026-01-03": 0,
+        "2026-01-04": 0
+      }
+    },
+    "zdEnriched": true,
+    "zdEnrichedAt": "2026-05-30T18:37:23.199Z"
+  },
   "wtp_agenda_vetle.bengtson@munu.cloud": [
     {
       "id": "1778577610987",
