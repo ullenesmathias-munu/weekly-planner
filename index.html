@@ -8988,6 +8988,12 @@ function renderOtoPersonMain(personName) {
     const intLbl = document.createElement('div'); intLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; intLbl.textContent='Agent intelligence';
     intWrap.appendChild(intLbl);
     renderAgentIntelligence(personName, intWrap);
+
+    // ── AI Coaching Card ─────────────────────────────────────────
+    if (zdReady()) {
+      renderAgentCoachingCard(personName, intWrap);
+    }
+
     container.appendChild(intWrap);
   }
 
@@ -9186,6 +9192,171 @@ function fmtTenure(startDateStr) {
   if (mos === 0) return yrs + (yrs===1?' year':' years');
   return yrs + (yrs===1?' yr':' yrs') + ' ' + mos + (mos===1?' mo':' mo');
 }
+
+// ─── TICKET ANONYMISER ───────────────────────────────────────────────────
+// Strips ALL PII before any ticket data is sent to Claude API.
+// Only agent replies are sent — customer messages are excluded entirely.
+// The agent name is replaced with their first name only (already known to the model).
+
+function anonymiseTicket(ticket, comments, agentName) {
+  // Regex patterns for PII
+  const EMAIL_RE   = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
+  const PHONE_RE   = /(\+?47[\s\-]?)?(\d[\s\-]?){7,10}/g;
+  const ORGNUM_RE  = /\d{3}\s?\d{3}\s?\d{3}/g; // Norwegian org numbers
+  const URL_RE     = /https?:\/\/[^\s]+/g;
+  const NAME_RE_PARTS = []; // built below from requester data
+
+  // Build name redaction list from ticket requester (if present)
+  if (ticket.via?.source?.from?.name) NAME_RE_PARTS.push(ticket.via.source.from.name);
+  if (ticket.requester_id) NAME_RE_PARTS.push(String(ticket.requester_id));
+
+  function scrub(text) {
+    if (!text) return '';
+    let t = text
+      .replace(EMAIL_RE,   '[EMAIL]')
+      .replace(PHONE_RE,   '[PHONE]')
+      .replace(ORGNUM_RE,  '[ORGNR]')
+      .replace(URL_RE,     '[URL]');
+    // Redact known name fragments
+    NAME_RE_PARTS.forEach(n => {
+      if (n && n.length > 2) {
+        const parts = n.split(/\s+/).filter(p => p.length > 2);
+        parts.forEach(p => {
+          try { if (t.toLowerCase().includes(p.toLowerCase())) { const idx2=t.toLowerCase().indexOf(p.toLowerCase()); while(idx2>=0){t=t.slice(0,idx2)+'[NAME]'+t.slice(idx2+p.length);} } } catch(ign) {}
+        });
+      }
+    });
+    return t.trim();
+  }
+
+  // Only include agent comments (not customer messages)
+  const agentComments = (comments || [])
+    .filter(c => !c.public || c.author_id === ticket.assignee_id) // agent or internal
+    .filter(c => c.author_id !== ticket.requester_id) // exclude requester
+    .map((c, i) => ({
+      idx:     i + 1,
+      body:    scrub(c.plain_body || c.body || '').slice(0, 600), // cap length
+      public:  c.public,
+      elapsed: ticket.created_at
+        ? Math.round((new Date(c.created_at) - new Date(ticket.created_at)) / 60000)
+        : null,
+    }))
+    .filter(c => c.body.length > 10); // skip empty/minimal
+
+  return {
+    id:           ticket.id,
+    channel:      (ticket.via?.channel || 'unknown'),
+    tags:         (ticket.tags || []).slice(0, 8),
+    csat:         null, // filled separately if available
+    first_reply_min: agentComments[0]?.elapsed ?? null,
+    reply_count:  agentComments.length,
+    agent_replies: agentComments,
+  };
+}
+
+// ─── CLAUDE API CALL (through existing Cloudflare proxy) ─────────────────
+async function callClaude(systemPrompt, userContent, maxTokens) {
+  const PROXY = 'https://zendesk-proxy.ullenesmathias.workers.dev/anthropic/v1/messages';
+  const res = await fetch(PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model:      'claude-sonnet-4-6',
+      max_tokens: maxTokens || 1200,
+      system:     systemPrompt,
+      messages:   [{ role: 'user', content: userContent }],
+    }),
+  });
+  if (!res.ok) throw new Error('Claude API ' + res.status);
+  const data = await res.json();
+  const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+  if (!text) throw new Error('Empty response');
+  return text;
+}
+
+// ─── AGENT COACHING ANALYSIS ─────────────────────────────────────────────
+// Fetches the agent's last N tickets, anonymises them, sends to Claude,
+// returns structured coaching feedback.
+async function runAgentCoachingAnalysis(agentName, zdAgentId, ticketCount) {
+  if (!zdReady()) throw new Error('Zendesk not configured');
+  ticketCount = ticketCount || 15;
+
+  // Fetch solved tickets assigned to this agent
+  const today = localToday();
+  const from30 = fmtLocal(new Date(new Date().setDate(new Date().getDate() - 30)));
+  const searchUrl = '/search.json?query='
+    + encodeURIComponent('type:ticket status>=solved assignee:' + zdAgentId
+      + ' solved>=' + from30 + ' solved<=' + today)
+    + '&per_page=' + ticketCount + '&sort_by=solved_at&sort_order=desc';
+
+  const searchRes = await zdFetch(searchUrl).catch(e => { throw new Error('ZD search: ' + e.message); });
+  const tickets = (searchRes.results || []).slice(0, ticketCount);
+  if (!tickets.length) throw new Error('No recent tickets found for ' + agentName);
+
+  // Fetch comments for each ticket (in parallel, capped at 10 simultaneous)
+  const withComments = [];
+  for (let i = 0; i < tickets.length; i += 5) {
+    const batch = tickets.slice(i, i + 5);
+    const results = await Promise.all(batch.map(async t => {
+      try {
+        const cRes = await zdFetch('/tickets/' + t.id + '/comments.json');
+        return { ticket: t, comments: cRes.comments || [] };
+      } catch { return { ticket: t, comments: [] }; }
+    }));
+    withComments.push(...results);
+    if (i + 5 < tickets.length) await new Promise(r => setTimeout(r, 300)); // rate limit
+  }
+
+  // Anonymise everything
+  const anonTickets = withComments
+    .map(({ ticket, comments }) => anonymiseTicket(ticket, comments, agentName))
+    .filter(t => t.agent_replies.length > 0); // only tickets with agent responses
+
+  if (!anonTickets.length) throw new Error('No tickets with agent responses found');
+
+  // Build the prompt
+  const systemPrompt = `You are a customer support coaching assistant for a Norwegian hospitality tech company (Munu). 
+You analyse anonymised support tickets to provide specific, constructive coaching feedback for a support agent.
+
+IMPORTANT RULES:
+- All customer data has been removed. Never infer or speculate about customer identity.
+- Focus ONLY on the agent's responses, not customer behaviour.
+- Be specific: quote short phrases from the agent's replies when giving examples.
+- Be constructive and balanced — highlight genuine strengths alongside areas for improvement.
+- Keep feedback actionable: "try X instead of Y" not just "this was bad".
+- Response must be valid JSON only. No preamble, no markdown fences.`;
+
+  const ticketSummary = anonTickets.slice(0, 12).map((t, i) =>
+    `Ticket ${i+1} [#${t.id}] channel:${t.channel} first_reply:${t.first_reply_min !== null ? t.first_reply_min + 'min' : 'unknown'} replies:${t.reply_count}
+`
+    + t.agent_replies.map(r =>
+      '  Reply ' + r.idx + ' (+' + (r.elapsed ?? '?') + 'min' + (r.public ? '' : ' [internal]') + '): ' + r.body
+    ).join('\n')
+  ).join('\n\n');
+
+  const userContent = `Agent first name: ${agentName.split(' ')[0]}
+Period: last 30 days
+Tickets analysed: ${anonTickets.length}
+
+${ticketSummary}
+
+Respond with this exact JSON structure:
+{
+  "overall_score": <1-10 integer>,
+  "summary": "<2-3 sentence overall assessment>",
+  "strengths": ["<specific strength with example>", "<specific strength>"],
+  "improvements": ["<specific area with example and suggestion>", "<specific area>"],
+  "response_time": "<assessment of first reply times>",
+  "tone": "<assessment of communication tone and clarity>",
+  "coaching_focus": "<single most important thing to work on this week>"
+}`;
+
+  const raw = await callClaude(systemPrompt, userContent, 1000);
+  // Parse JSON — strip any accidental markdown fences
+  const clean = raw.replace(/^```[a-z]*/,'').replace(/```$/,'').trim();
+  return JSON.parse(clean);
+}
+
 
 // --- SNAPSHOT BACKFILL ------------------------------------------------
 async function runSnapshotBackfill() {
@@ -10758,6 +10929,164 @@ function renderAgentIntelligence(personName, container) {
   card.appendChild(hdr); card.appendChild(body);
   container.appendChild(card);
 }
+
+// ─── AGENT COACHING CARD ─────────────────────────────────────────────────
+function renderAgentCoachingCard(agentName, container) {
+  // Find the agent's ZD ID
+  const zdAgent = zdAgents && zdAgents.find(a =>
+    normName(a.name.split(' ')[0]) === normName(agentName.split(' ')[0])
+  );
+
+  const card = document.createElement('div');
+  card.style.cssText = 'margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;';
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);';
+  const hdrLeft = document.createElement('div');
+  hdrLeft.style.cssText = 'display:flex;align-items:center;gap:8px;';
+  const hdrIcon = document.createElement('span'); hdrIcon.textContent = '✦';
+  hdrIcon.style.cssText = 'color:var(--cal-text);font-size:12px;';
+  const hdrTitle = document.createElement('div');
+  hdrTitle.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);';
+  hdrTitle.textContent = 'AI coaching analysis';
+  const hdrSub = document.createElement('div');
+  hdrSub.style.cssText = 'font-size:9px;color:var(--text3);margin-left:4px;';
+  hdrSub.textContent = '· anonymised · last 30 days';
+  hdrLeft.appendChild(hdrIcon); hdrLeft.appendChild(hdrTitle); hdrLeft.appendChild(hdrSub);
+
+  const runBtn = document.createElement('button');
+  runBtn.style.cssText = 'font-family:inherit;font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid var(--cal-text);background:none;color:var(--cal-text);transition:all 0.15s;';
+  runBtn.textContent = 'Analyse';
+  runBtn.onmouseover = () => { runBtn.style.background='var(--cal-text)'; runBtn.style.color='#000743'; };
+  runBtn.onmouseout  = () => { runBtn.style.background='none'; runBtn.style.color='var(--cal-text)'; };
+  hdr.appendChild(hdrLeft); hdr.appendChild(runBtn);
+
+  // Body — initially shows placeholder
+  const body = document.createElement('div');
+  body.style.cssText = 'padding:14px;';
+  body.innerHTML = '<div style="font-size:12px;color:var(--text3);font-style:italic;">Click Analyse to generate a coaching report from the last 30 days of tickets. No customer data is sent.</div>';
+
+  card.appendChild(hdr); card.appendChild(body);
+  container.appendChild(card);
+
+  // Cache key
+  const cacheKey = 'wtp_coaching_' + normName(agentName) + '_' + new Date().toISOString().slice(0,7); // monthly cache
+
+  // Load from cache if available
+  const cached = (() => { try { return JSON.parse(localStorage.getItem(cacheKey) || 'null'); } catch { return null; } })();
+  if (cached) {
+    renderCoachingResult(body, cached, agentName);
+    runBtn.textContent = 'Re-analyse';
+  }
+
+  runBtn.onclick = async () => {
+    if (!zdAgent && !zdAgents) {
+      body.innerHTML = '<div style="font-size:12px;color:var(--high-text);">Zendesk agents not loaded — open Tickets tab first.</div>';
+      return;
+    }
+    const agentId = zdAgent?.id;
+    if (!agentId) {
+      body.innerHTML = '<div style="font-size:12px;color:var(--high-text);">Could not find Zendesk agent for ' + agentName + '. Name may not match exactly.</div>';
+      return;
+    }
+
+    runBtn.disabled = true;
+    runBtn.textContent = 'Analysing…';
+    body.innerHTML = '<div style="display:flex;flex-direction:column;gap:6px;padding:4px 0;">'
+      + '<div style="font-size:12px;color:var(--text3);">Fetching tickets…</div>'
+      + '<div style="background:var(--border);border-radius:4px;height:3px;overflow:hidden;"><div id="coach-prog" style="background:var(--cal-text);height:3px;width:10%;transition:width 0.4s;"></div></div>'
+      + '</div>';
+
+    const prog = body.querySelector('#coach-prog');
+    const setProgress = (pct) => { if (prog) prog.style.width = pct + '%'; };
+
+    try {
+      setProgress(20);
+      const result = await runAgentCoachingAnalysis(agentName, agentId, 15);
+      setProgress(90);
+      localStorage.setItem(cacheKey, JSON.stringify(result));
+      body.innerHTML = '';
+      renderCoachingResult(body, result, agentName);
+      setProgress(100);
+      runBtn.textContent = 'Re-analyse';
+    } catch(e) {
+      body.innerHTML = '<div style="font-size:12px;color:var(--high-text);">Analysis failed: ' + e.message + '</div>';
+      runBtn.textContent = 'Retry';
+    }
+    runBtn.disabled = false;
+  };
+}
+
+function renderCoachingResult(container, result, agentName) {
+  container.innerHTML = '';
+
+  // Score + summary
+  const scoreRow = document.createElement('div');
+  scoreRow.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);';
+  const scoreBox = document.createElement('div');
+  const score = result.overall_score || 0;
+  const scoreColor = score >= 8 ? '#34d399' : score >= 6 ? '#fbbf24' : '#f87171';
+  scoreBox.style.cssText = 'width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:'+scoreColor+'1a;border:2px solid '+scoreColor+';';
+  scoreBox.innerHTML = '<span style="font-family:Fira Sans,sans-serif;font-size:22px;font-weight:900;color:'+scoreColor+';">' + score + '</span>';
+  const scoreSub = document.createElement('div'); scoreSub.style.cssText='font-size:9px;color:var(--text3);text-align:center;margin-top:2px;'; scoreSub.textContent='/10';
+  const scoreWrap = document.createElement('div'); scoreWrap.style.cssText='display:flex;flex-direction:column;align-items:center;flex-shrink:0;'; scoreWrap.appendChild(scoreBox); scoreWrap.appendChild(scoreSub);
+  const summaryEl = document.createElement('div'); summaryEl.style.cssText='font-size:12px;color:var(--text2);line-height:1.5;'; summaryEl.textContent = result.summary || '';
+  scoreRow.appendChild(scoreWrap); scoreRow.appendChild(summaryEl);
+  container.appendChild(scoreRow);
+
+  // Focus this week
+  if (result.coaching_focus) {
+    const focus = document.createElement('div');
+    focus.style.cssText = 'background:rgba(214,243,255,0.07);border:1px solid rgba(214,243,255,0.15);border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start;';
+    const focusIcon = document.createElement('div'); focusIcon.style.cssText='font-size:13px;flex-shrink:0;margin-top:1px;'; focusIcon.textContent='🎯';
+    const focusText = document.createElement('div');
+    focusText.style.cssText = 'font-size:12px;color:var(--text);line-height:1.4;';
+    focusText.innerHTML = '<strong style="color:var(--cal-text);">Focus this week:</strong> ' + (result.coaching_focus||'');
+    focus.appendChild(focusIcon); focus.appendChild(focusText);
+    container.appendChild(focus);
+  }
+
+  // Two columns: strengths + improvements
+  const cols = document.createElement('div'); cols.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;';
+
+  const mkList = (title, items, color, icon) => {
+    const sec = document.createElement('div'); sec.style.cssText='background:var(--surface2);border-radius:8px;padding:10px 12px;';
+    const t = document.createElement('div'); t.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:'+color+';margin-bottom:8px;display:flex;align-items:center;gap:5px;';
+    t.textContent = icon + ' ' + title;
+    sec.appendChild(t);
+    (items||[]).forEach(item => {
+      const row = document.createElement('div'); row.style.cssText='font-size:11px;color:var(--text2);line-height:1.4;padding:4px 0;border-bottom:1px solid var(--border);';
+      row.textContent = item;
+      row.style.borderBottom = '';
+      sec.appendChild(row);
+    });
+    return sec;
+  };
+
+  cols.appendChild(mkList('Strengths', result.strengths, '#34d399', '✓'));
+  cols.appendChild(mkList('Improve', result.improvements, '#fbbf24', '↑'));
+  container.appendChild(cols);
+
+  // Response time + tone in a row
+  const metaRow = document.createElement('div'); metaRow.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:10px;';
+  const mkMeta = (label, val) => {
+    const d = document.createElement('div'); d.style.cssText='background:var(--surface2);border-radius:8px;padding:8px 10px;';
+    const l = document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px;'; l.textContent=label;
+    const v = document.createElement('div'); v.style.cssText='font-size:11px;color:var(--text2);line-height:1.4;'; v.textContent=val||'—';
+    d.appendChild(l); d.appendChild(v); return d;
+  };
+  metaRow.appendChild(mkMeta('Response time', result.response_time));
+  metaRow.appendChild(mkMeta('Tone & clarity', result.tone));
+  container.appendChild(metaRow);
+
+  // Privacy note
+  const note = document.createElement('div');
+  note.style.cssText = 'font-size:9px;color:var(--text3);margin-top:8px;text-align:center;';
+  note.textContent = 'Generated from anonymised agent replies only · no customer data sent · cached monthly';
+  container.appendChild(note);
+}
+
 
 // ─── TREND ALERTS (auto-detect anomalies) ──────────────────────
 function getTrendAlerts() {
