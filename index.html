@@ -2755,7 +2755,7 @@ function renderSchedule() {
         const sl = (s||'').toLowerCase();
         if (sl === 'abs') absentCount++;
         else if (sl === 'h') holidayCount++;
-        else if (sl.startsWith('e')) eveningCount++;
+        else if (isNightShift(sl)) eveningCount++;
       });
     });
     const items = [];
@@ -2803,7 +2803,7 @@ function renderSchedule() {
 
       const working = myTeam.filter(p => {
         const s = (p.shifts[di]||'').toLowerCase();
-        return !OFF_SHIFTS.has(s) && !s.startsWith('e');
+        return !OFF_SHIFTS.has(s) && !isNightShift(s);
       }).length;
       const total = myTeam.length;
       const covClass = working >= total * 0.8 ? 'cov-ok' : working >= total * 0.6 ? 'cov-warn' : 'cov-low';
@@ -2817,8 +2817,9 @@ function renderSchedule() {
       if (!isWeekend) {
         const dotsEl = document.createElement('div'); dotsEl.className = 'sched-coverage-types';
         const dCount = myTeam.filter(p => (p.shifts[di]||'').toLowerCase().startsWith('d')).length;
-        const eCount = myTeam.filter(p => (p.shifts[di]||'').toLowerCase().startsWith('e')).length;
-        const wCount = myTeam.filter(p => (p.shifts[di]||'').toLowerCase().startsWith('w')).length;
+        const eCount = myTeam.filter(p => isNightShift(p.shifts[di])).length;
+        // W1/W3 are day weekend shifts; W2/H2 are night — already captured by isNightShift
+        const wCount = myTeam.filter(p => { const s=(p.shifts[di]||'').toLowerCase(); return (s.startsWith('w')||s.startsWith('h'))&&!isNightShift(s); }).length;
         if (dCount) { const d = document.createElement('span'); d.className='sched-shift-dot d'; d.textContent='D '+dCount; dotsEl.appendChild(d); }
         if (eCount) { const e = document.createElement('span'); e.className='sched-shift-dot e'; e.textContent='E '+eCount; dotsEl.appendChild(e); }
         if (wCount) { const ww = document.createElement('span'); ww.className='sched-shift-dot w'; ww.textContent='W '+wCount; dotsEl.appendChild(ww); }
@@ -5782,7 +5783,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   const hr = new Date().getHours();
   const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   const OFF = new Set(['so','h','hd','os','abs','ol','']);
-  const NIGHT = (s) => (s||'').toLowerCase().startsWith('e'); // E (17-6) = night shift, exclude from 'in today'
+  const NIGHT = (s) => isNightShift(s); // E/W2/H2 (17-6) = night shiftm 'in today'
   const todayWeek = SCHEDULE.find(w => w.dates && w.dates.includes(todayStr));
   const di = todayWeek ? todayWeek.dates.indexOf(todayStr) : -1;
   const inToday = todayWeek&&di>=0 ? todayWeek.people.filter(p=>MY_TEAM.includes(p.name)&&!OFF.has((p.shifts[di]||'').toLowerCase())&&!NIGHT(p.shifts[di])) : [];
@@ -6996,7 +6997,7 @@ async function renderTeamMemberDashboard(root) {
   const hr = new Date().getHours();
   const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   const OFF = new Set(['so','h','hd','os','abs','ol','']);
-  const isNightShift = (s) => (s||'').toLowerCase().startsWith('e');
+  // isNightShift is a global helper — no local redefinition needed
   const dayInfo = getPersonDayInfo(scheduleName, todayStr);
   const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
   const weekStamp = mondayStamp(0);
@@ -7037,7 +7038,7 @@ async function renderTeamMemberDashboard(root) {
     if (p.name===scheduleName) return false;
     const di=todayWeek.dates.indexOf(todayStr);
     const sh = (p.shifts[di]||'').toLowerCase();
-    return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has(sh)&&!sh.startsWith('e');
+    return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has(sh)&&!isNightShift(sh);
   }) : [];
 
   // ── Contextual greeting subtitle ─────────────────────────────
@@ -7226,7 +7227,7 @@ async function renderTeamMemberDashboard(root) {
     const nightPeople = todayWeek ? todayWeek.people.filter(p=>{
       if(p.name===scheduleName)return false;
       const di2=todayWeek.dates.indexOf(todayStr);
-      return MY_TEAM.includes(p.name)&&di2>=0&&(p.shifts[di2]||'').toLowerCase().startsWith('e');
+      return MY_TEAM.includes(p.name)&&di2>=0&&isNightShift(p.shifts[di2]);
     }) : [];
     if (nightPeople.length) {
       const nEl=document.createElement('div'); nEl.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';
@@ -8663,6 +8664,14 @@ function mk(tag, className, text) {
   if (text !== undefined) el.textContent = text;
   return el;
 }
+// Central night-shift detector — E (17-6), W2 (17-6), H2 (17-6) are all night shifts
+// Use this everywhere instead of ad-hoc startsWith('e') checks
+function isNightShift(shift) {
+  const s = (shift || '').toLowerCase().trim();
+  return s.startsWith('e') || s.startsWith('w2') || s.startsWith('h2');
+}
+
+
 function fmtSec(seconds) {
   if (!seconds || seconds <= 0) return '--';
   if (seconds < 60) return seconds + 's';
@@ -9262,13 +9271,34 @@ async function renderOpsContent(fromDate, toDate, container) {
   // Determine if we can use saved snapshot data for past weeks
   const _pDate = new Date(fromDate+'T00:00:00'); _pDate.setDate(_pDate.getDate() - ((_pDate.getDay()+6)%7));
   const periodMonday = fmtLocal(_pDate);
-  const savedSnap = getWeeklySnapshot(periodMonday);
   const isCurrentWeek = periodMonday === fmtLocal(getMonday(0));
+
+  // For past weeks: try to get enriched snapshot, building+fetching from ZD if needed
+  let savedSnap = getWeeklySnapshot(periodMonday);
+  if (!isCurrentWeek && zdReady()) {
+    if (!savedSnap || !savedSnap.zdEnriched) {
+      // Show a brief "fetching" note then enrich
+      const fetchNote = document.createElement('div');
+      fetchNote.style.cssText = 'font-size:11px;color:var(--text3);padding:8px 0;';
+      fetchNote.textContent = 'Fetching historical ZD data for this week…';
+      container.appendChild(fetchNote);
+      try {
+        savedSnap = await getOrBuildSnapshot(periodMonday);
+      } catch(e) {
+        console.warn('Ops heatmap snapshot fetch:', e.message);
+      }
+      // Remove the fetching note
+      fetchNote.remove();
+    }
+  }
+
   const useSnap = !isCurrentWeek && savedSnap && savedSnap.agents;
 
   const snapNote = useSnap
-    ? '<span style="font-size:10px;font-weight:400;color:var(--low-text);margin-left:6px;">✓ from saved snapshot</span>'
-    : (!isCurrentWeek ? '<span style="font-size:10px;font-weight:400;color:#ffb74d;margin-left:6px;">⚠ no snapshot — load Tickets tab for this week first</span>' : '');
+    ? (savedSnap.zdEnriched
+        ? '<span style="font-size:10px;font-weight:400;color:var(--low-text);margin-left:6px;">⚡ from enriched snapshot</span>'
+        : '<span style="font-size:10px;font-weight:400;color:var(--low-text);margin-left:6px;">✓ from saved snapshot</span>')
+    : (!isCurrentWeek ? '<span style="font-size:10px;font-weight:400;color:#ffb74d;margin-left:6px;">⚠ no snapshot available</span>' : '');
   const scorecardLabel = document.createElement('div');
   scorecardLabel.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;';
   scorecardLabel.innerHTML = 'Agent scorecard — vs team average' + snapNote;
@@ -9292,7 +9322,7 @@ async function renderOpsContent(fromDate, toDate, container) {
         const shift = ((person && idx>=0 ? person.shifts[idx] : '') || '').toLowerCase();
         if (!OFF_S.has(shift)) {
           working++;
-          if (shift.startsWith('e')) nightDays++; else dayDays++;
+          if (isNightShift(shift)) nightDays++; else dayDays++;
         }
       }
       d.setDate(d.getDate()+1);
@@ -9331,7 +9361,7 @@ async function renderOpsContent(fromDate, toDate, container) {
     // For past weeks: read from snapshot; for current week: read from live zdData
     let solved = 0, email = null, phone = null;
     if (useSnap) {
-      // Past week — read from saved snapshot
+      // Past week — read from enriched snapshot (zdSolved is accurate from full pagination)
       const sa = savedSnap.agents[name] || {};
       solved = sa.zdSolved || 0;
       email  = sa.zdEmail  != null ? sa.zdEmail  : null;
@@ -9361,6 +9391,8 @@ async function renderOpsContent(fromDate, toDate, container) {
     const nightDays = _sProf.nightDays;
     const dayDays   = _sProf.dayDays;
     const isNight   = _sProf.isNight;
+    // Mixed week: agent worked both day and night shifts this period
+    const isMixed = _sProf.nightDays > 0 && _sProf.dayDays > 0;
     const fullyAbsent  = working === 0 && total > 0;
     const partlyAbsent = working > 0 && working < total;
     const trend = agentTrend(name);
@@ -9371,37 +9403,45 @@ async function renderOpsContent(fromDate, toDate, container) {
       talkSec:  cs.avgTalkSec||0,
       waitSec:  cs.avgWaitSec||0,
       solved, email, phone,
-      working, total, nightDays, dayDays, isNight,
+      working, total, nightDays, dayDays, isNight, isMixed,
       fullyAbsent, partlyAbsent, trend,
       _fromSnap: useSnap,
     };
   });
 
   // Split by shift type — night shift agents get separate averages
+  // Mixed agents (both day + night days) are shown in their majority group
+  // but excluded from pure averages to avoid distorting either group
   const active      = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0) && !a.isNight);
   const activeNight = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0) && a.isNight);
+  const mixed       = agentData.filter(a => !a.fullyAbsent && a.isMixed && (a.calls>0||a.solved>0));
   const partial     = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working>0 && !a.isNight);
   const absent      = agentData.filter(a => a.fullyAbsent);
   const inactive    = agentData.filter(a => !a.fullyAbsent && a.calls===0&&a.solved===0&&a.working===0);
 
-  // Separate averages for day shift and night shift
   const calcAvg = (arr, key) => { const v=arr.filter(a=>!a.fullyAbsent&&a[key]>0).map(a=>a[key]); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
+
+  // Pure day avg — excludes mixed agents so it reflects true day-shift performance
+  const pureDay   = active.filter(a => !a.isMixed);
+  const pureNight = activeNight.filter(a => !a.isMixed);
+
   const avgs = {
-    calls:   calcAvg(active,'calls'),
-    solved:  calcAvg(active,'solved'),
-    email:   calcAvg(active.filter(a=>a.email>0),'email'),
-    phone:   calcAvg(active.filter(a=>a.phone>0),'phone'),
-    talkSec: calcAvg(active.filter(a=>a.talkSec>0),'talkSec'),
-    waitSec: calcAvg(active.filter(a=>a.waitSec>0),'waitSec'),
+    calls:   calcAvg(pureDay,'calls'),
+    solved:  calcAvg(pureDay,'solved'),
+    email:   calcAvg(pureDay.filter(a=>a.email>0),'email'),
+    phone:   calcAvg(pureDay.filter(a=>a.phone>0),'phone'),
+    talkSec: calcAvg(pureDay.filter(a=>a.talkSec>0),'talkSec'),
+    waitSec: calcAvg(pureDay.filter(a=>a.waitSec>0),'waitSec'),
   };
-  // Night shift averages (calls only — email/solved not applicable)
+
+  // Pure night avg — excludes mixed agents
   const nightAvgs = {
-    calls:   calcAvg(activeNight,'calls'),
-    solved:  0,
-    email:   0,
-    phone:   calcAvg(activeNight.filter(a=>a.phone>0),'phone'),
-    talkSec: calcAvg(activeNight.filter(a=>a.talkSec>0),'talkSec'),
-    waitSec: calcAvg(activeNight.filter(a=>a.waitSec>0),'waitSec'),
+    calls:   calcAvg(pureNight,'calls'),
+    solved:  calcAvg(pureNight.filter(a=>a.solved>0),'solved'),
+    email:   calcAvg(pureNight.filter(a=>a.email>0),'email'),
+    phone:   calcAvg(pureNight.filter(a=>a.phone>0),'phone'),
+    talkSec: calcAvg(pureNight.filter(a=>a.talkSec>0),'talkSec'),
+    waitSec: calcAvg(pureNight.filter(a=>a.waitSec>0),'waitSec'),
   };
 
   const METRICS = [
@@ -9440,8 +9480,18 @@ async function renderOpsContent(fromDate, toDate, container) {
 
     const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;justify-content:center;';
     const nmTxt=document.createElement('span'); nmTxt.textContent=a.name.split(' ')[0]; nm.appendChild(nmTxt);
-    if (label) { const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=label; nm.appendChild(lbl); }
-    else if (a.partlyAbsent) { const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=a.working+'/'+a.total+' days'; nm.appendChild(lbl); }
+    if (label) {
+      const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=label; nm.appendChild(lbl);
+    } else if (a.isMixed) {
+      // Agent had both day and night shifts this week — stats are a blend
+      const lbl=document.createElement('span');
+      lbl.style.cssText='font-size:9px;font-weight:500;color:#a78bfa;';
+      lbl.title='Worked '+a.dayDays+'d day + '+a.nightDays+'d night this period — stats are a blend of both';
+      lbl.textContent=a.nightDays+'d night / '+a.dayDays+'d day';
+      nm.appendChild(lbl);
+    } else if (a.partlyAbsent) {
+      const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=a.working+'/'+a.total+' days'; nm.appendChild(lbl);
+    }
     row.appendChild(nm);
 
     METRICS.forEach(m => {
@@ -9464,7 +9514,8 @@ async function renderOpsContent(fromDate, toDate, container) {
       }
 
       // Night shift — grey out email/solved columns (not applicable)
-      const isNA = a.isNight && (m.key==='email'||m.key==='solved');
+      // N/A for night agents only if the night group has zero data for that metric
+      const isNA = a.isNight && (m.key==='email'||m.key==='solved') && !nightAvgs[m.key];
       const val = a[m.key];
       const avg = (a.isNight ? nightAvgs : avgs)[m.key];
       const cls = isNA ? 'na' : (val===null||val===0) ? 'none' : classify(val, avg, m.lower);
@@ -9501,14 +9552,18 @@ async function renderOpsContent(fromDate, toDate, container) {
   // Night shift section
   if (activeNight.length) {
     const nSep=document.createElement('div'); nSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a78bfa;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;';
-    nSep.innerHTML='Night shift <span style="font-size:10px;font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;color:var(--text3);">— vs night avg · Email/Solved N/A</span>';
+    // Build night shift description — who is on night this period
+    const nightNames = activeNight.map(a=>a.name.split(' ')[0]).join(', ');
+    const nightShifts = ['E (17-6)','W2 (17-6)','H2 (17-6)'];
+    nSep.innerHTML='🌙 Night shift (17–06) <span style="font-size:10px;font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;color:var(--text3);">— separate averages · '+nightNames+'</span>';
     scCard.appendChild(nSep);
     const nAvgRow=document.createElement('div'); nAvgRow.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:5px 14px;background:rgba(167,139,250,0.05);border-bottom:1px solid var(--border);';
     const nAvgNm=document.createElement('div'); nAvgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#a78bfa;display:flex;align-items:center;'; nAvgNm.textContent='Night avg'; nAvgRow.appendChild(nAvgNm);
     METRICS.forEach(function(m2) {
-      const c2=document.createElement('div'); c2.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;';
-      const isNA2=m2.key==='email'||m2.key==='solved';
-      c2.textContent=m2.isTrend?'':isNA2?'N/A':(m2.key==='talkSec'||m2.key==='waitSec')?fmtSec(nightAvgs[m2.key]):(nightAvgs[m2.key]||'—');
+      const c2=document.createElement('div'); c2.style.cssText='font-size:11px;font-weight:700;color:#a78bfa;text-align:center;display:flex;align-items:center;justify-content:center;';
+      // Only N/A if nightAvgs truly has no data for this metric
+      const isNA2 = (m2.key==='email'||m2.key==='solved') && !nightAvgs[m2.key];
+      c2.textContent=m2.isTrend?'4wk':isNA2?'N/A':(m2.key==='talkSec'||m2.key==='waitSec')?fmtSec(nightAvgs[m2.key]):(nightAvgs[m2.key]||'—');
       nAvgRow.appendChild(c2);
     });
     scCard.appendChild(nAvgRow);
@@ -9577,7 +9632,7 @@ function buildWeeklySnapshot(fromDate, toDate) {
         const _p = _w.people.find(p => p.name === name);
         const _i = _w.dates.indexOf(_ds);
         const _sh = ((_p && _i>=0 ? _p.shifts[_i] : '')||'').toLowerCase();
-        if (!OFF_S_SN.has(_sh)) { if (_sh.startsWith('e')) _nightD++; else _dayD++; }
+        if (!OFF_S_SN.has(_sh)) { if (isNightShift(_sh)) _nightD++; else _dayD++; }
       }
     }
     snap.agents[name] = {
