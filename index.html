@@ -2952,6 +2952,18 @@ window.tryUnlock = async function() {
       </div>
 
       <!-- Agent identity mapping -->
+      <!-- Queue notifications -->
+      <div class="settings-card" id="queue-notif-card" style="display:none;">
+        <div class="settings-card-inner">
+          <div class="settings-card-title">Queue notifications</div>
+          <div class="settings-card-desc">Get Windows desktop notifications when team members log on or off the queue during opening hours (Mon–Fri 07:00–17:00).</div>
+          <div id="notif-status" style="margin:10px 0;font-size:12px;color:var(--text3);"></div>
+          <button class="btn-save" onclick="handleNotifPermission()" id="notif-btn" style="font-size:11px;padding:5px 14px;">Enable notifications</button>
+          <button class="btn-cancel" onclick="clearQueueLog()" style="font-size:11px;padding:5px 14px;margin-left:8px;">Clear activity log</button>
+        </div>
+      </div>
+
+      <!-- Agent identity mapping -->
       <div class="settings-card" id="agent-identity-card" style="display:none;">
         <div class="settings-card-inner">
           <div class="settings-card-title">Agent identity mapping</div>
@@ -6505,6 +6517,442 @@ function openMobileNotes() { /* no-op */ }
 function isMobile() { return window.innerWidth < 600; }
 
 // ── Admin dashboard ───────────────────────────────────────────────
+
+// ─── QUEUE STATE MONITOR ─────────────────────────────────────────────────────
+// Tracks agent ready-state transitions between polls and fires Windows
+// notifications + logs every change to a persistent history.
+
+const QUEUE_LOG_KEY   = 'wtp_queue_log';
+const QUEUE_STATE_KEY = 'wtp_queue_state'; // last known state per agent
+const MAX_LOG_ENTRIES = 500;
+
+// ── Notification permission ────────────────────────────────────────────────
+function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendQueueNotification(title, body, level) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  // Only notify during opening hours on weekdays
+  const now = new Date(), dow = now.getDay(), hr = now.getHours();
+  const isOpenHours = dow >= 1 && dow <= 5 && hr >= 7 && hr < 17;
+  if (!isOpenHours) return;
+  try {
+    const n = new Notification(title, {
+      body,
+      icon: 'https://ullenesmathias-munu.github.io/weekly-planner/favicon.ico',
+      badge: 'https://ullenesmathias-munu.github.io/weekly-planner/favicon.ico',
+      tag: 'queue-' + title.replace(/\s+/g,'-').toLowerCase(),
+      renotify: true,
+      silent: level === 'info',
+    });
+    n.onclick = () => { window.focus(); n.close(); };
+    setTimeout(() => n.close(), 8000);
+  } catch(e) {}
+}
+
+// ── Queue log storage ──────────────────────────────────────────────────────
+function loadQueueLog() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_LOG_KEY) || '[]'); } catch { return []; }
+}
+
+function saveQueueLog(log) {
+  // Keep last MAX_LOG_ENTRIES entries
+  const trimmed = log.slice(-MAX_LOG_ENTRIES);
+  localStorage.setItem(QUEUE_LOG_KEY, JSON.stringify(trimmed));
+}
+
+function addQueueLogEntry(entry) {
+  const log = loadQueueLog();
+  log.push({ ts: new Date().toISOString(), ...entry });
+  saveQueueLog(log);
+  // Sync to GitHub so log survives browser cache clears
+  if (typeof scheduleSyncSave === 'function') scheduleSyncSave();
+}
+
+// ── State diffing ──────────────────────────────────────────────────────────
+function loadQueueState() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_STATE_KEY) || '{}'); } catch { return {}; }
+}
+
+function saveQueueState(state) {
+  localStorage.setItem(QUEUE_STATE_KEY, JSON.stringify(state));
+}
+
+function diffQueueState(entries) {
+  const prev  = loadQueueState();
+  const next  = {};
+  const events = [];
+
+  const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const isMyTeam = m => {
+    const mf = norm(m.firstname||''), mfl = norm((m.firstname||'')+' '+(m.lastname||''));
+    return MY_TEAM.some(t => norm(t.split(' ')[0])===mf || norm(t)===mfl);
+  };
+
+  entries.forEach(q => {
+    if (q.queue_id !== 43500 && q.queue_id !== 43499) return;
+    const qName = (q.description||'').replace('KØ - ','');
+
+    (q.members||[]).filter(isMyTeam).forEach(m => {
+      const key    = q.queue_id + '_' + (m.firstname||'') + '_' + (m.lastname||'');
+      const ready  = !!(m.mobile?.ready || m.fixed?.ready);
+      const name   = (m.firstname||'') + ' ' + (m.lastname||'');
+
+      next[key] = { ready, name, queue: qName, queueId: q.queue_id };
+
+      if (prev[key] === undefined) return; // first load — no diff
+
+      const wasReady = prev[key].ready;
+      if (wasReady === ready) return; // no change
+
+      const event = {
+        name,
+        queue: qName,
+        queueId: q.queue_id,
+        event: ready ? 'logged_on' : 'logged_off',
+      };
+      events.push(event);
+    });
+  });
+
+  saveQueueState(next);
+  return events;
+}
+
+// ── Main poll hook — called by the 30s interval ────────────────────────────
+function processQueueStateChange(summary) {
+  if (!summary || !summary.entries) return;
+
+  const events = diffQueueState(summary.entries);
+  if (!events.length) return;
+
+  const now = new Date(), dow = now.getDay(), hr = now.getHours();
+  const isOpenHours = dow >= 1 && dow <= 5 && hr >= 7 && hr < 17;
+
+  events.forEach(ev => {
+    // Log every event regardless of time
+    addQueueLogEntry(ev);
+
+    // Notify only during opening hours
+    if (!isOpenHours) return;
+
+    if (ev.event === 'logged_off') {
+      sendQueueNotification(
+        ev.name.split(' ')[0] + ' logged off',
+        ev.name + ' left ' + ev.queue,
+        'warn'
+      );
+    } else if (ev.event === 'logged_on') {
+      sendQueueNotification(
+        ev.name.split(' ')[0] + ' logged on',
+        ev.name + ' joined ' + ev.queue,
+        'info'
+      );
+    }
+  });
+
+  // Also update the log panel in the dashboard if it's visible
+  const logPanel = document.getElementById('queue-log-panel');
+  if (logPanel) renderQueueLogPanel(logPanel);
+}
+
+// ── Queue log panel renderer ───────────────────────────────────────────────
+function renderQueueLogPanel(container) {
+  container.innerHTML = '';
+  const log = loadQueueLog().slice().reverse(); // newest first
+
+  if (!log.length) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'font-size:12px;color:var(--text3);padding:8px 0;font-style:italic;';
+    empty.textContent = 'No queue events yet — transitions will appear here as they happen.';
+    container.appendChild(empty);
+    return;
+  }
+
+  // Group by date
+  const today     = localToday();
+  const yesterday = fmtLocal(new Date(new Date().setDate(new Date().getDate()-1)));
+
+  let lastDate = null;
+  log.slice(0, 60).forEach(entry => {
+    const entryDate = entry.ts.slice(0,10);
+    const dateLabel = entryDate === today ? 'Today'
+      : entryDate === yesterday ? 'Yesterday'
+      : new Date(entry.ts).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+
+    if (entryDate !== lastDate) {
+      const sep = document.createElement('div');
+      sep.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);padding:8px 0 4px;border-top:1px solid var(--border);margin-top:4px;';
+      sep.textContent = dateLabel;
+      container.appendChild(sep);
+      lastDate = entryDate;
+    }
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+
+    const dot = document.createElement('div');
+    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;flex-shrink:0;background:'
+      + (entry.event==='logged_on' ? '#34d399' : '#f87171') + ';';
+
+    const time = document.createElement('div');
+    time.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;width:38px;';
+    time.textContent = new Date(entry.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+    const name = document.createElement('div');
+    name.style.cssText = 'font-size:12px;font-weight:600;color:var(--text);flex-shrink:0;min-width:70px;';
+    name.textContent = (entry.name||'').split(' ')[0];
+
+    const desc = document.createElement('div');
+    desc.style.cssText = 'font-size:11px;color:var(--text3);';
+    desc.textContent = (entry.event==='logged_on' ? '→ ' : '← ') + (entry.queue||'');
+
+    row.appendChild(dot); row.appendChild(time); row.appendChild(name); row.appendChild(desc);
+    container.appendChild(row);
+  });
+}
+
+
+function handleNotifPermission() {
+  if (!('Notification' in window)) {
+    alert('Your browser does not support notifications.');
+    return;
+  }
+  Notification.requestPermission().then(p => {
+    updateNotifStatus();
+    if (p === 'granted') {
+      new Notification('Munu Planner', { body: 'Queue notifications enabled!', silent: true });
+    }
+  });
+}
+
+function updateNotifStatus() {
+  const el  = document.getElementById('notif-status');
+  const btn = document.getElementById('notif-btn');
+  if (!el || !btn) return;
+  if (!('Notification' in window)) {
+    el.textContent = '⚠ Notifications not supported in this browser.';
+    btn.style.display = 'none';
+    return;
+  }
+  const p = Notification.permission;
+  el.textContent = p === 'granted'  ? "Notifications enabled. You will be alerted when agents log on/off during opening hours."
+    : p === 'denied'   ? "Notifications blocked. Allow them in browser settings (click the lock icon in the address bar)."
+    : 'Notifications not yet enabled.';
+  el.style.color = p === 'granted' ? '#34d399' : p === 'denied' ? '#f87171' : 'var(--text3)';
+  btn.textContent = p === 'granted' ? 'Send test notification' : 'Enable notifications';
+  btn.onclick = p === 'granted'
+    ? () => new Notification('Test', { body: 'Queue notifications are working!', silent: false })
+    : handleNotifPermission;
+}
+
+function clearQueueLog() {
+  if (confirm('Clear the queue activity log? This cannot be undone.')) {
+    localStorage.removeItem(QUEUE_LOG_KEY);
+    localStorage.removeItem(QUEUE_STATE_KEY);
+    const panel = document.getElementById('queue-log-panel');
+    if (panel) renderQueueLogPanel(panel);
+  }
+}
+
+
+// ─── AGENT QUEUE STATS (for My Team Overview tab) ────────────────────────────
+function getAgentQueueStats(agentName, fromDate, toDate) {
+  const log = loadQueueLog();
+  const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const normName = norm(agentName);
+
+  // Filter log entries for this agent in the date range
+  const entries = log.filter(e => {
+    if (!e.ts) return false;
+    const d = e.ts.slice(0,10);
+    if (d < fromDate || d > toDate) return false;
+    const eName = norm(e.name||'');
+    const eFirst = eName.split(' ')[0];
+    const aFirst = normName.split(' ')[0];
+    return eName === normName || eFirst === aFirst;
+  }).sort((a,b) => a.ts.localeCompare(b.ts));
+
+  if (!entries.length) return null;
+
+  // Build per-day sessions: pair logged_on with next logged_off
+  const days = {};
+  entries.forEach(e => {
+    const d = e.ts.slice(0,10);
+    if (!days[d]) days[d] = [];
+    days[d].push(e);
+  });
+
+  const sessions = []; // { date, loginTime, logoffTime, durationMin }
+  Object.entries(days).forEach(([date, evts]) => {
+    let loginTime = null;
+    evts.forEach(e => {
+      if (e.event === 'logged_on') {
+        loginTime = new Date(e.ts);
+      } else if (e.event === 'logged_off' && loginTime) {
+        const logoffTime = new Date(e.ts);
+        const durationMin = Math.round((logoffTime - loginTime) / 60000);
+        if (durationMin > 0 && durationMin < 720) { // sanity: <12h
+          sessions.push({
+            date,
+            loginTime,
+            logoffTime,
+            durationMin,
+            loginHour:  loginTime.getHours()  + loginTime.getMinutes()/60,
+            logoffHour: logoffTime.getHours() + logoffTime.getMinutes()/60,
+          });
+        }
+        loginTime = null;
+      }
+    });
+  });
+
+  if (!sessions.length) return { entries: entries.length, sessions: [], daysLoggedIn: Object.keys(days).length };
+
+  const avgLoginHour  = sessions.reduce((s,x) => s + x.loginHour,  0) / sessions.length;
+  const avgLogoffHour = sessions.reduce((s,x) => s + x.logoffHour, 0) / sessions.length;
+  const avgDuration   = sessions.reduce((s,x) => s + x.durationMin, 0) / sessions.length;
+
+  const fmtHM = h => {
+    const hr = Math.floor(h), mn = Math.round((h - hr) * 60);
+    return String(hr).padStart(2,'0') + ':' + String(mn).padStart(2,'0');
+  };
+
+  // Flag early logoffs (before 16:45 on a weekday)
+  const earlyLogoffs = sessions.filter(s => {
+    const dow = new Date(s.date+'T00:00:00').getDay();
+    return dow >= 1 && dow <= 5 && s.logoffHour < 16.75;
+  });
+
+  // Flag late logins (after 08:30 on a weekday)
+  const lateLogins = sessions.filter(s => {
+    const dow = new Date(s.date+'T00:00:00').getDay();
+    return dow >= 1 && dow <= 5 && s.loginHour > 8.5;
+  });
+
+  return {
+    entries: entries.length,
+    sessions,
+    daysLoggedIn:   Object.keys(days).length,
+    avgLoginTime:   fmtHM(avgLoginHour),
+    avgLogoffTime:  fmtHM(avgLogoffHour),
+    avgDurationMin: Math.round(avgDuration),
+    earlyLogoffs:   earlyLogoffs.length,
+    lateLogins:     lateLogins.length,
+  };
+}
+
+function renderAgentQueueStats(agentName, container) {
+  // Look back 4 weeks
+  const toDate   = localToday();
+  const fromDate = fmtLocal(new Date(getMonday(-3).getTime()));
+  const stats    = getAgentQueueStats(agentName, fromDate, toDate);
+
+  if (!stats || stats.daysLoggedIn === 0) return; // no data — don't show empty section
+
+  const sec = document.createElement('div'); sec.className = 'oto-section';
+  const hdr = document.createElement('div'); hdr.className = 'oto-section-hdr';
+  hdr.innerHTML = 'Queue login patterns <span style="font-weight:400;font-size:9px;color:var(--text3);">last 4 weeks</span>';
+  sec.appendChild(hdr);
+
+  const body = document.createElement('div'); body.className = 'oto-section-body';
+
+  // Stat grid
+  const grid = document.createElement('div'); grid.className = 'oto-stat-row';
+  const mkS = (val, label, cls) => {
+    const c = document.createElement('div'); c.className = 'oto-stat-card';
+    if (cls) c.style.borderLeft = '3px solid ' + (cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':'#f87171');
+    const v = document.createElement('div'); v.className = 'oto-stat-val'; v.style.color = cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--text)';
+    v.textContent = val!=null?val:'—';
+    const l = document.createElement('div'); l.className = 'oto-stat-label'; l.textContent = label;
+    c.appendChild(v); c.appendChild(l); return c;
+  };
+
+  grid.appendChild(mkS(stats.avgLoginTime,  'Avg login',   null));
+  grid.appendChild(mkS(stats.avgLogoffTime, 'Avg logoff',  null));
+
+  const durH = Math.floor(stats.avgDurationMin/60);
+  const durM = stats.avgDurationMin % 60;
+  const durStr = (durH>0?durH+'h ':'')+durM+'m';
+  grid.appendChild(mkS(durStr, 'Avg on queue', null));
+  grid.appendChild(mkS(stats.daysLoggedIn+'d', 'Days logged in', null));
+  body.appendChild(grid);
+
+  // Pattern observations
+  const obs = [];
+  if (stats.earlyLogoffs >= 3)
+    obs.push({ level:'warn', text: stats.earlyLogoffs + ' early logoffs (before 16:45) in the last 4 weeks' });
+  else if (stats.earlyLogoffs >= 1)
+    obs.push({ level:'info', text: stats.earlyLogoffs + ' early logoff'+(stats.earlyLogoffs>1?'s':'')+' in the last 4 weeks' });
+
+  if (stats.lateLogins >= 3)
+    obs.push({ level:'warn', text: stats.lateLogins + ' late logins (after 08:30) in the last 4 weeks' });
+
+  if (stats.sessions.length >= 3) {
+    // Check if avg logoff is consistently early
+    if (stats.avgLogoffTime < '16:45')
+      obs.push({ level:'warn', text: 'Average logoff ' + stats.avgLogoffTime + ' — 15+ min before closing' });
+    // Check if avg login is consistently late
+    if (stats.avgLoginTime > '08:20')
+      obs.push({ level:'warn', text: 'Average login ' + stats.avgLoginTime + ' — arriving later than opening' });
+  }
+
+  if (!obs.length && stats.daysLoggedIn >= 3)
+    obs.push({ level:'ok', text: 'Consistent queue coverage — no patterns of concern' });
+
+  if (obs.length) {
+    const obsList = document.createElement('div'); obsList.style.cssText='display:flex;flex-direction:column;gap:5px;margin-top:10px;';
+    obs.forEach(o => {
+      const row = document.createElement('div');
+      row.style.cssText='display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--text2);padding:6px 8px;border-radius:7px;background:var(--surface);border:1px solid var(--border);';
+      if (o.level==='warn') row.style.borderColor = 'rgba(251,191,36,0.3)';
+      if (o.level==='ok')   row.style.borderColor = 'rgba(52,211,153,0.25)';
+      const dot = document.createElement('div');
+      dot.style.cssText='width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+(o.level==='ok'?'#34d399':o.level==='warn'?'#fbbf24':'var(--text3)')+';';
+      const txt = document.createElement('span'); txt.textContent = o.text;
+      row.appendChild(dot); row.appendChild(txt); obsList.appendChild(row);
+    });
+    body.appendChild(obsList);
+  }
+
+  // Recent events timeline (last 10)
+  const recent = loadQueueLog()
+    .filter(e => {
+      const n = (s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());
+      const eName = n(e.name||''), aFirst = n(agentName.split(' ')[0]);
+      return eName.split(' ')[0] === aFirst && e.ts >= fromDate;
+    })
+    .sort((a,b) => b.ts.localeCompare(a.ts))
+    .slice(0, 8);
+
+  if (recent.length) {
+    const tlHdr = document.createElement('div');
+    tlHdr.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:12px;margin-bottom:6px;';
+    tlHdr.textContent = 'Recent events';
+    body.appendChild(tlHdr);
+    recent.forEach(e => {
+      const row = document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:7px;padding:3px 0;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.04);';
+      const dot = document.createElement('div');
+      dot.style.cssText='width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(e.event==='logged_on'?'#34d399':'#f87171')+';';
+      const time = document.createElement('span'); time.style.cssText='color:var(--text3);min-width:90px;';
+      time.textContent = new Date(e.ts).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      const ev = document.createElement('span'); ev.style.color='var(--text2)';
+      ev.textContent = e.event==='logged_on' ? '→ logged on' : '← logged off';
+      row.appendChild(dot); row.appendChild(time); row.appendChild(ev);
+      body.appendChild(row);
+    });
+  }
+
+  sec.appendChild(body);
+  container.appendChild(sec);
+}
+
+
 function renderAdminDashboard(root, viewerMode=false) {
   // viewerMode=true: operational view only, no personal sections (1:1s, team pulse, tasks, handover)
   const todayStr = localToday();
@@ -7081,16 +7529,23 @@ function renderAdminDashboard(root, viewerMode=false) {
         // Update time display
         const htime2 = uLive.querySelector('.db-queue-time');
         if (htime2) htime2.textContent = now2.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        // Update each queue's stat panels
+        // Process state changes → notifications + log
+        processQueueStateChange(summary);
+
+        // Check if stat panels exist (they may not if page loaded with stale cache)
+        const hasDataAttrs = !!uLive.querySelector('[data-queue-ready]');
+        if (!hasDataAttrs) {
+          renderDashboard();
+          return;
+        }
+        // Update each queue's stat panels in place
         entries2.forEach(q => {
           const members2 = (q.members||[]).filter(isMyTeam2);
           const ready2   = members2.filter(m=>m.fixed?.ready||m.mobile?.ready||m.fixed?.restore_ready||m.mobile?.restore_ready).length;
           const total2   = members2.length;
           const wait2    = q.keyfigures?.answered_waittime||0;
-          const isActive2 = q.queue_id===ACTIVE2;
-          // Find and update ready stat value
-          const readyEl = uLive.querySelector('[data-queue-ready="'+q.queue_id+'"]');
-          const waitEl  = uLive.querySelector('[data-queue-wait="'+q.queue_id+'"]');
+          const readyEl  = uLive.querySelector('[data-queue-ready="'+q.queue_id+'"]');
+          const waitEl   = uLive.querySelector('[data-queue-wait="'+q.queue_id+'"]');
           if (readyEl) {
             readyEl.textContent = ready2+'/'+total2;
             const readyCls2 = ready2===0&&total2>0?'danger':ready2<2&&total2>0?'warn':'ok';
@@ -8155,6 +8610,17 @@ function renderAdminDashboard(root, viewerMode=false) {
       col5.appendChild(linkSec5);
     }
   }
+  // Queue activity log
+  if (hasUnifonApi()) {
+    const qLogSec = dbSection('Queue activity');
+    const qLogBody = document.createElement('div');
+    qLogBody.id = 'queue-log-panel';
+    qLogBody.style.cssText = 'max-height:220px;overflow-y:auto;';
+    qLogSec.appendChild(qLogBody);
+    renderQueueLogPanel(qLogBody);
+    col5.appendChild(qLogSec);
+  }
+
   rowBottom.appendChild(col5);
   body.appendChild(rowBottom);
 
@@ -9790,6 +10256,9 @@ function renderOtoPersonMain(personName) {
       container.appendChild(sec);
     }
 
+    // ── Queue login patterns ────────────────────────────────
+    renderAgentQueueStats(personName, container);
+
     // ── Agent intelligence ────────────────────────────────────
     const intWrap = document.createElement('div');
     renderAgentIntelligence(personName, intWrap);
@@ -10647,15 +11116,16 @@ function settingsNav(section, btn) {
       bfStatus.style.color = snapCount > 0 ? 'var(--low-text)' : 'var(--text3)';
     }
   }
-  // Show agent identity card in Team section (admin only)
+  // Show agent identity + notification cards in Team section (admin only)
   if (section === 'team' && isAdmin()) {
     const aiCard = document.getElementById('agent-identity-card');
     if (aiCard) {
       aiCard.style.display = '';
-      // Render if empty
       const aiList = document.getElementById('agent-identity-list');
       if (aiList && !aiList.children.length) renderAgentIdentityMapping();
     }
+    const nCard = document.getElementById('queue-notif-card');
+    if (nCard) { nCard.style.display = ''; updateNotifStatus(); }
   }
 
   // Show admin-only cards in Integrations section
@@ -11151,11 +11621,22 @@ async function generateReport(fromDate, toDate, container) {
     lines.push('## Agent Calls');
     if(Object.keys(callStats).length){MY_TEAM.map(n=>({name:n,...(callStats[n]||{})})).sort((a,b)=>(b.answered||0)-(a.answered||0)).forEach(x=>{if((x.answered||0)>0){const ar=x.offered>0?Math.round(x.answered/x.offered*100)+'%':'?';lines.push('  '+x.name+': '+x.answered+' answered/'+x.offered+' offered ('+ar+') talk: '+(x.avgTalkSec?fmtSec(x.avgTalkSec):'?'));} });}else{lines.push('  No call data.');}
     if(decisions.length){lines.push('');lines.push('## Decisions');decisions.forEach(d=>lines.push('  '+d.date+': '+d.title+(d.owner?' ('+d.owner+')':'')));}
+    // Queue activity log for the period
+    const qLog = loadQueueLog().filter(e => e.ts && e.ts.slice(0,10) >= fromDate && e.ts.slice(0,10) <= toDate);
+    if (qLog.length) {
+      lines.push('');
+      lines.push('## Queue Activity Log');
+      qLog.sort((a,b) => a.ts.localeCompare(b.ts)).forEach(e => {
+        const t = new Date(e.ts).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+        lines.push('  ' + t + '  ' + (e.name||'') + '  ' + (e.event==='logged_on'?'→ logged on':'← logged off') + '  ' + (e.queue||''));
+      });
+    }
     lines.push('');
     lines.push('Suggested questions:');
     lines.push('- What are the main trends and concerns?');
     lines.push('- Which agents are over/under-performing?');
     lines.push('- What should be top priorities next month?');
+    if (qLog.length) lines.push('- Are there any patterns in queue login/logoff times worth addressing?');
     navigator.clipboard.writeText(lines.join('\n')).then(()=>{
       copyBtn.innerHTML='\u2713 Copied! Paste into Claude';
       copyBtn.style.background='rgba(52,211,153,0.15)';copyBtn.style.borderColor='rgba(52,211,153,0.3)';copyBtn.style.color='#34d399';
@@ -13632,7 +14113,7 @@ async function ghSave() {
       if (!k) continue;
       // Skip keys with non-ASCII characters — these are corrupted duplicates
       if (/[^\x00-\x7F]/.test(k)) { localStorage.removeItem(k); continue; }
-      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k.startsWith('wtp_ann_') || k.startsWith('wtp_intel_') || k.startsWith('wtp_weekly_briefing_') || k === 'wtp_ql_shared' || k === 'wtp_announcements' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token' || k === 'wtp_outlook_events' || k === 'wtp_outlook_synced' || k === 'wtp_cal_gist_url' || k === 'wtp_schedule' || k === UNIFON_KEY || k === UNIFON_HOURLY_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_MAP_KEY) {
+      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k.startsWith('wtp_ann_') || k.startsWith('wtp_intel_') || k.startsWith('wtp_weekly_briefing_') || k === 'wtp_ql_shared' || k === 'wtp_announcements' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token' || k === 'wtp_outlook_events' || k === 'wtp_outlook_synced' || k === 'wtp_cal_gist_url' || k === 'wtp_schedule' || k === UNIFON_KEY || k === UNIFON_HOURLY_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_MAP_KEY || k === QUEUE_LOG_KEY || k === QUEUE_STATE_KEY) {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -13726,7 +14207,8 @@ async function ghReadOnlyLoad() {
     const sharedKeys = [
       'wtp_users', 'wtp_wingman', 'wtp_encrypted_token', 'wtp_ql_shared',
       'wtp_announcements', 'wtp_outlook_events', 'wtp_outlook_synced', 'wtp_cal_gist_url',
-      'wtp_schedule', UNIFON_KEY,
+      'wtp_schedule', UNIFON_KEY, UNIFON_AGENT_KEY, UNIFON_MAP_KEY,
+      QUEUE_LOG_KEY, QUEUE_STATE_KEY,
     ];
     // Manager view users also need profile (RAG) and decision log data
     const isManagerView = currentUser && !currentUser.isAdmin && (currentUser.privileges||[]).includes('manager_view');
@@ -14020,6 +14502,10 @@ function loadUserData() {
   if (ta) ta.value = localStorage.getItem(userNoteKey(u)) || '';
   const ud = document.getElementById('user-display');
   if (ud) ud.textContent = getUserDisplayName();
+  // Request notification permission for queue monitor (admin only)
+  if (currentUser?.isAdmin && typeof requestNotificationPermission === 'function') {
+    requestNotificationPermission();
+  }
   // Show admin-only tabs
   const otoBtn = document.getElementById('tab-btn-onetoone');
   if (otoBtn) otoBtn.style.display = currentUser?.isAdmin ? '' : 'none';
