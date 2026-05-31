@@ -15329,11 +15329,12 @@ function renderUserList() {
     };
 
     const fGrid = document.createElement('div'); fGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
+    const { wrap: f0, inp: inpUsername }  = mkField('Login username', u.name,                      'text', 'Used to log in');
     const { wrap: f1, inp: inpDisplay }   = mkField('Display name',   u.displayName||u.name,       'text', 'How their name appears');
     const { wrap: f2, inp: inpEmail }     = mkField('Email',          u.email||'',                  'email', 'name@munu.cloud');
     const { wrap: f3, inp: inpSched }     = mkField('Schedule name',  u.scheduleName||getScheduleName(u)||'', 'text', 'Match name in schedule');
     const { wrap: f4, inp: inpPassword }  = mkField('New password',   '',                           'password', 'Leave blank to keep current');
-    fGrid.appendChild(f1); fGrid.appendChild(f2); fGrid.appendChild(f3); fGrid.appendChild(f4);
+    fGrid.appendChild(f0); fGrid.appendChild(f1); fGrid.appendChild(f2); fGrid.appendChild(f3); fGrid.appendChild(f4);
     editPanel.appendChild(fGrid);
 
     const btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:8px;align-items:center;';
@@ -15357,6 +15358,20 @@ function renderUserList() {
       const all = getUsers();
       const t = all.find(x => x.name === u.name);
       if (!t) return;
+
+      // Username (login name)
+      const newUsername = inpUsername.value.trim();
+      if (newUsername && newUsername !== t.name) {
+        if (all.some(x => x.name !== t.name && x.name === newUsername)) {
+          msg.style.color='var(--high-text)'; msg.textContent='Username already taken'; return;
+        }
+        // Update session if this is the current user
+        if (currentUser && currentUser.name === t.name) {
+          currentUser.name = newUsername;
+          localStorage.setItem('wtp_session', JSON.stringify(currentUser));
+        }
+        t.name = newUsername;
+      }
 
       // Display name
       const dn = inpDisplay.value.trim();
