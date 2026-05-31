@@ -3595,14 +3595,7 @@ window.tryUnlock = async function() {
         </div>
       </div>
 
-      <!-- Unifon name mapping -->
-      <div class="settings-card" id="unifon-map-card" style="display:none;">
-        <div class="settings-card-inner">
-          <div class="settings-card-title">Unifon name mapping</div>
-          <div class="settings-card-desc">Map Unifon agent names to your team member names so call stats appear on the right agent cards.</div>
-          <div id="unifon-map-body" style="margin-top:8px;"></div>
-        </div>
-      </div>
+      <!-- Unifon name mapping — superseded by auto-match in Team members -->
 
       <!-- Zendesk (shown if configured) -->
       <div class="settings-card" id="zd-settings-card">
@@ -10980,29 +10973,39 @@ function renderOtoPersonMain(personName) {
     const mb = document.createElement('div'); mb.className = 'oto-section-body';
     mb.style.display = 'flex'; mb.style.flexDirection = 'column'; mb.style.gap = '6px';
 
-    // ZD match
-    const zdAgent = zdAgents && zdAgents.find(a =>
-      normName(a.name.split(' ')[0]) === normName(personName.split(' ')[0]) ||
-      normName(a.name) === normName(personName)
-    );
+    // ZD match — check stored profile ID first, then live agent list, then first-name fallback
+    const storedZdId = profile.zdAgentId;
+    const zdAgent = storedZdId
+      ? (zdAgents && zdAgents.find(a => String(a.id) === String(storedZdId)))
+        || { id: storedZdId, name: 'Agent #' + storedZdId + ' (open Tickets tab to verify)' }
+      : zdAgents && zdAgents.find(a =>
+          normName(a.name.split(' ')[0]) === normName(personName.split(' ')[0]) ||
+          normName(a.name) === normName(personName)
+        );
+    const zdMatched = !!(storedZdId || zdAgent);
     const zdRow = document.createElement('div'); zdRow.className = 'oto-match-row';
-    const zdDot = document.createElement('div'); zdDot.className = 'oto-match-dot ' + (zdAgent ? 'ok' : 'warn');
+    const zdDot = document.createElement('div'); zdDot.className = 'oto-match-dot ' + (zdMatched ? 'ok' : 'warn');
     const zdTxt = document.createElement('div'); zdTxt.style.flex = '1'; zdTxt.style.color = 'var(--text2)';
-    zdTxt.innerHTML = '<strong>Zendesk:</strong> ' + (zdAgent
-      ? '<span style="color:#34d399;">✓ Matched to ' + zdAgent.name + '</span>'
-      : '<span style="color:#fbbf24;">⚠ No match — name may differ</span>');
+    if (zdMatched) {
+      zdTxt.innerHTML = '<strong>Zendesk:</strong> <span style="color:#34d399;">✓ '
+        + (zdAgent?.name || 'Linked (ID: ' + storedZdId + ')') + '</span>';
+    } else if (!zdAgents || !zdAgents.length) {
+      zdTxt.innerHTML = '<strong>Zendesk:</strong> <span style="color:var(--text3);">Not checked — open Tickets tab first to load agents, or map in Settings → Team</span>';
+    } else {
+      zdTxt.innerHTML = '<strong>Zendesk:</strong> <span style="color:#fbbf24;">⚠ No match — set in Settings → Team → Team members → Edit</span>';
+    }
     zdRow.appendChild(zdDot); zdRow.appendChild(zdTxt);
     mb.appendChild(zdRow);
 
-    // Unifon match (via name map)
-    const nameMap = loadUnifonNameMap ? loadUnifonNameMap() : {};
-    const uniMatch = Object.entries(nameMap).find(([,n]) => n === personName);
+    // Unifon match — auto from imported reports
+    const uniStats = getUnifonAgentStats(personName, fmtLocal(getMonday(-4)), localToday());
+    const uniMatched = uniStats && (uniStats.answered > 0 || uniStats.missed > 0);
     const uniRow = document.createElement('div'); uniRow.className = 'oto-match-row';
-    const uniDot = document.createElement('div'); uniDot.className = 'oto-match-dot ' + (uniMatch ? 'ok' : 'miss');
+    const uniDot = document.createElement('div'); uniDot.className = 'oto-match-dot ' + (uniMatched ? 'ok' : 'miss');
     const uniTxt = document.createElement('div'); uniTxt.style.flex = '1'; uniTxt.style.color = 'var(--text2)';
-    uniTxt.innerHTML = '<strong>Unifon:</strong> ' + (uniMatch
-      ? '<span style="color:#34d399;">✓ Agent #' + uniMatch[0] + '</span>'
-      : '<span style="color:var(--text3);">Not mapped — set in Settings → Data & Import → Unifon agent mapping</span>');
+    uniTxt.innerHTML = '<strong>Unifon:</strong> ' + (uniMatched
+      ? '<span style="color:#34d399;">✓ Auto-matched from imported reports (' + (uniStats.answered + uniStats.missed) + ' calls in last 4 weeks)</span>'
+      : '<span style="color:var(--text3);">No call data yet — import a Unifon .xlsx in Settings → Data & Import</span>');
     uniRow.appendChild(uniDot); uniRow.appendChild(uniTxt);
     mb.appendChild(uniRow);
 
