@@ -6505,19 +6505,6 @@ function openMobileNotes() { /* no-op */ }
 function isMobile() { return window.innerWidth < 600; }
 
 // ── Admin dashboard ───────────────────────────────────────────────
-// Top-level wrapper — calls the inner function via the live DOM element
-function refreshUnifonLiveWidget(el) {
-  const target = el || document.getElementById('db-unifon-live');
-  if (!target) return;
-  if (typeof window._refreshUnifonLiveWidget === 'function') {
-    window._refreshUnifonLiveWidget(target);
-  } else {
-    // Dashboard not rendered yet — trigger a full re-render
-    localStorage.removeItem('wtp_unifon_queue_cache');
-    renderDashboard();
-  }
-}
-
 function renderAdminDashboard(root, viewerMode=false) {
   // viewerMode=true: operational view only, no personal sections (1:1s, team pulse, tasks, handover)
   const todayStr = localToday();
@@ -6871,11 +6858,6 @@ function renderAdminDashboard(root, viewerMode=false) {
     queueSec.appendChild(uLive);
 
     // Async fill — non-blocking
-    refreshUnifonLiveWidget(uLive);
-  }
-
-  // ── Separated so polling can re-call it ────────────────────────
-  window._refreshUnifonLiveWidget = function(uLive) {
     fetchUnifonQueueSummary(true).then(summary => {
       if (!summary || !summary.entries) {
         uLive.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--text3);">Queue data unavailable</div>';
@@ -6890,6 +6872,7 @@ function renderAdminDashboard(root, viewerMode=false) {
       htitle.textContent = _isOpenHours ? 'Queue — opening hours' : _isWeekend ? 'Queue — weekend (Vakt)' : 'Queue — after hours (Vakt)';
       const htime = document.createElement('div');
       htime.style.cssText = 'font-size:9px;color:var(--text3);';
+      htime.className = 'db-queue-time';
       htime.textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
       hdr.appendChild(htitle); hdr.appendChild(htime);
       uLive.appendChild(hdr);
@@ -6964,10 +6947,12 @@ function renderAdminDashboard(root, viewerMode=false) {
           const rVal = document.createElement('div'); rVal.className = 'db-stat-value small ' + readyCls;
           rVal.textContent = ready + '/' + total;
           rVal.title = loggedIn + ' logged in, ' + ready + ' ready';
+          rVal.dataset.queueReady = q.queue_id;
           rPanel.appendChild(rLbl); rPanel.appendChild(rVal);
           const wPanel = document.createElement('div'); wPanel.className = 'db-stat-panel ' + waitCls;
           const wLbl = document.createElement('div'); wLbl.className = 'db-stat-label'; wLbl.textContent = 'Avg wait';
           const wVal = document.createElement('div'); wVal.className = 'db-stat-value small ' + waitCls; wVal.textContent = wait > 0 ? Math.round(wait) + 's' : '—';
+          wVal.dataset.queueWait = q.queue_id;
           wPanel.appendChild(wLbl); wPanel.appendChild(wVal);
           qGrid.appendChild(rPanel); qGrid.appendChild(wPanel);
           uLive.appendChild(qGrid);
@@ -7075,11 +7060,52 @@ function renderAdminDashboard(root, viewerMode=false) {
     const dashTab = document.getElementById('tab-dashboard');
     if (!dashTab || dashTab.style.display === 'none') return;
     localStorage.removeItem('wtp_unifon_queue_cache');
-    // Re-render the live Unifon widget if it exists
+    // Re-fetch and update the live widget in place
     const uLive = document.getElementById('db-unifon-live');
-    if (uLive && hasUnifonApi()) refreshUnifonLiveWidget(uLive);
-    // Also re-render the ZD period stats
-    renderQueuePanel(queueBody, queuePeriod);
+    if (uLive && hasUnifonApi()) {
+      fetchUnifonQueueSummary(true).then(summary => {
+        if (!summary || !summary.entries) return;
+        // Re-render just the queue stat panels inside the widget
+        const now2 = new Date();
+        const dow2 = now2.getDay(), hr2 = now2.getHours();
+        const isWknd2 = dow2===0||dow2===6;
+        const isOpen2 = !isWknd2 && hr2>=7 && hr2<17;
+        const ACTIVE2 = isOpen2 ? 43500 : 43499;
+        const INACTIVE2 = isOpen2 ? 43499 : 43500;
+        const entries2 = summary.entries.filter(q=>q.queue_id===43500||q.queue_id===43499);
+        const norm3 = s=>(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+        const isMyTeam2 = m => {
+          const mf=norm3(m.firstname||''), mfl=norm3((m.firstname||'')+' '+(m.lastname||''));
+          return MY_TEAM.some(t=>norm3(t.split(' ')[0])===mf||norm3(t)===mfl);
+        };
+        // Update time display
+        const htime2 = uLive.querySelector('.db-queue-time');
+        if (htime2) htime2.textContent = now2.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+        // Update each queue's stat panels
+        entries2.forEach(q => {
+          const members2 = (q.members||[]).filter(isMyTeam2);
+          const ready2   = members2.filter(m=>m.fixed?.ready||m.mobile?.ready||m.fixed?.restore_ready||m.mobile?.restore_ready).length;
+          const total2   = members2.length;
+          const wait2    = q.keyfigures?.answered_waittime||0;
+          const isActive2 = q.queue_id===ACTIVE2;
+          // Find and update ready stat value
+          const readyEl = uLive.querySelector('[data-queue-ready="'+q.queue_id+'"]');
+          const waitEl  = uLive.querySelector('[data-queue-wait="'+q.queue_id+'"]');
+          if (readyEl) {
+            readyEl.textContent = ready2+'/'+total2;
+            const readyCls2 = ready2===0&&total2>0?'danger':ready2<2&&total2>0?'warn':'ok';
+            readyEl.className = 'db-stat-value small '+readyCls2;
+            readyEl.closest('.db-stat-panel').className = 'db-stat-panel '+readyCls2;
+          }
+          if (waitEl) {
+            waitEl.textContent = wait2>0?Math.round(wait2)+'s':'—';
+            const waitCls2 = wait2>120?'danger':wait2>60?'warn':wait2>0?'ok':'';
+            waitEl.className = 'db-stat-value small '+waitCls2;
+            waitEl.closest('.db-stat-panel').className = 'db-stat-panel '+waitCls2;
+          }
+        });
+      }).catch(()=>{});
+    }
   }, 30000);
 
   const mkQStat=(id,label,color)=>{const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;cell.appendChild(val);cell.appendChild(lbl);return cell;};
