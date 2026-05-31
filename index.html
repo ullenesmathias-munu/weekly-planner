@@ -3136,7 +3136,8 @@ window.tryUnlock = async function() {
           </div>
           <div class="settings-btn-row">
             <button class="btn-save" onclick="saveUnifonCredentials()">Save</button>
-            <button class="btn-cancel" onclick="clearUnifonCredentials()">Clear</button>
+            <button class="btn-cancel" onclick="clearUnifonCredentials()">Clear all</button>
+            <button class="btn-cancel" onclick="resetUnifonToken()" style="background:none;border:1px solid #fbbf24;color:#fbbf24;">↻ Reset token</button>
             <button class="btn-save" onclick="testUnifonApi()" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);">Test connection</button>
           </div>
           <div id="unifon-api-status" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
@@ -5196,6 +5197,14 @@ function saveUnifonCredentials() {
 }
 function saveUnifonApiKey() { saveUnifonCredentials(); }
 
+function resetUnifonToken() {
+  // Clear only the token + queue cache — keeps credentials intact
+  [UNIFON_TOKEN_CACHE_KEY, UNIFON_QUEUE_CACHE_KEY, UNIFON_API_CACHE_KEY].forEach(k => localStorage.removeItem(k));
+  const status = document.getElementById('unifon-api-status');
+  if (status) { status.style.color = '#fbbf24'; status.textContent = 'Token cleared — testing connection…'; }
+  setTimeout(() => testUnifonApi(), 300);
+}
+
 function clearUnifonCredentials() {
   [UNIFON_CLIENT_ID_KEY, UNIFON_CLIENT_SECRET_KEY, UNIFON_TOKEN_CACHE_KEY, UNIFON_QUEUE_CACHE_KEY, UNIFON_API_CACHE_KEY].forEach(k => localStorage.removeItem(k));
   const ci = document.getElementById('unifon-client-id');     if (ci) ci.value = '';
@@ -6883,22 +6892,6 @@ function renderAdminDashboard(root, viewerMode=false) {
         if (mapped) return MY_TEAM.some(t => t.toLowerCase() === mapped[1].toLowerCase());
         return MY_TEAM.some(t => t.split(' ')[0].toLowerCase() === mFirst);
       };
-
-      // Debug: log raw member data so we can see the actual structure
-      console.log('[Unifon] Raw queue entries:', JSON.stringify(showEntries.map(q => ({
-        id: q.queue_id,
-        desc: q.description,
-        memberCount: (q.members||[]).length,
-        sampleMembers: (q.members||[]).slice(0,3).map(m => ({
-          firstname: m.firstname,
-          lastname: m.lastname,
-          fixed: m.fixed,
-          mobile: m.mobile,
-          status: m.status,
-          ready: m.ready,
-          logged_in: m.logged_in,
-        }))
-      })), null, 2));
 
       // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
       showEntries.forEach((q, qi) => {
