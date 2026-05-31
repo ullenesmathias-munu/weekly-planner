@@ -12064,16 +12064,16 @@
       }
     },
     "2026-05-31": {
-      "Jonas Johannes": {
-        "answered": 5,
-        "totalTalkSec": 1392,
-        "totalWaitSec": 130,
-        "missed": 0
-      },
       "Benjamin \u00d8deg\u00e5rd": {
-        "answered": 5,
-        "totalTalkSec": 1844,
-        "totalWaitSec": 723,
+        "answered": 8,
+        "totalTalkSec": 3069,
+        "totalWaitSec": 1264,
+        "missed": 1
+      },
+      "Jonas Johannes": {
+        "answered": 14,
+        "totalTalkSec": 6424,
+        "totalWaitSec": 1678,
         "missed": 1
       }
     },
