@@ -6903,6 +6903,20 @@ function renderAdminDashboard(root, viewerMode=false) {
         return MY_TEAM.some(t => t.split(' ')[0].toLowerCase() === mFirst);
       };
 
+      // DEBUG: dump raw member structure once
+      if (!window._unifonDebugDone) {
+        window._unifonDebugDone = true;
+        console.log('[Unifon DEBUG] Full summary keys:', Object.keys(summary || {}));
+        if (summary?.entries?.length) {
+          const q0 = summary.entries[0];
+          console.log('[Unifon DEBUG] Queue keys:', Object.keys(q0));
+          console.log('[Unifon DEBUG] keyfigures:', JSON.stringify(q0.keyfigures));
+          if (q0.members?.length) {
+            console.log('[Unifon DEBUG] Member[0] full:', JSON.stringify(q0.members[0]));
+            console.log('[Unifon DEBUG] Member[1] full:', JSON.stringify(q0.members[1]));
+          }
+        }
+      }
       // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
       showEntries.forEach((q, qi) => {
         const isActive = q.queue_id === ACTIVE_QUEUE_ID;
