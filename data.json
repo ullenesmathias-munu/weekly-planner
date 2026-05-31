@@ -12603,7 +12603,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-31T09:14:27.630Z",
+    "generated": "2026-05-31T11:20:03.375Z",
     "agents": {
       "Jonas": {
         "answered": 78,
@@ -12646,16 +12646,6 @@
         "zdPhone": 33,
         "zdOpen": 7,
         "zdPending": 10
-      },
-      "Bernadett": {
-        "answered": 10,
-        "missed": 0,
-        "avgTalk": 495,
-        "avgWait": 39,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 3
       },
       "Benjamin": {
         "answered": 28,
