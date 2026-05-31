@@ -10072,6 +10072,9 @@
     "zdEnriched": true,
     "zdEnrichedAt": "2026-05-30T07:30:08.689Z"
   },
+  "wtp_ann_read_benjamin_odegard_munu_cloud": [
+    "1778664308290"
+  ],
   "wtp_profile_cecilie": {
     "log": [],
     "goals": [],
@@ -12693,7 +12696,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-31",
     "toDate": "2026-05-31",
-    "generated": "2026-05-31T17:48:31.330Z",
+    "generated": "2026-05-31T17:51:12.830Z",
     "agents": {
       "Jonas": {
         "answered": 5,
