@@ -197,6 +197,13 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-05-31T16:04:32.599Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -5778,7 +5785,7 @@
       "queueId": 43499
     },
     "43499_Jonas_Johannes": {
-      "ready": true,
+      "ready": false,
       "name": "Jonas Johannes",
       "queue": "Vakt",
       "queueId": 43499
