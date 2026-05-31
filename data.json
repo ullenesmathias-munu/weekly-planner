@@ -12657,9 +12657,7 @@
       "isAdmin": false,
       "displayName": "Benjamin",
       "scheduleName": "Benjamin",
-      "privileges": [
-        "zendesk"
-      ]
+      "privileges": []
     }
   ],
   "wtp_profile_julie": {
