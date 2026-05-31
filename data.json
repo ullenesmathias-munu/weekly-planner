@@ -5762,21 +5762,9 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
-    "43500_Bernadett_Costea": {
-      "ready": false,
-      "name": "Bernadett Costea",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500
-    },
     "43499_Thomas_Hildre": {
       "ready": false,
       "name": "Thomas Hildre",
-      "queue": "Vakt",
-      "queueId": 43499
-    },
-    "43499_Bernadett_Costea": {
-      "ready": false,
-      "name": "Bernadett Costea",
       "queue": "Vakt",
       "queueId": 43499
     },
@@ -7966,7 +7954,8 @@
     "focus": "",
     "_open": false,
     "internalNotes": "",
-    "email": "Vetle.Bengtson"
+    "email": "Vetle.Bengtson@munu.cloud",
+    "zdAgentId": "34928604435485"
   },
   "wtp_intel_snap_2026-05-11": {
     "fromDate": "2026-05-11",
