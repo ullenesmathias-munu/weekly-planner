@@ -6884,6 +6884,22 @@ function renderAdminDashboard(root, viewerMode=false) {
         return MY_TEAM.some(t => t.split(' ')[0].toLowerCase() === mFirst);
       };
 
+      // Debug: log raw member data so we can see the actual structure
+      console.log('[Unifon] Raw queue entries:', JSON.stringify(showEntries.map(q => ({
+        id: q.queue_id,
+        desc: q.description,
+        memberCount: (q.members||[]).length,
+        sampleMembers: (q.members||[]).slice(0,3).map(m => ({
+          firstname: m.firstname,
+          lastname: m.lastname,
+          fixed: m.fixed,
+          mobile: m.mobile,
+          status: m.status,
+          ready: m.ready,
+          logged_in: m.logged_in,
+        }))
+      })), null, 2));
+
       // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
       showEntries.forEach((q, qi) => {
         const isActive = q.queue_id === ACTIVE_QUEUE_ID;
