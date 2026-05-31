@@ -207,7 +207,8 @@
     }
   ],
   "wtp_profile_benjamin": {
-    "rag": "green"
+    "rag": "green",
+    "zdAgentId": "24587976723485"
   },
   "wtp_profile_thomas": {
     "log": [
