@@ -12612,6 +12612,7 @@
     "zdEnriched": true,
     "zdEnrichedAt": "2026-05-30T07:29:24.197Z"
   },
+  "wtp_fb_seen_vetle": 1780176134062,
   "wtp_users": [
     {
       "name": "Mathias",
@@ -12854,13 +12855,13 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-31T17:51:26.762Z",
+    "generated": "2026-05-31T17:57:33.990Z",
     "agents": {
       "Jonas": {
-        "answered": 78,
-        "missed": 1,
-        "avgTalk": 401,
-        "avgWait": 200,
+        "answered": 87,
+        "missed": 2,
+        "avgTalk": 417,
+        "avgWait": 197,
         "zdSolved": 112,
         "isNight": false,
         "nightDays": 0,
@@ -12899,10 +12900,10 @@
         "zdPending": 10
       },
       "Benjamin": {
-        "answered": 28,
+        "answered": 31,
         "missed": 1,
-        "avgTalk": 280,
-        "avgWait": 66,
+        "avgTalk": 292,
+        "avgWait": 77,
         "zdSolved": 49,
         "isNight": true,
         "nightDays": 2,
@@ -12998,11 +12999,11 @@
       }
     },
     "totals": {
-      "offered": 343,
-      "answered": 298,
-      "missed": 45,
-      "ansRate": 87,
-      "avgWait": 631
+      "offered": 497,
+      "answered": 426,
+      "missed": 71,
+      "ansRate": 86,
+      "avgWait": 566
     }
   },
   "wtp_schedule": [
