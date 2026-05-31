@@ -5198,8 +5198,9 @@ function saveUnifonCredentials() {
 function saveUnifonApiKey() { saveUnifonCredentials(); }
 
 function resetUnifonToken() {
-  // Clear only the token + queue cache — keeps credentials intact
+  // Clear token, queue cache, and failure cooldown — keeps credentials intact
   [UNIFON_TOKEN_CACHE_KEY, UNIFON_QUEUE_CACHE_KEY, UNIFON_API_CACHE_KEY].forEach(k => localStorage.removeItem(k));
+  window._unifonDebugDone = false; // re-enable debug log
   const status = document.getElementById('unifon-api-status');
   if (status) { status.style.color = '#fbbf24'; status.textContent = 'Token cleared — testing connection…'; }
   setTimeout(() => testUnifonApi(), 300);
@@ -5342,6 +5343,22 @@ async function fetchUnifonQueueSummary(forceRefresh) {
       return null; // cooldown — don't hammer a failing endpoint
     }
     const data = await unifonApiFetch('/bnapi/v1/queue/summary');
+    // DEBUG: log raw structure once
+    if (!window._unifonDebugDone) {
+      window._unifonDebugDone = true;
+      console.log('[Unifon DEBUG] summary keys:', Object.keys(data||{}));
+      const entries = data?.entries || data?.queues || data?.data || [];
+      console.log('[Unifon DEBUG] entries type:', typeof entries, Array.isArray(entries) ? entries.length + ' items' : entries);
+      if (Array.isArray(entries) && entries.length) {
+        const q0 = entries[0];
+        console.log('[Unifon DEBUG] queue[0] keys:', Object.keys(q0));
+        const members = q0.members || q0.agents || q0.users || [];
+        console.log('[Unifon DEBUG] members count:', members.length);
+        if (members.length) {
+          console.log('[Unifon DEBUG] member[0]:', JSON.stringify(members[0]));
+        }
+      }
+    }
     localStorage.setItem(UNIFON_QUEUE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
     return data;
   } catch(e) {
@@ -6903,20 +6920,6 @@ function renderAdminDashboard(root, viewerMode=false) {
         return MY_TEAM.some(t => t.split(' ')[0].toLowerCase() === mFirst);
       };
 
-      // DEBUG: dump raw member structure once
-      if (!window._unifonDebugDone) {
-        window._unifonDebugDone = true;
-        console.log('[Unifon DEBUG] Full summary keys:', Object.keys(summary || {}));
-        if (summary?.entries?.length) {
-          const q0 = summary.entries[0];
-          console.log('[Unifon DEBUG] Queue keys:', Object.keys(q0));
-          console.log('[Unifon DEBUG] keyfigures:', JSON.stringify(q0.keyfigures));
-          if (q0.members?.length) {
-            console.log('[Unifon DEBUG] Member[0] full:', JSON.stringify(q0.members[0]));
-            console.log('[Unifon DEBUG] Member[1] full:', JSON.stringify(q0.members[1]));
-          }
-        }
-      }
       // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
       showEntries.forEach((q, qi) => {
         const isActive = q.queue_id === ACTIVE_QUEUE_ID;
