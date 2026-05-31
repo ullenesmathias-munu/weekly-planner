@@ -190,6 +190,15 @@
     "zdEnriched": true,
     "zdEnrichedAt": "2026-05-30T07:29:35.099Z"
   },
+  "wtp_queue_log": [
+    {
+      "ts": "2026-05-31T16:03:32.695Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    }
+  ],
   "wtp_profile_benjamin": {
     "rag": "green"
   },
@@ -5805,7 +5814,7 @@
       "queueId": 43499
     },
     "43499_Benjamin_\u00d8deg\u00e5rd": {
-      "ready": false,
+      "ready": true,
       "name": "Benjamin \u00d8deg\u00e5rd",
       "queue": "Vakt",
       "queueId": 43499
