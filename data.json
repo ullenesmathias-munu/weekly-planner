@@ -12653,20 +12653,20 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-31T11:20:03.375Z",
+    "generated": "2026-05-31T17:46:25.407Z",
     "agents": {
       "Jonas": {
         "answered": 78,
         "missed": 1,
         "avgTalk": 401,
         "avgWait": 200,
-        "zdSolved": 102,
+        "zdSolved": 112,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 6,
-        "zdEmail": 13,
-        "zdPhone": 89,
-        "zdOpen": 9,
+        "zdEmail": 15,
+        "zdPhone": 97,
+        "zdOpen": 8,
         "zdPending": 2
       },
       "Thomas": {
@@ -12702,14 +12702,14 @@
         "missed": 1,
         "avgTalk": 280,
         "avgWait": 66,
-        "zdSolved": 44,
+        "zdSolved": 49,
         "isNight": true,
         "nightDays": 2,
         "dayDays": 2,
         "zdEmail": 3,
-        "zdPhone": 41,
-        "zdOpen": 7,
-        "zdPending": 0
+        "zdPhone": 46,
+        "zdOpen": 4,
+        "zdPending": 1
       },
       "Cecilie": {
         "answered": 57,
@@ -12750,8 +12750,8 @@
         "dayDays": 5,
         "zdEmail": 11,
         "zdPhone": 66,
-        "zdOpen": 9,
-        "zdPending": 5
+        "zdOpen": 10,
+        "zdPending": 4
       },
       "Andreas": {
         "answered": 30,
