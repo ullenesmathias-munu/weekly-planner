@@ -5343,22 +5343,6 @@ async function fetchUnifonQueueSummary(forceRefresh) {
       return null; // cooldown — don't hammer a failing endpoint
     }
     const data = await unifonApiFetch('/bnapi/v1/queue/summary');
-    // DEBUG: log raw structure once
-    if (!window._unifonDebugDone) {
-      window._unifonDebugDone = true;
-      console.log('[Unifon DEBUG] summary keys:', Object.keys(data||{}));
-      const entries = data?.entries || data?.queues || data?.data || [];
-      console.log('[Unifon DEBUG] entries type:', typeof entries, Array.isArray(entries) ? entries.length + ' items' : entries);
-      if (Array.isArray(entries) && entries.length) {
-        const q0 = entries[0];
-        console.log('[Unifon DEBUG] queue[0] keys:', Object.keys(q0));
-        const members = q0.members || q0.agents || q0.users || [];
-        console.log('[Unifon DEBUG] members count:', members.length);
-        if (members.length) {
-          console.log('[Unifon DEBUG] member[0]:', JSON.stringify(members[0]));
-        }
-      }
-    }
     localStorage.setItem(UNIFON_QUEUE_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
     return data;
   } catch(e) {
@@ -6912,19 +6896,27 @@ function renderAdminDashboard(root, viewerMode=false) {
       ];
 
       // Helper to check if a queue member belongs to MY_TEAM
-      const nameMapW = (typeof loadUnifonNameMap === 'function') ? loadUnifonNameMap() : {};
+      // Queue members have firstname/lastname directly — match against MY_TEAM
+      const norm2 = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
       const isMyTeamMember = (m) => {
-        const mFirst = (m.firstname||'').toLowerCase();
-        const mapped = Object.entries(nameMapW).find(([num]) => m.fixed?.agent===num || m.mobile?.agent===num);
-        if (mapped) return MY_TEAM.some(t => t.toLowerCase() === mapped[1].toLowerCase());
-        return MY_TEAM.some(t => t.split(' ')[0].toLowerCase() === mFirst);
+        const mFirst = norm2(m.firstname||'');
+        const mFull  = norm2((m.firstname||'')+' '+(m.lastname||''));
+        return MY_TEAM.some(t => {
+          const tFirst = norm2(t.split(' ')[0]);
+          const tFull  = norm2(t);
+          return mFirst === tFirst || mFull === tFull;
+        });
       };
 
       // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
       showEntries.forEach((q, qi) => {
         const isActive = q.queue_id === ACTIVE_QUEUE_ID;
         const members  = (q.members || []).filter(isMyTeamMember);
-        const ready    = members.filter(m => m.fixed?.ready || m.mobile?.ready).length;
+        const ready    = members.filter(m =>
+          m.fixed?.ready || m.mobile?.ready ||
+          m.fixed?.restore_ready || m.mobile?.restore_ready
+        ).length;
+        const loggedIn = members.filter(m => m.fixed !== null || m.mobile !== null).length;
         const total    = members.length;
         const wait     = q.keyfigures?.answered_waittime || 0;
         const waitCls  = wait > 120 ? 'danger' : wait > 60 ? 'warn' : wait > 0 ? 'ok' : '';
@@ -6949,7 +6941,9 @@ function renderAdminDashboard(root, viewerMode=false) {
           const qGrid = document.createElement('div'); qGrid.className = 'db-stat-grid'; qGrid.style.padding = '4px 12px 8px';
           const rPanel = document.createElement('div'); rPanel.className = 'db-stat-panel ' + readyCls;
           const rLbl = document.createElement('div'); rLbl.className = 'db-stat-label'; rLbl.textContent = 'Agents ready';
-          const rVal = document.createElement('div'); rVal.className = 'db-stat-value small ' + readyCls; rVal.textContent = ready + '/' + total;
+          const rVal = document.createElement('div'); rVal.className = 'db-stat-value small ' + readyCls;
+          rVal.textContent = ready + '/' + total;
+          rVal.title = loggedIn + ' logged in, ' + ready + ' ready';
           rPanel.appendChild(rLbl); rPanel.appendChild(rVal);
           const wPanel = document.createElement('div'); wPanel.className = 'db-stat-panel ' + waitCls;
           const wLbl = document.createElement('div'); wLbl.className = 'db-stat-label'; wLbl.textContent = 'Avg wait';
