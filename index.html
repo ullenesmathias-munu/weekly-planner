@@ -8702,8 +8702,7 @@ function renderAdminDashboard(root, viewerMode=false) {
     }
   };
 
-  // renderQueuePanel end — renderChart2 for CSAT trend
-  renderChart2();
+  // renderQueuePanel end
 }
 
   // ── Right panel: SATISFACTION + MEDIAN RESOLUTION + VOLUME TREND ──
@@ -11780,6 +11779,8 @@ function settingsNav(section, btn) {
     }
     const nCard = document.getElementById('queue-notif-card');
     if (nCard) { nCard.style.display = ''; updateNotifStatus(); }
+    // Always render the portal logins list
+    renderUserList();
   }
 
   // Show admin-only cards in Integrations section
