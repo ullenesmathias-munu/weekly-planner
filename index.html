@@ -9907,7 +9907,14 @@ async function renderTeamMemberDashboard(root) {
 
   // Open tickets (async)
   const ticketPanel = m('div','ap-panel');
-  const ticketHdr = m('div','ap-panel-hdr'); ticketHdr.textContent = 'My open tickets';
+  const ticketHdr = m('div','ap-panel-hdr');
+  // Header with refresh button
+  const ticketHdrLabel = m('span'); ticketHdrLabel.textContent = 'My open tickets';
+  const ticketRefreshBtn = m('button');
+  ticketRefreshBtn.style.cssText = 'font-family:inherit;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--cal-text);transition:all 0.15s;';
+  ticketRefreshBtn.textContent = '↻ Refresh';
+  ticketRefreshBtn.onclick = () => { fetchMyTickets(); };
+  ticketHdr.appendChild(ticketHdrLabel); ticketHdr.appendChild(ticketRefreshBtn);
   const ticketBody = m('div','ap-panel-body');
   ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
   ticketPanel.appendChild(ticketHdr); ticketPanel.appendChild(ticketBody);
@@ -9961,9 +9968,23 @@ async function renderTeamMemberDashboard(root) {
   body.appendChild(sec5Grid);
 
   // ══ ASYNC: ZD tickets ═════════════════════════════════════════
-  if (zdReady() && myZdAgentId) {
-    (async () => {
-      try {
+  async function fetchMyTickets() {
+    ticketRefreshBtn.textContent = '↻ Loading…';
+    ticketRefreshBtn.disabled = true;
+    if (!zdReady()) {
+      ticketBody.innerHTML = '<div style="font-size:12px;color:var(--text3);">Zendesk not configured.</div>';
+      ticketRefreshBtn.textContent = '↻ Refresh'; ticketRefreshBtn.disabled = false;
+      return;
+    }
+    if (!myZdAgentId) {
+      ticketBody.innerHTML = '<div style="font-size:12px;color:var(--text2);line-height:1.6;">'
+        + 'Ask your manager to link your account to Zendesk in <strong>Settings → Team → Team members → Edit → Zendesk agent</strong>. '
+        + 'Once linked, your ticket stats will appear here automatically.</div>';
+      ticketRefreshBtn.textContent = '↻ Refresh'; ticketRefreshBtn.disabled = false;
+      return;
+    }
+    ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
+    try {
         const [openRes, pendRes, solvedRes] = await Promise.all([
           zdFetch('/search.json?query='+encodeURIComponent('type:ticket status:open assignee:'+myZdAgentId)+'&per_page=10').catch(()=>({results:[]})),
           zdCount('type:ticket status:pending assignee:'+myZdAgentId).catch(()=>0),
@@ -10027,13 +10048,15 @@ async function renderTeamMemberDashboard(root) {
             csatRow2.appendChild(csatIcon);csatRow2.appendChild(csatTxt2);ticketBody.appendChild(csatRow2);
           }
         }
-      } catch(e) {
-        ticketBody.innerHTML='<div style="font-size:11px;color:var(--text3);">Could not load tickets.</div>';
-      }
-    })();
-  } else {
-    ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Zendesk not configured for your account.</div>';
+      ticketRefreshBtn.textContent = '↻ Refresh';
+      ticketRefreshBtn.disabled = false;
+    } catch(e) {
+      ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Could not load tickets: ' + e.message + '</div>';
+      ticketRefreshBtn.textContent = '↻ Retry';
+      ticketRefreshBtn.disabled = false;
+    }
   }
+  fetchMyTickets();
 
   } catch(e) {
     console.error('Agent portal error:', e);
