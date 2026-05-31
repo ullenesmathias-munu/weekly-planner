@@ -5232,8 +5232,12 @@ function initUnifonApiSettings() {
 async function getUnifonToken() {
   try {
     const cached = JSON.parse(localStorage.getItem(UNIFON_TOKEN_CACHE_KEY) || '{}');
-    if (cached.access_token && cached.expires_at && cached.expires_at > Date.now() + 5*60*1000) {
+    if (cached.access_token && cached.expires_at && cached.expires_at > Date.now() + 10*60*1000) {
       return cached.access_token;
+    }
+    // If token exists but expires soon (or expiry unknown), clear it to force a fresh fetch
+    if (cached.access_token && (!cached.expires_at || cached.expires_at <= Date.now() + 10*60*1000)) {
+      localStorage.removeItem(UNIFON_TOKEN_CACHE_KEY);
     }
     const res = await fetch(BNAPI_PROXY + '/bnapi/v1/session/token', {
       method: 'POST',
@@ -5254,12 +5258,18 @@ async function getUnifonToken() {
   } catch(e) { throw new Error('Unifon token: ' + e.message); }
 }
 
-async function unifonApiFetch(path) {
+async function unifonApiFetch(path, _retry) {
   if (!hasUnifonApi()) throw new Error('Unifon credentials not configured');
   const token = await getUnifonToken();
   const res = await fetch(BNAPI_PROXY + path, {
     headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
   });
+  // If token was rejected by the server, clear it and retry once with a fresh one
+  if ((res.status === 401 || res.status === 403) && !_retry) {
+    console.warn('[Unifon] Token rejected (' + res.status + ') — clearing cache and retrying with fresh token');
+    localStorage.removeItem(UNIFON_TOKEN_CACHE_KEY);
+    return unifonApiFetch(path, true); // retry flag prevents infinite loop
+  }
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.message || json.error_description || json.error || 'HTTP ' + res.status);
   return json;
