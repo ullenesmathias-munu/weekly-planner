@@ -6505,6 +6505,19 @@ function openMobileNotes() { /* no-op */ }
 function isMobile() { return window.innerWidth < 600; }
 
 // ── Admin dashboard ───────────────────────────────────────────────
+// Top-level wrapper — calls the inner function via the live DOM element
+function refreshUnifonLiveWidget(el) {
+  const target = el || document.getElementById('db-unifon-live');
+  if (!target) return;
+  if (typeof window._refreshUnifonLiveWidget === 'function') {
+    window._refreshUnifonLiveWidget(target);
+  } else {
+    // Dashboard not rendered yet — trigger a full re-render
+    localStorage.removeItem('wtp_unifon_queue_cache');
+    renderDashboard();
+  }
+}
+
 function renderAdminDashboard(root, viewerMode=false) {
   // viewerMode=true: operational view only, no personal sections (1:1s, team pulse, tasks, handover)
   const todayStr = localToday();
@@ -6862,7 +6875,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   }
 
   // ── Separated so polling can re-call it ────────────────────────
-  window.refreshUnifonLiveWidget = function refreshUnifonLiveWidget(uLive) {
+  window._refreshUnifonLiveWidget = function(uLive) {
     fetchUnifonQueueSummary(true).then(summary => {
       if (!summary || !summary.entries) {
         uLive.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--text3);">Queue data unavailable</div>';
