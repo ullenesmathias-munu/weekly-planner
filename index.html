@@ -1549,6 +1549,435 @@
   .oto-match-dot.miss   { background: #f87171; }
 
 
+  /* ─── Agent Portal Dashboard ──────────────────────────────── */
+
+  /* Hero */
+  .ap-hero {
+    background: linear-gradient(135deg, #000743 0%, #001166 50%, #000a3d 100%);
+    padding: 28px 36px 24px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .ap-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(214,243,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ap-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 20%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(241,183,242,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ap-hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .ap-hero-greeting {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #D6F3FF;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .ap-hero-sub {
+    font-size: 12px;
+    color: rgba(214,243,255,0.5);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .ap-hero-kpis {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .ap-hero-kpi {
+    background: rgba(214,243,255,0.08);
+    border: 1px solid rgba(214,243,255,0.15);
+    border-radius: 12px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 72px;
+    cursor: default;
+    transition: background 0.15s;
+  }
+  .ap-hero-kpi:hover { background: rgba(214,243,255,0.13); }
+  .ap-hero-kpi-val {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: #D6F3FF;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .ap-hero-kpi-val.ok     { color: #6ee7b7; }
+  .ap-hero-kpi-val.warn   { color: #fcd34d; }
+  .ap-hero-kpi-val.danger { color: #fca5a5; }
+  .ap-hero-kpi-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    color: rgba(214,243,255,0.4);
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+  .ap-hero-kpi-delta {
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .ap-hero-kpi-delta.up   { color: #6ee7b7; }
+  .ap-hero-kpi-delta.down { color: #fca5a5; }
+  .ap-hero-kpi-delta.flat { color: rgba(214,243,255,0.3); }
+
+  /* Page body */
+  .ap-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Section headers */
+  .ap-section-title {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text3);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ap-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Stat cards — large performance numbers */
+  .ap-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .ap-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, border-color 0.15s;
+    cursor: default;
+  }
+  .ap-stat-card:hover { transform: translateY(-1px); border-color: var(--border2); }
+  .ap-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--ap-accent, var(--border));
+    border-radius: 14px 14px 0 0;
+  }
+  .ap-stat-card.ok     { --ap-accent: #34d399; }
+  .ap-stat-card.warn   { --ap-accent: #fbbf24; }
+  .ap-stat-card.danger { --ap-accent: #f87171; }
+  .ap-stat-card.blue   { --ap-accent: #60a5fa; }
+  .ap-stat-card.purple { --ap-accent: #a78bfa; }
+  .ap-stat-card.pink   { --ap-accent: #f472b6; }
+
+  .ap-stat-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .ap-stat-val {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .ap-stat-val.ok     { color: #34d399; }
+  .ap-stat-val.warn   { color: #fbbf24; }
+  .ap-stat-val.danger { color: #f87171; }
+  .ap-stat-val.blue   { color: #60a5fa; }
+  .ap-stat-val.small  { font-size: 26px; }
+
+  .ap-stat-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .ap-stat-vs {
+    font-size: 10px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .ap-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 20px;
+  }
+  .ap-delta.up   { background: rgba(52,211,153,0.12); color: #34d399; }
+  .ap-delta.down { background: rgba(248,113,113,0.12); color: #f87171; }
+  .ap-delta.flat { background: rgba(156,163,175,0.08); color: var(--text3); }
+
+  /* Gauge bar */
+  .ap-gauge {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .ap-gauge-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.5,0,0,1);
+  }
+
+  /* Trend sparklines row */
+  .ap-trends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .ap-trend-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .ap-trend-label {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ap-trend-val {
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  /* Two-column layout for middle row */
+  .ap-mid-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 900px) { .ap-mid-grid { grid-template-columns: 1fr; } }
+
+  /* Panel card */
+  .ap-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .ap-panel-hdr {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+  }
+  .ap-panel-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Task / action items */
+  .ap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.4;
+    transition: background 0.12s;
+  }
+  .ap-item:hover { background: var(--surface3); }
+  .ap-item-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* Schedule strip */
+  .ap-sched-strip {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .ap-sched-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    min-width: 52px;
+    transition: background 0.12s;
+  }
+  .ap-sched-day.today {
+    background: rgba(77,171,247,0.1);
+    border-color: rgba(77,171,247,0.3);
+  }
+  .ap-sched-day.off { opacity: 0.45; }
+  .ap-sched-day-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+  }
+  .ap-sched-day.today .ap-sched-day-label { color: var(--cal-text); }
+  .ap-sched-shift {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text2);
+  }
+
+  /* Team comparison bar */
+  .ap-comp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .ap-comp-label {
+    font-size: 11px;
+    color: var(--text2);
+    width: 90px;
+    flex-shrink: 0;
+  }
+  .ap-comp-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: visible;
+    position: relative;
+  }
+  .ap-comp-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.5,0,0,1);
+  }
+  .ap-comp-avg-line {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 12px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+  }
+  .ap-comp-val {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    width: 40px;
+    text-align: right;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Queue activity */
+  .ap-queue-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .ap-queue-row:last-child { border-bottom: none; }
+
+  /* Announcement banner */
+  .ap-announcement {
+    background: rgba(251,191,36,0.10);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-left: 4px solid #fbbf24;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .ap-announcement:hover { background: rgba(251,191,36,0.16); }
+
+  /* Animations */
+  @keyframes apFadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ap-anim { animation: apFadeUp 0.4s cubic-bezier(0.5,0,0,1) both; }
+  .ap-anim-1 { animation-delay: 0.05s; }
+  .ap-anim-2 { animation-delay: 0.10s; }
+  .ap-anim-3 { animation-delay: 0.15s; }
+  .ap-anim-4 { animation-delay: 0.20s; }
+  .ap-anim-5 { animation-delay: 0.25s; }
+
+
   .tabs { border-bottom: 1px solid var(--border); }
   .tab-btn { position: relative; }
   .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
@@ -2951,7 +3380,6 @@ window.tryUnlock = async function() {
         <div class="settings-section-title">Team</div>
       </div>
 
-      <!-- Agent identity mapping -->
       <!-- Queue notifications -->
       <div class="settings-card" id="queue-notif-card" style="display:none;">
         <div class="settings-card-inner">
@@ -2963,33 +3391,43 @@ window.tryUnlock = async function() {
         </div>
       </div>
 
-      <!-- Agent identity mapping -->
-      <div class="settings-card" id="agent-identity-card" style="display:none;">
+      <!-- Unified team management -->
+      <div class="settings-card" id="team-members-card" style="display:none;">
         <div class="settings-card-inner">
-          <div class="settings-card-title">Agent identity mapping</div>
-          <div class="settings-card-desc">Map each team member to their Zendesk agent and Unifon agent number. This enables personal stats in the agent portal. Click Refresh to load live data from each system.</div>
-          <div style="display:flex;gap:8px;margin:10px 0;">
-            <button class="btn-save" onclick="renderAgentIdentityMapping()" style="font-size:11px;padding:5px 12px;">↻ Refresh from ZD + Unifon</button>
+          <div class="settings-card-title">Team members</div>
+          <div class="settings-card-desc">Manage your team — names, profiles, schedule, portal access, and system integrations. Each member appears in the schedule, My Team tab, and agent portal.</div>
+          <div id="team-members-list" style="display:flex;flex-direction:column;gap:8px;margin:12px 0;"></div>
+          <div style="padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:10px;">Add team member</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+              <input id="new-member-name"  class="settings-input" type="text" placeholder="Full name (e.g. Jonas Berg)" />
+              <input id="new-member-title" class="settings-input" type="text" placeholder="Job title (optional)" />
+              <input id="new-member-email" class="settings-input" type="email" placeholder="Email (optional)" />
+              <input id="new-member-phone" class="settings-input" type="tel" placeholder="Phone (optional)" />
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="btn-save" onclick="addTeamMemberFromSettings()" style="font-size:11px;padding:5px 14px;">Add member</button>
+              <span id="team-add-msg" style="font-size:11px;color:var(--text3);"></span>
+            </div>
           </div>
-          <div id="agent-identity-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
       </div>
 
-      <!-- Users -->
+      <!-- Portal users (login accounts) -->
       <div class="settings-card" id="users-card">
         <div class="settings-card-inner">
-          <div class="settings-card-title">Users</div>
-          <div class="settings-card-desc">Manage who can log in. Admins can access all tabs including Reports.</div>
+          <div class="settings-card-title">Portal logins</div>
+          <div class="settings-card-desc">Manage who can log into the planner. Link each login to a team member using the schedule name field.</div>
           <div id="user-list-wrap">
             <div id="user-list" style="margin-bottom:12px;display:flex;flex-direction:column;gap:4px;"></div>
           </div>
           <div style="padding-top:12px;border-top:1px solid var(--border);">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:10px;">Add user</div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:10px;">Add login</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-              <input id="new-username"     class="settings-input" type="text"     placeholder="Name" />
+              <input id="new-username"     class="settings-input" type="text"     placeholder="Login username" />
               <input id="new-displayname"  class="settings-input" type="text"     placeholder="Display name (optional)" />
               <input id="new-password"     class="settings-input" type="password" placeholder="Password" />
-              <input id="new-schedulename" class="settings-input" type="text"     placeholder="Schedule name (if different)" />
+              <input id="new-schedulename" class="settings-input" type="text"     placeholder="Team member name (to link)" />
             </div>
             <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
               <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;">
@@ -2999,9 +3437,9 @@ window.tryUnlock = async function() {
                 <input id="new-priv-zendesk" type="checkbox" /> Zendesk access
               </label>
             </div>
-            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Schedule names: <span id="schedule-names-list" style="color:var(--text2);"></span></div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:8px;">Team members: <span id="schedule-names-list" style="color:var(--text2);"></span></div>
             <div style="display:flex;gap:8px;align-items:center;">
-              <button class="btn-save" onclick="addUser()">Add user</button>
+              <button class="btn-save" onclick="addUser()">Add login</button>
               <span id="user-add-msg" style="font-size:11px;color:var(--text3);"></span>
             </div>
           </div>
@@ -3215,7 +3653,67 @@ window.tryUnlock = async function() {
 // ─── Schedule data ───────────────────────────────────────────────
 let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylen", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26"], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylen", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17"], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "D1 (7-15)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24"], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31"], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylen", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}];
 
-const MY_TEAM = ['Jonas','Thomas','Maylen','Bernadett','Benjamin','Cecilie','Tord','Marie','Andreas','Julie','Vetle'];
+// MY_TEAM is now dynamic — stored in wtp_team, falling back to hardcoded defaults
+const MY_TEAM_DEFAULT = ['Jonas','Thomas','Maylen','Bernadett','Benjamin','Cecilie','Tord','Marie','Andreas','Julie','Vetle'];
+const MY_TEAM_KEY = 'wtp_team';
+let MY_TEAM = (() => {
+  try {
+    const stored = JSON.parse(localStorage.getItem(MY_TEAM_KEY) || 'null');
+    return Array.isArray(stored) && stored.length ? stored : [...MY_TEAM_DEFAULT];
+  } catch { return [...MY_TEAM_DEFAULT]; }
+})();
+
+function saveMyTeam() {
+  localStorage.setItem(MY_TEAM_KEY, JSON.stringify(MY_TEAM));
+  scheduleSyncSave();
+}
+
+function addTeamMember(name) {
+  if (!name || MY_TEAM.includes(name)) return false;
+  MY_TEAM.push(name);
+  // Add to SCHEDULE — insert person row in every week
+  SCHEDULE.forEach(week => {
+    if (!week.people) week.people = [];
+    if (!week.people.find(p => p.name === name)) {
+      week.people.push({ name, shifts: Array(week.dates?.length || 7).fill('') });
+    }
+  });
+  saveMyTeam();
+  saveSchedule();
+  return true;
+}
+
+function removeTeamMember(name) {
+  const idx = MY_TEAM.indexOf(name);
+  if (idx < 0) return false;
+  MY_TEAM.splice(idx, 1);
+  // Remove from SCHEDULE
+  SCHEDULE.forEach(week => {
+    if (week.people) week.people = week.people.filter(p => p.name !== name);
+  });
+  saveMyTeam();
+  saveSchedule();
+  return true;
+}
+
+function renameTeamMember(oldName, newName) {
+  if (!newName || oldName === newName) return false;
+  const idx = MY_TEAM.indexOf(oldName);
+  if (idx < 0) return false;
+  MY_TEAM[idx] = newName;
+  // Rename in SCHEDULE
+  SCHEDULE.forEach(week => {
+    const p = (week.people||[]).find(p => p.name === oldName);
+    if (p) p.name = newName;
+  });
+  // Move profile
+  const profile = loadProfile(oldName);
+  saveProfile(newName, profile);
+  localStorage.removeItem('wtp_profile_' + normalizeKey(oldName));
+  saveMyTeam();
+  saveSchedule();
+  return true;
+}
 // Normalise name for matching — strips accents so Maylén === Maylen
 function normName(s) { return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
 const EXCLUDE = ['Kristian','Markus','Ulrik','Stian','Mathias'];
@@ -6953,6 +7451,232 @@ function renderAgentQueueStats(agentName, container) {
 }
 
 
+
+// ─── TEAM MEMBER MANAGEMENT (Settings → Team) ────────────────────────────────
+
+function addTeamMemberFromSettings() {
+  const nameEl  = document.getElementById('new-member-name');
+  const titleEl = document.getElementById('new-member-title');
+  const emailEl = document.getElementById('new-member-email');
+  const phoneEl = document.getElementById('new-member-phone');
+  const msg     = document.getElementById('team-add-msg');
+
+  const name = (nameEl?.value||'').trim();
+  if (!name) { if (msg) { msg.style.color='var(--high-text)'; msg.textContent='Name is required'; } return; }
+  if (MY_TEAM.some(n => n.toLowerCase() === name.toLowerCase())) {
+    if (msg) { msg.style.color='var(--high-text)'; msg.textContent='Member already exists'; } return;
+  }
+
+  // Save profile fields
+  const profile = loadProfile(name);
+  if (titleEl?.value) profile.title = titleEl.value.trim();
+  if (emailEl?.value) profile.email = emailEl.value.trim();
+  if (phoneEl?.value) profile.phone = phoneEl.value.trim();
+  saveProfile(name, profile);
+
+  addTeamMember(name);
+
+  // Clear form
+  if (nameEl)  nameEl.value  = '';
+  if (titleEl) titleEl.value = '';
+  if (emailEl) emailEl.value = '';
+  if (phoneEl) phoneEl.value = '';
+
+  if (msg) { msg.style.color='#34d399'; msg.textContent='✓ '+name+' added'; setTimeout(()=>msg.textContent='',3000); }
+  renderTeamMembersList();
+  renderUserList();
+}
+
+async function renderTeamMembersList() {
+  const list = document.getElementById('team-members-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  // Load ZD agents for matching
+  let zdAgentList = zdAgents && zdAgents.length ? zdAgents : [];
+  if (!zdAgentList.length && zdReady()) {
+    try {
+      const gId = zdGroupId || await zdGetGroupId().catch(()=>null);
+      if (gId) zdAgentList = await zdGetAgents(gId).catch(()=>[]);
+    } catch {}
+  }
+
+  MY_TEAM.forEach((name, memberIdx) => {
+    const profile = loadProfile(name);
+    const hue = (name.charCodeAt(0)*47)%360;
+    const portalUser = getUsers().find(u => {
+      const sn = getScheduleName(u) || getUserDisplayName(u);
+      return sn.toLowerCase() === name.toLowerCase() ||
+             normName(sn.split(' ')[0]) === normName(name.split(' ')[0]);
+    });
+
+    // ZD match
+    const zdAgent = zdAgentList.find(a =>
+      normName(a.name.split(' ')[0]) === normName(name.split(' ')[0]) ||
+      String(profile.zdAgentId) === String(a.id)
+    );
+
+    const card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;';
+
+    // ── Header row ──────────────────────────────────────────────
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;';
+
+    const av = document.createElement('div');
+    av.style.cssText = `width:34px;height:34px;border-radius:50%;background:hsl(${hue},45%,32%);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;`;
+    av.textContent = name.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+
+    const info = document.createElement('div'); info.style.flex = '1';
+    const nameEl2 = document.createElement('div'); nameEl2.style.cssText='font-size:13px;font-weight:700;color:var(--text);'; nameEl2.textContent = name;
+    const subEl = document.createElement('div'); subEl.style.cssText='font-size:10px;color:var(--text3);margin-top:1px;display:flex;gap:6px;flex-wrap:wrap;';
+    if (profile.title) { const s=document.createElement('span');s.textContent=profile.title;subEl.appendChild(s); }
+    if (profile.email) { const s=document.createElement('span');s.textContent=profile.email;subEl.appendChild(s); }
+    if (profile.phone) { const s=document.createElement('span');s.textContent=profile.phone;subEl.appendChild(s); }
+    info.appendChild(nameEl2); if (subEl.children.length) info.appendChild(subEl);
+
+    // Status chips
+    const chips = document.createElement('div'); chips.style.cssText='display:flex;gap:4px;flex-wrap:wrap;align-items:center;';
+    const mkChip = (label, color) => {
+      const c=document.createElement('span');
+      c.style.cssText=`font-size:10px;padding:1px 7px;border-radius:20px;background:${color}1a;border:1px solid ${color}33;color:${color};font-weight:600;white-space:nowrap;`;
+      c.textContent=label; return c;
+    };
+    if (zdAgent) chips.appendChild(mkChip('ZD ✓','#34d399'));
+    else chips.appendChild(mkChip('ZD —','#fbbf24'));
+    if (portalUser) chips.appendChild(mkChip('Portal ✓','#60a5fa'));
+    else chips.appendChild(mkChip('No login','#9ca3af'));
+
+    const editBtn = document.createElement('button');
+    editBtn.style.cssText='font-size:11px;color:var(--cal-text);background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:2px 8px;';
+    editBtn.textContent = 'Edit';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.style.cssText='font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;';
+    removeBtn.textContent = 'Remove';
+    removeBtn.onmouseover = () => { removeBtn.style.color='var(--high-text)'; removeBtn.style.background='var(--high-bg)'; };
+    removeBtn.onmouseout  = () => { removeBtn.style.color='var(--text3)'; removeBtn.style.background='none'; };
+    removeBtn.onclick = () => confirmDialog(
+      'Remove ' + name + ' from the team?\n\nThis removes them from MY_TEAM and the schedule. Their 1:1 history and profile are kept.',
+      () => { removeTeamMember(name); renderTeamMembersList(); renderSchedule(); renderUserList(); },
+      'Remove'
+    );
+
+    hdr.appendChild(av); hdr.appendChild(info); hdr.appendChild(chips);
+    hdr.appendChild(editBtn); hdr.appendChild(removeBtn);
+    card.appendChild(hdr);
+
+    // ── Edit panel ──────────────────────────────────────────────
+    const editPanel = document.createElement('div');
+    editPanel.style.cssText = 'display:none;border-top:1px solid var(--border);padding:14px;background:var(--surface);';
+
+    const mkF = (label, val, type, placeholder) => {
+      const wrap=document.createElement('div');wrap.style.cssText='display:flex;flex-direction:column;gap:3px;';
+      const lbl=document.createElement('label');lbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);';lbl.textContent=label;
+      const inp=document.createElement('input');inp.type=type||'text';inp.value=val||'';inp.placeholder=placeholder||'';
+      inp.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:6px 9px;outline:none;transition:border-color 0.15s;';
+      inp.onfocus=()=>inp.style.borderColor='var(--cal-text)';
+      inp.onblur=()=>inp.style.borderColor='var(--border)';
+      wrap.appendChild(lbl);wrap.appendChild(inp);return {wrap,inp};
+    };
+
+    // Row 1: name + title
+    const row1=document.createElement('div');row1.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;';
+    const {wrap:w1,inp:inpName}   = mkF('Full name',    name,           'text', 'e.g. Jonas Berg');
+    const {wrap:w2,inp:inpTitle}  = mkF('Job title',    profile.title,  'text', 'e.g. L1 Agent');
+    row1.appendChild(w1);row1.appendChild(w2);
+
+    // Row 2: email + phone
+    const row2=document.createElement('div');row2.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;';
+    const {wrap:w3,inp:inpEmail}  = mkF('Email',        profile.email,  'email','name@munu.cloud');
+    const {wrap:w4,inp:inpPhone}  = mkF('Phone',        profile.phone,  'tel',  '+47 000 00 000');
+    row2.appendChild(w3);row2.appendChild(w4);
+
+    // Row 3: start date + birthday
+    const row3=document.createElement('div');row3.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;';
+    const {wrap:w5,inp:inpStart}  = mkF('Start date',   profile.startDate, 'date','');
+    const {wrap:w6,inp:inpBday}   = mkF('Birthday',     profile.birthday,  'text','DD/MM');
+    row3.appendChild(w5);row3.appendChild(w6);
+
+    // Row 4: ZD agent picker
+    const row4=document.createElement('div');row4.style.cssText='margin-bottom:10px;';
+    const zdLblEl=document.createElement('div');zdLblEl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:3px;';zdLblEl.textContent='Zendesk agent';
+    const zdSel=document.createElement('select');
+    zdSel.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:6px 9px;outline:none;width:100%;';
+    const zdOpt0=document.createElement('option');zdOpt0.value='';zdOpt0.textContent='— not mapped —';zdSel.appendChild(zdOpt0);
+    zdAgentList.forEach(a=>{
+      const opt=document.createElement('option');opt.value=String(a.id);
+      opt.textContent=a.name+' ('+a.email+')';
+      if(String(profile.zdAgentId)===String(a.id)||(!profile.zdAgentId&&zdAgent&&a.id===zdAgent.id)) opt.selected=true;
+      zdSel.appendChild(opt);
+    });
+    if(!zdAgentList.length){zdSel.innerHTML='<option>— Open Tickets tab first to load ZD agents —</option>';}
+    row4.appendChild(zdLblEl);row4.appendChild(zdSel);
+
+    // Unifon status
+    const uniDiv=document.createElement('div');uniDiv.style.cssText='font-size:11px;color:var(--text3);margin-bottom:10px;';
+    const testStats=getUnifonAgentStats(name,fmtLocal(getMonday(-4)),localToday());
+    uniDiv.innerHTML='<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);">UNIFON</span> '
+      +(testStats&&(testStats.answered>0||testStats.missed>0)
+        ?'<span style="color:#34d399;font-weight:600;">✓ Auto-matched from imported reports ('+( testStats.answered+testStats.missed)+' calls in last 4 weeks)</span>'
+        :'<span style="color:var(--text3);">No call data yet — import a Unifon report</span>');
+
+    // Save / cancel
+    const btnRow=document.createElement('div');btnRow.style.cssText='display:flex;gap:8px;align-items:center;';
+    const saveBtn=document.createElement('button');saveBtn.className='btn-save';saveBtn.style.cssText='font-size:11px;padding:5px 14px;';saveBtn.textContent='Save';
+    const cancelBtn=document.createElement('button');cancelBtn.className='btn-cancel';cancelBtn.style.cssText='font-size:11px;padding:5px 14px;';cancelBtn.textContent='Cancel';
+    const msgEl=document.createElement('span');msgEl.style.cssText='font-size:11px;color:var(--text3);';
+    btnRow.appendChild(saveBtn);btnRow.appendChild(cancelBtn);btnRow.appendChild(msgEl);
+
+    editPanel.appendChild(row1);editPanel.appendChild(row2);editPanel.appendChild(row3);
+    editPanel.appendChild(row4);editPanel.appendChild(uniDiv);editPanel.appendChild(btnRow);
+    card.appendChild(editPanel);
+
+    // Toggle
+    editBtn.onclick = () => {
+      const open = editPanel.style.display !== 'none';
+      editPanel.style.display = open ? 'none' : '';
+      editBtn.textContent = open ? 'Edit' : 'Done';
+      editBtn.style.color = open ? 'var(--cal-text)' : 'var(--text3)';
+    };
+    cancelBtn.onclick = () => {
+      editPanel.style.display='none'; editBtn.textContent='Edit'; editBtn.style.color='var(--cal-text)';
+    };
+
+    saveBtn.onclick = () => {
+      const newName = inpName.value.trim();
+      if (!newName) { msgEl.style.color='var(--high-text)';msgEl.textContent='Name is required';return; }
+
+      // Save profile
+      const prof = loadProfile(name);
+      prof.title     = inpTitle.value.trim() || undefined;
+      prof.email     = inpEmail.value.trim() || undefined;
+      prof.phone     = inpPhone.value.trim() || undefined;
+      prof.startDate = inpStart.value || undefined;
+      prof.birthday  = inpBday.value.trim() || undefined;
+      prof.zdAgentId = zdSel.value || undefined;
+
+      // Rename if name changed
+      if (newName !== name) {
+        if (MY_TEAM.some((n,i)=>i!==memberIdx&&n.toLowerCase()===newName.toLowerCase())) {
+          msgEl.style.color='var(--high-text)';msgEl.textContent='Name already exists';return;
+        }
+        saveProfile(name, prof);
+        renameTeamMember(name, newName);
+      } else {
+        saveProfile(name, prof);
+      }
+
+      scheduleSyncSave();
+      msgEl.style.color='#34d399';msgEl.textContent='✓ Saved';
+      setTimeout(()=>{ editPanel.style.display='none'; editBtn.textContent='Edit'; editBtn.style.color='var(--cal-text)'; renderTeamMembersList(); renderSchedule(); },700);
+    };
+
+    list.appendChild(card);
+  });
+}
+
+
 function renderAdminDashboard(root, viewerMode=false) {
   // viewerMode=true: operational view only, no personal sections (1:1s, team pulse, tasks, handover)
   const todayStr = localToday();
@@ -8635,761 +9359,692 @@ function renderAdminDashboard(root, viewerMode=false) {
   renderChart1(initFrom, initTo);
   renderChart2();
 }
+
 async function renderTeamMemberDashboard(root) {
+  root.innerHTML = '';
   try {
-  // scheduleName is the MY_TEAM name (e.g. "Jonas") — may differ from login username
-  // Fall back to display name or username if not matched
-  const scheduleName = getScheduleName() || getUserDisplayName() || currentUser?.name || '';
-  const todayStr = localToday();
+
+  // ── Identity ─────────────────────────────────────────────────
+  const scheduleName = getScheduleName(currentUser) || getUserDisplayName(currentUser);
+  const displayName  = getUserDisplayName(currentUser);
+  const firstName    = displayName.split(' ')[0];
+  const myZdAgentId  = getUserZdAgentId(currentUser.name);
+  const myUnifonKey  = getUserUnifonAgentNum(currentUser.name);
+  const todayStr     = localToday();
+  const todayDate    = new Date(todayStr + 'T00:00:00');
+  const dow          = todayDate.getDay();
+  const thisMonday   = fmtLocal(getMonday(0));
+  const lastMonday   = fmtLocal(getMonday(-1));
+  const lastSunday   = fmtLocal(new Date(getMonday(0).getTime() - 86400000));
+
+  // ── Greeting ─────────────────────────────────────────────────
   const hr = new Date().getHours();
-  const greeting = hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  const OFF = new Set(['so','h','hd','os','abs','ol','']);
-  // isNightShift is a global helper — no local redefinition needed
-  const dayInfo = getPersonDayInfo(scheduleName, todayStr);
-  const isOff = !dayInfo || OFF.has((dayInfo.shift||'').toLowerCase());
-  const weekStamp = mondayStamp(0);
-  const todayDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const greeting = hr < 5 ? 'Good night' : hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
 
-  // ── Personal identity — ZD + Unifon ──────────────────────────
-  const myZdAgentId    = getUserZdAgentId(currentUser.name);
-  const myUnifonNum    = getUserUnifonAgentNum(currentUser.name);
-  const thisMonday     = fmtLocal(getMonday(0));
-  const todayStr2      = localToday();
-  const myCallsThisWk  = myUnifonNum ? getUnifonAgentStats(myUnifonNum, thisMonday, todayStr2) : null;
-  const myCallsLastWk  = myUnifonNum ? getUnifonAgentStats(myUnifonNum, fmtLocal(getMonday(-1)), fmtLocal(new Date(getMonday(0).getTime()-86400000))) : null;
-  // ZD personal stats from snapshot
-  const mySnapThisWk   = getWeeklySnapshot(thisMonday);
-  const mySnapLastWk   = getWeeklySnapshot(fmtLocal(getMonday(-1)));
-  const myZdThisWk     = mySnapThisWk?.agents?.[scheduleName] || null;
-  const myZdLastWk     = mySnapLastWk?.agents?.[scheduleName] || null;
+  // ── Schedule for this person ──────────────────────────────────
+  const weekDates = [];
+  const mon = getMonday(0);
+  for (let i = 0; i < 7; i++) { const d = new Date(mon); d.setDate(mon.getDate()+i); weekDates.push(fmtLocal(d)); }
+  const weekSched = SCHEDULE.find(w => w.dates && w.dates[0] === fmtLocal(getMonday(0)));
+  const personSched = weekSched?.people?.find(p => normName(p.name) === normName(scheduleName) || normName(p.name.split(' ')[0]) === normName(scheduleName.split(' ')[0]));
+  const todayDayIdx = weekDates.indexOf(todayStr);
+  const todayShift = personSched?.shifts?.[todayDayIdx] || '';
+  const isOff = !todayShift || ['so','h','hd','os','abs','ol'].includes(todayShift.toLowerCase());
 
-  // ── Notifications from manager ────────────────────────────────
-  const adminUser = getUsers().find(u=>u.isAdmin);
-  const adminOtoKey = adminUser ? 'wtp_oto_'+adminUser.name.toLowerCase() : null;
-  const notifKey = 'wtp_dash_notif_seen_'+normalizeKey(currentUser.name);
-  const lastSeen = localStorage.getItem(notifKey)||'0';
-  const newSharedNotes = [];
-  if (adminOtoKey) {
-    try {
-      const raw = localStorage.getItem(adminOtoKey);
-      if (raw) {
-        const d = JSON.parse(raw);
-        (d.sessions||[]).filter(s=>s.person===currentUser.name&&s.sharedNotes&&s.sharedNotes.trim()&&(s.updatedAt||s.date)>lastSeen).forEach(s=>newSharedNotes.push(s));
-      }
-    } catch {}
+  // ── Data: calls (4 weeks from snapshots) ─────────────────────
+  const snapWeeks = [];
+  for (let i = 3; i >= 0; i--) {
+    const wMon = fmtLocal(getMonday(-i));
+    const snap = getWeeklySnapshot(wMon);
+    const ag   = snap?.agents?.[scheduleName];
+    snapWeeks.push({
+      week:     wMon,
+      answered: ag?.answered  || 0,
+      missed:   ag?.missed    || 0,
+      avgTalk:  ag?.avgTalk   || 0,
+      avgWait:  ag?.avgWait   || 0,
+      zdSolved: ag?.zdSolved  || 0,
+      zdEmail:  ag?.zdEmail   || 0,
+      zdPhone:  ag?.zdPhone   || 0,
+    });
   }
+  const thisWk = snapWeeks[3];
+  const lastWk = snapWeeks[2];
 
-  // ── Task data ─────────────────────────────────────────────────
-  const todayTasks = tasks.filter(t=>t.day===todayDay&&t.weekStamp===weekStamp&&!t.done&&!t.isMeeting);
-  const overdueTasks = tasks.filter(t=>!t.done&&isOverdue(t));
-  const agendaItems = loadAgenda(currentUser.name);
+  // Live call data for this week (may supplement snapshots)
+  const liveCallsThisWk = myUnifonKey ? getUnifonAgentStats(myUnifonKey, thisMonday, todayStr) : null;
+  const liveCallsLastWk = myUnifonKey ? getUnifonAgentStats(myUnifonKey, lastMonday, lastSunday) : null;
 
-  // ── Upcoming 1:1 check ────────────────────────────────────────
-  const otoData = getOtoData();
-  const in7Days = new Date(); in7Days.setDate(in7Days.getDate()+7);
-  const in7Str = fmtLocal(in7Days);
-  const upcomingSession = (otoData.sessions||[])
-    .filter(s=>s.person===currentUser.name&&s.date>=todayStr&&s.date<=in7Str)
-    .sort((a,b)=>a.date.localeCompare(b.date))[0]||null;
+  // Merge: prefer live if it has more data than snapshot
+  const callsThisWk = (liveCallsThisWk?.answered || 0) > thisWk.answered ? liveCallsThisWk : thisWk;
+  const callsLastWk = (liveCallsLastWk?.answered || 0) > lastWk.answered ? liveCallsLastWk : lastWk;
 
-  // ── Who else is in today ──────────────────────────────────────
-  const todayWeek = SCHEDULE.find(w=>w.dates&&w.dates.includes(todayStr));
-  const colleaguesIn = todayWeek ? todayWeek.people.filter(p=>{
-    if (p.name===scheduleName) return false;
-    const di=todayWeek.dates.indexOf(todayStr);
-    const sh = (p.shifts[di]||'').toLowerCase();
-    return MY_TEAM.includes(p.name)&&di>=0&&!OFF.has(sh)&&!isNightShift(sh);
-  }) : [];
+  // ── Team averages (for comparison) ───────────────────────────
+  const teamSnap    = getWeeklySnapshot(thisMonday);
+  const teamAgents  = teamSnap ? Object.entries(teamSnap.agents || {}) : [];
+  const teamCount   = Math.max(1, teamAgents.length);
+  const teamAvgCalls   = teamAgents.length ? Math.round(teamAgents.reduce((s,[,a])=>s+(a.answered||0),0)/teamCount) : null;
+  const teamAvgSolved  = teamAgents.length ? Math.round(teamAgents.reduce((s,[,a])=>s+(a.zdSolved||0),0)/teamCount) : null;
 
-  // ── Contextual greeting subtitle ─────────────────────────────
-  const roleColors = {'Phone Guru':'#a5b4fc','Inbox Champion':'#4ade80','SLA Sherpa':'#fbbf24','Freelancer':'#94a3b8'};
-  let subtitle = '';
-  if (isOff) {
-    const code = (dayInfo?.shift||'').toUpperCase();
-    subtitle = code==='ABS'?'Enjoy the day off.':code==='H'?'Holiday today.':'Day off today.';
-  } else if (dayInfo?.role) {
-    subtitle = dayInfo.role + ' today.';
-  } else if (dayInfo?.shift) {
-    subtitle = 'On shift ' + dayInfo.shift + '.';
-  }
+  // ── Announcements ─────────────────────────────────────────────
+  const unreadAnns = getUnreadAnnouncements ? getUnreadAnnouncements(currentUser.name) : [];
+  const allAnns    = loadAnnouncements ? loadAnnouncements().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,3) : [];
 
-  // ── Hero ──────────────────────────────────────────────────────
-  const hero = document.createElement('div'); hero.className = 'db-hero';
-  const heroLeft = document.createElement('div'); heroLeft.className = 'db-hero-left';
-  const eyebrow = document.createElement('div'); eyebrow.className = 'db-hero-eyebrow';
-  eyebrow.textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const greet = document.createElement('div'); greet.className = 'db-hero-greeting';
-  greet.textContent = greeting + ', ' + getUserDisplayName() + '.';
-  heroLeft.appendChild(eyebrow); heroLeft.appendChild(greet);
-  if (subtitle) {
-    const sub = document.createElement('div');
-    sub.style.cssText = 'font-size:13px;color:rgba(214,243,255,0.5);margin-top:5px;font-weight:500;letter-spacing:-0.01em;';
-    sub.textContent = subtitle; heroLeft.appendChild(sub);
-  }
-  hero.appendChild(heroLeft);
+  // ── Tasks ─────────────────────────────────────────────────────
+  const allTasks     = tasks || [];
+  const todayTasks   = allTasks.filter(t => !t.done && (t.date === todayStr || (!t.date)));
+  const overdueTasks = allTasks.filter(t => !t.done && t.date && t.date < todayStr);
 
-  // KPI tiles
-  const kpis = document.createElement('div'); kpis.className = 'db-hero-right';
-  const mkKpi = (val,label,cls,fn) => {
-    const k=document.createElement('div');k.className='db-kpi';k.onclick=fn;
-    const v=document.createElement('div');v.className='db-kpi-val '+cls;v.textContent=val;
-    const l=document.createElement('div');l.className='db-kpi-label';l.textContent=label;
-    k.appendChild(v);k.appendChild(l);return k;
+  // ── 1:1 data ─────────────────────────────────────────────────
+  const otoData     = getOtoData ? getOtoData() : {};
+  const adminUser   = getUsers().find(u=>u.isAdmin);
+  const myOtoKey    = adminUser ? 'wtp_oto_' + adminUser.name.toLowerCase() : 'wtp_oto_data';
+  const allSessions = (otoData.sessions||[]).filter(s=>s.person===scheduleName).sort((a,b)=>b.date.localeCompare(a.date));
+  const lastSession = allSessions[0] || null;
+  const openActions = allSessions.flatMap(s=>(s.actions||[]).filter(a=>!a.done).map(a=>({...a,sessionDate:s.date}))).slice(0,5);
+  const daysSince1on1 = lastSession ? Math.floor((new Date(todayStr+'T00:00:00')-new Date(lastSession.date+'T00:00:00'))/86400000) : null;
+
+  // ── Queue login data ──────────────────────────────────────────
+  const queueLog     = loadQueueLog ? loadQueueLog().filter(e => {
+    const nm = (s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());
+    return nm(e.name||'').split(' ')[0] === nm(scheduleName.split(' ')[0]) && e.ts >= thisMonday;
+  }).sort((a,b)=>b.ts.localeCompare(a.ts)).slice(0,6) : [];
+
+  // ── Helper functions ──────────────────────────────────────────
+  const m = (tag, cls) => { const e=document.createElement(tag); if(cls)e.className=cls; return e; };
+  const tx = (el, t) => { el.textContent=t; return el; };
+  const delta = (curr, prev) => {
+    if (curr == null || prev == null || prev === 0) return null;
+    return Math.round(((curr - prev) / prev) * 100);
   };
-  kpis.appendChild(mkKpi(todayTasks.length,'Tasks today','neutral',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
-  if (overdueTasks.length) kpis.appendChild(mkKpi(overdueTasks.length,'Overdue','danger',()=>switchTab('planner',document.querySelector('[onclick*="planner"]'))));
-  if (agendaItems.length) kpis.appendChild(mkKpi(agendaItems.length,'1:1 topics','ok',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
-  if (newSharedNotes.length) kpis.appendChild(mkKpi(newSharedNotes.length,'From manager','neutral',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]'))));
+  const deltaEl = (curr, prev, invert) => {
+    const d = typeof prev === 'number' ? curr - prev : null;
+    if (d === null || (curr === 0 && prev === 0)) return null;
+    const pct = prev > 0 ? Math.round(Math.abs(d)/prev*100) : null;
+    const dir = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+    const good = invert ? dir === 'down' : dir === 'up';
+    const el = m('span','ap-delta '+(d===0?'flat':good?'up':'down'));
+    el.textContent = (d > 0 ? '↑' : d < 0 ? '↓' : '→') + ' ' + (pct!=null?pct+'%':Math.abs(d));
+    return el;
+  };
 
-  // RAG status KPI — show only if set (non-green)
-  const _selfProfile = loadProfile(scheduleName);
-  if (_selfProfile.rag === 'red')   kpis.appendChild(mkKpi('RED',   'Your status', 'danger', ()=>{}));
-  else if (_selfProfile.rag === 'amber') kpis.appendChild(mkKpi('AMBER', 'Your status', 'warn',   ()=>{}));
+  // ── HERO ──────────────────────────────────────────────────────
+  const hero = m('div','ap-hero ap-anim');
+  const heroTop = m('div','ap-hero-top');
+  const heroLeft = m('div');
 
-  // Live queue pressure — async, non-blocking
-  const _qKpi = mkKpi('…', 'Open queue', 'neutral', ()=>{});
-  if (zdReady()) kpis.appendChild(_qKpi);
+  const heroGreeting = m('div','ap-hero-greeting');
+  heroGreeting.textContent = greeting + ', ' + firstName + '.';
 
-  hero.appendChild(kpis);
+  const heroSub = m('div','ap-hero-sub');
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  heroSub.textContent = dayNames[dow] + ', ' + todayDate.getDate() + ' ' + monthNames[todayDate.getMonth()] + ' · ' +
+    (isOff ? 'Day off' : todayShift ? 'On shift: ' + todayShift : 'No shift assigned');
+
+  heroLeft.appendChild(heroGreeting);
+  heroLeft.appendChild(heroSub);
+
+  // Hero KPIs — quick summary
+  const heroKpis = m('div','ap-hero-kpis');
+  const mkHKpi = (val, label, cls, deltaStr) => {
+    const k = m('div','ap-hero-kpi');
+    const v = m('div','ap-hero-kpi-val'+(cls?' '+cls:'')); v.textContent = val??'—';
+    const l = m('div','ap-hero-kpi-label'); l.textContent = label;
+    k.appendChild(v); k.appendChild(l);
+    if (deltaStr) {
+      const d2 = m('div','ap-hero-kpi-delta '+deltaStr.cls); d2.textContent = deltaStr.text;
+      k.appendChild(d2);
+    }
+    return k;
+  };
+
+  // Tasks
+  const taskCount = todayTasks.length + overdueTasks.length;
+  heroKpis.appendChild(mkHKpi(taskCount, 'Tasks', taskCount>3?'warn':'', null));
+
+  // Open tickets (will be populated async)
+  const heroOpenTicketKpi = mkHKpi('…', 'Open tickets', '', null);
+  heroKpis.appendChild(heroOpenTicketKpi);
+
+  // Calls this week
+  if (callsThisWk.answered != null) {
+    const ansRate = callsThisWk.offered > 0 ? Math.round(callsThisWk.answered/callsThisWk.offered*100) : null;
+    const rateCls = ansRate==null?'':ansRate>=90?'ok':ansRate>=80?'warn':'danger';
+    const lastRate = callsLastWk.offered > 0 ? Math.round(callsLastWk.answered/callsLastWk.offered*100) : null;
+    const rateDelta = ansRate!=null&&lastRate!=null ? (ansRate>lastRate?{cls:'up',text:'↑'}:ansRate<lastRate?{cls:'down',text:'↓'}:{cls:'flat',text:'→'}) : null;
+    heroKpis.appendChild(mkHKpi(ansRate!=null?ansRate+'%':'—', 'Answer rate', rateCls, rateDelta));
+    heroKpis.appendChild(mkHKpi(callsThisWk.answered, 'Calls this wk', '', null));
+  }
+
+  heroTop.appendChild(heroLeft);
+  heroTop.appendChild(heroKpis);
+  hero.appendChild(heroTop);
   root.appendChild(hero);
 
-  // Populate queue KPI async
-  if (zdReady()) {
-    const _agentsCached = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-    const _matched = _agentsCached.find(a=>normName((a.name||'').split(' ')[0])===normName(scheduleName));
-    if (_matched) {
-      zdCount('type:ticket assignee_id:'+_matched.id+' (status:open OR status:pending OR status:hold)').then(n=>{
-        const v = _qKpi.querySelector('.db-kpi-val');
-        if (v) { v.textContent=n; v.className='db-kpi-val '+(+n>8?'danger':+n>4?'warn':'ok'); }
-      }).catch(()=>{ _qKpi.querySelector('.db-kpi-val').textContent='—'; });
-    } else {
-      _qKpi.querySelector('.db-kpi-val').textContent='—';
-    }
-  }
-
-  // ── Personal performance stats row ──────────────────────────
-  if (myCallsThisWk || myZdThisWk) {
-    const statsHero = document.createElement('div');
-    statsHero.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);';
-
-    const mkPStat = (val, label, sub, cls) => {
-      const p = document.createElement('div');
-      p.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;border-left:3px solid '+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--border)')+';';
-      const v = document.createElement('div');
-      v.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:"+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--text)')+';';
-      v.textContent = val!=null?String(val):'—';
-      const l = document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:3px;'; l.textContent=label;
-      p.appendChild(v); p.appendChild(l);
-      if (sub) { const s=document.createElement('div');s.style.cssText='font-size:10px;color:var(--text3);margin-top:2px;';s.textContent=sub;p.appendChild(s); }
-      return p;
-    };
-
-    if (myCallsThisWk) {
-      const ar = myCallsThisWk.ansRate;
-      statsHero.appendChild(mkPStat(myCallsThisWk.answered, 'Calls answered', myCallsLastWk?'prev wk: '+myCallsLastWk.answered:null, ar>=90?'ok':ar>=80?'warn':'danger'));
-      statsHero.appendChild(mkPStat(myCallsThisWk.missed, 'Missed', null, myCallsThisWk.missed===0?'ok':myCallsThisWk.missed>5?'danger':'warn'));
-      if (myCallsThisWk.avgTalkSec>0) statsHero.appendChild(mkPStat(fmtSec(myCallsThisWk.avgTalkSec), 'Avg talk', null, null));
-      statsHero.appendChild(mkPStat(ar!=null?ar+'%':'—', 'Answer rate', null, ar>=90?'ok':ar>=80?'warn':ar!=null?'danger':null));
-    }
-    if (myZdThisWk) {
-      const solved = myZdThisWk.zdSolved||0;
-      statsHero.appendChild(mkPStat(solved, 'Tickets solved', myZdLastWk?'prev wk: '+(myZdLastWk.zdSolved||0):null, solved>0?'ok':null));
-    }
-    if (statsHero.children.length) root.appendChild(statsHero);
-  }
-
-  // ── Notification bar — announcements + manager notes ─────────
-  const unreadAnns = getUnreadAnnouncements(currentUser.name);
-  const hasNotifs = newSharedNotes.length > 0 || unreadAnns.length > 0;
-  if (hasNotifs) {
-    const bar = document.createElement('div'); bar.className = 'db-notif-bar';
-    if (unreadAnns.length) {
-      const lbl = document.createElement('div'); lbl.className = 'db-notif-bar-label'; lbl.textContent = '📣 Updates';
-      bar.appendChild(lbl);
-      unreadAnns.slice(0, 2).forEach(ann => {
-        const pill = document.createElement('div'); pill.className = 'db-notif-pill';
-        pill.onclick = () => { document.getElementById('tab-dashboard')?.querySelector('.ann-card.unread')?.scrollIntoView({behavior:'smooth'}); };
-        const dot = document.createElement('div'); dot.className = 'db-notif-dot';
-        const txt = document.createElement('span'); txt.textContent = ann.text.slice(0, 50) + (ann.text.length > 50 ? '…' : '');
-        pill.appendChild(dot); pill.appendChild(txt); bar.appendChild(pill);
-      });
-    }
-    if (newSharedNotes.length) {
-      const lbl2 = document.createElement('div'); lbl2.className = 'db-notif-bar-label'; lbl2.style.marginLeft = unreadAnns.length ? '12px' : '0'; lbl2.textContent = '✉ From manager';
-      bar.appendChild(lbl2);
-      newSharedNotes.slice(0,2).forEach(s=>{
-        const pill=document.createElement('div'); pill.className='db-notif-pill';
-        pill.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
-        const dot=document.createElement('div'); dot.className='db-notif-dot';
-        const txt=document.createElement('span');
-        txt.textContent='Note from 1:1 on '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-        pill.appendChild(dot); pill.appendChild(txt); bar.appendChild(pill);
-      });
-    }
-    root.appendChild(bar);
-  }
-
-  // ── Body ──────────────────────────────────────────────────────
-  const body = document.createElement('div'); body.className = 'db-body';
-
-  // ── Col 1: Today's shift (hero) + colleagues in ───────────────
-  const col1 = document.createElement('div'); col1.className = 'db-col';
-
-  const shiftSec = dbSection('Today');
-  if (!dayInfo) {
-    const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule found for today';shiftSec.appendChild(e);
-  } else if (isOff) {
-    const code = (dayInfo.shift||'').toUpperCase();
-    const offCard = document.createElement('div');
-    offCard.style.cssText = 'padding:20px 18px;background:var(--surface2);border-radius:var(--radius-lg);border:1px solid var(--border);';
-    const offEmoji = document.createElement('div'); offEmoji.style.cssText='font-size:28px;margin-bottom:8px;'; offEmoji.textContent=code==='ABS'?'🏖':code==='H'?'🏠':'🔄';
-    const offLabel = document.createElement('div'); offLabel.style.cssText='font-family:"Fira Sans",sans-serif;font-size:20px;font-weight:900;color:var(--text);letter-spacing:-0.02em;';
-    offLabel.textContent=code==='ABS'?'Absent today':code==='H'?'Holiday':code==='SO'?'Day off (SO)':'Day off';
-    const offSub = document.createElement('div'); offSub.style.cssText='font-size:12px;color:var(--text3);margin-top:4px;';
-    offSub.textContent='See you on the next shift.';
-    offCard.appendChild(offEmoji);offCard.appendChild(offLabel);offCard.appendChild(offSub);shiftSec.appendChild(offCard);
-  } else {
-    // Shift hero card — visually dominant
-    const card = document.createElement('div'); card.className = 'db-today-shift';
-    card.style.cssText = 'display:flex;align-items:center;gap:18px;padding:18px 22px;background:#000743;border:1px solid rgba(214,243,255,0.18);border-radius:var(--radius-lg);position:relative;overflow:hidden;';
-    // Subtle radial glow
-    const glow = document.createElement('div'); glow.style.cssText='position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(214,243,255,0.12),transparent 70%);pointer-events:none;';
-    card.appendChild(glow);
-    const shiftWrap = document.createElement('div'); shiftWrap.style.position='relative';
-    const shiftLbl = document.createElement('div'); shiftLbl.className = 'db-today-shift-label'; shiftLbl.textContent = 'Shift';
-    const shiftVal = document.createElement('div'); shiftVal.className = 'db-today-shift-main'; shiftVal.textContent = dayInfo.shift;
-    shiftWrap.appendChild(shiftLbl); shiftWrap.appendChild(shiftVal); card.appendChild(shiftWrap);
-    if (dayInfo.role) {
-      const div = document.createElement('div'); div.className = 'db-divider'; card.appendChild(div);
-      const roleWrap = document.createElement('div'); roleWrap.style.position='relative';
-      const roleLbl = document.createElement('div'); roleLbl.className = 'db-today-shift-label'; roleLbl.textContent = 'Role';
-      const roleVal = document.createElement('div'); roleVal.style.cssText='font-size:16px;font-weight:700;letter-spacing:-0.01em;';
-      roleVal.style.color = roleColors[dayInfo.role]||'var(--text)'; roleVal.textContent = dayInfo.role;
-      roleWrap.appendChild(roleLbl); roleWrap.appendChild(roleVal); card.appendChild(roleWrap);
-    }
-    shiftSec.appendChild(card);
-  }
-  col1.appendChild(shiftSec);
-
-  // RAG status — personal wellbeing indicator set by manager
-  const _ragProfile = loadProfile(scheduleName);
-  if (_ragProfile.rag && _ragProfile.rag !== 'none') {
-    const ragSec = dbSection('Your status');
-    const ragCard = document.createElement('div');
-    const ragColor = _ragProfile.rag==='red'?'#ff6b6b':_ragProfile.rag==='amber'?'#fbbf24':'#4ade80';
-    const ragBg    = _ragProfile.rag==='red'?'rgba(255,107,107,0.08)':_ragProfile.rag==='amber'?'rgba(251,191,36,0.08)':'rgba(74,222,128,0.08)';
-    ragCard.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-md);border:1px solid '+ragColor.replace(')',',0.25)').replace('rgb','rgba')+';background:'+ragBg+';';
-    const ragDot = document.createElement('div');
-    ragDot.style.cssText = 'width:10px;height:10px;border-radius:50%;background:'+ragColor+';flex-shrink:0;';
-    const ragText = document.createElement('div');
-    ragText.style.cssText = 'font-size:12px;color:var(--text2);flex:1;';
-    ragText.textContent = _ragProfile.focus || (_ragProfile.rag==='red'?'Needs attention':_ragProfile.rag==='amber'?'Check in with your manager':'On track');
-    ragCard.appendChild(ragDot); ragCard.appendChild(ragText);
-    ragSec.appendChild(ragCard);
-    col1.appendChild(ragSec);
-  }
-
-  // Who's in today with me
-  const colleagSec = dbSection('Team in today');
-  if (!colleaguesIn.length && !todayWeek) {
-    const e=document.createElement('div');e.className='db-empty';e.textContent='No schedule data';colleagSec.appendChild(e);
-  } else if (!colleaguesIn.length) {
-    const e=document.createElement('div');e.className='db-empty';e.textContent='No colleagues in today';colleagSec.appendChild(e);
-  } else {
-    const grid = document.createElement('div'); grid.className = 'db-team-grid';
-    colleaguesIn.forEach(p=>{
-      const di=todayWeek?todayWeek.dates.indexOf(todayStr):-1;
-      const shift=di>=0?p.shifts[di]:'';
-      const role=di>=0?p.roles[di]:'';
-      const chip=document.createElement('div'); chip.className='db-team-chip';
-      const dot=document.createElement('div'); dot.className='db-team-chip-dot'; dot.style.background=roleColors[role]||'var(--text3)';
-      const name=document.createElement('span'); name.style.cssText='flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'; name.textContent=p.name;
-      const shiftEl=document.createElement('span'); shiftEl.className='db-team-chip-shift'; shiftEl.textContent=shift.split(' ')[0]||shift;
-      chip.appendChild(dot);chip.appendChild(name);chip.appendChild(shiftEl); grid.appendChild(chip);
-    });
-    colleagSec.appendChild(grid);
-    // Show who's off
-    const offPeople = todayWeek ? todayWeek.people.filter(p=>{
-      if(p.name===scheduleName)return false;
-      const di=todayWeek.dates.indexOf(todayStr);
-      const sh=(p.shifts[di]||'').toLowerCase();
-      return MY_TEAM.includes(p.name)&&di>=0&&OFF.has(sh)&&!sh.startsWith('e');
-    }) : [];
-    const nightPeople = todayWeek ? todayWeek.people.filter(p=>{
-      if(p.name===scheduleName)return false;
-      const di2=todayWeek.dates.indexOf(todayStr);
-      return MY_TEAM.includes(p.name)&&di2>=0&&isNightShift(p.shifts[di2]);
-    }) : [];
-    if (nightPeople.length) {
-      const nEl=document.createElement('div'); nEl.style.cssText='font-size:11px;color:var(--text3);margin-top:6px;';
-      nEl.textContent='Night shift: '+nightPeople.map(p=>p.name).join(', '); colleagSec.appendChild(nEl);
-    }
-    if (offPeople.length) {
-      const offEl=document.createElement('div'); offEl.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;';
-      offEl.textContent='Off today: '+offPeople.map(p=>p.name).join(', '); colleagSec.appendChild(offEl);
-    }
-  }
-  col1.appendChild(colleagSec);
-  body.appendChild(col1);
-
-  // ── Col 2: Announcements + Week + 1:1 ────────────────────────
-  const col2 = document.createElement('div'); col2.className = 'db-col';
-
-  // Announcements — shown first, most prominent
-  const unreadAnnCount = renderAnnouncementsForTeamMember(col2, currentUser.name);
-
-  // Add unread announcements to KPI bar and notification bar
-  if (unreadAnnCount > 0) {
-    kpis.appendChild(mkKpi(unreadAnnCount, 'Updates', 'neutral', () => {}));
-  }
-
-  const weekSec = dbSection('This week');
-  const mon = getMonday(0);
-  const strip = document.createElement('div'); strip.style.cssText='display:flex;flex-direction:column;gap:4px;';
-  for (let i=0;i<7;i++) {
-    const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const dStr=fmtLocal(d);
-    const info=getPersonDayInfo(scheduleName,dStr);
-    const isToday2=dStr===todayStr;
-    const dayOff=!info||!info.shift||OFF.has(info.shift.toLowerCase());
-    const dows=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    const row=document.createElement('div');
-    row.style.cssText=`display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:var(--radius-md);background:${isToday2?'#000743':'var(--surface2)'};border:1px solid ${isToday2?'rgba(214,243,255,0.3)':'var(--border)'};transition:background 0.12s;`;
-    const dowEl=document.createElement('div'); dowEl.style.cssText=`font-size:11px;font-weight:700;color:${isToday2?'#D6F3FF':'var(--text2)'};width:68px;flex-shrink:0;`; dowEl.textContent=dows[i];
-    const dateEl=document.createElement('div'); dateEl.style.cssText='font-size:10px;color:var(--text3);width:36px;flex-shrink:0;font-variant-numeric:tabular-nums;'; dateEl.textContent=d.getDate()+'/'+(d.getMonth()+1);
-    const shiftEl=document.createElement('div'); shiftEl.style.cssText=`font-size:11px;font-weight:700;flex:1;color:${isToday2?'#D6F3FF':dayOff?'var(--text3)':'var(--text)'};font-style:${dayOff?'italic':'normal'};`;
-    shiftEl.textContent=dayOff?(info?.shift?.toUpperCase()||'Off'):(info?.shift||'—');
-    const roleEl=document.createElement('div'); roleEl.style.cssText='font-size:10px;color:var(--text3);flex-shrink:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;';
-    if (info?.role && !dayOff) { roleEl.textContent=info.role; roleEl.style.color=roleColors[info.role]||'var(--text3)'; }
-    row.appendChild(dowEl);row.appendChild(dateEl);row.appendChild(shiftEl);row.appendChild(roleEl);
-    strip.appendChild(row);
-  }
-  weekSec.appendChild(strip);
-  col2.appendChild(weekSec);
-
-  // Upcoming 1:1
-  if (upcomingSession || agendaItems.length) {
-    const oneToOneSec = dbSection('Your 1:1','Feedback',()=>switchTab('feedback',document.querySelector('[onclick*="feedback"]')));
-    if (upcomingSession) {
-      const sessionCard = document.createElement('div');
-      sessionCard.style.cssText='padding:10px 13px;background:rgba(214,243,255,0.05);border:1px solid rgba(214,243,255,0.15);border-radius:var(--radius-md);margin-bottom:8px;';
-      const daysUntil = Math.ceil((new Date(upcomingSession.date+'T00:00:00')-new Date(todayStr+'T00:00:00'))/86400000);
-      const when = daysUntil===0?'Today':daysUntil===1?'Tomorrow':new Date(upcomingSession.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-      const sessionLbl = document.createElement('div'); sessionLbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:rgba(214,243,255,0.4);margin-bottom:3px;'; sessionLbl.textContent='Next session';
-      const sessionDate = document.createElement('div'); sessionDate.style.cssText='font-family:"Fira Sans",sans-serif;font-size:18px;font-weight:900;color:#D6F3FF;letter-spacing:-0.02em;'; sessionDate.textContent=when;
-      sessionCard.appendChild(sessionLbl);sessionCard.appendChild(sessionDate);
-      oneToOneSec.appendChild(sessionCard);
-    }
-    if (agendaItems.length) {
-      const agendaLbl=document.createElement('div'); agendaLbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:6px;'; agendaLbl.textContent='Your agenda';
-      oneToOneSec.appendChild(agendaLbl);
-      agendaItems.slice(0,4).forEach(a=>{
-        const row=document.createElement('div'); row.className='db-row';
-        const dot=document.createElement('div'); dot.style.cssText='width:5px;height:5px;border-radius:50%;background:var(--cal-text);flex-shrink:0;margin-top:1px;';
-        const txt=document.createElement('div'); txt.className='db-row-label'; txt.textContent=a.text;
-        row.appendChild(dot);row.appendChild(txt);oneToOneSec.appendChild(row);
-      });
-      if (agendaItems.length>4) {
-        const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;'; more.textContent='+'+(agendaItems.length-4)+' more in Feedback'; oneToOneSec.appendChild(more);
-      }
-    }
-    if (newSharedNotes.length) {
-      const noteLbl=document.createElement('div'); noteLbl.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:rgba(241,183,242,0.6);margin-top:10px;margin-bottom:6px;'; noteLbl.textContent='From your manager';
-      oneToOneSec.appendChild(noteLbl);
-      newSharedNotes.slice(0,2).forEach(s=>{
-        const item=document.createElement('div'); item.className='db-notif-item pink-border'; item.style.marginBottom='5px';
-        item.onclick=()=>{localStorage.setItem(notifKey,new Date().toISOString());switchTab('feedback',document.querySelector('[onclick*="feedback"]'));};
-        const dot=document.createElement('div'); dot.className='db-notif-item-dot pink';
-        const b=document.createElement('div'); b.className='db-notif-body';
-        const t=document.createElement('div'); t.className='db-notif-title'; t.textContent='1:1 '+new Date(s.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-        const sub=document.createElement('div'); sub.className='db-notif-sub'; sub.textContent=s.sharedNotes.slice(0,65)+(s.sharedNotes.length>65?'…':'');
-        b.appendChild(t);b.appendChild(sub);item.appendChild(dot);item.appendChild(b);oneToOneSec.appendChild(item);
-      });
-    }
-    col2.appendChild(oneToOneSec);
-  }
-
-  // Open 1:1 action items assigned to this person
-  const _otoData = getOtoData();
-  const _myActions = [];
-  (_otoData.sessions||[]).filter(s=>s.person===scheduleName).forEach(s=>{
-    (s.actions||[]).filter(a=>!a.done).forEach(a=>_myActions.push({ text:a.text, sessionId:s.id, actionIdx:(s.actions||[]).indexOf(a) }));
-  });
-  if (_myActions.length) {
-    const actionSec = dbSection('Open actions from 1:1');
-    _myActions.slice(0,6).forEach(a=>{
-      const row = document.createElement('div'); row.className='db-row';
-      row.style.cssText += 'cursor:default;';
-      const dot = document.createElement('div');
-      dot.style.cssText = 'width:6px;height:6px;border-radius:50%;border:1.5px solid var(--cal-text);flex-shrink:0;margin-top:2px;';
-      const lbl = document.createElement('div'); lbl.className='db-row-label'; lbl.textContent=a.text;
-      const doneBtn = document.createElement('button');
-      doneBtn.style.cssText = 'font-size:11px;background:none;border:none;color:var(--text3);cursor:pointer;flex-shrink:0;padding:0 2px;';
-      doneBtn.textContent = '✓';
-      doneBtn.title = 'Mark done';
-      doneBtn.onclick = () => {
-        const d2 = getOtoData();
-        const sess = (d2.sessions||[]).find(s=>s.id===a.sessionId);
-        if (sess && sess.actions && sess.actions[a.actionIdx]) {
-          sess.actions[a.actionIdx].done = true;
-          saveOtoData(d2);
-          row.style.opacity='0.4'; row.style.textDecoration='line-through';
-          doneBtn.remove();
-        }
+  // ── ANNOUNCEMENTS ─────────────────────────────────────────────
+  if (allAnns.length) {
+    const annWrap = m('div'); annWrap.style.cssText='padding:0 24px;margin-top:-4px;';
+    allAnns.forEach(ann => {
+      const isUnread = unreadAnns.some(u=>u.id===ann.id);
+      const el = m('div','ap-announcement');
+      el.style.marginBottom = '8px';
+      if (!isUnread) el.style.opacity = '0.65';
+      const icon = m('span'); icon.textContent = '📣'; icon.style.cssText='font-size:14px;flex-shrink:0;margin-top:1px;';
+      const txt = m('div'); txt.style.cssText='font-size:12px;color:var(--text);line-height:1.5;flex:1;';
+      txt.textContent = ann.text||'';
+      const date = m('div'); date.style.cssText='font-size:10px;color:var(--text3);flex-shrink:0;white-space:nowrap;';
+      date.textContent = ann.date||'';
+      el.appendChild(icon); el.appendChild(txt); el.appendChild(date);
+      el.onclick = () => {
+        if (markAnnouncementRead) markAnnouncementRead(currentUser.name, ann.id);
+        el.style.opacity='0.65';
       };
-      row.appendChild(dot); row.appendChild(lbl); row.appendChild(doneBtn);
-      actionSec.appendChild(row);
+      annWrap.appendChild(el);
     });
-    if (_myActions.length>6) {
-      const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;';
-      more.textContent='+'+ (_myActions.length-6)+' more'; actionSec.appendChild(more);
-    }
-    col2.appendChild(actionSec);
+    root.appendChild(annWrap);
   }
 
-  body.appendChild(col2);
+  // ── BODY ──────────────────────────────────────────────────────
+  const body = m('div','ap-body');
+  root.appendChild(body);
 
-  // ── Col 3: Tasks ─────────────────────────────────────────────
-  const col3 = document.createElement('div'); col3.className = 'db-col';
+  // ══ SECTION 1: MY PERFORMANCE ════════════════════════════════
+  const sec1Title = m('div','ap-section-title ap-anim ap-anim-1');
+  sec1Title.innerHTML = '📊 My performance this week';
+  body.appendChild(sec1Title);
 
-  const taskSec = dbSection('Tasks today','Planner',()=>switchTab('planner',document.querySelector('[onclick*="planner"]')));
-  if (!todayTasks.length && !overdueTasks.length) {
-    const e=document.createElement('div');e.className='db-empty';e.textContent='Nothing on the list yet.';taskSec.appendChild(e);
-  }
-  overdueTasks.slice(0,3).forEach(t=>{
-    const row=document.createElement('div'); row.className='db-row';
-    const badge=document.createElement('span'); badge.className='db-row-badge'; badge.style.cssText='background:var(--high-bg);color:var(--high-text);flex-shrink:0;'; badge.textContent='overdue';
-    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
-    row.appendChild(badge);row.appendChild(label);taskSec.appendChild(row);
-  });
-  todayTasks.slice(0,8).forEach(t=>{
-    const row=document.createElement('div'); row.className='db-row';
-    const done=document.createElement('div'); done.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--border2);';
-    const label=document.createElement('div'); label.className='db-row-label'; label.textContent=t.text;
-    const pri=t.priority||'';
-    row.appendChild(done);row.appendChild(label);
-    if (pri) {
-      const b=document.createElement('span');b.className='db-row-badge';
-      b.style.cssText=pri==='high'?'background:var(--high-bg);color:var(--high-text);':pri==='medium'?'background:var(--med-bg);color:var(--med-text);':'background:var(--low-bg);color:var(--low-text);';
-      b.textContent=pri; row.appendChild(b);
-    }
-    taskSec.appendChild(row);
-  });
-  if (todayTasks.length>8) {
-    const more=document.createElement('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;'; more.textContent='+'+(todayTasks.length-8)+' more in Planner'; taskSec.appendChild(more);
-  }
-  col3.appendChild(taskSec);
+  const statsGrid = m('div','ap-stats-grid ap-anim ap-anim-1');
 
-  // Personal ZD stats this week
-  if (zdReady()) {
-    const statsSec = dbSection('My tickets this week');
-    const statsGrid = document.createElement('div');
-    statsGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;';
-    const mkStat = (id, label) => {
-      const c=document.createElement('div'); c.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
-      const v=document.createElement('div'); v.id=id; v.style.cssText="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--text);"; v.textContent='…';
-      const l=document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;'; l.textContent=label;
-      c.appendChild(v); c.appendChild(l); return c;
-    };
-    statsGrid.appendChild(mkStat('nm-zd-solved','Solved'));
-    statsGrid.appendChild(mkStat('nm-zd-email','Email'));
-    statsGrid.appendChild(mkStat('nm-zd-phone','Phone'));
-    statsSec.appendChild(statsGrid);
+  // Helper: make a big stat card
+  const mkStatCard = (label, val, cls, gaugeVal, prevVal, teamAvg, unit, invert) => {
+    const card = m('div','ap-stat-card '+(cls||''));
+    const lbl = m('div','ap-stat-label'); lbl.textContent = label;
+    const valEl = m('div','ap-stat-val '+(cls||'')+( String(val).length > 5?' small':''));
+    valEl.textContent = val!=null ? (String(val)+(unit||'')) : '—';
+    const meta = m('div','ap-stat-meta');
 
-    // Refresh stats button — sits below stats grid, no link to Tickets tab
-    const refreshStatsBtn = document.createElement('button');
-    refreshStatsBtn.style.cssText = 'margin-top:8px;font-family:inherit;font-size:10px;font-weight:700;color:var(--text3);background:none;border:1px solid var(--border);border-radius:var(--radius-md);padding:4px 10px;cursor:pointer;width:100%;transition:border-color 0.12s,color 0.12s;';
-    refreshStatsBtn.textContent = '↻ Refresh stats';
-    refreshStatsBtn.onmouseenter = () => { refreshStatsBtn.style.color='var(--cal-text)'; refreshStatsBtn.style.borderColor='var(--cal-text)'; };
-    refreshStatsBtn.onmouseleave = () => { refreshStatsBtn.style.color='var(--text3)'; refreshStatsBtn.style.borderColor='var(--border)'; };
-    statsSec.appendChild(refreshStatsBtn);
-    col3.appendChild(statsSec);
-
-    // Resolve own ZD agent ID — try cache first, then /users/me.json self-lookup
-    const _selfCacheKey = 'wtp_zd_self_agent';
-    const _doFetchStats = async () => {
-      ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='…';});
-      refreshStatsBtn.textContent='↻ Refreshing…'; refreshStatsBtn.disabled=true;
-      try {
-        // 1. Try cached self-agent
-        let _agId = null;
-        try { const sc=JSON.parse(localStorage.getItem(_selfCacheKey)||'null'); if(sc&&sc.id) _agId=sc.id; } catch {}
-
-        // 2. Try team cache by first name
-        if (!_agId) {
-          const _agNow = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-          const _agM = _agNow.find(a=>normName((a.name||'').split(' ')[0])===normName(scheduleName));
-          if (_agM) { _agId=_agM.id; localStorage.setItem(_selfCacheKey, JSON.stringify({id:_agM.id,name:_agM.name})); }
-        }
-
-        // 3. Self-lookup via /users/me.json — works with own ZD credentials
-        if (!_agId) {
-          try {
-            const meRes = await zdFetch('/users/me.json');
-            const me = meRes.user;
-            if (me && me.id) {
-              _agId = me.id;
-              localStorage.setItem(_selfCacheKey, JSON.stringify({id:me.id, name:me.name}));
-              // Also add to team cache for future use
-              const existing = JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-              if (!existing.find(a=>a.id===me.id)) {
-                existing.push({id:me.id, name:me.name, email:me.email});
-                localStorage.setItem('wtp_zd_agents_cache', JSON.stringify(existing));
-              }
-            }
-          } catch {}
-        }
-
-        if (!_agId) {
-          ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
-          refreshStatsBtn.textContent='↻ Refresh stats'; refreshStatsBtn.disabled=false;
-          return;
-        }
-
-        // Fetch solved tickets for this week
-        const _wFrom=fmtLocal(getMonday(0)), _wTo=localToday();
-        let _solved=0,_email=0,_phone=0;
-        let url='/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_agId+' status>=solved solved>='+_wFrom+' solved<='+_wTo)+'&per_page=100';
-        for(let p=0;p<5&&url;p++){
-          const r=await zdFetch(url);
-          (r.results||[]).forEach(t=>{_solved++;const _c=t.channel||(t.via&&t.via.channel)||'';if(_c==='email')_email++;else _phone++;});
-          url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
-        }
-        const sv=document.getElementById('nm-zd-solved'); if(sv){sv.textContent=_solved;sv.style.color=_solved>0?'var(--low-text)':'var(--text)';}
-        const ev=document.getElementById('nm-zd-email');  if(ev){ev.textContent=_email; ev.style.color='var(--cal-text)';}
-        const pv=document.getElementById('nm-zd-phone');  if(pv){pv.textContent=_phone; pv.style.color='var(--med-text)';}
-      } catch(e) {
-        ['nm-zd-solved','nm-zd-email','nm-zd-phone'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
-      }
-      refreshStatsBtn.textContent='↻ Refresh stats'; refreshStatsBtn.disabled=false;
-    };
-    refreshStatsBtn.onclick = _doFetchStats;
-    _doFetchStats(); // always attempt on load
-  }
-
-  // Tickets
-  const zdSubdomain = localStorage.getItem('wtp_zd_subdomain');
-  const zdToken = localStorage.getItem('wtp_zd_token');
-  if (zdSubdomain && zdToken) {
-    const ticketSec = dbSection('Open tickets');
-    const loading = document.createElement('div'); loading.className='db-empty'; loading.textContent='Loading…';
-    ticketSec.appendChild(loading);
-    col3.appendChild(ticketSec);
-    // Use self-cached agent ID (set by doFetchStats above via /users/me.json)
-    (async () => {
-      let _tAgId = null;
-      try { const sc=JSON.parse(localStorage.getItem('wtp_zd_self_agent')||'null'); if(sc&&sc.id) _tAgId=sc.id; } catch {}
-      if (!_tAgId) {
-        const ac=JSON.parse(localStorage.getItem('wtp_zd_agents_cache')||'[]');
-        const am=ac.find(a=>normName((a.name||'').split(' ')[0])===normName(scheduleName));
-        if (am) _tAgId=am.id;
-      }
-      if (!_tAgId) {
-        try {
-          const meRes=await zdFetch('/users/me.json');
-          if (meRes.user&&meRes.user.id) { _tAgId=meRes.user.id; localStorage.setItem('wtp_zd_self_agent',JSON.stringify({id:meRes.user.id,name:meRes.user.name})); }
-        } catch {}
-      }
-      if (!_tAgId) { loading.textContent='Could not identify your agent account.'; return; }
-      zdFetch('/search.json?query='+encodeURIComponent('type:ticket assignee_id:'+_tAgId+' (status:open OR status:pending OR status:hold)')+'&per_page=6&sort_by=created_at&sort_order=asc').then(r=>{
-        loading.remove();
-        const tickets=r.results||[];
-        if (!tickets.length) { const e=document.createElement('div');e.className='db-empty';e.textContent='Queue is clear.';ticketSec.appendChild(e);return; }
-        tickets.forEach(t=>{
-          const a=document.createElement('a');a.className='db-ticket-row';
-          a.href='https://'+zdSubdomain+'.zendesk.com/agent/tickets/'+t.id;a.target='_blank';a.rel='noopener';
-          const ms=Date.now()-new Date(t.created_at).getTime();const d=Math.floor(ms/86400000);const h=Math.floor((ms%86400000)/3600000);
-          const id=document.createElement('span');id.className='db-ticket-id';id.textContent='#'+t.id;
-          const subj=document.createElement('span');subj.className='db-ticket-subject';subj.textContent=t.subject||'(no subject)';
-          const age=document.createElement('span');age.className='db-ticket-age';age.textContent=d>0?d+'d':h>0?h+'h':'now';
-          a.appendChild(id);a.appendChild(subj);a.appendChild(age);ticketSec.appendChild(a);
-        });
-      }).catch(()=>{loading.textContent='Could not load tickets.';});
-    })();
-  }
-  body.appendChild(col3);
-
-  // ── Col 4: Performance + Mood + Handover + Quick links ────────
-  const col4 = document.createElement('div'); col4.className = 'db-col';
-
-  // ── 1. Personal performance trend (4-week sparkline) ─────────
-  (() => {
-    const weeks4 = [];
-    for (let i = 3; i >= 0; i--) {
-      const mon = fmtLocal(getMonday(-i));
-      const snap = getWeeklySnapshot(mon);
-      if (snap && snap.agents && snap.agents[scheduleName]) {
-        weeks4.push({ week: mon, ...snap.agents[scheduleName] });
-      } else {
-        weeks4.push({ week: mon, answered: 0, zdSolved: 0 });
-      }
-    }
-    const hasData = weeks4.some(w => (w.answered||0) > 0 || (w.zdSolved||0) > 0);
-    if (!hasData) return;
-
-    const trendSec = dbSection('My performance — last 4 weeks');
-
-    // Answer rate vs team avg
-    const myLastSnap = weeks4[weeks4.length - 1];
-    const teamSnap   = getWeeklySnapshot(fmtLocal(getMonday(0)));
-    if (myLastSnap && teamSnap && teamSnap.totals) {
-      const myRate = teamSnap.totals.ansRate;
-      const myAns  = myLastSnap.answered || 0;
-      const myCall = (myLastSnap.answered||0) + (myLastSnap.missed||0);
-      const myPersonalRate = myCall > 0 ? Math.round(myAns / myCall * 100) : null;
-
-      if (myPersonalRate !== null || myRate !== null) {
-        const rateRow = document.createElement('div');
-        rateRow.style.cssText = 'display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;';
-        const mkMini = (val, label, cls) => {
-          const p = document.createElement('div');
-          p.style.cssText = 'flex:1;min-width:80px;background:var(--surface2);border-radius:8px;padding:8px 10px;border-left:3px solid '+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':'var(--border)')+';';
-          const v = document.createElement('div'); v.style.cssText="font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;color:"+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':'var(--text)')+';letter-spacing:-0.03em;'; v.textContent=val??'—';
-          const l = document.createElement('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-top:2px;'; l.textContent=label;
-          p.appendChild(v); p.appendChild(l); return p;
-        };
-        if (myPersonalRate !== null) rateRow.appendChild(mkMini(myPersonalRate+'%', 'My answer rate', myPersonalRate>=90?'ok':myPersonalRate>=80?'warn':null));
-        if (myRate !== null) rateRow.appendChild(mkMini(myRate+'%', 'Team avg', myRate>=90?'ok':myRate>=80?'warn':null));
-        trendSec.appendChild(rateRow);
-      }
+    // vs last week
+    if (prevVal != null && typeof prevVal === 'number' && val != null) {
+      const vsRow = m('div','ap-stat-vs');
+      const dEl = deltaEl(typeof val==='number'?val:parseFloat(val)||0, prevVal, invert);
+      if (dEl) vsRow.appendChild(dEl);
+      const prevTxt = m('span'); prevTxt.textContent = ' vs last wk (' + prevVal + (unit||') ');
+      vsRow.appendChild(prevTxt);
+      meta.appendChild(vsRow);
     }
 
-    // Sparkline: calls + tickets per week
-    const mkSparkline = (values, label, color) => {
-      const maxV = Math.max(...values, 1);
-      const W = 180, H = 36;
+    // vs team average
+    if (teamAvg != null && val != null) {
+      const teamRow = m('div','ap-stat-vs');
+      const numVal = typeof val==='number'?val:parseFloat(val)||0;
+      const diff = numVal - teamAvg;
+      const teamDot = m('span');
+      teamDot.style.cssText = 'display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:4px;background:'+(
+        (!invert&&diff>0)||( invert&&diff<0)?'#34d399':
+        (!invert&&diff<0)||( invert&&diff>0)?'#f87171':'var(--text3)'
+      )+';';
+      teamRow.appendChild(teamDot);
+      const tTxt = m('span'); tTxt.textContent = 'Team avg: ' + teamAvg + (unit||'');
+      teamRow.appendChild(tTxt);
+      meta.appendChild(teamRow);
+    }
+
+    // Gauge
+    if (gaugeVal != null) {
+      const gauge = m('div','ap-gauge');
+      const fill = m('div','ap-gauge-fill');
+      fill.style.width = Math.min(100, gaugeVal) + '%';
+      fill.style.background = cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--cal-text)';
+      gauge.appendChild(fill);
+      card.appendChild(lbl); card.appendChild(valEl); card.appendChild(meta); card.appendChild(gauge);
+    } else {
+      card.appendChild(lbl); card.appendChild(valEl); card.appendChild(meta);
+    }
+    return card;
+  };
+
+  // Calls answered
+  if (callsThisWk.answered != null) {
+    const ansRate  = callsThisWk.offered>0 ? Math.round(callsThisWk.answered/callsThisWk.offered*100) : null;
+    const prevRate = callsLastWk.offered>0 ? Math.round(callsLastWk.answered/callsLastWk.offered*100) : null;
+    const rateCls  = ansRate==null?'blue':ansRate>=90?'ok':ansRate>=80?'warn':'danger';
+
+    statsGrid.appendChild(mkStatCard(
+      'Calls answered', callsThisWk.answered, 'blue',
+      null, callsLastWk.answered, teamAvgCalls, '', false
+    ));
+    if (ansRate != null) {
+      statsGrid.appendChild(mkStatCard(
+        'Answer rate', ansRate, rateCls,
+        ansRate, prevRate, null, '%', false
+      ));
+    }
+    if (callsThisWk.missed > 0 || callsLastWk.missed > 0) {
+      statsGrid.appendChild(mkStatCard(
+        'Missed calls', callsThisWk.missed, callsThisWk.missed===0?'ok':callsThisWk.missed>5?'danger':'warn',
+        null, callsLastWk.missed, null, '', true
+      ));
+    }
+    if (callsThisWk.avgTalk > 0) {
+      statsGrid.appendChild(mkStatCard(
+        'Avg talk time', fmtSec(callsThisWk.avgTalk), 'purple',
+        null, callsLastWk.avgTalk>0?callsLastWk.avgTalk:null, null, '', false
+      ));
+    }
+  }
+
+  // Tickets solved
+  if (thisWk.zdSolved > 0 || lastWk.zdSolved > 0) {
+    statsGrid.appendChild(mkStatCard(
+      'Tickets solved', thisWk.zdSolved, thisWk.zdSolved>0?'ok':'',
+      null, lastWk.zdSolved, teamAvgSolved, '', false
+    ));
+  }
+
+  if (statsGrid.children.length === 0) {
+    const noData = m('div');
+    noData.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;font-size:13px;color:var(--text3);font-style:italic;grid-column:1/-1;';
+    noData.textContent = 'No performance data yet for this week. Stats appear after a Unifon report is imported and weekly snapshots are built.';
+    statsGrid.appendChild(noData);
+  }
+
+  body.appendChild(statsGrid);
+
+  // ══ SECTION 2: TREND + COMPARISON ════════════════════════════
+  const hasAnyTrendData = snapWeeks.some(w => w.answered > 0 || w.zdSolved > 0);
+  if (hasAnyTrendData) {
+    const sec2Title = m('div','ap-section-title ap-anim ap-anim-2');
+    sec2Title.innerHTML = '📈 4-week trend';
+    body.appendChild(sec2Title);
+
+    const trendsGrid = m('div','ap-trends-grid ap-anim ap-anim-2');
+
+    const mkTrendCard = (label, values, color, unit, fmt) => {
+      const card = m('div','ap-trend-card');
+      const lbl = m('div','ap-trend-label');
+      const lspan = m('span'); lspan.textContent = label;
+      const curr = values[values.length-1];
+      const prev = values[values.length-2];
+      const dEl2 = prev != null && curr != null ? deltaEl(curr, prev, false) : null;
+      lbl.appendChild(lspan); if (dEl2) lbl.appendChild(dEl2);
+
+      const valEl2 = m('div','ap-trend-val');
+      valEl2.textContent = curr != null ? (fmt?fmt(curr):(curr+(unit||''))) : '—';
+
+      // SVG sparkline
+      const maxV = Math.max(...values.filter(v=>v!=null), 1);
+      const W = 200, H = 40;
       const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svg.setAttribute('viewBox', '0 0 '+W+' '+H);
-      svg.setAttribute('width', W); svg.setAttribute('height', H);
-      svg.style.cssText = 'display:block;overflow:visible;';
-      const bW = Math.floor(W / values.length) - 4;
-      values.forEach((v, i) => {
-        const bH = Math.max(2, Math.round(v / maxV * (H - 14)));
-        const x = i * (W / values.length) + 2;
-        const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
-        rect.setAttribute('x', x); rect.setAttribute('y', H - 10 - bH);
-        rect.setAttribute('width', bW); rect.setAttribute('height', bH);
-        rect.setAttribute('rx', '2'); rect.setAttribute('fill', i === values.length-1 ? color : color+'66');
-        svg.appendChild(rect);
-        // value on top of bar
-        if (v > 0) {
-          const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-          t.setAttribute('x', x + bW/2); t.setAttribute('y', H - bH - 12);
-          t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','8');
-          t.setAttribute('fill', i===values.length-1?color:'var(--text3)'); t.textContent=v;
-          svg.appendChild(t);
-        }
+      svg.setAttribute('viewBox','0 0 '+W+' '+H);
+      svg.style.cssText = 'width:100%;height:'+H+'px;display:block;margin-top:4px;overflow:visible;';
+
+      // Area fill
+      const pts = values.map((v,i) => ({
+        x: Math.round(i * W / Math.max(1,values.length-1)),
+        y: H - Math.round((v||0)/maxV*(H-8)) - 4
+      }));
+      if (pts.length > 1) {
+        const areaPath = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const d = 'M'+pts[0].x+','+H+' '+pts.map(p=>'L'+p.x+','+p.y).join(' ')+' L'+pts[pts.length-1].x+','+H+' Z';
+        areaPath.setAttribute('d',d);
+        areaPath.setAttribute('fill',color+'22');
+        svg.appendChild(areaPath);
+
+        // Line
+        const linePath = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+        linePath.setAttribute('points',pts.map(p=>p.x+','+p.y).join(' '));
+        linePath.setAttribute('stroke',color);
+        linePath.setAttribute('stroke-width','2');
+        linePath.setAttribute('fill','none');
+        linePath.setAttribute('stroke-linecap','round');
+        linePath.setAttribute('stroke-linejoin','round');
+        svg.appendChild(linePath);
+      }
+
+      // Dots + labels
+      pts.forEach((pt,i) => {
+        const v = values[i];
+        const isLast = i === pts.length-1;
+        const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);
+        dot.setAttribute('r',isLast?4:3);
+        dot.setAttribute('fill',isLast?color:'var(--surface)');
+        dot.setAttribute('stroke',color);dot.setAttribute('stroke-width','2');
+        svg.appendChild(dot);
+
+        // Week label
+        const wDate = new Date(snapWeeks[i].week+'T00:00:00');
+        const wLbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+        wLbl.setAttribute('x',pt.x);wLbl.setAttribute('y',H+10);
+        wLbl.setAttribute('text-anchor','middle');wLbl.setAttribute('font-size','8');
+        wLbl.setAttribute('fill',isLast?color:'var(--text3)');
+        wLbl.textContent = wDate.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+        svg.appendChild(wLbl);
       });
-      // Week labels
-      weeks4.forEach((w, i) => {
-        const x = i * (W / values.length) + bW/2 + 2;
-        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-        t.setAttribute('x', x); t.setAttribute('y', H - 2);
-        t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','7');
-        t.setAttribute('fill','var(--text3)');
-        const d = new Date(w.week+'T00:00:00');
-        t.textContent = d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-        svg.appendChild(t);
-      });
-      const wrap = document.createElement('div'); wrap.style.cssText='display:flex;align-items:center;gap:10px;padding:4px 0;';
-      const lbl = document.createElement('div'); lbl.style.cssText='font-size:10px;font-weight:700;color:var(--text3);width:52px;flex-shrink:0;text-align:right;'; lbl.textContent=label;
-      wrap.appendChild(lbl); wrap.appendChild(svg); return wrap;
+
+      card.appendChild(lbl); card.appendChild(valEl2); card.appendChild(svg);
+      return card;
     };
 
-    const callVals   = weeks4.map(w => w.answered || 0);
-    const ticketVals = weeks4.map(w => w.zdSolved  || 0);
-    if (callVals.some(v=>v>0))   trendSec.appendChild(mkSparkline(callVals,   'Calls',   '#60a5fa'));
-    if (ticketVals.some(v=>v>0)) trendSec.appendChild(mkSparkline(ticketVals, 'Tickets', '#34d399'));
+    const callVals    = snapWeeks.map(w=>w.answered);
+    const solvedVals  = snapWeeks.map(w=>w.zdSolved);
+    const missedVals  = snapWeeks.map(w=>w.missed);
+    const ansRateVals = snapWeeks.map(w=>w.answered+w.missed>0?Math.round(w.answered/(w.answered+w.missed)*100):null);
 
-    col4.appendChild(trendSec);
-  })();
+    if (callVals.some(v=>v>0))    trendsGrid.appendChild(mkTrendCard('Calls answered', callVals, '#60a5fa', ''));
+    if (solvedVals.some(v=>v>0))  trendsGrid.appendChild(mkTrendCard('Tickets solved',  solvedVals,'#34d399',''));
+    if (ansRateVals.some(v=>v!=null)) trendsGrid.appendChild(mkTrendCard('Answer rate', ansRateVals, '#a78bfa', '%'));
+    if (missedVals.some(v=>v>0))  trendsGrid.appendChild(mkTrendCard('Missed calls',   missedVals,'#f87171',''));
 
-  // ── 2. CSAT for recent tickets (async, non-blocking) ─────────
+    body.appendChild(trendsGrid);
+
+    // ── Team comparison bars ────────────────────────────────────
+    if (teamAgents.length > 1) {
+      const sec2bTitle = m('div','ap-section-title ap-anim ap-anim-2');
+      sec2bTitle.innerHTML = '👥 You vs the team';
+      body.appendChild(sec2bTitle);
+
+      const compPanel = m('div','ap-panel ap-anim ap-anim-2');
+      const compHdr = m('div','ap-panel-hdr');
+      compHdr.textContent = 'This week — normalised (white line = team average)';
+      const compBody = m('div','ap-panel-body');
+
+      const AGENT_COLORS=['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+      const myColor = AGENT_COLORS[MY_TEAM.indexOf(scheduleName) % AGENT_COLORS.length] || '#60a5fa';
+
+      const mkCompRow = (label, myVal, allVals, fmt, invert) => {
+        const validVals = allVals.filter(v=>v!=null&&v>0);
+        if (!validVals.length || myVal == null) return null;
+        const maxV = Math.max(...validVals);
+        const avg  = Math.round(validVals.reduce((s,v)=>s+v,0)/validVals.length);
+        if (maxV === 0) return null;
+
+        const row = m('div','ap-comp-row');
+        const lbl = m('div','ap-comp-label'); lbl.textContent = label;
+        const track = m('div','ap-comp-track');
+
+        const fill = m('div','ap-comp-fill');
+        const pct = Math.round(myVal/maxV*100);
+        fill.style.width = pct + '%';
+        const aboveAvg = invert ? myVal <= avg : myVal >= avg;
+        fill.style.background = aboveAvg ? myColor : '#f87171';
+        track.appendChild(fill);
+
+        // Team average line
+        if (avg > 0) {
+          const avgLine = m('div','ap-comp-avg-line');
+          avgLine.style.left = Math.round(avg/maxV*100) + '%';
+          avgLine.title = 'Team avg: ' + (fmt?fmt(avg):avg);
+          track.appendChild(avgLine);
+        }
+
+        const val2 = m('div','ap-comp-val');
+        val2.textContent = fmt ? fmt(myVal) : myVal;
+        if (!aboveAvg) val2.style.color = '#f87171';
+        row.appendChild(lbl); row.appendChild(track); row.appendChild(val2);
+        return row;
+      };
+
+      const allAnswered = teamAgents.map(([,a])=>a.answered||0);
+      const allSolved   = teamAgents.map(([,a])=>a.zdSolved||0);
+      const allMissed   = teamAgents.map(([,a])=>a.missed||0);
+
+      const r1 = mkCompRow('Calls answered', thisWk.answered, allAnswered, null, false);
+      const r2 = mkCompRow('Tickets solved',  thisWk.zdSolved, allSolved,   null, false);
+      const r3 = mkCompRow('Missed calls',    thisWk.missed,   allMissed,   null, true);
+
+      let addedAny = false;
+      [r1,r2,r3].forEach(r=>{ if(r){compBody.appendChild(r);addedAny=true;} });
+      if (addedAny) {
+        compPanel.appendChild(compHdr); compPanel.appendChild(compBody);
+        body.appendChild(compPanel);
+      }
+    }
+  }
+
+  // ══ SECTION 3: TODAY ═════════════════════════════════════════
+  const sec3Title = m('div','ap-section-title ap-anim ap-anim-3');
+  sec3Title.innerHTML = '📋 Today';
+  body.appendChild(sec3Title);
+
+  const todayGrid = m('div','ap-mid-grid ap-anim ap-anim-3');
+
+  // Left: Tasks + 1:1 actions
+  const taskPanel = m('div','ap-panel');
+  const taskHdr = m('div','ap-panel-hdr');
+  taskHdr.textContent = 'Tasks & actions';
+  const taskCount2 = todayTasks.length + overdueTasks.length + openActions.length;
+  if (taskCount2 > 0) {
+    const badge = m('span'); badge.style.cssText='background:rgba(251,191,36,0.15);color:#fbbf24;border-radius:20px;padding:1px 7px;font-size:10px;font-weight:700;';
+    badge.textContent = taskCount2;
+    taskHdr.appendChild(badge);
+  }
+  const taskBody = m('div','ap-panel-body');
+
+  if (overdueTasks.length) {
+    overdueTasks.forEach(t => {
+      const it = m('div','ap-item');
+      const dot = m('div','ap-item-dot'); dot.style.background='#f87171';
+      const txt = m('span'); txt.textContent = t.text||'Task';
+      const ovr = m('span'); ovr.style.cssText='font-size:10px;color:#f87171;margin-left:auto;white-space:nowrap;';ovr.textContent='overdue';
+      it.appendChild(dot); it.appendChild(txt); it.appendChild(ovr); taskBody.appendChild(it);
+    });
+  }
+  if (todayTasks.length) {
+    todayTasks.slice(0,6).forEach(t => {
+      const it = m('div','ap-item');
+      const dot = m('div','ap-item-dot'); dot.style.background='var(--cal-text)';
+      const txt = m('span'); txt.textContent = t.text||'Task';
+      it.appendChild(dot); it.appendChild(txt); taskBody.appendChild(it);
+    });
+  }
+  if (openActions.length) {
+    const actHdr2 = m('div'); actHdr2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);padding:4px 0 2px;';
+    actHdr2.textContent = 'Open 1:1 actions';
+    taskBody.appendChild(actHdr2);
+    openActions.forEach(a => {
+      const it = m('div','ap-item');
+      const dot = m('div','ap-item-dot'); dot.style.background='#a78bfa';
+      const txt = m('span'); txt.textContent = a.text||'Action';
+      it.appendChild(dot); it.appendChild(txt); taskBody.appendChild(it);
+    });
+  }
+  if (taskCount2 === 0) {
+    const clear = m('div','ap-item ok');
+    const dot2 = m('div','ap-item-dot'); dot2.style.background='#34d399';
+    const txt2 = m('span'); txt2.textContent = 'All clear — no tasks or actions pending';
+    clear.appendChild(dot2); clear.appendChild(txt2); taskBody.appendChild(clear);
+  }
+
+  taskPanel.appendChild(taskHdr); taskPanel.appendChild(taskBody);
+  todayGrid.appendChild(taskPanel);
+
+  // Right: Schedule this week
+  const schedPanel = m('div','ap-panel');
+  const schedHdr = m('div','ap-panel-hdr');
+  schedHdr.textContent = 'My schedule this week';
+  const schedBody = m('div','ap-panel-body');
+
+  if (personSched) {
+    const strip = m('div','ap-sched-strip');
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    weekDates.forEach((d,i) => {
+      const shift = personSched.shifts?.[i] || '';
+      const isToday2 = d === todayStr;
+      const isOff2 = !shift || ['so','h','hd','os','abs','ol'].includes(shift.toLowerCase());
+      const dayEl = m('div','ap-sched-day'+(isToday2?' today':'')+(isOff2?' off':''));
+      const dlbl = m('div','ap-sched-day-label'); dlbl.textContent = days[i];
+      const dsft = m('div','ap-sched-shift'); dsft.textContent = shift || '—';
+      dayEl.appendChild(dlbl); dayEl.appendChild(dsft); strip.appendChild(dayEl);
+    });
+    schedBody.appendChild(strip);
+  } else {
+    const nd = m('div'); nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';
+    nd.textContent = 'Schedule not loaded yet.';
+    schedBody.appendChild(nd);
+  }
+
+  // Last 1:1 note
+  if (lastSession) {
+    const oDiv = m('div'); oDiv.style.marginTop = '12px';
+    const oHdr2 = m('div'); oHdr2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';
+    oHdr2.textContent = 'Last 1:1 · ' + lastSession.date + (daysSince1on1?'  ('+daysSince1on1+'d ago)':'');
+    const oNotes = m('div'); oNotes.style.cssText='font-size:12px;color:var(--text2);line-height:1.5;';
+    oNotes.textContent = (lastSession.notes||'').slice(0,200) || '(no notes)';
+    oDiv.appendChild(oHdr2); oDiv.appendChild(oNotes); schedBody.appendChild(oDiv);
+  }
+
+  schedPanel.appendChild(schedHdr); schedPanel.appendChild(schedBody);
+  todayGrid.appendChild(schedPanel);
+  body.appendChild(todayGrid);
+
+  // ══ SECTION 4: TICKETS + QUEUE LOG ════════════════════════════
+  const sec4Title = m('div','ap-section-title ap-anim ap-anim-4');
+  sec4Title.innerHTML = '🎫 Tickets & queue';
+  body.appendChild(sec4Title);
+
+  const sec4Grid = m('div','ap-mid-grid ap-anim ap-anim-4');
+
+  // Open tickets (async)
+  const ticketPanel = m('div','ap-panel');
+  const ticketHdr = m('div','ap-panel-hdr'); ticketHdr.textContent = 'My open tickets';
+  const ticketBody = m('div','ap-panel-body');
+  ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
+  ticketPanel.appendChild(ticketHdr); ticketPanel.appendChild(ticketBody);
+  sec4Grid.appendChild(ticketPanel);
+
+  // Queue log
+  const queuePanel = m('div','ap-panel');
+  const queueHdr = m('div','ap-panel-hdr'); queueHdr.textContent = 'My queue activity this week';
+  const queueBody2 = m('div','ap-panel-body');
+  if (queueLog.length) {
+    queueLog.forEach(e => {
+      const row = m('div','ap-queue-row');
+      const dot3 = m('div'); dot3.style.cssText='width:6px;height:6px;border-radius:50%;flex-shrink:0;background:'+(e.event==='logged_on'?'#34d399':'#f87171')+';';
+      const time3 = m('span'); time3.style.cssText='color:var(--text3);min-width:85px;flex-shrink:0;';
+      time3.textContent = new Date(e.ts).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      const ev3 = m('span'); ev3.style.color='var(--text2)';
+      ev3.textContent = e.event==='logged_on'?'→ logged on':'← logged off';
+      row.appendChild(dot3); row.appendChild(time3); row.appendChild(ev3);
+      queueBody2.appendChild(row);
+    });
+  } else {
+    const nd2 = m('div'); nd2.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';
+    nd2.textContent = 'No queue events logged this week yet.';
+    queueBody2.appendChild(nd2);
+  }
+  queuePanel.appendChild(queueHdr); queuePanel.appendChild(queueBody2);
+  sec4Grid.appendChild(queuePanel);
+  body.appendChild(sec4Grid);
+
+  // ══ SECTION 5: MOOD + HANDOVER + NOTEPAD ══════════════════════
+  const sec5Grid = m('div','ap-mid-grid ap-anim ap-anim-5');
+
+  // Mood
+  const moodPanel = m('div','ap-panel');
+  const moodHdr = m('div','ap-panel-hdr'); moodHdr.textContent = 'How are you doing?';
+  const moodBody = m('div','ap-panel-body');
+  renderMoodWidget(moodBody, currentUser.name);
+  moodPanel.appendChild(moodHdr); moodPanel.appendChild(moodBody);
+  sec5Grid.appendChild(moodPanel);
+
+  // Handover
+  const hvPanel = m('div','ap-panel');
+  const isEveningShift2 = personSched && ['e','n','l'].some(s=>(personSched.shifts?.[todayDayIdx]||'').toLowerCase().startsWith(s));
+  const hvHdr = m('div','ap-panel-hdr');
+  hvHdr.textContent = isEveningShift2 ? 'Leave a handover note' : 'Handover notes';
+  const hvBody = m('div','ap-panel-body');
+  renderHandoverWidget(hvBody, currentUser.name, isEveningShift2);
+  hvPanel.appendChild(hvHdr); hvPanel.appendChild(hvBody);
+  sec5Grid.appendChild(hvPanel);
+
+  body.appendChild(sec5Grid);
+
+  // ══ ASYNC: ZD tickets ═════════════════════════════════════════
   if (zdReady() && myZdAgentId) {
-    const csatSec = dbSection('My recent CSAT');
-    const csatBody = document.createElement('div');
-    csatBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
-    csatSec.appendChild(csatBody);
-    col4.appendChild(csatSec);
-
     (async () => {
       try {
-        const from30 = fmtLocal(new Date(new Date().setDate(new Date().getDate()-30)));
-        const fromTs = Math.floor(new Date(from30+'T00:00:00').getTime()/1000);
+        const [openRes, pendRes, solvedRes] = await Promise.all([
+          zdFetch('/search.json?query='+encodeURIComponent('type:ticket status:open assignee:'+myZdAgentId)+'&per_page=10').catch(()=>({results:[]})),
+          zdCount('type:ticket status:pending assignee:'+myZdAgentId).catch(()=>0),
+          zdCount('type:ticket status>=solved solved>='+thisMonday+' assignee:'+myZdAgentId).catch(()=>0),
+        ]);
+        const openTickets = openRes.results || [];
+        const openCount   = openRes.count ?? openTickets.length;
+
+        // Update hero KPI
+        const hkv = heroOpenTicketKpi.querySelector('.ap-hero-kpi-val');
+        if (hkv) { hkv.textContent = openCount; hkv.className = 'ap-hero-kpi-val'+(openCount>10?' warn':openCount>20?' danger':''); }
+
+        // Fill ticket panel
+        ticketBody.innerHTML = '';
+        if (!openTickets.length) {
+          const nt = m('div'); nt.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';
+          nt.textContent = 'No open tickets assigned to you.';
+          ticketBody.appendChild(nt);
+        } else {
+          openTickets.slice(0,8).forEach(t => {
+            const row2 = m('div','ap-item');
+            row2.style.cursor = 'pointer';
+            const age = Math.floor((Date.now()-new Date(t.created_at).getTime())/86400000);
+            const dot4 = m('div','ap-item-dot');
+            dot4.style.background = age>3?'#f87171':age>1?'#fbbf24':'var(--cal-text)';
+            const txt3 = m('span'); txt3.style.flex='1'; txt3.textContent = t.subject||'Ticket #'+t.id;
+            const ageTxt = m('span'); ageTxt.style.cssText='font-size:10px;color:var(--text3);white-space:nowrap;margin-left:6px;';
+            ageTxt.textContent = age===0?'today':age+'d';
+            row2.appendChild(dot4); row2.appendChild(txt3); row2.appendChild(ageTxt);
+            ticketBody.appendChild(row2);
+          });
+          if (openCount > 8) {
+            const more = m('div'); more.style.cssText='font-size:11px;color:var(--text3);padding:4px 0;text-align:center;';
+            more.textContent = '+ ' + (openCount-8) + ' more open tickets';
+            ticketBody.appendChild(more);
+          }
+        }
+        // Add pending + solved summary
+        if (pendRes > 0 || solvedRes > 0) {
+          const sumRow = m('div'); sumRow.style.cssText='display:flex;gap:8px;margin-top:4px;';
+          if (pendRes>0){const p=m('span');p.style.cssText='font-size:11px;color:#fbbf24;';p.textContent=pendRes+' pending';sumRow.appendChild(p);}
+          if (solvedRes>0){const s=m('span');s.style.cssText='font-size:11px;color:#34d399;';s.textContent=solvedRes+' solved this week';sumRow.appendChild(s);}
+          ticketBody.appendChild(sumRow);
+        }
+
+        // CSAT (light fetch)
+        const fromTs = Math.floor(new Date(thisMonday+'T00:00:00').getTime()/1000);
         const toTs   = Math.floor(Date.now()/1000);
         const csatData = await zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=50&assignee_id='+myZdAgentId).catch(()=>null);
-        const ratings = csatData?.satisfaction_ratings || [];
-        const myRatings = ratings.filter(r => String(r.assignee_id) === String(myZdAgentId));
-        if (!myRatings.length) {
-          csatBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">No ratings in the last 30 days.</div>';
-          return;
-        }
-        const good  = myRatings.filter(r=>r.score==='good').length;
-        const bad   = myRatings.filter(r=>r.score==='bad').length;
-        const total = good + bad;
-        const pct   = total > 0 ? Math.round(good/total*100) : null;
-        csatBody.innerHTML = '';
-
-        const scoreRow = document.createElement('div');
-        scoreRow.style.cssText = 'display:flex;align-items:center;gap:12px;';
-        const pctEl = document.createElement('div');
-        const col = pct>=90?'#34d399':pct>=75?'#fbbf24':'#f87171';
-        pctEl.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:32px;font-weight:900;color:"+col+";letter-spacing:-0.04em;line-height:1;";
-        pctEl.textContent = pct!=null ? pct+'%' : '—';
-        const meta = document.createElement('div'); meta.style.cssText='display:flex;flex-direction:column;gap:3px;';
-        const mkRow2 = (label, val, c) => {
-          const r=document.createElement('div');r.style.cssText='display:flex;justify-content:space-between;gap:16px;font-size:11px;';
-          const l=document.createElement('span');l.style.color='var(--text2)';l.textContent=label;
-          const v=document.createElement('span');v.style.cssText='font-weight:700;color:'+(c||'var(--text)');v.textContent=val;
-          r.appendChild(l);r.appendChild(v);return r;
-        };
-        meta.appendChild(mkRow2('Good', good, '#34d399'));
-        meta.appendChild(mkRow2('Bad',  bad,  bad>0?'#f87171':'var(--text3)'));
-        meta.appendChild(mkRow2('Rated', total));
-        scoreRow.appendChild(pctEl); scoreRow.appendChild(meta);
-        csatBody.appendChild(scoreRow);
-
-        // Show the last bad rating if any, as a coaching note (anonymised)
-        const lastBad = myRatings.filter(r=>r.score==='bad').sort((a,b)=>b.updated_at?.localeCompare(a.updated_at||'')||0)[0];
-        if (lastBad && lastBad.comment) {
-          const note = document.createElement('div');
-          note.style.cssText='margin-top:8px;font-size:11px;color:var(--text3);font-style:italic;border-top:1px solid var(--border);padding-top:8px;line-height:1.4;';
-          note.textContent = 'Last feedback: "' + lastBad.comment.slice(0,120) + (lastBad.comment.length>120?'…':'"');
-          csatBody.appendChild(note);
+        if (csatData?.satisfaction_ratings?.length) {
+          const ratings = csatData.satisfaction_ratings.filter(r=>String(r.assignee_id)===String(myZdAgentId));
+          const good = ratings.filter(r=>r.score==='good').length;
+          const bad  = ratings.filter(r=>r.score==='bad').length;
+          const tot  = good+bad;
+          const pct  = tot>0?Math.round(good/tot*100):null;
+          if (pct!=null) {
+            const csatRow2=m('div');csatRow2.style.cssText='display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);';
+            const csatIcon=m('span');csatIcon.textContent='★';csatIcon.style.cssText='color:'+(pct>=90?'#34d399':pct>=75?'#fbbf24':'#f87171')+';font-size:14px;';
+            const csatTxt2=m('span');csatTxt2.style.cssText='font-size:12px;color:var(--text2);';
+            csatTxt2.textContent='CSAT: '+pct+'% ('+good+' good, '+bad+' bad)';
+            csatRow2.appendChild(csatIcon);csatRow2.appendChild(csatTxt2);ticketBody.appendChild(csatRow2);
+          }
         }
       } catch(e) {
-        csatBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Could not load CSAT.</div>';
+        ticketBody.innerHTML='<div style="font-size:11px;color:var(--text3);">Could not load tickets.</div>';
       }
     })();
+  } else {
+    ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Zendesk not configured for your account.</div>';
   }
 
-  // ── 3. Handover notes — always visible ───────────────────────
-  const isEveningShift = dayInfo && !isOff && ['e','n','l'].some(s=>(dayInfo.shift||'').toLowerCase().startsWith(s));
-  const activeHandovers = getActiveHandovers();
-  const handoverSec = dbSection(isEveningShift ? 'Leave a handover' : 'Handover notes');
-  renderHandoverWidget(handoverSec, currentUser.name, isEveningShift);
-  col4.appendChild(handoverSec);
-
-  // ── 4. Mood widget ────────────────────────────────────────────
-  const moodSec = dbSection('How are you doing?');
-  renderMoodWidget(moodSec, currentUser.name);
-  col4.appendChild(moodSec);
-
-  // ── 5. Quick links ────────────────────────────────────────────
-  const qlSec = dbSection('Quick links');
-  renderQuickLinks(qlSec, currentUser.name, true);
-  col4.appendChild(qlSec);
-
-  body.appendChild(col4);
-  root.appendChild(body);
   } catch(e) {
-    console.error('renderTeamMemberDashboard error:', e);
+    console.error('Agent portal error:', e);
     const err = document.createElement('div');
     err.style.cssText = 'padding:32px;color:var(--text3);font-size:13px;';
     err.textContent = 'Could not load dashboard. Error: ' + e.message;
     root.appendChild(err);
   }
 }
+
 
 // Standalone weather fetch — lives outside renderAdminDashboard so re-renders don't kill it
 function _fetchWeather(targetEl) {
@@ -11116,13 +11771,12 @@ function settingsNav(section, btn) {
       bfStatus.style.color = snapCount > 0 ? 'var(--low-text)' : 'var(--text3)';
     }
   }
-  // Show agent identity + notification cards in Team section (admin only)
+  // Show team cards in Team section (admin only)
   if (section === 'team' && isAdmin()) {
-    const aiCard = document.getElementById('agent-identity-card');
-    if (aiCard) {
-      aiCard.style.display = '';
-      const aiList = document.getElementById('agent-identity-list');
-      if (aiList && !aiList.children.length) renderAgentIdentityMapping();
+    const tmCard = document.getElementById('team-members-card');
+    if (tmCard) {
+      tmCard.style.display = '';
+      renderTeamMembersList();
     }
     const nCard = document.getElementById('queue-notif-card');
     if (nCard) { nCard.style.display = ''; updateNotifStatus(); }
@@ -14113,7 +14767,7 @@ async function ghSave() {
       if (!k) continue;
       // Skip keys with non-ASCII characters — these are corrupted duplicates
       if (/[^\x00-\x7F]/.test(k)) { localStorage.removeItem(k); continue; }
-      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k.startsWith('wtp_ann_') || k.startsWith('wtp_intel_') || k.startsWith('wtp_weekly_briefing_') || k === 'wtp_ql_shared' || k === 'wtp_announcements' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token' || k === 'wtp_outlook_events' || k === 'wtp_outlook_synced' || k === 'wtp_cal_gist_url' || k === 'wtp_schedule' || k === UNIFON_KEY || k === UNIFON_HOURLY_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_MAP_KEY || k === QUEUE_LOG_KEY || k === QUEUE_STATE_KEY) {
+      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k.startsWith('wtp_ann_') || k.startsWith('wtp_intel_') || k.startsWith('wtp_weekly_briefing_') || k === 'wtp_ql_shared' || k === 'wtp_announcements' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token' || k === 'wtp_outlook_events' || k === 'wtp_outlook_synced' || k === 'wtp_cal_gist_url' || k === 'wtp_schedule' || k === UNIFON_KEY || k === UNIFON_HOURLY_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_MAP_KEY || k === QUEUE_LOG_KEY || k === QUEUE_STATE_KEY || k === MY_TEAM_KEY) {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -14208,7 +14862,7 @@ async function ghReadOnlyLoad() {
       'wtp_users', 'wtp_wingman', 'wtp_encrypted_token', 'wtp_ql_shared',
       'wtp_announcements', 'wtp_outlook_events', 'wtp_outlook_synced', 'wtp_cal_gist_url',
       'wtp_schedule', UNIFON_KEY, UNIFON_AGENT_KEY, UNIFON_MAP_KEY,
-      QUEUE_LOG_KEY, QUEUE_STATE_KEY,
+      QUEUE_LOG_KEY, QUEUE_STATE_KEY, MY_TEAM_KEY,
     ];
     // Manager view users also need profile (RAG) and decision log data
     const isManagerView = currentUser && !currentUser.isAdmin && (currentUser.privileges||[]).includes('manager_view');
@@ -14240,6 +14894,13 @@ async function ghReadOnlyLoad() {
     sharedKeys.forEach(k => {
       if (data[k] !== undefined) localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]));
     });
+    // Reload MY_TEAM from storage
+    try {
+      const storedTeam = JSON.parse(localStorage.getItem(MY_TEAM_KEY) || 'null');
+      if (Array.isArray(storedTeam) && storedTeam.length) {
+        MY_TEAM.length = 0; storedTeam.forEach(n => MY_TEAM.push(n));
+      }
+    } catch(e) {}
     // Reload SCHEDULE array and re-render
     const savedSched = localStorage.getItem('wtp_schedule');
     if (savedSched) { try { const s = JSON.parse(savedSched); SCHEDULE.length = 0; s.forEach(w => SCHEDULE.push(w)); initScheduleSelect(); } catch(e) {} }
@@ -14571,95 +15232,171 @@ function saveEvents() { if (currentUser) { localStorage.setItem(userCalKey(curre
 function renderUserList() {
   const list = document.getElementById('user-list');
   if (!list) return;
-  // Populate datalist for schedule name autocomplete
   const dl = document.getElementById('schedule-names-list');
-  if (dl) { dl.innerHTML = ''; MY_TEAM.forEach(n => { const opt = document.createElement('option'); opt.value = n; dl.appendChild(opt); }); }
+  if (dl) dl.textContent = MY_TEAM.join(', ');
   const users = getUsers();
   list.innerHTML = '';
+
   users.forEach((u, idx) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;';
+
+    // ── Summary row ────────────────────────────────────────────
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:var(--radius-md);flex-wrap:wrap;';
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;';
 
-    const nameWrap = document.createElement('div'); nameWrap.style.cssText = 'flex:1;min-width:0;';
-    const nameEl = document.createElement('div'); nameEl.style.cssText = 'font-size:12px;font-weight:600;color:var(--text);'; nameEl.textContent = getUserDisplayName(u);
-    const subEl = document.createElement('div'); subEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:6px;';
-    if (u.displayName && u.name !== u.displayName) {
-      const loginSpan = document.createElement('span'); loginSpan.textContent = u.name; subEl.appendChild(loginSpan);
-    }
-    // Schedule link
+    // Avatar
+    const hue = (getUserDisplayName(u).charCodeAt(0)*47)%360;
+    const av = document.createElement('div');
+    av.style.cssText = `width:30px;height:30px;border-radius:50%;background:hsl(${hue},45%,32%);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;`;
+    av.textContent = getUserDisplayName(u).split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+
+    const info = document.createElement('div'); info.style.cssText = 'flex:1;min-width:0;';
+    const nameEl = document.createElement('div'); nameEl.style.cssText = 'font-size:12px;font-weight:700;color:var(--text);'; nameEl.textContent = getUserDisplayName(u);
+    const subEl = document.createElement('div'); subEl.style.cssText = 'font-size:10px;color:var(--text3);margin-top:1px;';
+    const parts = [];
+    if (u.name !== getUserDisplayName(u)) parts.push('login: ' + u.name);
     const linkedName = u.scheduleName || getScheduleName(u);
-    if (linkedName) {
-      const linkChip = document.createElement('span'); linkChip.style.cssText = 'background:rgba(122,173,255,0.12);color:var(--cal-text);border-radius:4px;padding:0 5px;font-size:10px;font-weight:600;cursor:pointer;';
-      linkChip.textContent = '→ ' + linkedName;
-      linkChip.title = 'Click to change schedule link';
-      linkChip.onclick = () => promptScheduleLink(u, idx);
-      subEl.appendChild(linkChip);
-    } else if (!u.isAdmin) {
-      const linkBtn = document.createElement('button'); linkBtn.style.cssText = 'font-size:10px;color:var(--text3);background:none;border:1px dashed var(--border);border-radius:4px;padding:0 6px;cursor:pointer;';
-      linkBtn.textContent = '+ Link to schedule';
-      linkBtn.onclick = () => promptScheduleLink(u, idx);
-      subEl.appendChild(linkBtn);
-    }
-    nameWrap.appendChild(nameEl); if (subEl.childNodes.length) nameWrap.appendChild(subEl);
+    if (linkedName) parts.push('→ ' + linkedName);
+    if (u.email) parts.push(u.email);
+    subEl.textContent = parts.join(' · ');
+    info.appendChild(nameEl); if (parts.length) info.appendChild(subEl);
 
-    const badges = document.createElement('div'); badges.style.cssText = 'display:flex;align-items:center;gap:5px;';
+    const badges = document.createElement('div'); badges.style.cssText = 'display:flex;align-items:center;gap:4px;flex-shrink:0;';
+
+    // Role badge
     const roleBadge = document.createElement('span');
-    roleBadge.style.cssText = 'font-size:10px;padding:1px 6px;border-radius:8px;' + (u.isAdmin ? 'background:var(--cal);color:var(--cal-text);' : 'background:var(--surface3);color:var(--text3);');
+    roleBadge.style.cssText = 'font-size:10px;padding:1px 7px;border-radius:8px;' + (u.isAdmin ? 'background:var(--cal);color:var(--cal-text);' : 'background:var(--surface3);color:var(--text3);');
     roleBadge.textContent = u.isAdmin ? 'admin' : 'user';
     badges.appendChild(roleBadge);
 
-    // Privilege toggle chips (non-admin users only)
+    // Privilege chips (non-admin only)
     if (!u.isAdmin && u.name !== currentUser.name) {
-      const zdPriv = (u.privileges || []).includes('zendesk');
-      const zdChip = document.createElement('button');
-      zdChip.style.cssText = 'font-size:10px;padding:1px 7px;border-radius:8px;border:1px solid;cursor:pointer;transition:all 0.15s;' +
-        (zdPriv ? 'background:var(--low-bg);color:var(--low-text);border-color:rgba(76,175,80,0.3);' : 'background:var(--surface3);color:var(--text3);border-color:var(--border);');
-      zdChip.textContent = zdPriv ? '✓ Tickets' : '+ Tickets';
-      zdChip.title = zdPriv ? 'Click to remove Tickets access' : 'Click to grant Tickets access';
-      zdChip.onclick = () => {
-        const allUsers = getUsers();
-        const target = allUsers.find(x => x.name === u.name);
-        if (!target) return;
-        if (!target.privileges) target.privileges = [];
-        if (zdPriv) target.privileges = target.privileges.filter(p => p !== 'zendesk');
-        else target.privileges.push('zendesk');
-        localStorage.setItem('wtp_users', JSON.stringify(allUsers));
-        renderUserList();
+      const mkPrivChip = (label, privKey, activeColor) => {
+        const has = (u.privileges||[]).includes(privKey);
+        const chip = document.createElement('button');
+        chip.style.cssText = 'font-size:10px;padding:1px 7px;border-radius:8px;border:1px solid;cursor:pointer;transition:all 0.15s;' +
+          (has ? 'background:'+activeColor+';color:var(--cal-text);border-color:rgba(122,173,255,0.3);' : 'background:var(--surface3);color:var(--text3);border-color:var(--border);');
+        chip.textContent = has ? '✓ ' + label : '+ ' + label;
+        chip.onclick = () => {
+          const all = getUsers(); const t = all.find(x=>x.name===u.name); if (!t) return;
+          if (!t.privileges) t.privileges = [];
+          if (has) t.privileges = t.privileges.filter(p=>p!==privKey); else t.privileges.push(privKey);
+          localStorage.setItem('wtp_users', JSON.stringify(all)); scheduleSyncSave(); renderUserList();
+        };
+        return chip;
       };
-      badges.appendChild(zdChip);
-
-      // Manager view privilege — shows the ops dashboard without personal sections
-      const mvPriv = (u.privileges || []).includes('manager_view');
-      const mvChip = document.createElement('button');
-      mvChip.style.cssText = 'font-size:10px;padding:1px 7px;border-radius:8px;border:1px solid;cursor:pointer;transition:all 0.15s;' +
-        (mvPriv ? 'background:var(--cal);color:var(--cal-text);border-color:rgba(122,173,255,0.3);' : 'background:var(--surface3);color:var(--text3);border-color:var(--border);');
-      mvChip.textContent = mvPriv ? '✓ Manager view' : '+ Manager view';
-      mvChip.title = mvPriv ? 'Click to remove manager dashboard access' : 'Click to grant manager dashboard (no personal data)';
-      mvChip.onclick = () => {
-        const allUsers = getUsers();
-        const target = allUsers.find(x => x.name === u.name);
-        if (!target) return;
-        if (!target.privileges) target.privileges = [];
-        if (mvPriv) target.privileges = target.privileges.filter(p => p !== 'manager_view');
-        else target.privileges.push('manager_view');
-        localStorage.setItem('wtp_users', JSON.stringify(allUsers));
-        scheduleSyncSave();
-        renderUserList();
-      };
-      badges.appendChild(mvChip);
+      badges.appendChild(mkPrivChip('Tickets', 'zendesk', 'var(--low-bg)'));
+      badges.appendChild(mkPrivChip('Manager', 'manager_view', 'var(--cal)'));
     }
 
-    row.appendChild(nameWrap); row.appendChild(badges);
+    // Edit button
+    const editBtn = document.createElement('button');
+    editBtn.style.cssText = 'font-size:11px;color:var(--cal-text);background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:2px 8px;flex-shrink:0;';
+    editBtn.textContent = 'Edit';
+
+    // Remove button
+    let delBtn = null;
     if (u.name !== currentUser.name) {
-      const del = document.createElement('button'); del.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;flex-shrink:0;'; del.textContent = 'remove';
-      del.onmouseover = () => { del.style.color = 'var(--high-text)'; del.style.background = 'var(--high-bg)'; };
-      del.onmouseout = () => { del.style.color = 'var(--text3)'; del.style.background = 'none'; };
-      del.onclick = () => confirmDialog('Remove user ' + getUserDisplayName(u) + '?', () => { const users2 = getUsers(); users2.splice(idx,1); localStorage.setItem('wtp_users', JSON.stringify(users2)); renderUserList(); }, 'Remove');
-      row.appendChild(del);
+      delBtn = document.createElement('button');
+      delBtn.style.cssText = 'font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;padding:2px 6px;border-radius:4px;flex-shrink:0;';
+      delBtn.textContent = 'Remove';
+      delBtn.onmouseover = () => { delBtn.style.color='var(--high-text)'; delBtn.style.background='var(--high-bg)'; };
+      delBtn.onmouseout  = () => { delBtn.style.color='var(--text3)'; delBtn.style.background='none'; };
+      delBtn.onclick = () => confirmDialog('Remove user ' + getUserDisplayName(u) + '?', () => {
+        const users2 = getUsers(); users2.splice(idx,1);
+        localStorage.setItem('wtp_users', JSON.stringify(users2)); scheduleSyncSave(); renderUserList();
+      }, 'Remove');
     }
-    list.appendChild(row);
+
+    row.appendChild(av); row.appendChild(info); row.appendChild(badges); row.appendChild(editBtn);
+    if (delBtn) row.appendChild(delBtn);
+    wrap.appendChild(row);
+
+    // ── Edit panel (hidden by default) ─────────────────────────
+    const editPanel = document.createElement('div');
+    editPanel.style.cssText = 'display:none;padding:12px 14px;border-top:1px solid var(--border);background:var(--surface);';
+
+    const mkField = (label, val, type, placeholder) => {
+      const f = document.createElement('div'); f.style.cssText = 'display:flex;flex-direction:column;gap:3px;';
+      const l = document.createElement('label'); l.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);'; l.textContent = label;
+      const inp = document.createElement('input');
+      inp.type = type||'text'; inp.value = val||''; inp.placeholder = placeholder||'';
+      inp.style.cssText = 'font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:6px 9px;outline:none;';
+      inp.onfocus = () => inp.style.borderColor = 'var(--cal-text)';
+      inp.onblur  = () => inp.style.borderColor = 'var(--border)';
+      f.appendChild(l); f.appendChild(inp); return { wrap: f, inp };
+    };
+
+    const fGrid = document.createElement('div'); fGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
+    const { wrap: f1, inp: inpDisplay }   = mkField('Display name',   u.displayName||u.name,       'text', 'How their name appears');
+    const { wrap: f2, inp: inpEmail }     = mkField('Email',          u.email||'',                  'email', 'name@munu.cloud');
+    const { wrap: f3, inp: inpSched }     = mkField('Schedule name',  u.scheduleName||getScheduleName(u)||'', 'text', 'Match name in schedule');
+    const { wrap: f4, inp: inpPassword }  = mkField('New password',   '',                           'password', 'Leave blank to keep current');
+    fGrid.appendChild(f1); fGrid.appendChild(f2); fGrid.appendChild(f3); fGrid.appendChild(f4);
+    editPanel.appendChild(fGrid);
+
+    const btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:8px;align-items:center;';
+    const saveBtn = document.createElement('button'); saveBtn.className = 'btn-save'; saveBtn.style.cssText='font-size:11px;padding:5px 14px;'; saveBtn.textContent = 'Save changes';
+    const cancelBtn = document.createElement('button'); cancelBtn.className = 'btn-cancel'; cancelBtn.style.cssText='font-size:11px;padding:5px 14px;'; cancelBtn.textContent = 'Cancel';
+    const msg = document.createElement('span'); msg.style.cssText = 'font-size:11px;color:var(--text3);';
+    btnRow.appendChild(saveBtn); btnRow.appendChild(cancelBtn); btnRow.appendChild(msg);
+    editPanel.appendChild(btnRow);
+    wrap.appendChild(editPanel);
+
+    // Toggle edit panel
+    editBtn.onclick = () => {
+      const open = editPanel.style.display !== 'none';
+      editPanel.style.display = open ? 'none' : '';
+      editBtn.textContent = open ? 'Edit' : 'Done';
+      editBtn.style.color = open ? 'var(--cal-text)' : 'var(--text3)';
+    };
+    cancelBtn.onclick = () => { editPanel.style.display = 'none'; editBtn.textContent = 'Edit'; editBtn.style.color = 'var(--cal-text)'; };
+
+    saveBtn.onclick = async () => {
+      const all = getUsers();
+      const t = all.find(x => x.name === u.name);
+      if (!t) return;
+
+      // Display name
+      const dn = inpDisplay.value.trim();
+      if (dn && dn !== (t.displayName||t.name)) t.displayName = dn;
+
+      // Email
+      t.email = inpEmail.value.trim() || undefined;
+
+      // Schedule name
+      const sn = inpSched.value.trim();
+      if (sn) {
+        const match = MY_TEAM.find(n => n.toLowerCase() === sn.toLowerCase());
+        if (match) t.scheduleName = match;
+        else { msg.style.color = 'var(--high-text)'; msg.textContent = 'Schedule name not found: ' + sn; return; }
+      } else {
+        delete t.scheduleName;
+      }
+
+      // Password
+      const pw = inpPassword.value;
+      if (pw) {
+        if (pw.length < 6) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Password must be at least 6 characters'; return; }
+        t.hash = await hashPassword(pw);
+      }
+
+      localStorage.setItem('wtp_users', JSON.stringify(all));
+      scheduleSyncSave();
+      msg.style.color = '#34d399'; msg.textContent = '✓ Saved';
+      setTimeout(() => {
+        editPanel.style.display = 'none';
+        editBtn.textContent = 'Edit';
+        editBtn.style.color = 'var(--cal-text)';
+        renderUserList();
+      }, 800);
+    };
+
+    list.appendChild(wrap);
   });
 }
+
 
 function promptScheduleLink(user, idx) {
   const current = user.scheduleName || getScheduleName(user) || '';
