@@ -6858,7 +6858,12 @@ function renderAdminDashboard(root, viewerMode=false) {
     queueSec.appendChild(uLive);
 
     // Async fill — non-blocking
-    fetchUnifonQueueSummary().then(summary => {
+    refreshUnifonLiveWidget(uLive);
+  }
+
+  // ── Separated so polling can re-call it ────────────────────────
+  window.refreshUnifonLiveWidget = function refreshUnifonLiveWidget(uLive) {
+    fetchUnifonQueueSummary(true).then(summary => {
       if (!summary || !summary.entries) {
         uLive.innerHTML = '<div style="padding:8px 12px;font-size:11px;color:var(--text3);">Queue data unavailable</div>';
         return;
@@ -6919,9 +6924,7 @@ function renderAdminDashboard(root, viewerMode=false) {
         ).length;
         const loggedIn = members.filter(m => m.fixed !== null || m.mobile !== null).length;
         const total    = members.length;
-        // Debug log — remove once confirmed working
-        console.log('[Queue]', q.description, '| all members:', allMembers.length, '| MY_TEAM matched:', total, '| ready:', ready);
-        members.forEach(m => console.log('  -', m.firstname, m.lastname, '| mobile.ready:', m.mobile?.ready, '| fixed.ready:', m.fixed?.ready));
+
         const wait     = q.keyfigures?.answered_waittime || 0;
         const waitCls  = wait > 120 ? 'danger' : wait > 60 ? 'warn' : wait > 0 ? 'ok' : '';
         const readyCls = ready === 0 && total > 0 ? 'danger' : ready < 2 && total > 0 ? 'warn' : 'ok';
@@ -7056,13 +7059,14 @@ function renderAdminDashboard(root, viewerMode=false) {
   // Clear any previous interval, then start a fresh one
   if (window._queuePollTimer) clearInterval(window._queuePollTimer);
   window._queuePollTimer = setInterval(() => {
-    // Only poll if dashboard tab is visible
     const dashTab = document.getElementById('tab-dashboard');
-    if (dashTab && dashTab.style.display !== 'none') {
-      // Force fresh fetch by clearing queue cache first
-      localStorage.removeItem('wtp_unifon_queue_cache');
-      renderQueuePanel(queueBody, queuePeriod);
-    }
+    if (!dashTab || dashTab.style.display === 'none') return;
+    localStorage.removeItem('wtp_unifon_queue_cache');
+    // Re-render the live Unifon widget if it exists
+    const uLive = document.getElementById('db-unifon-live');
+    if (uLive && hasUnifonApi()) refreshUnifonLiveWidget(uLive);
+    // Also re-render the ZD period stats
+    renderQueuePanel(queueBody, queuePeriod);
   }, 30000);
 
   const mkQStat=(id,label,color)=>{const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;cell.appendChild(val);cell.appendChild(lbl);return cell;};
