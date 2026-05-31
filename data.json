@@ -12496,13 +12496,13 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-05-31T09:10:18.284Z",
+    "generated": "2026-05-31T09:13:32.315Z",
     "agents": {
       "Jonas": {
-        "answered": 43,
+        "answered": 78,
         "missed": 1,
         "avgTalk": 401,
-        "avgWait": 139,
+        "avgWait": 200,
         "zdSolved": 102,
         "isNight": false,
         "nightDays": 0,
@@ -12551,10 +12551,10 @@
         "dayDays": 3
       },
       "Benjamin": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
+        "answered": 28,
+        "missed": 1,
+        "avgTalk": 280,
+        "avgWait": 66,
         "zdSolved": 44,
         "isNight": true,
         "nightDays": 2,
@@ -12565,9 +12565,9 @@
         "zdPending": 0
       },
       "Cecilie": {
-        "answered": 32,
-        "missed": 2,
-        "avgTalk": 427,
+        "answered": 57,
+        "missed": 7,
+        "avgTalk": 471,
         "avgWait": 17,
         "zdSolved": 70,
         "isNight": true,
@@ -12650,11 +12650,11 @@
       }
     },
     "totals": {
-      "offered": 259,
-      "answered": 222,
-      "missed": 37,
-      "ansRate": 86,
-      "avgWait": 827
+      "offered": 329,
+      "answered": 286,
+      "missed": 43,
+      "ansRate": 87,
+      "avgWait": 630
     }
   },
   "wtp_schedule": [
