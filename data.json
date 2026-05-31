@@ -11733,6 +11733,48 @@
         "totalWaitSec": 12,
         "missed": 0
       }
+    },
+    "2026-05-31": {
+      "Jonas Johannes": {
+        "answered": 5,
+        "totalTalkSec": 1392,
+        "totalWaitSec": 130,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 5,
+        "totalTalkSec": 1844,
+        "totalWaitSec": 723,
+        "missed": 1
+      }
+    },
+    "2026-05-30": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 23,
+        "totalTalkSec": 5989,
+        "totalWaitSec": 1121,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 30,
+        "totalTalkSec": 12634,
+        "totalWaitSec": 9490,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 1,
+        "totalTalkSec": 186,
+        "totalWaitSec": 14,
+        "missed": 0
+      }
+    },
+    "2026-05-29": {
+      "Cecilie Steinkopf": {
+        "answered": 24,
+        "totalTalkSec": 13030,
+        "totalWaitSec": 402,
+        "missed": 5
+      }
     }
   },
   "wtp_intel_snap_2026-01-05": {
