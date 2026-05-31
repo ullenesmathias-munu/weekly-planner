@@ -7670,6 +7670,163 @@ async function renderTeamMembersList() {
 }
 
 
+
+// ─── AGENT LIVE STATS ────────────────────────────────────────────────────────
+// Admin fetches live ZD stats per agent every 30 minutes and writes them to
+// data.json. Agents read from there — no API key needed on their end.
+
+const AGENT_LIVE_STATS_KEY = 'wtp_agent_live_stats';
+let _agentStatsRefreshTimer = null;
+
+function loadAgentLiveStats() {
+  try { return JSON.parse(localStorage.getItem(AGENT_LIVE_STATS_KEY) || '{}'); } catch { return {}; }
+}
+
+function saveAgentLiveStats(stats) {
+  localStorage.setItem(AGENT_LIVE_STATS_KEY, JSON.stringify(stats));
+  scheduleSyncSave();
+}
+
+function getAgentLiveStatsFor(scheduleName) {
+  const all = loadAgentLiveStats();
+  // Try exact match, then first-name match
+  if (all[scheduleName]) return all[scheduleName];
+  const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const key = Object.keys(all).find(k =>
+    norm(k.split(' ')[0]) === norm(scheduleName.split(' ')[0])
+  );
+  return key ? all[key] : null;
+}
+
+async function refreshAgentLiveStats(force) {
+  if (!isAdmin() || !zdReady()) return;
+
+  const all = loadAgentLiveStats();
+  const AGE_MS = 30 * 60 * 1000; // 30 minutes
+  const now = Date.now();
+
+  // Skip if recently refreshed (unless forced)
+  if (!force && all._refreshedAt && now - all._refreshedAt < AGE_MS) return;
+
+  console.log('[AgentStats] Refreshing live ZD stats for all agents…');
+
+  // Ensure ZD agents are loaded
+  if (!zdAgents || !zdAgents.length) {
+    try {
+      if (!zdGroupId) zdGroupId = await zdGetGroupId().catch(()=>null);
+      if (zdGroupId) zdAgents = await zdGetAgents(zdGroupId).catch(()=>[]);
+    } catch(e) { console.warn('[AgentStats] Could not load ZD agents:', e.message); return; }
+  }
+
+  const today     = localToday();
+  const thisMonday = fmtLocal(getMonday(0));
+  const fromTs    = Math.floor(new Date(thisMonday+'T00:00:00').getTime()/1000);
+  const toTs      = Math.floor(Date.now()/1000);
+
+  const newStats = { _refreshedAt: now };
+
+  // Fetch per-agent stats in batches of 3
+  for (let i = 0; i < MY_TEAM.length; i += 3) {
+    const batch = MY_TEAM.slice(i, i + 3);
+    await Promise.all(batch.map(async name => {
+      // Find ZD agent for this team member
+      const profile  = loadProfile(name);
+      const zdAgentId = profile.zdAgentId
+        || (zdAgents.find(a =>
+            normName(a.name.split(' ')[0]) === normName(name.split(' ')[0]) ||
+            normName(a.name) === normName(name)
+          ))?.id;
+
+      if (!zdAgentId) return; // skip unmapped agents
+
+      try {
+        const [openCount, pendCount, solvedCount, csatData] = await Promise.all([
+          zdCount('type:ticket status:open assignee:'+zdAgentId).catch(()=>null),
+          zdCount('type:ticket status:pending assignee:'+zdAgentId).catch(()=>null),
+          zdCount('type:ticket status>=solved solved>='+thisMonday+' solved<='+today+' assignee:'+zdAgentId).catch(()=>null),
+          zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=50&assignee_id='+zdAgentId).catch(()=>null),
+        ]);
+
+        const ratings  = csatData?.satisfaction_ratings?.filter(r=>String(r.assignee_id)===String(zdAgentId)) || [];
+        const csatGood = ratings.filter(r=>r.score==='good').length;
+        const csatBad  = ratings.filter(r=>r.score==='bad').length;
+        const csatTotal = csatGood + csatBad;
+
+        newStats[name] = {
+          zdAgentId,
+          openTickets:    openCount,
+          pendingTickets: pendCount,
+          solvedThisWeek: solvedCount,
+          csatGood,
+          csatBad,
+          csatTotal,
+          csatPct: csatTotal > 0 ? Math.round(csatGood/csatTotal*100) : null,
+          updatedAt: new Date().toISOString(),
+        };
+      } catch(e) {
+        console.warn('[AgentStats] Failed for', name, e.message);
+      }
+    }));
+    // Rate limit pause between batches
+    if (i + 3 < MY_TEAM.length) await new Promise(r => setTimeout(r, 500));
+  }
+
+  saveAgentLiveStats(newStats);
+  console.log('[AgentStats] Done — refreshed', Object.keys(newStats).filter(k=>k!=='_refreshedAt').length, 'agents');
+
+  // Update agent dashboard if it's currently open
+  const dashTab = document.getElementById('tab-dashboard');
+  if (dashTab && dashTab.style.display !== 'none' && currentUser && !currentUser.isAdmin) {
+    renderDashboard();
+  }
+}
+
+function startAgentStatsRefresh() {
+  if (!isAdmin()) return;
+  // Initial fetch
+  refreshAgentLiveStats(false);
+  // Refresh every 30 minutes
+  if (_agentStatsRefreshTimer) clearInterval(_agentStatsRefreshTimer);
+  _agentStatsRefreshTimer = setInterval(() => refreshAgentLiveStats(false), 30 * 60 * 1000);
+}
+
+
+function renderCachedTicketStats(container, stats) {
+  const m = (tag, cls) => { const e=document.createElement(tag); if(cls)e.className=cls; return e; };
+
+  // Age indicator
+  const age = stats.updatedAt ? Math.round((Date.now()-new Date(stats.updatedAt).getTime())/60000) : null;
+  const ageEl = m('div'); ageEl.style.cssText='font-size:10px;color:var(--text3);margin-bottom:10px;';
+  ageEl.textContent = age!=null ? 'Updated ' + (age<2?'just now':age<60?age+'m ago':Math.floor(age/60)+'h ago') + ' · refreshes every 30 min' : '';
+  container.appendChild(ageEl);
+
+  // Stat grid
+  const grid = m('div'); grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;';
+  const mkS = (val, label, cls) => {
+    const c=m('div'); c.style.cssText='background:var(--surface2);border-radius:8px;padding:10px 12px;border-left:3px solid '+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--border)')+';';
+    const v=m('div'); v.style.cssText="font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;color:"+(cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--text)')+';letter-spacing:-0.03em;line-height:1;';
+    v.textContent=val!=null?String(val):'—';
+    const l=m('div'); l.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-top:3px;'; l.textContent=label;
+    c.appendChild(v); c.appendChild(l); return c;
+  };
+
+  const openCls = stats.openTickets>20?'danger':stats.openTickets>10?'warn':stats.openTickets>0?'ok':null;
+  grid.appendChild(mkS(stats.openTickets, 'Open tickets', openCls));
+  grid.appendChild(mkS(stats.solvedThisWeek, 'Solved this week', stats.solvedThisWeek>0?'ok':null));
+  if (stats.pendingTickets > 0) grid.appendChild(mkS(stats.pendingTickets, 'Pending', 'warn'));
+  if (stats.csatPct != null) {
+    grid.appendChild(mkS(stats.csatPct+'%', 'CSAT', stats.csatPct>=90?'ok':stats.csatPct>=75?'warn':'danger'));
+  }
+  container.appendChild(grid);
+
+  // CSAT detail
+  if (stats.csatTotal > 0) {
+    const csatRow = m('div'); csatRow.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;';
+    csatRow.textContent = stats.csatGood+' good · '+stats.csatBad+' bad · '+stats.csatTotal+' rated this week';
+    container.appendChild(csatRow);
+  }
+}
+
 function renderAdminDashboard(root, viewerMode=false) {
   // viewerMode=true: operational view only, no personal sections (1:1s, team pulse, tasks, handover)
   const todayStr = localToday();
@@ -9964,8 +10121,23 @@ async function renderTeamMemberDashboard(root) {
   async function fetchMyTickets() {
     ticketRefreshBtn.textContent = '↻ Loading…';
     ticketRefreshBtn.disabled = true;
+    ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
+
+    // Try cached stats first (written by admin session, no API key needed)
+    const cached = getAgentLiveStatsFor(scheduleName);
+    if (cached) {
+      ticketBody.innerHTML = '';
+      renderCachedTicketStats(ticketBody, cached);
+      ticketRefreshBtn.textContent = '↻ Refresh';
+      ticketRefreshBtn.disabled = false;
+      return;
+    }
+
+    // No cached data — check if ZD is configured for live fetch
     if (!zdReady()) {
-      ticketBody.innerHTML = '<div style="font-size:12px;color:var(--text3);">Zendesk not configured.</div>';
+      ticketBody.innerHTML = '<div style="font-size:12px;color:var(--text2);line-height:1.6;padding:8px 0;">'
+        + 'Your manager needs to be logged in for your ticket stats to load. '
+        + 'Stats are refreshed every 30 minutes from their session.</div>';
       ticketRefreshBtn.textContent = '↻ Refresh'; ticketRefreshBtn.disabled = false;
       return;
     }
@@ -9976,7 +10148,6 @@ async function renderTeamMemberDashboard(root) {
       ticketRefreshBtn.textContent = '↻ Refresh'; ticketRefreshBtn.disabled = false;
       return;
     }
-    ticketBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
     try {
         const [openRes, pendRes, solvedRes] = await Promise.all([
           zdFetch('/search.json?query='+encodeURIComponent('type:ticket status:open assignee:'+myZdAgentId)+'&per_page=10').catch(()=>({results:[]})),
@@ -10860,41 +11031,6 @@ function renderOtoPersonMain(personName) {
   function renderOtoOverview(container) {
     container.className = 'oto-overview-body';
 
-    // ── Performance stats from snapshots ──────────────────────
-    const weeks4 = [];
-    for (let i=3; i>=0; i--) {
-      const mon = fmtLocal(getMonday(-i));
-      const snap = getWeeklySnapshot(mon);
-      if (snap && snap.agents && snap.agents[personName]) {
-        weeks4.push({ week: mon, ...snap.agents[personName] });
-      }
-    }
-    if (weeks4.length) {
-      const statRow = document.createElement('div'); statRow.className = 'oto-stat-row';
-      const latest = weeks4[weeks4.length-1];
-      const prev   = weeks4.length > 1 ? weeks4[weeks4.length-2] : null;
-
-      const mkStat = (val, label, trend) => {
-        const card = document.createElement('div'); card.className = 'oto-stat-card';
-        const v = document.createElement('div'); v.className = 'oto-stat-val'; v.textContent = val!=null?val:'—';
-        const l = document.createElement('div'); l.className = 'oto-stat-label'; l.textContent = label;
-        card.appendChild(v); card.appendChild(l);
-        if (trend !== null && trend !== undefined) {
-          const t = document.createElement('div');
-          t.style.cssText = 'font-size:10px;margin-top:2px;color:'+(trend>0?'#34d399':trend<0?'#f87171':'var(--text3)')+';';
-          t.textContent = (trend>0?'+':'')+trend+' vs prev wk';
-          card.appendChild(t);
-        }
-        return card;
-      };
-      const trendOrNull = (curr, p) => p ? (curr||0)-(p||0) : null;
-      statRow.appendChild(mkStat(latest.answered||0, 'Calls this wk', trendOrNull(latest.answered,prev?.answered)));
-      statRow.appendChild(mkStat(latest.zdSolved||0, 'Tickets this wk', trendOrNull(latest.zdSolved,prev?.zdSolved)));
-      statRow.appendChild(mkStat(latest.missed||0, 'Missed calls', trendOrNull(latest.missed,prev?.missed)));
-      statRow.appendChild(mkStat(latest.avgTalk?fmtSec(latest.avgTalk):'—', 'Avg talk time', null));
-      container.appendChild(statRow);
-    }
-
     // ── Prep brief ────────────────────────────────────────────
     renderPrepBrief(personName, container);
 
@@ -10950,7 +11086,18 @@ function renderOtoPersonMain(personName) {
     addBtn.onclick = () => {
       const d = getOtoData(); d.sessions = d.sessions||[];
       d.sessions.unshift({ id:Date.now()+'', person:personName, date:today, notes:'', actions:[], wins:[] });
-      saveOtoData(d); renderOtoPersonMain(personName); switchOtoTab('1:1 Sessions');
+      saveOtoData(d);
+      // Re-render and switch to sessions tab — use setTimeout so DOM settles first
+      renderOtoPersonMain(personName);
+      setTimeout(() => {
+        const sessBtn = document.querySelector('.oto-tab-btn');
+        if (sessBtn) {
+          // Find the 1:1 Sessions tab button and click it
+          document.querySelectorAll('.oto-tab-btn').forEach(b => {
+            if (b.textContent === '1:1 Sessions') b.click();
+          });
+        }
+      }, 50);
     };
     sHdr.appendChild(sLbl); sHdr.appendChild(addBtn); container.appendChild(sHdr);
 
@@ -11113,7 +11260,8 @@ function appendSessionCard(container, session, expanded) {
   const doAdd=()=>{const t3=aInp.value.trim();if(!t3)return;const d5=getOtoData();const s4=d5.sessions.find(s=>s.id===session.id);if(s4){if(!s4.actions)s4.actions=[];s4.actions.push({id:Date.now()+'',text:t3,done:false});saveOtoData(d5);renderOtoPersonMain(session.person);}aInp.value='';};
   aAdd.onclick=doAdd; aInp.addEventListener('keydown',e=>{if(e.key==='Enter')doAdd();});
   aRow.appendChild(aInp); aRow.appendChild(aAdd);
-  cBody.appendChild(mkLabel('Action items')); cBody.appendChild(aList); cBody.appendChild(aRow);
+  const albl2 = document.createElement('div'); albl2.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-top:10px;margin-bottom:4px;'; albl2.textContent='Action items';
+  cBody.appendChild(albl2); cBody.appendChild(aList); cBody.appendChild(aRow);
   card.appendChild(cHdr); card.appendChild(cBody); container.appendChild(card);
 }
 
@@ -12571,14 +12719,29 @@ function renderFeedbackAdmin(body, topRight) {
       main.appendChild(empty);
     } else {
       posts.forEach((p, i) => {
-        const card = fbMakeCard(p, true, () => {
-          confirmDialog('Delete this post?', () => {
+        const card = fbMakeCard(p, true,
+          () => {
+            confirmDialog('Delete this post?', () => {
+              const all = loadFbPosts(fbSelectedUser);
+              all.splice(all.length - 1 - i, 1);
+              saveFbPosts(fbSelectedUser, all);
+              renderFeedbackTab();
+            }, 'Delete');
+          },
+          (replyText) => {
+            // Save reply on the post object
             const all = loadFbPosts(fbSelectedUser);
-            all.splice(all.length - 1 - i, 1);
-            saveFbPosts(fbSelectedUser, all);
-            renderFeedbackTab();
-          }, 'Delete');
-        });
+            const realIdx = all.length - 1 - i;
+            if (all[realIdx]) {
+              if (replyText) all[realIdx].reply = replyText;
+              else delete all[realIdx].reply;
+              saveFbPosts(fbSelectedUser, all);
+              scheduleSyncSave();
+              renderFeedbackTab();
+              showToast('✓ Response saved');
+            }
+          }
+        );
         main.appendChild(card);
       });
     }
@@ -12625,15 +12788,50 @@ function renderFeedbackUser(body, topRight, username) {
   }
 }
 
-function fbMakeCard(post, isAdmin2, onDelete) {
-  const card = document.createElement('div'); card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:8px;';
+function fbMakeCard(post, isAdmin2, onDelete, onReply) {
+  const card = document.createElement('div');
+  card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:8px;';
   const hdr = document.createElement('div'); hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;';
   const ts = new Date(post.ts);
-  const meta = document.createElement('div'); meta.style.cssText = 'font-size:10px;color:var(--text3);'; meta.textContent = ts.toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'short'}) + ' · ' + ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const meta = document.createElement('div'); meta.style.cssText = 'font-size:10px;color:var(--text3);';
+  meta.textContent = ts.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})+' · '+ts.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   const del = document.createElement('button'); del.style.cssText = 'background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0;'; del.textContent = '✕'; del.onclick = onDelete;
   hdr.appendChild(meta); hdr.appendChild(del);
   const txt = document.createElement('div'); txt.style.cssText = 'font-size:13px;color:var(--text2);line-height:1.5;'; txt.textContent = post.text;
   card.appendChild(hdr); card.appendChild(txt);
+
+  // Show existing reply
+  if (post.reply) {
+    const replyWrap = document.createElement('div');
+    replyWrap.style.cssText = 'margin-top:10px;padding:8px 10px;background:rgba(77,171,247,0.07);border-left:3px solid var(--cal-text);border-radius:0 6px 6px 0;';
+    const replyMeta = document.createElement('div'); replyMeta.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--cal-text);margin-bottom:4px;';
+    replyMeta.textContent = 'Manager response';
+    const replyTxt = document.createElement('div'); replyTxt.style.cssText='font-size:12px;color:var(--text2);line-height:1.5;';
+    replyTxt.textContent = post.reply;
+    replyWrap.appendChild(replyMeta); replyWrap.appendChild(replyTxt);
+    card.appendChild(replyWrap);
+  }
+
+  // Admin: reply input
+  if (isAdmin2) {
+    const replyRow = document.createElement('div'); replyRow.style.cssText='display:flex;gap:6px;margin-top:8px;';
+    const replyInp = document.createElement('input'); replyInp.type='text';
+    replyInp.placeholder = post.reply ? 'Edit response…' : 'Add response…';
+    replyInp.value = post.reply || '';
+    replyInp.style.cssText='flex:1;font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;outline:none;';
+    replyInp.onfocus=()=>replyInp.style.borderColor='var(--cal-text)';
+    replyInp.onblur=()=>replyInp.style.borderColor='var(--border)';
+    const replyBtn = document.createElement('button'); replyBtn.className='btn-save';
+    replyBtn.style.cssText='font-size:11px;padding:4px 10px;';
+    replyBtn.textContent = post.reply ? 'Update' : 'Reply';
+    replyBtn.onclick = () => {
+      const val = replyInp.value.trim();
+      if (onReply) onReply(val);
+    };
+    replyRow.appendChild(replyInp); replyRow.appendChild(replyBtn);
+    card.appendChild(replyRow);
+  }
+
   return card;
 }
 
@@ -14794,7 +14992,7 @@ async function ghSave() {
       if (!k) continue;
       // Skip keys with non-ASCII characters — these are corrupted duplicates
       if (/[^\x00-\x7F]/.test(k)) { localStorage.removeItem(k); continue; }
-      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k.startsWith('wtp_ann_') || k.startsWith('wtp_intel_') || k.startsWith('wtp_weekly_briefing_') || k === 'wtp_ql_shared' || k === 'wtp_announcements' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token' || k === 'wtp_outlook_events' || k === 'wtp_outlook_synced' || k === 'wtp_cal_gist_url' || k === 'wtp_schedule' || k === UNIFON_KEY || k === UNIFON_HOURLY_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_MAP_KEY || k === QUEUE_LOG_KEY || k === QUEUE_STATE_KEY || k === MY_TEAM_KEY) {
+      if (k.startsWith('wtp_tasks_') || k.startsWith('wtp_notepad_') || k.startsWith('wtp_cal_') || k.startsWith('wtp_oto_') || k.startsWith('wtp_fb_') || k.startsWith('wtp_agenda_') || k.startsWith('wtp_profile_') || k.startsWith('wtp_review_') || k.startsWith('wtp_mood_') || k.startsWith('wtp_handover_') || k.startsWith('wtp_ql_') || k.startsWith('wtp_ann_') || k.startsWith('wtp_intel_') || k.startsWith('wtp_weekly_briefing_') || k === 'wtp_ql_shared' || k === 'wtp_announcements' || k === 'wtp_decisions' || k === 'wtp_users' || k === 'wtp_wingman' || k === 'wtp_encrypted_token' || k === 'wtp_outlook_events' || k === 'wtp_outlook_synced' || k === 'wtp_cal_gist_url' || k === 'wtp_schedule' || k === UNIFON_KEY || k === UNIFON_HOURLY_KEY || k === UNIFON_AGENT_KEY || k === UNIFON_MAP_KEY || k === QUEUE_LOG_KEY || k === QUEUE_STATE_KEY || k === MY_TEAM_KEY || k === AGENT_LIVE_STATS_KEY) {
         const v = localStorage.getItem(k);
         try { data[k] = JSON.parse(v); } catch { data[k] = v; }
       }
@@ -14889,7 +15087,7 @@ async function ghReadOnlyLoad() {
       'wtp_users', 'wtp_wingman', 'wtp_encrypted_token', 'wtp_ql_shared',
       'wtp_announcements', 'wtp_outlook_events', 'wtp_outlook_synced', 'wtp_cal_gist_url',
       'wtp_schedule', UNIFON_KEY, UNIFON_AGENT_KEY, UNIFON_MAP_KEY,
-      QUEUE_LOG_KEY, QUEUE_STATE_KEY, MY_TEAM_KEY,
+      QUEUE_LOG_KEY, QUEUE_STATE_KEY, MY_TEAM_KEY, AGENT_LIVE_STATS_KEY,
     ];
     // Manager view users also need profile (RAG) and decision log data
     const isManagerView = currentUser && !currentUser.isAdmin && (currentUser.privileges||[]).includes('manager_view');
@@ -15193,6 +15391,10 @@ function loadUserData() {
   // Request notification permission for queue monitor (admin only)
   if (currentUser?.isAdmin && typeof requestNotificationPermission === 'function') {
     requestNotificationPermission();
+  }
+  // Start agent live stats refresh (admin only — fetches ZD data for all agents)
+  if (currentUser?.isAdmin && typeof startAgentStatsRefresh === 'function') {
+    startAgentStatsRefresh();
   }
   // Show admin-only tabs
   const otoBtn = document.getElementById('tab-btn-onetoone');
@@ -16695,6 +16897,9 @@ function getISOWeek(date) {
   return d.getFullYear()+'-W'+String(Math.ceil((((d-yearStart)/86400000)+1)/7)).padStart(2,'0');
 }
 function moodKey(username, week) { return 'wtp_mood_'+normalizeKey(username)+'_'+(week||getISOWeek(new Date())); }
+function loadMoodHistory(username) {
+  try { return JSON.parse(localStorage.getItem('wtp_mood_'+normalizeKey(username)) || '[]'); } catch { return []; }
+}
 function getCurrentMood(username) {
   try { return JSON.parse(localStorage.getItem(moodKey(username)) || 'null'); } catch { return null; }
 }
