@@ -7047,9 +7047,19 @@ function renderAdminDashboard(root, viewerMode=false) {
   const queueBody=document.createElement('div');
   queueSec.appendChild(queueBody);
 
-  // Initial render — called immediately so col2 isn't empty on load
-  // (button clicks re-render with the selected period)
+  // Initial render + live polling every 30s
   setTimeout(() => renderQueuePanel(queueBody, queuePeriod), 0);
+  // Clear any previous interval, then start a fresh one
+  if (window._queuePollTimer) clearInterval(window._queuePollTimer);
+  window._queuePollTimer = setInterval(() => {
+    // Only poll if dashboard tab is visible
+    const dashTab = document.getElementById('tab-dashboard');
+    if (dashTab && dashTab.style.display !== 'none') {
+      // Force fresh fetch by clearing queue cache first
+      localStorage.removeItem('wtp_unifon_queue_cache');
+      renderQueuePanel(queueBody, queuePeriod);
+    }
+  }, 30000);
 
   const mkQStat=(id,label,color)=>{const cell=document.createElement('div');cell.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;';const val=document.createElement('div');val.id=id;val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.03em;line-height:1;color:${color};`;val.textContent='…';const lbl=document.createElement('div');lbl.style.cssText='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:3px;';lbl.textContent=label;cell.appendChild(val);cell.appendChild(lbl);return cell;};
   const mkUC=(v,l,c)=>{const cel=document.createElement('div');cel.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';const vv=document.createElement('div');vv.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:18px;font-weight:900;letter-spacing:-0.03em;color:${c||'var(--text)'};`;vv.textContent=v;const ll=document.createElement('div');ll.style.cssText='font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;';ll.textContent=l;cel.appendChild(vv);cel.appendChild(ll);return cel;};
