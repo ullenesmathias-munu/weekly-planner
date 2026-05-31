@@ -12442,10 +12442,11 @@
       "tvOnly": true
     },
     {
-      "name": "Jonas.Jjohannes@munu.cloud",
+      "name": "Jonas.Johannes@munu.cloud",
       "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
       "isAdmin": false,
-      "displayName": "Jonas"
+      "displayName": "Jonas",
+      "scheduleName": "Jonas"
     }
   ],
   "wtp_profile_julie": {
