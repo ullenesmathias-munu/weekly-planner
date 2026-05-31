@@ -6911,13 +6911,17 @@ function renderAdminDashboard(root, viewerMode=false) {
       // Render queues — active queue gets full stat panels, inactive gets a dimmed summary row
       showEntries.forEach((q, qi) => {
         const isActive = q.queue_id === ACTIVE_QUEUE_ID;
-        const members  = (q.members || []).filter(isMyTeamMember);
+        const allMembers = q.members || [];
+        const members  = allMembers.filter(isMyTeamMember);
         const ready    = members.filter(m =>
           m.fixed?.ready || m.mobile?.ready ||
           m.fixed?.restore_ready || m.mobile?.restore_ready
         ).length;
         const loggedIn = members.filter(m => m.fixed !== null || m.mobile !== null).length;
         const total    = members.length;
+        // Debug log — remove once confirmed working
+        console.log('[Queue]', q.description, '| all members:', allMembers.length, '| MY_TEAM matched:', total, '| ready:', ready);
+        members.forEach(m => console.log('  -', m.firstname, m.lastname, '| mobile.ready:', m.mobile?.ready, '| fixed.ready:', m.fixed?.ready));
         const wait     = q.keyfigures?.answered_waittime || 0;
         const waitCls  = wait > 120 ? 'danger' : wait > 60 ? 'warn' : wait > 0 ? 'ok' : '';
         const readyCls = ready === 0 && total > 0 ? 'danger' : ready < 2 && total > 0 ? 'warn' : 'ok';
