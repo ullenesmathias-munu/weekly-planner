@@ -12391,10 +12391,10 @@
     },
     "2026-05-31": {
       "Benjamin \u00d8deg\u00e5rd": {
-        "answered": 8,
-        "totalTalkSec": 3069,
-        "totalWaitSec": 1264,
-        "missed": 1
+        "answered": 14,
+        "totalTalkSec": 4754,
+        "totalWaitSec": 1366,
+        "missed": 3
       },
       "Jonas Johannes": {
         "answered": 14,
@@ -12429,6 +12429,14 @@
         "totalTalkSec": 13030,
         "totalWaitSec": 402,
         "missed": 5
+      }
+    },
+    "2026-06-01": {
+      "Vetle Bengtson": {
+        "answered": 1,
+        "totalTalkSec": 522,
+        "totalWaitSec": 43,
+        "missed": 0
       }
     }
   },
