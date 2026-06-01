@@ -7117,7 +7117,9 @@ function diffQueueState(entries) {
 
     (q.members||[]).filter(isMyTeam).forEach(m => {
       const key    = q.queue_id + '_' + (m.firstname||'') + '_' + (m.lastname||'');
-      const ready  = !!(m.mobile?.ready || m.fixed?.ready);
+      // "Present on queue" = ready OR restore_ready (on a call / wrap-up still counts as
+      // logged in). Using only `ready` would log a false "logged off" on every call.
+      const ready  = !!(m.mobile?.ready || m.fixed?.ready || m.mobile?.restore_ready || m.fixed?.restore_ready);
       const name   = (m.firstname||'') + ' ' + (m.lastname||'');
 
       next[key] = { ready, name, queue: qName, queueId: q.queue_id };
