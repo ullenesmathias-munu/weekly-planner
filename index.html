@@ -12422,6 +12422,15 @@ async function generateReport(fromDate, toDate, container) {
     const sorted=MY_TEAM.map(n=>({name:n,v:zd.agentSolved[n]||0})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
     const maxV=sorted[0]?.v||1;
     sorted.forEach((x,i)=>zdSW.appendChild(mkAgentBar(x.name,x.v,maxV,AGENT_COLORS[i%AGENT_COLORS.length])));
+    // Show unattributed tickets (solved by non-team members, e.g. admin) so total always adds up
+    const teamAttributed=sorted.reduce((s,x)=>s+x.v,0);
+    const unattributed=Math.max(0,(zd.totalSolved||0)-teamAttributed);
+    if(unattributed>0){
+      const otherRow=mkAgentBar('Other / admin',unattributed,maxV,'var(--text3)');
+      otherRow.style.opacity='0.45';
+      otherRow.title='Tickets solved by agents outside the team list (e.g. admin accounts)';
+      zdSW.appendChild(otherRow);
+    }
     if(!sorted.length){const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No data \u2014 run backfill';zdSW.appendChild(nd);}
   } else {
     const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No ZD data \u2014 run backfill in Settings';zdSW.appendChild(nd);
