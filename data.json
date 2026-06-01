@@ -8582,7 +8582,7 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
     "toDate": "2026-06-07",
-    "generated": "2026-06-01T08:48:37.309Z",
+    "generated": "2026-06-01T11:50:06.840Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -8595,7 +8595,7 @@
         "dayDays": 4,
         "zdEmail": 0,
         "zdPhone": 0,
-        "zdOpen": 8,
+        "zdOpen": 7,
         "zdPending": 2
       },
       "Thomas": {
@@ -8609,7 +8609,7 @@
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
-        "zdOpen": 12,
+        "zdOpen": 10,
         "zdPending": 1
       },
       "Maylen": {
@@ -8617,13 +8617,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 3,
+        "zdSolved": 9,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 2,
         "zdEmail": 1,
-        "zdPhone": 2,
-        "zdOpen": 7,
+        "zdPhone": 8,
+        "zdOpen": 9,
         "zdPending": 10
       },
       "Benjamin": {
@@ -8645,13 +8645,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 3,
+        "zdSolved": 9,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
         "zdEmail": 0,
-        "zdPhone": 3,
-        "zdOpen": 2,
+        "zdPhone": 9,
+        "zdOpen": 3,
         "zdPending": 0
       },
       "Tord": {
@@ -8673,13 +8673,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 7,
+        "zdSolved": 13,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 2,
-        "zdPhone": 5,
-        "zdOpen": 8,
+        "zdEmail": 3,
+        "zdPhone": 10,
+        "zdOpen": 9,
         "zdPending": 3
       },
       "Andreas": {
@@ -8687,13 +8687,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 12,
+        "zdSolved": 21,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 6,
-        "zdPhone": 6,
-        "zdOpen": 5,
+        "zdEmail": 10,
+        "zdPhone": 11,
+        "zdOpen": 4,
         "zdPending": 7
       },
       "Julie": {
@@ -8715,13 +8715,13 @@
         "missed": 0,
         "avgTalk": 522,
         "avgWait": 43,
-        "zdSolved": 6,
+        "zdSolved": 10,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 6,
-        "zdOpen": 3,
+        "zdEmail": 2,
+        "zdPhone": 8,
+        "zdOpen": 4,
         "zdPending": 3
       }
     },
