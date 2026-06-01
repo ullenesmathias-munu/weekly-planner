@@ -5886,6 +5886,33 @@ async function fetchUnifonLiveKpis() {
   } catch(e) { return null; }
 }
 
+// Count MY_TEAM members whose scheduled shift covers the current moment.
+// Returns null if there's no schedule for today (caller falls back to queue total).
+function countScheduledWorkingNow() {
+  if (typeof SCHEDULE === 'undefined') return null;
+  const now = new Date();
+  const ds = fmtLocal(now);
+  const hourNow = now.getHours() + now.getMinutes()/60;
+  const week = SCHEDULE.find(w => w.dates && w.dates.includes(ds));
+  if (!week) return null;
+  const idx = week.dates.indexOf(ds);
+  const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  let count = 0;
+  MY_TEAM.forEach(name => {
+    const nf = norm(name.split(' ')[0]);
+    const person = week.people.find(p => norm(p.name.split(' ')[0]) === nf || norm(p.name) === norm(name));
+    if (!person) return;
+    const shift = (person.shifts[idx] || '');
+    if (!shift || (typeof ABSENT_SHIFTS !== 'undefined' && ABSENT_SHIFTS.has(shift.toLowerCase()))) return;
+    const t = (typeof getShiftTimes === 'function') ? getShiftTimes(shift) : null;
+    if (!t) return;
+    const s = t[0], e = t[1];
+    const working = (e <= s) ? (hourNow >= s || hourNow < e) : (hourNow >= s && hourNow < e);
+    if (working) count++;
+  });
+  return count;
+}
+
 // fetchUnifonApiToday - uses live queue KPIs (only real-time REST data available)
 async function fetchUnifonApiToday() {
   if (!hasUnifonApi()) return null;
@@ -8037,8 +8064,11 @@ function renderAdminDashboard(root, viewerMode=false) {
     try {
       const cached=JSON.parse(localStorage.getItem('wtp_unifon_live_kpis')||'null');
       if(cached&&cached.agentsReady!=null){
-        const v=cached.agentsReady+' ready';
+        const sched=(typeof countScheduledWorkingNow==='function')?countScheduledWorkingNow():null;
+        const denom=(sched!=null&&sched>0)?Math.max(sched,cached.agentsReady):cached.agentsTotal;
+        const v=cached.agentsReady+(denom!=null?'/'+denom:'')+' ready';
         uniAnsRateKpi.querySelector('.db-kpi-val').textContent=v;
+        uniAnsRateKpi.querySelector('.db-kpi-label').textContent='Queue agents';
         kpis.appendChild(uniAnsRateKpi);
       }
     } catch{}
@@ -8046,10 +8076,14 @@ function renderAdminDashboard(root, viewerMode=false) {
     if(hasUnifonApi()){
       fetchUnifonLiveKpis().then(k=>{
         if(!k) return;
-        const v=k.agentsReady+'/'+k.agentsTotal+' ready';
+        const sched=(typeof countScheduledWorkingNow==='function')?countScheduledWorkingNow():null;
+        const denom=(sched!=null&&sched>0)?Math.max(sched,k.agentsReady):k.agentsTotal;
+        const v=k.agentsReady+'/'+denom+' ready';
         uniAnsRateKpi.querySelector('.db-kpi-val').textContent=v;
         uniAnsRateKpi.querySelector('.db-kpi-label').textContent='Queue agents';
-        const cls=k.agentsReady===0?'danger':k.agentsReady<3?'warn':'ok';
+        uniAnsRateKpi.title=(sched!=null?sched+' scheduled on shift now':k.agentsTotal+' assigned to queue')+' · '+k.agentsReady+' ready';
+        const ratio=denom>0?k.agentsReady/denom:0;
+        const cls=k.agentsReady===0?'danger':ratio<0.6?'warn':'ok';
         uniAnsRateKpi.querySelector('.db-kpi-val').className='db-kpi-val '+cls;
         if(!kpis.contains(uniAnsRateKpi)) kpis.appendChild(uniAnsRateKpi);
       }).catch(()=>{});
