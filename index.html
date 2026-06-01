@@ -12965,9 +12965,20 @@ async function renderOpsContent(fromDate, toDate, container) {
   if (unassignedQ>10) signals.push('red'); else if (unassignedQ>3) signals.push('amber');
 
   const cycleRag = signals.includes('red')?'red':signals.includes('amber')?'amber':'green';
-  const cycleMsg = cycleRag==='red'?'Vicious cycle active — email backlog driving call volume':cycleRag==='amber'?'Warning signs — monitor closely this week':'Operations healthy — cycle broken';
+  // Build the narrative from whichever signals actually fired (not hard-coded to email)
+  const drivers = [];
+  if (openQ>30) drivers.push({sev:openQ>60?2:1, head:'Open queue elevated', sub:'queue at '+openQ+' (target <30)'});
+  if (emailRatio!==null&&emailRatio<50) drivers.push({sev:emailRatio<30?2:1, head:'Email share low', sub:'email '+emailRatio+'% of contacts → customers calling instead'});
+  if (callTrend>=30) drivers.push({sev:callTrend>=50?2:1, head:'Call volume climbing', sub:'calls '+(callTrend>0?'+':'')+callTrend+'% vs last week'});
+  if (unassignedQ>3) drivers.push({sev:unassignedQ>10?2:1, head:'Tickets awaiting pickup', sub:unassignedQ+' unassigned in queue'});
+  drivers.sort((a,b)=>b.sev-a.sev);
   const unassignedNote = unassignedQ > 3 ? ' · ' + unassignedQ + ' tickets need agent pickup' : '';
-  const cycleSub = cycleRag==='red'?'Customers not getting email responses → calling instead → inbox grows'+unassignedNote:cycleRag==='amber'?'Queue or call trend showing early pressure — act before it compounds'+unassignedNote:'Email ratio healthy, queue manageable, call volume stable';
+  const cycleMsg = cycleRag==='green'
+    ? 'Operations healthy — cycle broken'
+    : (drivers[0] ? drivers[0].head + (drivers.length>1?' (+'+(drivers.length-1)+' more)':'') : (cycleRag==='red'?'Operations under pressure':'Warning signs — monitor closely'));
+  const cycleSub = cycleRag==='green'
+    ? 'Email ratio healthy, queue manageable, call volume stable'
+    : (drivers.length ? drivers.map(d=>d.sub).join(' · ') : 'Monitor closely this week'+unassignedNote);
   const ragColor = cycleRag==='red'?'var(--high-text)':cycleRag==='amber'?'#ffb74d':'var(--low-text)';
   const ragBg    = cycleRag==='red'?'rgba(239,83,80,0.08)':cycleRag==='amber'?'rgba(255,183,77,0.08)':'rgba(52,211,153,0.08)';
   const ragBorder= cycleRag==='red'?'rgba(239,83,80,0.25)':cycleRag==='amber'?'rgba(255,183,77,0.25)':'rgba(52,211,153,0.2)';
@@ -13137,60 +13148,63 @@ async function renderOpsContent(fromDate, toDate, container) {
       solved, email, phone,
       working, total, nightDays, dayDays, isNight, isMixed,
       fullyAbsent, partlyAbsent, trend,
+      // Volume normalised per day worked (fair across part-time / full weeks)
+      solvedPD: working>0 ? Math.round((solved||0)/working*10)/10 : 0,
+      callsPD:  working>0 ? Math.round((cs.answered||0)/working*10)/10 : 0,
+      emailPD:  (working>0 && email!=null) ? Math.round(email/working*10)/10 : null,
+      phonePD:  (working>0 && phone!=null) ? Math.round(phone/working*10)/10 : null,
       _fromSnap: useSnap,
     };
   });
 
-  // Split by shift type — night shift agents get separate averages
-  // Mixed agents (both day + night days) are shown in their majority group
-  // but excluded from pure averages to avoid distorting either group
-  const active      = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0) && !a.isNight);
-  const activeNight = agentData.filter(a => !a.fullyAbsent && (a.calls>0||a.solved>0) && a.isNight);
-  const mixed       = agentData.filter(a => !a.fullyAbsent && a.isMixed && (a.calls>0||a.solved>0));
-  const partial     = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working>0 && !a.isNight);
-  const absent      = agentData.filter(a => a.fullyAbsent);
-  const inactive    = agentData.filter(a => !a.fullyAbsent && a.calls===0&&a.solved===0&&a.working===0);
+  // ── Cohorts ──────────────────────────────────────────────────────
+  // Night/mixed agents are shown WITH the team (tagged 🌙). Their volume is
+  // shift-dependent, so it's excluded from the team average and shown neutral —
+  // they're judged on their own 4-week trend instead.
+  const isShiftCtx = a => a.isNight || a.isMixed;
+  const active   = agentData.filter(a => !a.fullyAbsent && (a.calls>0 || a.solved>0));
+  const partial  = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working>0);
+  const absent   = agentData.filter(a => a.fullyAbsent);
+  const inactive = agentData.filter(a => !a.fullyAbsent && a.calls===0 && a.solved===0 && a.working===0);
 
-  const calcAvg = (arr, key) => { const v=arr.filter(a=>!a.fullyAbsent&&a[key]>0).map(a=>a[key]); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
-
-  // Pure day avg — excludes mixed agents so it reflects true day-shift performance
-  const pureDay   = active.filter(a => !a.isMixed);
-  const pureNight = activeNight.filter(a => !a.isMixed);
-
+  // Team average (MEAN) — over pure day agents only, on per-day rates
+  const dayAgents = active.filter(a => !isShiftCtx(a));
+  const meanOf  = (arr,key) => { const v=arr.map(a=>a[key]).filter(x=>x!=null&&x>0); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length*10)/10:0; };
+  const meanSec = (arr,key) => { const v=arr.map(a=>a[key]).filter(x=>x>0); return v.length?Math.round(v.reduce((s,x)=>s+x,0)/v.length):0; };
   const avgs = {
-    calls:   calcAvg(pureDay,'calls'),
-    solved:  calcAvg(pureDay,'solved'),
-    email:   calcAvg(pureDay.filter(a=>a.email>0),'email'),
-    phone:   calcAvg(pureDay.filter(a=>a.phone>0),'phone'),
-    talkSec: calcAvg(pureDay.filter(a=>a.talkSec>0),'talkSec'),
-    waitSec: calcAvg(pureDay.filter(a=>a.waitSec>0),'waitSec'),
-  };
-
-  // Pure night avg — excludes mixed agents
-  const nightAvgs = {
-    calls:   calcAvg(pureNight,'calls'),
-    solved:  calcAvg(pureNight.filter(a=>a.solved>0),'solved'),
-    email:   calcAvg(pureNight.filter(a=>a.email>0),'email'),
-    phone:   calcAvg(pureNight.filter(a=>a.phone>0),'phone'),
-    talkSec: calcAvg(pureNight.filter(a=>a.talkSec>0),'talkSec'),
-    waitSec: calcAvg(pureNight.filter(a=>a.waitSec>0),'waitSec'),
+    solvedPD: meanOf(dayAgents,'solvedPD'),
+    callsPD:  meanOf(dayAgents,'callsPD'),
+    emailPD:  meanOf(dayAgents,'emailPD'),
+    phonePD:  meanOf(dayAgents,'phonePD'),
+    talkSec:  meanSec(dayAgents,'talkSec'),
+    waitSec:  meanSec(dayAgents,'waitSec'),
   };
 
   const METRICS = [
-    {key:'calls',   label:'Calls',   lower:false},
-    {key:'solved',  label:'Solved',  lower:false},
-    {key:'email',   label:'Email',   lower:false},
-    {key:'phone',   label:'Phone',   lower:false},
-    {key:'talkSec', label:'Talk',    lower:true},
-    {key:'waitSec', label:'Wait',    lower:true},
-    {key:'trend',   label:'Trend',   lower:false, isTrend:true},
+    {key:'solvedPD', raw:'solved', label:'Solved/d', vol:true,  lower:false},
+    {key:'callsPD',  raw:'calls',  label:'Calls/d',  vol:true,  lower:false},
+    {key:'emailPD',  raw:'email',  label:'Email',    vol:true,  lower:false},
+    {key:'phonePD',  raw:'phone',  label:'Phone',    vol:true,  lower:false},
+    {key:'talkSec',  label:'Talk', vol:false, lower:true},
+    {key:'waitSec',  label:'Wait', vol:false, lower:true},
+    {key:'trend',    label:'Trend',isTrend:true},
   ];
 
-  // Header
+  const GRID = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;';
+
+  // Group header (Contribution / Efficiency / Trend)
+  const grpHdr = document.createElement('div');
+  grpHdr.style.cssText = GRID+'padding:6px 14px 2px;background:var(--surface2);';
+  [{t:'',s:'grid-column:1;'},{t:'Contribution — per day worked',s:'grid-column:2 / 6;'},{t:'Efficiency — lower is better',s:'grid-column:6 / 8;'},{t:'Trend',s:'grid-column:8;'}].forEach(g=>{
+    const c=document.createElement('div'); c.style.cssText='font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);text-align:center;border-bottom:1px solid var(--border);padding-bottom:3px;'+g.s; c.textContent=g.t; grpHdr.appendChild(c);
+  });
+  scCard.appendChild(grpHdr);
+
+  // Column header
   const scHdr = document.createElement('div');
-  scHdr.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:6px 14px;border-bottom:1px solid var(--border);background:var(--surface2);';
+  scHdr.style.cssText = GRID+'padding:4px 14px 6px;border-bottom:1px solid var(--border);background:var(--surface2);';
   ['Agent',...METRICS.map(m=>m.label)].forEach((h,i) => {
-    const c=document.createElement('div'); c.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'+(i>0?'text-align:center;':''); c.textContent=h; scHdr.appendChild(c);
+    const c=document.createElement('div'); c.style.cssText='font-size:9px;font-weight:600;letter-spacing:0.04em;color:var(--text3);'+(i>0?'text-align:center;':''); c.textContent=h; scHdr.appendChild(c);
   });
   scCard.appendChild(scHdr);
 
@@ -13200,114 +13214,102 @@ async function renderOpsContent(fromDate, toDate, container) {
     if (lower) return r<=1.1?'good':r<=1.5?'warn':'bad';
     return r>=0.9?'good':r>=0.5?'warn':'bad';
   };
-
-  const fmtSec = s => s>0?Math.floor(s/60)+'m'+(s%60?s%60+'s':''):'—';
-  const fmtDelta = (v,a,lower) => { if(!v||!a)return''; const p=Math.round((v-a)/a*100); return (p>0?'+':'')+p+'%'; };
+  const fmtSec = s => s>0?Math.floor(s/60)+'m'+(s%60?(s%60)+'s':''):'—';
+  const fmtDelta = (v,a) => { if(!v||!a)return''; const p=Math.round((v-a)/a*100); return (p>0?'+':'')+p+'%'; };
   const cellBg = c => c==='good'?'rgba(52,211,153,0.1)':c==='warn'?'rgba(255,183,77,0.1)':c==='bad'?'rgba(239,83,80,0.1)':'transparent';
   const cellColor = c => c==='good'?'var(--low-text)':c==='warn'?'#ffb74d':c==='bad'?'var(--high-text)':'var(--text3)';
+  const NIGHT='#a78bfa';
 
   const makeAgentRow = (a, faded, label) => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:4px 14px;border-bottom:1px solid var(--border);'+(faded?'opacity:0.45;':'');
+    row.style.cssText = GRID+'padding:4px 14px;border-bottom:1px solid var(--border);align-items:stretch;'+(faded?'opacity:0.5;':'');
 
     const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;justify-content:center;';
     const nmTxt=document.createElement('span'); nmTxt.textContent=a.name.split(' ')[0]; nm.appendChild(nmTxt);
     if (label) {
       const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=label; nm.appendChild(lbl);
-    } else if (a.isMixed) {
-      // Agent had both day and night shifts this week — stats are a blend
-      const lbl=document.createElement('span');
-      lbl.style.cssText='font-size:9px;font-weight:500;color:#a78bfa;';
-      lbl.title='Worked '+a.dayDays+'d day + '+a.nightDays+'d night this period — stats are a blend of both';
-      lbl.textContent=a.nightDays+'d night / '+a.dayDays+'d day';
+    } else if (a.isNight || a.isMixed) {
+      const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:600;color:'+NIGHT+';';
+      lbl.textContent = a.isMixed ? '🌙 '+a.nightDays+'n/'+a.dayDays+'d' : '🌙 night';
+      lbl.title='Night queue — volume shown for context, judged on own trend';
       nm.appendChild(lbl);
     } else if (a.partlyAbsent) {
       const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:500;color:#ffb74d;'; lbl.textContent=a.working+'/'+a.total+' days'; nm.appendChild(lbl);
+    } else if (a.working>0) {
+      const lbl=document.createElement('span'); lbl.style.cssText='font-size:9px;font-weight:400;color:var(--text3);'; lbl.textContent=a.working+'/'+a.total+' days'; nm.appendChild(lbl);
     }
     row.appendChild(nm);
 
     METRICS.forEach(m => {
       const cell = document.createElement('div');
 
-      // Trend column — special rendering
       if (m.isTrend) {
-        cell.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;margin:1px;';
+        cell.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:40px;margin:1px;';
         if (a.trend) {
-          const ar=document.createElement('div'); ar.style.cssText='font-size:16px;font-weight:700;color:'+a.trend.color+';line-height:1;'; ar.textContent=a.trend.arrow;
+          const ar=document.createElement('div'); ar.style.cssText='font-size:15px;font-weight:700;color:'+a.trend.color+';line-height:1;'; ar.textContent=a.trend.arrow;
           const pct=document.createElement('div'); pct.style.cssText='font-size:9px;color:'+a.trend.color+';margin-top:1px;'; pct.textContent=(a.trend.pct>0?'+':'')+a.trend.pct+'%';
-          const sub=document.createElement('div'); sub.style.cssText='font-size:8px;color:var(--text3);margin-top:1px;'; sub.textContent='4wk trend';
+          const sub=document.createElement('div'); sub.style.cssText='font-size:8px;color:var(--text3);margin-top:1px;'; sub.textContent='4wk';
           cell.appendChild(ar); cell.appendChild(pct); cell.appendChild(sub);
-        } else {
-          const dash=document.createElement('div'); dash.style.cssText='font-size:12px;color:var(--text3);'; dash.textContent='—';
-          cell.appendChild(dash);
-        }
-        row.appendChild(cell);
-        return;
+        } else { const dash=document.createElement('div'); dash.style.cssText='font-size:12px;color:var(--text3);'; dash.textContent='—'; cell.appendChild(dash); }
+        row.appendChild(cell); return;
       }
 
-      // Night shift — grey out email/solved columns (not applicable)
-      // N/A for night agents only if the night group has zero data for that metric
-      const isNA = a.isNight && (m.key==='email'||m.key==='solved') && !nightAvgs[m.key];
-      const val = a[m.key];
-      const avg = (a.isNight ? nightAvgs : avgs)[m.key];
-      const cls = isNA ? 'na' : (val===null||val===0) ? 'none' : classify(val, avg, m.lower);
+      if (m.vol) {
+        const pd = a[m.key];
+        const rawTotal = a[m.raw];
+        const neutral = isShiftCtx(a);
+        if (rawTotal==null || rawTotal===0) {
+          cell.style.cssText='display:flex;align-items:center;justify-content:center;min-height:40px;margin:1px;';
+          const v=document.createElement('div'); v.style.cssText='font-size:12px;color:var(--text3);'; v.textContent='—'; cell.appendChild(v);
+        } else if (neutral) {
+          cell.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:40px;margin:1px;';
+          const v=document.createElement('div'); v.style.cssText='font-size:12px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;'; v.textContent=(pd!=null?pd:'—'); cell.appendChild(v);
+          const r=document.createElement('div'); r.style.cssText='font-size:8px;color:'+NIGHT+';'; r.textContent=rawTotal+' tot'; cell.appendChild(r);
+        } else {
+          const avg = avgs[m.key];
+          const cls = classify(pd, avg, false);
+          cell.style.cssText='border-radius:6px;padding:3px;background:'+cellBg(cls)+';display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:40px;margin:1px;';
+          const v=document.createElement('div'); v.style.cssText='font-size:12px;font-weight:700;color:'+cellColor(cls)+';font-variant-numeric:tabular-nums;'; v.textContent=(pd!=null&&pd>0?pd:'—'); cell.appendChild(v);
+          if(pd>0&&avg>0){const d=document.createElement('div'); d.style.cssText='font-size:9px;color:'+cellColor(cls)+';opacity:0.85;'; d.textContent=fmtDelta(pd,avg); cell.appendChild(d);}
+          const r=document.createElement('div'); r.style.cssText='font-size:8px;color:var(--text3);'; r.textContent=rawTotal+' tot'; cell.appendChild(r);
+        }
+        row.appendChild(cell); return;
+      }
 
-      cell.style.cssText = 'border-radius:6px;padding:4px 3px;background:'+(isNA?'transparent':cellBg(cls))+';display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:38px;margin:1px;';
-      const ve=document.createElement('div');
-      ve.style.cssText='font-size:12px;font-weight:700;color:'+(isNA?'var(--text3)':cellColor(cls))+';font-variant-numeric:tabular-nums;';
-      ve.textContent = isNA ? 'N/A' : (m.key==='talkSec'||m.key==='waitSec')?fmtSec(val):(val!=null&&val>0?val:'—');
-      cell.appendChild(ve);
-      if (!isNA&&val>0&&avg>0) { const de=document.createElement('div'); de.style.cssText='font-size:9px;color:'+cellColor(cls)+';opacity:0.8;'; de.textContent=fmtDelta(val,avg,m.lower); cell.appendChild(de); }
+      // Efficiency (talk/wait) — per-call, comparable across shifts → always coloured
+      const val = a[m.key];
+      const avg = avgs[m.key];
+      const cls = (val===null||val===0) ? 'none' : classify(val, avg, true);
+      cell.style.cssText='border-radius:6px;padding:3px;background:'+cellBg(cls)+';display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:40px;margin:1px;';
+      const v=document.createElement('div'); v.style.cssText='font-size:12px;font-weight:700;color:'+cellColor(cls)+';font-variant-numeric:tabular-nums;'; v.textContent=fmtSec(val); cell.appendChild(v);
+      if(val>0&&avg>0){const d=document.createElement('div'); d.style.cssText='font-size:9px;color:'+cellColor(cls)+';opacity:0.85;'; d.textContent=fmtDelta(val,avg); cell.appendChild(d);}
       row.appendChild(cell);
     });
     return row;
   };
 
-  active.sort((a,b)=>b.solved-a.solved).forEach(a => scCard.appendChild(makeAgentRow(a, false, null)));
+  // Active agents — day + night together, sorted by per-day output
+  active.sort((a,b)=>b.solvedPD-a.solvedPD).forEach(a => scCard.appendChild(makeAgentRow(a, false, null)));
 
-  // Partially absent — show with faded cells and day count, but still compare vs avg
-  if (partial.length) {
-    partial.forEach(a => scCard.appendChild(makeAgentRow(a, true, a.working+'/'+a.total+' days')));
-  }
+  if (partial.length) partial.forEach(a => scCard.appendChild(makeAgentRow(a, true, a.working+'/'+a.total+' days')));
 
-  // Team avg row (absent agents excluded from calculation)
+  // Team average row (MEAN of day agents, per-day rates)
   const avgRow = document.createElement('div');
-  avgRow.style.cssText = 'display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:6px 14px;background:var(--surface2);border-top:1px solid var(--border);';
+  avgRow.style.cssText = GRID+'padding:6px 14px;background:var(--surface2);border-top:2px solid var(--border);';
   const avgNm=document.createElement('div'); avgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);display:flex;align-items:center;'; avgNm.textContent='Team avg'; avgRow.appendChild(avgNm);
   METRICS.forEach(m => {
     const c=document.createElement('div'); c.style.cssText='font-size:11px;font-weight:700;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;';
-    c.textContent = m.isTrend ? '4wk' : (m.key==='talkSec'||m.key==='waitSec')?fmtSec(avgs[m.key]):(avgs[m.key]||'—');
+    c.textContent = m.isTrend ? '4wk' : (m.vol ? (avgs[m.key]||'—') : fmtSec(avgs[m.key]));
     avgRow.appendChild(c);
   });
   scCard.appendChild(avgRow);
 
-  // Night shift section
-  if (activeNight.length) {
-    const nSep=document.createElement('div'); nSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#a78bfa;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;';
-    // Build night shift description — who is on night this period
-    const nightNames = activeNight.map(a=>a.name.split(' ')[0]).join(', ');
-    const nightShifts = ['E (17-6)','W2 (17-6)','H2 (17-6)'];
-    nSep.innerHTML='🌙 Night shift (17–06) <span style="font-size:10px;font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;color:var(--text3);">— separate averages · '+nightNames+'</span>';
-    scCard.appendChild(nSep);
-    const nAvgRow=document.createElement('div'); nAvgRow.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:5px 14px;background:rgba(167,139,250,0.05);border-bottom:1px solid var(--border);';
-    const nAvgNm=document.createElement('div'); nAvgNm.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#a78bfa;display:flex;align-items:center;'; nAvgNm.textContent='Night avg'; nAvgRow.appendChild(nAvgNm);
-    METRICS.forEach(function(m2) {
-      const c2=document.createElement('div'); c2.style.cssText='font-size:11px;font-weight:700;color:#a78bfa;text-align:center;display:flex;align-items:center;justify-content:center;';
-      // Only N/A if nightAvgs truly has no data for this metric
-      const isNA2 = (m2.key==='email'||m2.key==='solved') && !nightAvgs[m2.key];
-      c2.textContent=m2.isTrend?'4wk':isNA2?'N/A':(m2.key==='talkSec'||m2.key==='waitSec')?fmtSec(nightAvgs[m2.key]):(nightAvgs[m2.key]||'—');
-      nAvgRow.appendChild(c2);
-    });
-    scCard.appendChild(nAvgRow);
-    activeNight.sort(function(a,b){return b.calls-a.calls;}).forEach(function(a){scCard.appendChild(makeAgentRow(a,false,null));});
-  }
-
   if (absent.length) {
-    const absSep=document.createElement('div'); absSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;';
+    const absSep=document.createElement('div'); absSep.style.cssText='padding:6px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);border-top:1px solid var(--border);';
     absSep.innerHTML='On leave / absent <span style="font-size:10px;color:var(--text3);font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;">— excluded from team average</span>';
     scCard.appendChild(absSep);
     absent.forEach(a => {
-      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:90px repeat(6,1fr) 52px;gap:2px;padding:5px 14px;border-bottom:1px solid var(--border);opacity:0.35;';
+      const row=document.createElement('div'); row.style.cssText=GRID+'padding:5px 14px;border-bottom:1px solid var(--border);opacity:0.35;';
       const nm2=document.createElement('div'); nm2.style.cssText='font-size:12px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:1px;';
       nm2.innerHTML='<span>'+a.name.split(' ')[0]+'</span><span style="font-size:9px;color:#ffb74d;">Absent</span>';
       row.appendChild(nm2);
@@ -13323,13 +13325,16 @@ async function renderOpsContent(fromDate, toDate, container) {
   }
 
   // Legend
-  const legend=document.createElement('div'); legend.style.cssText='padding:7px 14px;border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;';
-  [['good','var(--low-text)','rgba(52,211,153,0.1)','\u2265 90% of avg'],['warn','#ffb74d','rgba(255,183,77,0.1)','50–89%'],['bad','var(--high-text)','rgba(239,83,80,0.1)','< 50%']].forEach(([,tc,bg,lbl])=>{
+  const legend=document.createElement('div'); legend.style.cssText='padding:8px 14px;border-top:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;align-items:center;';
+  [['var(--low-text)','rgba(52,211,153,0.1)','\u2265 90% of avg'],['#ffb74d','rgba(255,183,77,0.1)','50\u201389%'],['var(--high-text)','rgba(239,83,80,0.1)','< 50%']].forEach(([tc,bg,lbl])=>{
     const p=document.createElement('span'); p.style.cssText='display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);';
     p.innerHTML='<span style="width:10px;height:10px;border-radius:3px;background:'+bg+';display:inline-block;"></span><span style="color:'+tc+'">'+lbl+'</span>';
     legend.appendChild(p);
   });
-  const note=document.createElement('span'); note.style.cssText='font-size:10px;color:var(--text3);margin-left:auto;'; note.textContent='Talk & wait time: lower = better';
+  const nightLg=document.createElement('span'); nightLg.style.cssText='display:flex;align-items:center;gap:4px;font-size:10px;color:'+NIGHT+';';
+  nightLg.innerHTML='<span style="width:10px;height:10px;border-radius:3px;background:rgba(167,139,250,0.2);display:inline-block;"></span>\ud83c\udf19 night — volume for context, judged on own trend';
+  legend.appendChild(nightLg);
+  const note=document.createElement('span'); note.style.cssText='font-size:10px;color:var(--text3);margin-left:auto;'; note.textContent='Volume = per day worked \u00b7 efficiency = per call';
   legend.appendChild(note);
   scCard.appendChild(legend);
   container.appendChild(scCard);
