@@ -7153,8 +7153,8 @@ function processQueueStateChange(summary) {
 
 // ── Log-off analysis: frequency + duration per agent ───────────────────────
 // Pairs each logged_off with the agent's next logged_on (same queue) and
-// measures the gap, clamped to weekday open hours (07:00–17:00) so overnight
-// and weekend gaps don't inflate the numbers.
+// measures the gap, clamped to each agent's actual scheduled shift hours so time
+// it's clamped to each agent's scheduled shift hours so off-shift time isn't counted.
 function computeLogoffStats(opts) {
   opts = opts || {};
   const queueId = opts.queueId || 43500;
@@ -7168,15 +7168,40 @@ function computeLogoffStats(opts) {
     .filter(e => !toTs   || e.ts <= toTs)
     .sort((a,b) => a.ts.localeCompare(b.ts));
 
-  // Overlap (ms) between [start,end] and weekday open-hours windows
-  function openOverlapMs(start, end) {
+  // Optional single-agent filter (first-name match, accent-insensitive)
+  const _norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const _agentFirst = opts.agentName ? _norm(opts.agentName.split(' ')[0]) : null;
+  const logF = _agentFirst ? log.filter(e => _norm((e.name||'').split(' ')[0]) === _agentFirst) : log;
+
+  // Resolve an agent's scheduled working window [startHr,endHr] for a date.
+  // Returns null if they're off / not scheduled that day; falls back to 07–17
+  // only when there's no schedule data at all.
+  function agentWindowFor(name, dateObj) {
+    const ds = fmtLocal(dateObj);
+    const week = (typeof SCHEDULE !== 'undefined') ? SCHEDULE.find(w => w.dates && w.dates.includes(ds)) : null;
+    if (!week) return [7,17];
+    const nf = _norm(name.split(' ')[0]);
+    const person = week.people.find(p => _norm(p.name.split(' ')[0]) === nf || _norm(p.name) === _norm(name));
+    if (!person) return [7,17];
+    const idx = week.dates.indexOf(ds);
+    const shift = (person.shifts[idx] || '');
+    if (!shift || (typeof ABSENT_SHIFTS !== 'undefined' && ABSENT_SHIFTS.has(shift.toLowerCase()))) return null; // off that day
+    const t = (typeof getShiftTimes === 'function') ? getShiftTimes(shift) : null;
+    return t || [7,17];
+  }
+
+  // Off-queue time counted ONLY within the agent's scheduled shift each day.
+  // E.g. Andreas on D1 (07–15): logging off at 15:00 accrues no off-time after 15:00.
+  function offOverlapMs(name, start, end) {
     let total = 0;
     const cur = new Date(start); cur.setHours(0,0,0,0);
     while (cur < end) {
-      const dow = cur.getDay();
-      if (dow >= 1 && dow <= 5) {
-        const o = new Date(cur); o.setHours(OPEN_START,0,0,0);
-        const c = new Date(cur); c.setHours(OPEN_END,0,0,0);
+      const win = agentWindowFor(name, cur);
+      if (win) {
+        let ws = win[0], we = win[1];
+        if (we <= ws) we = 24; // wrapping (night) shift — count the evening portion that day
+        const o = new Date(cur); o.setHours(ws,0,0,0);
+        const c = new Date(cur); c.setHours(we,0,0,0);
         const s = Math.max(start.getTime(), o.getTime());
         const e = Math.min(end.getTime(),   c.getTime());
         if (e > s) total += (e - s);
@@ -7188,19 +7213,19 @@ function computeLogoffStats(opts) {
 
   const byAgent = {}, openOff = {};
   const ensure = name => (byAgent[name] = byAgent[name] || { name, logoffs:0, offMs:0, longestMs:0, currentlyOff:false });
-  log.forEach(e => {
+  logF.forEach(e => {
     ensure(e.name);
     if (e.event === 'logged_off') {
       openOff[e.name] = new Date(e.ts);
     } else if (e.event === 'logged_on' && openOff[e.name]) {
-      const dur = openOverlapMs(openOff[e.name], new Date(e.ts));
+      const dur = offOverlapMs(e.name, openOff[e.name], new Date(e.ts));
       if (dur > 0) { byAgent[e.name].logoffs++; byAgent[e.name].offMs += dur; byAgent[e.name].longestMs = Math.max(byAgent[e.name].longestMs, dur); }
       delete openOff[e.name];
     }
   });
   // Still logged off → count up to now (open-hours clamped)
   Object.keys(openOff).forEach(name => {
-    const dur = openOverlapMs(openOff[name], new Date());
+    const dur = offOverlapMs(name, openOff[name], new Date());
     byAgent[name].currentlyOff = true;
     if (dur > 0) { byAgent[name].logoffs++; byAgent[name].offMs += dur; byAgent[name].longestMs = Math.max(byAgent[name].longestMs, dur); }
   });
@@ -7421,79 +7446,113 @@ function getAgentQueueStats(agentName, fromDate, toDate) {
 }
 
 function renderAgentQueueStats(agentName, container) {
-  // Look back 4 weeks
+  // Last 4 weeks
   const toDate   = localToday();
   const fromDate = fmtLocal(new Date(getMonday(-3).getTime()));
   const stats    = getAgentQueueStats(agentName, fromDate, toDate);
 
-  if (!stats || stats.daysLoggedIn === 0) return; // no data — don't show empty section
+  // Performance: calls (Unifon) + tickets (snapshots) over the same window
+  const uni = (typeof getUnifonAgentStats === 'function') ? getUnifonAgentStats(agentName, fromDate, toDate) : null;
+  const calls4wk  = uni ? (uni.answered||0) : 0;
+  const missed4wk = uni ? (uni.missed||0)   : 0;
+  let solved4wk = 0;
+  for (let i=0;i<4;i++){ const snap=getWeeklySnapshot(fmtLocal(getMonday(-i))); const a=snap&&snap.agents&&snap.agents[agentName]; if(a) solved4wk += (a.zdSolved||0); }
+
+  // Log-off frequency + duration (day queue, open-hours clamped)
+  const off = (typeof computeLogoffStats === 'function')
+    ? (computeLogoffStats({ fromTs: fromDate, toTs: toDate+'T23:59:59', queueId: 43500, agentName })[0] || null)
+    : null;
+  const fmtDur = ms => { const m=Math.round(ms/60000); if(m<1) return '0m'; if(m<60) return m+'m'; const h=Math.floor(m/60); return h+'h'+(m%60?' '+(m%60)+'m':''); };
+
+  const hasQueue = !!(stats && stats.daysLoggedIn > 0);
+  const hasPerf  = calls4wk>0 || missed4wk>0 || solved4wk>0;
+  if (!hasQueue && !hasPerf) return; // nothing to show for this agent
 
   const sec = document.createElement('div'); sec.className = 'oto-section';
   const hdr = document.createElement('div'); hdr.className = 'oto-section-hdr';
-  hdr.innerHTML = 'Queue login patterns <span style="font-weight:400;font-size:9px;color:var(--text3);">last 4 weeks</span>';
+  hdr.innerHTML = 'Performance &amp; presence <span style="font-weight:400;font-size:9px;color:var(--text3);">last 4 weeks</span>';
   sec.appendChild(hdr);
 
   const body = document.createElement('div'); body.className = 'oto-section-body';
 
-  // Stat grid
-  const grid = document.createElement('div'); grid.className = 'oto-stat-row';
   const mkS = (val, label, cls) => {
     const c = document.createElement('div'); c.className = 'oto-stat-card';
     if (cls) c.style.borderLeft = '3px solid ' + (cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':'#f87171');
-    const v = document.createElement('div'); v.className = 'oto-stat-val'; v.style.color = cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--text)';
+    const v = document.createElement('div'); v.className = 'oto-stat-val';
+    v.style.color = cls==='ok'?'#34d399':cls==='warn'?'#fbbf24':cls==='danger'?'#f87171':'var(--text)';
     v.textContent = val!=null?val:'—';
     const l = document.createElement('div'); l.className = 'oto-stat-label'; l.textContent = label;
     c.appendChild(v); c.appendChild(l); return c;
   };
 
-  grid.appendChild(mkS(stats.avgLoginTime,  'Avg login',   null));
-  grid.appendChild(mkS(stats.avgLogoffTime, 'Avg logoff',  null));
-
-  const durH = Math.floor(stats.avgDurationMin/60);
-  const durM = stats.avgDurationMin % 60;
-  const durStr = (durH>0?durH+'h ':'')+durM+'m';
-  grid.appendChild(mkS(durStr, 'Avg on queue', null));
-  grid.appendChild(mkS(stats.daysLoggedIn+'d', 'Days logged in', null));
-  body.appendChild(grid);
-
-  // Pattern observations
-  const obs = [];
-  if (stats.earlyLogoffs >= 3)
-    obs.push({ level:'warn', text: stats.earlyLogoffs + ' early logoffs (before 16:45) in the last 4 weeks' });
-  else if (stats.earlyLogoffs >= 1)
-    obs.push({ level:'info', text: stats.earlyLogoffs + ' early logoff'+(stats.earlyLogoffs>1?'s':'')+' in the last 4 weeks' });
-
-  if (stats.lateLogins >= 3)
-    obs.push({ level:'warn', text: stats.lateLogins + ' late logins (after 08:30) in the last 4 weeks' });
-
-  if (stats.sessions.length >= 3) {
-    // Check if avg logoff is consistently early
-    if (stats.avgLogoffTime < '16:45')
-      obs.push({ level:'warn', text: 'Average logoff ' + stats.avgLogoffTime + ' — 15+ min before closing' });
-    // Check if avg login is consistently late
-    if (stats.avgLoginTime > '08:20')
-      obs.push({ level:'warn', text: 'Average login ' + stats.avgLoginTime + ' — arriving later than opening' });
+  // ── Performance ──
+  if (hasPerf) {
+    const pLbl = document.createElement('div'); pLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;'; pLbl.textContent='Output';
+    body.appendChild(pLbl);
+    const pGrid = document.createElement('div'); pGrid.className = 'oto-stat-row';
+    pGrid.appendChild(mkS(calls4wk, 'Calls answered', null));
+    pGrid.appendChild(mkS(missed4wk, 'Calls missed', (calls4wk>0 && missed4wk >= calls4wk*0.15) ? 'warn' : null));
+    pGrid.appendChild(mkS(solved4wk, 'Tickets solved', null));
+    body.appendChild(pGrid);
   }
 
-  if (!obs.length && stats.daysLoggedIn >= 3)
-    obs.push({ level:'ok', text: 'Consistent queue coverage — no patterns of concern' });
-
-  if (obs.length) {
-    const obsList = document.createElement('div'); obsList.style.cssText='display:flex;flex-direction:column;gap:5px;margin-top:10px;';
-    obs.forEach(o => {
-      const row = document.createElement('div');
-      row.style.cssText='display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--text2);padding:6px 8px;border-radius:7px;background:var(--surface);border:1px solid var(--border);';
-      if (o.level==='warn') row.style.borderColor = 'rgba(251,191,36,0.3)';
-      if (o.level==='ok')   row.style.borderColor = 'rgba(52,211,153,0.25)';
-      const dot = document.createElement('div');
-      dot.style.cssText='width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+(o.level==='ok'?'#34d399':o.level==='warn'?'#fbbf24':'var(--text3)')+';';
-      const txt = document.createElement('span'); txt.textContent = o.text;
-      row.appendChild(dot); row.appendChild(txt); obsList.appendChild(row);
-    });
-    body.appendChild(obsList);
+  // ── Presence + log-offs ──
+  if (hasQueue || off) {
+    const qLbl = document.createElement('div'); qLbl.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin:12px 0 6px;'; qLbl.textContent='Queue presence';
+    body.appendChild(qLbl);
+    const qGrid = document.createElement('div'); qGrid.className = 'oto-stat-row';
+    if (hasQueue) {
+      qGrid.appendChild(mkS(stats.avgLoginTime,  'Avg login',  null));
+      qGrid.appendChild(mkS(stats.avgLogoffTime, 'Avg logoff', null));
+      const durH=Math.floor(stats.avgDurationMin/60), durM=stats.avgDurationMin%60;
+      qGrid.appendChild(mkS((durH>0?durH+'h ':'')+durM+'m', 'Avg on queue', null));
+      qGrid.appendChild(mkS(stats.daysLoggedIn+'d', 'Days logged in', null));
+    }
+    if (off) {
+      qGrid.appendChild(mkS(off.logoffs, 'Log-offs', off.logoffs>=12 ? 'warn' : null));
+      qGrid.appendChild(mkS(fmtDur(off.offMs), 'Total off', null));
+      qGrid.appendChild(mkS(fmtDur(off.longestMs), 'Longest off', off.longestMs>=2*3600000 ? 'warn' : null));
+    }
+    body.appendChild(qGrid);
   }
 
-  // Recent events timeline (last 10)
+  // ── Pattern observations (presence only) ──
+  if (hasQueue) {
+    const obs = [];
+    if (stats.earlyLogoffs >= 3)
+      obs.push({ level:'warn', text: stats.earlyLogoffs + ' early logoffs (before 16:45) in the last 4 weeks' });
+    else if (stats.earlyLogoffs >= 1)
+      obs.push({ level:'info', text: stats.earlyLogoffs + ' early logoff'+(stats.earlyLogoffs>1?'s':'')+' in the last 4 weeks' });
+    if (stats.lateLogins >= 3)
+      obs.push({ level:'warn', text: stats.lateLogins + ' late logins (after 08:30) in the last 4 weeks' });
+    if (stats.sessions.length >= 3) {
+      if (stats.avgLogoffTime < '16:45')
+        obs.push({ level:'warn', text: 'Average logoff ' + stats.avgLogoffTime + ' — 15+ min before closing' });
+      if (stats.avgLoginTime > '08:20')
+        obs.push({ level:'warn', text: 'Average login ' + stats.avgLoginTime + ' — arriving later than opening' });
+    }
+    if (off && off.logoffs >= 12)
+      obs.push({ level:'warn', text: off.logoffs + ' log-offs totalling ' + fmtDur(off.offMs) + ' off-queue during open hours' });
+    if (!obs.length && stats.daysLoggedIn >= 3)
+      obs.push({ level:'ok', text: 'Consistent queue coverage — no patterns of concern' });
+
+    if (obs.length) {
+      const obsList = document.createElement('div'); obsList.style.cssText='display:flex;flex-direction:column;gap:5px;margin-top:10px;';
+      obs.forEach(o => {
+        const row = document.createElement('div');
+        row.style.cssText='display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--text2);padding:6px 8px;border-radius:7px;background:var(--surface);border:1px solid var(--border);';
+        if (o.level==='warn') row.style.borderColor = 'rgba(251,191,36,0.3)';
+        if (o.level==='ok')   row.style.borderColor = 'rgba(52,211,153,0.25)';
+        const dot = document.createElement('div');
+        dot.style.cssText='width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px;background:'+(o.level==='ok'?'#34d399':o.level==='warn'?'#fbbf24':'var(--text3)')+';';
+        const txt = document.createElement('span'); txt.textContent = o.text;
+        row.appendChild(dot); row.appendChild(txt); obsList.appendChild(row);
+      });
+      body.appendChild(obsList);
+    }
+  }
+
+  // ── Recent events timeline (last 8) ──
   const recent = loadQueueLog()
     .filter(e => {
       const n = (s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim());
@@ -7525,7 +7584,6 @@ function renderAgentQueueStats(agentName, container) {
   sec.appendChild(body);
   container.appendChild(sec);
 }
-
 
 
 // ─── TEAM MEMBER MANAGEMENT (Settings → Team) ────────────────────────────────
@@ -9584,7 +9642,7 @@ function renderAdminDashboard(root, viewerMode=false) {
     qOffSec.appendChild(qOffBody);
     const qOffNote = document.createElement('div');
     qOffNote.style.cssText = 'font-size:9px;color:var(--text3);margin-top:8px;font-style:italic;';
-    qOffNote.textContent = 'Day queue · open hours only (07–17, Mon–Fri) · 🔴 = off now';
+    qOffNote.textContent = 'Day queue · counted only within each agent\'s scheduled shift · 🔴 = off now';
     qOffSec.appendChild(qOffNote);
     col5.appendChild(qOffSec);
   }
