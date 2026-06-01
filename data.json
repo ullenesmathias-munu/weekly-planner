@@ -13787,7 +13787,7 @@
         "missed": 3,
         "avgTalk": 505,
         "avgWait": 84,
-        "zdSolved": 128,
+        "zdSolved": 127,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
@@ -13815,7 +13815,7 @@
         "missed": 0,
         "avgTalk": 416,
         "avgWait": 14,
-        "zdSolved": 26,
+        "zdSolved": 25,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
@@ -13830,8 +13830,30 @@
       "answered": 432,
       "missed": 71,
       "ansRate": 86,
-      "avgWait": 575
-    }
+      "avgWait": 575,
+      "zdTotalSolved": 655,
+      "zdOpenEow": 115,
+      "zdCsatGood": 30,
+      "zdCsatBad": 3,
+      "zdCsatTotal": 33,
+      "zdCsatPct": 91,
+      "zdMttrMean": 1382,
+      "zdMttrMedian": 19,
+      "zdEmailTotal": 183,
+      "zdPhoneTotal": 472,
+      "zdTicketCount": 655,
+      "zdSolvedPerDay": {
+        "2026-05-25": 0,
+        "2026-05-26": 0,
+        "2026-05-27": 0,
+        "2026-05-28": 0,
+        "2026-05-29": 0,
+        "2026-05-30": 0,
+        "2026-05-31": 0
+      }
+    },
+    "zdEnriched": true,
+    "zdEnrichedAt": "2026-06-01T14:15:26.751Z"
   },
   "wtp_schedule": [
     {
