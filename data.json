@@ -8217,8 +8217,8 @@
   },
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
-    "toDate": "2026-06-01",
-    "generated": "2026-06-01T05:53:24.109Z",
+    "toDate": "2026-06-07",
+    "generated": "2026-06-01T06:28:20.948Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -8227,12 +8227,12 @@
         "avgWait": 0,
         "zdSolved": 0,
         "isNight": false,
-        "nightDays": 0,
-        "dayDays": 1,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
-        "zdPending": 0
+        "nightDays": 2,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 8,
+        "zdPending": 2
       },
       "Thomas": {
         "answered": 0,
@@ -8241,12 +8241,12 @@
         "avgWait": 0,
         "zdSolved": 0,
         "isNight": true,
-        "nightDays": 1,
+        "nightDays": 5,
         "dayDays": 0,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
-        "zdPending": 0
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 12,
+        "zdPending": 1
       },
       "Maylen": {
         "answered": 0,
@@ -8256,11 +8256,11 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
-        "zdPending": 0
+        "dayDays": 2,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 7,
+        "zdPending": 10
       },
       "Benjamin": {
         "answered": 0,
@@ -8270,10 +8270,10 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 5,
         "zdPending": 0
       },
       "Cecilie": {
@@ -8284,10 +8284,10 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
+        "dayDays": 7,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 3,
         "zdPending": 0
       },
       "Tord": {
@@ -8299,8 +8299,8 @@
         "isNight": false,
         "nightDays": 0,
         "dayDays": 0,
-        "zdEmail": null,
-        "zdPhone": null,
+        "zdEmail": 0,
+        "zdPhone": 0,
         "zdOpen": 0,
         "zdPending": 0
       },
@@ -8312,25 +8312,25 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
-        "zdPending": 0
+        "dayDays": 4,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 10,
+        "zdPending": 4
       },
       "Andreas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0,
+        "zdSolved": 7,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
-        "zdPending": 0
+        "dayDays": 5,
+        "zdEmail": 5,
+        "zdPhone": 2,
+        "zdOpen": 5,
+        "zdPending": 7
       },
       "Julie": {
         "answered": 0,
@@ -8341,32 +8341,32 @@
         "isNight": false,
         "nightDays": 0,
         "dayDays": 0,
-        "zdEmail": null,
-        "zdPhone": null,
+        "zdEmail": 0,
+        "zdPhone": 0,
         "zdOpen": 0,
         "zdPending": 0
       },
       "Vetle": {
-        "answered": 0,
+        "answered": 1,
         "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
+        "avgTalk": 522,
+        "avgWait": 43,
+        "zdSolved": 1,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
-        "zdEmail": null,
-        "zdPhone": null,
-        "zdOpen": 0,
-        "zdPending": 0
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 1,
+        "zdOpen": 4,
+        "zdPending": 2
       }
     },
     "totals": {
-      "offered": 0,
-      "answered": 0,
+      "offered": 1,
+      "answered": 1,
       "missed": 0,
-      "ansRate": null,
-      "avgWait": 0
+      "ansRate": 100,
+      "avgWait": 54
     }
   },
   "wtp_profile_vetle": {
