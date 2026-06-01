@@ -13549,7 +13549,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-06-01T07:52:25.590Z",
+    "generated": "2026-06-01T11:50:16.798Z",
     "agents": {
       "Jonas": {
         "answered": 87,
@@ -13562,7 +13562,7 @@
         "dayDays": 6,
         "zdEmail": 15,
         "zdPhone": 97,
-        "zdOpen": 8,
+        "zdOpen": 7,
         "zdPending": 2
       },
       "Thomas": {
@@ -13576,7 +13576,7 @@
         "dayDays": 3,
         "zdEmail": 12,
         "zdPhone": 35,
-        "zdOpen": 12,
+        "zdOpen": 10,
         "zdPending": 1
       },
       "Maylen": {
@@ -13590,7 +13590,7 @@
         "dayDays": 4,
         "zdEmail": 10,
         "zdPhone": 33,
-        "zdOpen": 7,
+        "zdOpen": 9,
         "zdPending": 10
       },
       "Benjamin": {
@@ -13646,7 +13646,7 @@
         "dayDays": 5,
         "zdEmail": 11,
         "zdPhone": 66,
-        "zdOpen": 5,
+        "zdOpen": 10,
         "zdPending": 3
       },
       "Andreas": {
@@ -13660,7 +13660,7 @@
         "dayDays": 4,
         "zdEmail": 85,
         "zdPhone": 43,
-        "zdOpen": 5,
+        "zdOpen": 4,
         "zdPending": 7
       },
       "Julie": {
@@ -13688,8 +13688,8 @@
         "dayDays": 4,
         "zdEmail": 6,
         "zdPhone": 20,
-        "zdOpen": 3,
-        "zdPending": 2
+        "zdOpen": 4,
+        "zdPending": 3
       }
     },
     "totals": {
@@ -13697,30 +13697,8 @@
       "answered": 432,
       "missed": 71,
       "ansRate": 86,
-      "avgWait": 575,
-      "zdTotalSolved": 658,
-      "zdOpenEow": 113,
-      "zdCsatGood": 30,
-      "zdCsatBad": 3,
-      "zdCsatTotal": 33,
-      "zdCsatPct": 91,
-      "zdMttrMean": 1387,
-      "zdMttrMedian": 20,
-      "zdEmailTotal": 186,
-      "zdPhoneTotal": 472,
-      "zdTicketCount": 658,
-      "zdSolvedPerDay": {
-        "2026-05-25": 0,
-        "2026-05-26": 0,
-        "2026-05-27": 0,
-        "2026-05-28": 0,
-        "2026-05-29": 0,
-        "2026-05-30": 0,
-        "2026-05-31": 0
-      }
-    },
-    "zdEnriched": true,
-    "zdEnrichedAt": "2026-06-01T08:00:33.432Z"
+      "avgWait": 575
+    }
   },
   "wtp_schedule": [
     {
