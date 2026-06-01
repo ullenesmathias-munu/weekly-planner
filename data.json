@@ -13374,8 +13374,30 @@
       "answered": 432,
       "missed": 71,
       "ansRate": 86,
-      "avgWait": 575
-    }
+      "avgWait": 575,
+      "zdTotalSolved": 658,
+      "zdOpenEow": 113,
+      "zdCsatGood": 30,
+      "zdCsatBad": 3,
+      "zdCsatTotal": 33,
+      "zdCsatPct": 91,
+      "zdMttrMean": 1387,
+      "zdMttrMedian": 20,
+      "zdEmailTotal": 186,
+      "zdPhoneTotal": 472,
+      "zdTicketCount": 658,
+      "zdSolvedPerDay": {
+        "2026-05-25": 0,
+        "2026-05-26": 0,
+        "2026-05-27": 0,
+        "2026-05-28": 0,
+        "2026-05-29": 0,
+        "2026-05-30": 0,
+        "2026-05-31": 0
+      }
+    },
+    "zdEnriched": true,
+    "zdEnrichedAt": "2026-06-01T08:00:24.774Z"
   },
   "wtp_schedule": [
     {
