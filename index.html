@@ -11265,19 +11265,43 @@ function appendSessionCard(container, session, expanded) {
   card.appendChild(cHdr); card.appendChild(cBody); container.appendChild(card);
 }
 
+// ─── ZD business-hours MTTR helper ───────────────────────────────
+// Fetches full_resolution_time_in_minutes.business for a list of ticket IDs
+// using the ZD tickets/show_many sideload. Returns Map<id, minutes>.
+// Falls back gracefully if the endpoint is unavailable.
+async function fetchTicketBizMinutes(ticketIds) {
+  const map = new Map();
+  if (!ticketIds || !ticketIds.length) return map;
+  for (let i = 0; i < ticketIds.length; i += 100) {
+    const chunk = ticketIds.slice(i, i + 100);
+    const data = await zdFetch('/tickets/show_many.json?ids=' + chunk.join(',') + '&include=metric_sets')
+      .catch(() => ({ tickets: [] }));
+    (data.tickets || []).forEach(t => {
+      const biz = t.metric_set
+        && t.metric_set.full_resolution_time_in_minutes
+        && t.metric_set.full_resolution_time_in_minutes.business;
+      if (biz != null) map.set(t.id, biz);
+    });
+  }
+  return map;
+}
+
 // ─── ZD INSIGHTS (CSAT + MTTR in Tickets tab) ────────────────────
 async function zdRenderInsights(body, fromDate, toDate) {
   if (!zdReady()) return;
   try {
     const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
     const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
-    const [csatData, solvedData] = await Promise.all([
-      zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
-      zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100').catch(()=>({results:[]}))
-    ]);
+    // Fetch CSAT (single page) + paginate solved tickets (all pages)
+    const csatData = await zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]}));
+    let allTickets2 = [], tkUrl2 = '/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
+    for (let p=0; p<20&&tkUrl2; p++) {
+      const r2 = await zdFetch(tkUrl2).catch(()=>({results:[]}));
+      allTickets2 = allTickets2.concat(r2.results||[]);
+      tkUrl2 = r2.next_page ? r2.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+    }
     const ratings = csatData.satisfaction_ratings || [];
-    const tickets = solvedData.results || [];
-    if (!ratings.length && !tickets.length) return;
+    if (!ratings.length && !allTickets2.length) return;
 
     const insWrap = document.createElement('div'); insWrap.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;';
 
@@ -11294,15 +11318,21 @@ async function zdRenderInsights(body, fromDate, toDate) {
       insWrap.appendChild(csatCard);
     }
 
-    // MTTR
-    if (tickets.length) {
-      const resTimes = tickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(m=>m>0).sort((a,b)=>a-b);
+    // MTTR — business hours via metric_sets sideload, falls back to calendar
+    if (allTickets2.length) {
+      const bizMap2 = await fetchTicketBizMinutes(allTickets2.map(t=>t.id));
+      const resTimes = allTickets2.map(t=>{
+        const biz = bizMap2.get(t.id);
+        if (biz != null) return biz;
+        const sv = t.solved_at||t.updated_at;
+        return sv ? Math.round((new Date(sv)-new Date(t.created_at))/60000) : null;
+      }).filter(v=>v!==null&&v>=0).sort((a,b)=>a-b);
       const mttr = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
       const fmtM = m => m<60?m+'m':m<1440?Math.floor(m/60)+'h '+Math.round(m%60)+'m':Math.floor(m/1440)+'d '+Math.floor((m%1440)/60)+'h';
       const mttrCard = document.createElement('div'); mttrCard.style.cssText='background:var(--surface2);border-radius:var(--radius-lg);padding:14px;';
       const ml = document.createElement('div'); ml.style.cssText='font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;'; ml.textContent='Avg resolution';
       const mv = document.createElement('div'); mv.style.cssText='font-size:28px;font-weight:900;color:var(--text);font-family:\'Fira Sans\',sans-serif;'; mv.textContent=mttr?fmtM(mttr):'—';
-      const ms2 = document.createElement('div'); ms2.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;'; ms2.textContent='Based on '+resTimes.length+' tickets';
+      const ms2 = document.createElement('div'); ms2.style.cssText='font-size:11px;color:var(--text3);margin-top:4px;'; ms2.textContent='Based on '+allTickets2.length+' tickets · business hrs';
       mttrCard.appendChild(ml); mttrCard.appendChild(mv); mttrCard.appendChild(ms2);
       insWrap.appendChild(mttrCard);
     }
@@ -12246,7 +12276,13 @@ async function generateReport(fromDate, toDate, container) {
         const csatGood=ratings.filter(r=>r.score==='good').length;
         const csatBad=ratings.filter(r=>r.score==='bad').length;
         const csatTotal=csatGood+csatBad;
-        const resTimes=allTickets.map(t=>{const sv=t.solved_at||t.updated_at;return(new Date(sv)-new Date(t.created_at))/60000;}).filter(v=>v>0).sort((a,b)=>a-b);
+        const bizMap3 = await fetchTicketBizMinutes(allTickets.map(t=>t.id));
+        const resTimes=allTickets.map(t=>{
+          const biz=bizMap3.get(t.id);
+          if(biz!=null)return biz;
+          const sv=t.solved_at||t.updated_at;
+          return sv?Math.round((new Date(sv)-new Date(t.created_at))/60000):null;
+        }).filter(v=>v!==null&&v>=0).sort((a,b)=>a-b);
         const solvedPerDay={};
         const days2=[];
         for(let d=new Date(fromDate+'T00:00:00');fmtLocal(new Date(d))<=toDate;d.setDate(d.getDate()+1)) days2.push(fmtLocal(new Date(d)));
@@ -13394,10 +13430,14 @@ async function enrichSnapshotWithZD(snap) {
       allTickets = allTickets.concat(r.results||[]);
       tkUrl = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
     }
+    const bizMap = await fetchTicketBizMinutes(allTickets.map(t=>t.id));
     const resTimes = allTickets.map(t=>{
-      const sv=t.solved_at||t.updated_at;
-      return sv ? (new Date(sv)-new Date(t.created_at))/60000 : null;
-    }).filter(v=>v>0).sort((a,b)=>a-b);
+      const biz = bizMap.get(t.id);
+      if (biz != null) return biz;
+      // fallback to calendar if metric_set unavailable
+      const sv = t.solved_at||t.updated_at;
+      return sv ? Math.round((new Date(sv)-new Date(t.created_at))/60000) : null;
+    }).filter(v=>v!==null&&v>=0).sort((a,b)=>a-b);
     const mttrMean   = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
     const mttrMedian = resTimes.length ? Math.round(resTimes[Math.floor(resTimes.length/2)]) : null;
     const emailTotal = allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length;
