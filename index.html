@@ -7015,7 +7015,7 @@ function isMobile() { return window.innerWidth < 600; }
 
 const QUEUE_LOG_KEY   = 'wtp_queue_log';
 const QUEUE_STATE_KEY = 'wtp_queue_state'; // last known state per agent
-const MAX_LOG_ENTRIES = 500;
+const MAX_LOG_ENTRIES = 4000;
 
 // ── Notification permission ────────────────────────────────────────────────
 function requestNotificationPermission() {
@@ -7149,6 +7149,89 @@ function processQueueStateChange(summary) {
   // Also update the log panel in the dashboard if it's visible
   const logPanel = document.getElementById('queue-log-panel');
   if (logPanel) renderQueueLogPanel(logPanel);
+}
+
+// ── Log-off analysis: frequency + duration per agent ───────────────────────
+// Pairs each logged_off with the agent's next logged_on (same queue) and
+// measures the gap, clamped to weekday open hours (07:00–17:00) so overnight
+// and weekend gaps don't inflate the numbers.
+function computeLogoffStats(opts) {
+  opts = opts || {};
+  const queueId = opts.queueId || 43500;
+  const fromTs  = opts.fromTs || null;   // ISO lower bound (inclusive)
+  const toTs    = opts.toTs   || null;
+  const OPEN_START = 7, OPEN_END = 17;
+
+  const log = (typeof loadQueueLog === 'function' ? loadQueueLog() : [])
+    .filter(e => e.queueId === queueId)
+    .filter(e => !fromTs || e.ts >= fromTs)
+    .filter(e => !toTs   || e.ts <= toTs)
+    .sort((a,b) => a.ts.localeCompare(b.ts));
+
+  // Overlap (ms) between [start,end] and weekday open-hours windows
+  function openOverlapMs(start, end) {
+    let total = 0;
+    const cur = new Date(start); cur.setHours(0,0,0,0);
+    while (cur < end) {
+      const dow = cur.getDay();
+      if (dow >= 1 && dow <= 5) {
+        const o = new Date(cur); o.setHours(OPEN_START,0,0,0);
+        const c = new Date(cur); c.setHours(OPEN_END,0,0,0);
+        const s = Math.max(start.getTime(), o.getTime());
+        const e = Math.min(end.getTime(),   c.getTime());
+        if (e > s) total += (e - s);
+      }
+      cur.setDate(cur.getDate()+1);
+    }
+    return total;
+  }
+
+  const byAgent = {}, openOff = {};
+  const ensure = name => (byAgent[name] = byAgent[name] || { name, logoffs:0, offMs:0, longestMs:0, currentlyOff:false });
+  log.forEach(e => {
+    ensure(e.name);
+    if (e.event === 'logged_off') {
+      openOff[e.name] = new Date(e.ts);
+    } else if (e.event === 'logged_on' && openOff[e.name]) {
+      const dur = openOverlapMs(openOff[e.name], new Date(e.ts));
+      if (dur > 0) { byAgent[e.name].logoffs++; byAgent[e.name].offMs += dur; byAgent[e.name].longestMs = Math.max(byAgent[e.name].longestMs, dur); }
+      delete openOff[e.name];
+    }
+  });
+  // Still logged off → count up to now (open-hours clamped)
+  Object.keys(openOff).forEach(name => {
+    const dur = openOverlapMs(openOff[name], new Date());
+    byAgent[name].currentlyOff = true;
+    if (dur > 0) { byAgent[name].logoffs++; byAgent[name].offMs += dur; byAgent[name].longestMs = Math.max(byAgent[name].longestMs, dur); }
+  });
+
+  return Object.values(byAgent)
+    .map(a => ({ ...a, avgMs: a.logoffs ? Math.round(a.offMs / a.logoffs) : 0 }))
+    .filter(a => a.logoffs > 0)
+    .sort((x,y) => y.offMs - x.offMs);
+}
+
+function renderLogoffPanel(container, opts) {
+  container.innerHTML = '';
+  const stats = computeLogoffStats(opts || {});
+  const fmtDur = ms => { const m=Math.round(ms/60000); if(m<1) return '<1m'; if(m<60) return m+'m'; const h=Math.floor(m/60); return h+'h'+(m%60?' '+(m%60)+'m':''); };
+  if (!stats.length) {
+    const e=document.createElement('div'); e.style.cssText='font-size:12px;color:var(--text3);padding:8px 0;font-style:italic;';
+    e.textContent='No log-offs recorded in this window yet.'; container.appendChild(e); return;
+  }
+  const GR='display:grid;grid-template-columns:1fr 42px 64px 92px;gap:6px;align-items:center;';
+  const hdr=document.createElement('div'); hdr.style.cssText=GR+'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);padding:4px 0 6px;border-bottom:1px solid var(--border);';
+  ['Agent','Off ×','Total','Avg / longest'].forEach((h,i)=>{const c=document.createElement('div'); if(i>0)c.style.textAlign='right'; c.textContent=h; hdr.appendChild(c);});
+  container.appendChild(hdr);
+  stats.forEach(s=>{
+    const row=document.createElement('div'); row.style.cssText=GR+'padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+    const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);'; nm.textContent=s.name.split(' ')[0]+(s.currentlyOff?' 🔴':''); if(s.currentlyOff)nm.title='Currently logged off';
+    const cnt=document.createElement('div'); cnt.style.cssText='font-size:12px;font-weight:700;text-align:right;color:var(--text);'; cnt.textContent=s.logoffs;
+    const tot=document.createElement('div'); tot.style.cssText='font-size:12px;text-align:right;color:var(--text2);'; tot.textContent=fmtDur(s.offMs);
+    const al=document.createElement('div'); al.style.cssText='font-size:10px;text-align:right;color:var(--text3);'; al.textContent=fmtDur(s.avgMs)+' / '+fmtDur(s.longestMs);
+    [nm,cnt,tot,al].forEach(x=>row.appendChild(x));
+    container.appendChild(row);
+  });
 }
 
 // ── Queue log panel renderer ───────────────────────────────────────────────
@@ -9492,6 +9575,18 @@ function renderAdminDashboard(root, viewerMode=false) {
     qLogSec.appendChild(qLogBody);
     renderQueueLogPanel(qLogBody);
     col5.appendChild(qLogSec);
+
+    // Queue presence — how often / how long agents log off (this week, day queue)
+    const qOffSec = dbSection('Log-offs this week');
+    const qOffBody = document.createElement('div');
+    qOffBody.id = 'queue-logoff-panel';
+    renderLogoffPanel(qOffBody, { fromTs: fmtLocal(getMonday(0)), queueId: 43500 });
+    qOffSec.appendChild(qOffBody);
+    const qOffNote = document.createElement('div');
+    qOffNote.style.cssText = 'font-size:9px;color:var(--text3);margin-top:8px;font-style:italic;';
+    qOffNote.textContent = 'Day queue · open hours only (07–17, Mon–Fri) · 🔴 = off now';
+    qOffSec.appendChild(qOffNote);
+    col5.appendChild(qOffSec);
   }
 
   rowBottom.appendChild(col5);
