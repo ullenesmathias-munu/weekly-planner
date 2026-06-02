@@ -9670,7 +9670,15 @@ function renderAdminDashboard(root, viewerMode=false) {
     renderQueueLogPanel(qLogBody);
     col5.appendChild(qLogSec);
 
-    // Queue presence — how often / how long agents log off (this week, day queue)
+    // Queue presence — log-offs TODAY (day queue, within scheduled shift)
+    const qOffTodaySec = dbSection('Log-offs today');
+    const qOffTodayBody = document.createElement('div');
+    qOffTodayBody.id = 'queue-logoff-today';
+    renderLogoffPanel(qOffTodayBody, { fromTs: fmtLocal(new Date()), queueId: 43500 });
+    qOffTodaySec.appendChild(qOffTodayBody);
+    col5.appendChild(qOffTodaySec);
+
+    // Queue presence — log-offs THIS WEEK
     const qOffSec = dbSection('Log-offs this week');
     const qOffBody = document.createElement('div');
     qOffBody.id = 'queue-logoff-panel';
