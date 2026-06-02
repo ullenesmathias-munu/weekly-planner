@@ -5863,8 +5863,13 @@ async function fetchUnifonLiveKpis() {
   try {
     const summary = await fetchUnifonQueueSummary();
     if (!summary || !summary.entries || !summary.entries.length) return null;
-    const totalWait = summary.entries.reduce((s, q) => s + (q.keyfigures?.answered_waittime || 0), 0);
-    const avgWait   = summary.entries.length ? Math.round(totalWait / summary.entries.length) : 0;
+    // Avg wait from the ACTIVE queue only (day queue in open hours, Vakt otherwise) —
+    // averaging across Salg/Overflow/etc. dilutes the number meaninglessly.
+    const _now = new Date(); const _dow = _now.getDay(); const _hr = _now.getHours();
+    const _isOpen = !(_dow===0||_dow===6) && _hr>=7 && _hr<17;
+    const _activeId = _isOpen ? 43500 : 43499;
+    const _activeQ = summary.entries.find(q => q.queue_id === _activeId);
+    const avgWait = Math.round((_activeQ && _activeQ.keyfigures && _activeQ.keyfigures.answered_waittime) || 0);
     // Filter to MY_TEAM only — deduplicated across queues
     const _nm = (typeof loadUnifonNameMap === 'function') ? loadUnifonNameMap() : {};
     const _isMy = (m) => {
@@ -8916,7 +8921,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   // ── Render Chart 2: CSAT trend ────────────────────────────────
 
 
-  const renderChart2 = async () => {
+  async function renderChart2() {
     const el = document.getElementById('db-chart2-body'); if (!el) return;
     if (!zdReady()) { el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:12px;">Zendesk not configured</div>'; return; }
 
@@ -14395,183 +14400,274 @@ function enterTvMode() {
   overlay.style.display = 'flex';
   const tvRoot = document.getElementById('tv-root');
   if (!tvRoot) return;
-  tvRoot.innerHTML = '';
+  tvRoot.style.cssText = 'flex:1;min-height:0;overflow:hidden;background:radial-gradient(120% 120% at 70% -10%, #001a5e 0%, #000743 45%, #00041f 100%);';
 
-  // Build TV dashboard layout
-  tvRoot.style.cssText = 'flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:16px;padding:20px;min-height:0;overflow:hidden;';
-
-  // Header row (full width)
-  const hdr = document.createElement('div');
-  hdr.style.cssText = 'grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid rgba(214,243,255,0.1);';
-  const wordmark = document.createElement('div');
-  wordmark.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:#D6F3FF;letter-spacing:-0.03em;";
-  wordmark.innerHTML = 'munu.<span style="color:#F1B7F2;font-size:14px;font-weight:400;margin-left:8px;letter-spacing:0.05em;">SUPPORT DASHBOARD</span>';
-  const clock = document.createElement('div');
-  clock.id = 'tv-clock';
-  clock.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:#D6F3FF;letter-spacing:-0.02em;";
-  const dateEl = document.createElement('div');
-  dateEl.id = 'tv-date';
-  dateEl.style.cssText = 'font-size:12px;color:rgba(214,243,255,0.5);text-align:right;margin-top:2px;';
-  const clockWrap = document.createElement('div'); clockWrap.style.textAlign='right';
-  clockWrap.appendChild(clock); clockWrap.appendChild(dateEl);
-  const exitBtn = document.createElement('button');
-  exitBtn.style.cssText = 'font-family:inherit;font-size:11px;color:rgba(214,243,255,0.4);background:none;border:1px solid rgba(214,243,255,0.15);border-radius:6px;padding:4px 10px;cursor:pointer;margin-left:16px;';
-  exitBtn.textContent = '✕ Exit';
-  exitBtn.onclick = exitTvMode;
-  hdr.appendChild(wordmark); hdr.appendChild(clockWrap); hdr.appendChild(exitBtn);
-  tvRoot.appendChild(hdr);
-
-  // Clock ticker
+  // Clock ticker (own 1s timer; renderTvData rebuilds the elements it targets by id)
   const tickClock = () => {
     const now = new Date();
     const timeEl = document.getElementById('tv-clock');
-    const dtEl = document.getElementById('tv-date');
+    const dtEl   = document.getElementById('tv-date');
     if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    if (dtEl) dtEl.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+    if (dtEl) dtEl.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})
+      + (window.__tvLastFetch ? ' · updated ' + window.__tvLastFetch.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '');
   };
-  tickClock();
   const clockTimer = setInterval(tickClock, 1000);
   overlay.dataset.clockTimer = clockTimer;
 
-  const mkCard = (title, content, colSpan=1, rowSpan=1) => {
-    const card = document.createElement('div');
-    card.style.cssText = `background:rgba(255,255,255,0.04);border:1px solid rgba(214,243,255,0.08);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;overflow:hidden;${colSpan>1?`grid-column:span ${colSpan};`:''}${rowSpan>1?`grid-row:span ${rowSpan};`:''}`;
-    const titleEl = document.createElement('div');
-    titleEl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(214,243,255,0.35);';
-    titleEl.textContent = title;
-    card.appendChild(titleEl);
-    if (content) card.appendChild(content);
-    return { card, titleEl };
-  };
+  renderTvData();   // instant paint from cache
+  tickClock();
+  tvLiveRefresh();  // pull fresh data
 
-  // ── Card 1: Queue ─────────────────────────────────────────────
-  const qBody = document.createElement('div'); qBody.id = 'tv-queue'; qBody.style.cssText='flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;';
-  const { card: qCard } = mkCard('Live queue', qBody);
-  tvRoot.appendChild(qCard);
-
-  // ── Card 2: Today's tickets ────────────────────────────────────
-  const tBody = document.createElement('div'); tBody.id = 'tv-tickets'; tBody.style.cssText='flex:1;display:flex;align-items:center;justify-content:center;';
-  const { card: tCard } = mkCard('Solved today', tBody);
-  tvRoot.appendChild(tCard);
-
-  // ── Card 3: Calls ────────────────────────────────────────────
-  const cBody = document.createElement('div'); cBody.id = 'tv-calls'; cBody.style.cssText='flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;';
-  const { card: cCard } = mkCard('Calls today', cBody);
-  tvRoot.appendChild(cCard);
-
-  // ── Card 4: Team ─────────────────────────────────────────────
-  const tmBody = document.createElement('div'); tmBody.id = 'tv-team'; tmBody.style.cssText='flex:1;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;';
-  const { card: tmCard } = mkCard('Team today', tmBody, 2);
-  tvRoot.appendChild(tmCard);
-
-  // ── Card 5: Top agents ───────────────────────────────────────
-  const aBody = document.createElement('div'); aBody.id = 'tv-agents'; aBody.style.cssText='flex:1;display:flex;flex-direction:column;gap:6px;';
-  const { card: aCard } = mkCard('This week — solved', aBody);
-  tvRoot.appendChild(aCard);
-
-  // Populate with available data
-  renderTvData();
-
-  // Auto-refresh every 2 minutes
-  const refreshTimer = setInterval(renderTvData, 120000);
+  const refreshTimer = setInterval(tvLiveRefresh, 300000); // 5 min
   overlay.dataset.refreshTimer = refreshTimer;
 }
 
+// Live aggregate stats fetched directly (range-independent, always current)
+let tvStats = { open:null, solvedToday:null, unassigned:null, ts:null };
+
+async function tvLiveRefresh() {
+  if (typeof zdReady === 'function' && zdReady()) {
+    const t = localToday();
+    try {
+      const gId = zdGroupId || (await zdGetGroupId().catch(()=>null));
+      const [open, solved, unassigned] = await Promise.all([
+        zdCount('type:ticket status:open').catch(()=>null),
+        zdCount('type:ticket status>=solved solved>='+t+' solved<='+t).catch(()=>null),
+        gId ? zdCount('type:ticket group:'+gId+' status<solved assignee:none').catch(()=>null) : Promise.resolve(null),
+      ]);
+      if (open!=null) tvStats.open = open;
+      if (solved!=null) tvStats.solvedToday = solved;
+      if (unassigned!=null) tvStats.unassigned = unassigned;
+    } catch(e){}
+    try { await zdRefresh(); } catch(e){}   // refresh per-agent zdData for the leaderboard
+  }
+  try { if (typeof hasUnifonApi === 'function' && hasUnifonApi()) await fetchUnifonLiveKpis(); } catch(e){}
+  window.__tvLastFetch = new Date();
+  tvStats.ts = Date.now();
+  renderTvData();
+}
+
+// Per-agent live status from schedule + cached queue summary
+function tvAgentStatuses() {
+  const now = new Date(); const ds = fmtLocal(now);
+  const hourNow = now.getHours() + now.getMinutes()/60;
+  const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const week = (typeof SCHEDULE !== 'undefined') ? SCHEDULE.find(w => w.dates && w.dates.includes(ds)) : null;
+  const idx = week ? week.dates.indexOf(ds) : -1;
+  let members = [];
+  try { const c = JSON.parse(localStorage.getItem(UNIFON_QUEUE_CACHE_KEY)||'{}'); members = (c.data && c.data.entries || []).flatMap(q => q.members||[]); } catch(e){}
+  const findMember = name => {
+    const nf = norm(name.split(' ')[0]);
+    return members.find(m => norm(m.firstname||'')===nf || norm((m.firstname||'')+' '+(m.lastname||''))===norm(name));
+  };
+  return MY_TEAM.map(name => {
+    let shiftCode='', scheduledNow=false, isNight=false, shiftLabel='';
+    if (week && idx>=0) {
+      const person = week.people.find(p => norm(p.name.split(' ')[0])===norm(name.split(' ')[0]) || norm(p.name)===norm(name));
+      shiftCode = person ? (person.shifts[idx]||'') : '';
+      if (shiftCode && !(typeof ABSENT_SHIFTS!=='undefined' && ABSENT_SHIFTS.has(shiftCode.toLowerCase()))) {
+        const tt = (typeof getShiftTimes==='function') ? getShiftTimes(shiftCode) : null;
+        if (tt) {
+          const s=tt[0], e=tt[1]; isNight = e<=s;
+          scheduledNow = isNight ? (hourNow>=s || hourNow<e) : (hourNow>=s && hourNow<e);
+          const pad = n => (n<10?'0':'')+n;
+          shiftLabel = pad(s)+'–'+(e===24?'24':pad(e));
+        }
+      }
+    }
+    const m = findMember(name);
+    const idle    = !!(m && (m.fixed?.ready || m.mobile?.ready));
+    const present = !!(m && (m.fixed?.ready||m.mobile?.ready||m.fixed?.restore_ready||m.mobile?.restore_ready));
+    let status='off', color='rgba(214,243,255,0.3)', label='off today';
+    if (scheduledNow) {
+      if (idle)        { status='ready'; color='#69db7c'; label='ready'; }
+      else if (present){ status='busy';  color='#ffb74d'; label='on call'; }
+      else             { status='offq';  color='#ff6b7d'; label='logged off'; }
+    } else if (present){ status='busy';  color='#ffb74d'; label='ready · off-shift'; }
+    else if (shiftCode){ status='off';   color='rgba(214,243,255,0.3)'; label='off now'; }
+    return { name, shiftCode, scheduledNow, isNight, shiftLabel, idle, present, status, color, label };
+  });
+}
+
 function renderTvData() {
-  const today = localToday();
-  const mon = fmtLocal(getMonday(0));
+  const tvRoot = document.getElementById('tv-root');
+  if (!tvRoot) return;
+  const LIGHT='#D6F3FF', PINK='#F1B7F2', DIM='rgba(214,243,255,0.5)', DIM2='rgba(214,243,255,0.3)';
+  const PANEL='rgba(255,255,255,0.04)', PANELB='rgba(214,243,255,0.1)';
+  const GREEN='#69db7c', AMBER='#ffb74d', RED='#ff6b7d';
+  const AC=['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  const fira = "font-family:'Fira Sans',sans-serif;font-weight:900;letter-spacing:-0.03em;";
+  const el = (t,css,txt) => { const d=document.createElement(t); if(css)d.style.cssText=css; if(txt!=null)d.textContent=txt; return d; };
 
-  // Queue data from zdData
-  const qEl = document.getElementById('tv-queue');
-  if (qEl) {
-    qEl.innerHTML = '';
-    const qItems = [
-      { label:'Open', val: Object.values(zdData).reduce((s,d)=>s+(d.open||0),0), color:'#ef5350' },
-      { label:'Pending', val: Object.values(zdData).reduce((s,d)=>s+(d.pending||0),0), color:'#ffb74d' },
-      { label:'On hold', val: Object.values(zdData).reduce((s,d)=>s+(d.onhold||0),0), color:'rgba(214,243,255,0.3)' },
-    ];
-    qItems.forEach(q => {
-      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;justify-content:space-between;';
-      const lbl = document.createElement('div'); lbl.style.cssText='font-size:14px;color:rgba(214,243,255,0.6);'; lbl.textContent=q.label;
-      const val = document.createElement('div'); val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:32px;font-weight:900;color:${q.color};letter-spacing:-0.04em;line-height:1;`; val.textContent=q.val;
-      row.appendChild(lbl); row.appendChild(val); qEl.appendChild(row);
+  tvRoot.style.cssText = 'flex:1;min-height:0;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto;gap:14px;padding:20px 24px;color:#F9FBFF;font-family:Inter,sans-serif;background:radial-gradient(120% 120% at 70% -10%, #001a5e 0%, #000743 45%, #00041f 100%);';
+  tvRoot.innerHTML = '';
+
+  // live KPI cache
+  let liveK = null; try { liveK = JSON.parse(localStorage.getItem('wtp_unifon_live_kpis')||'null'); } catch(e){}
+  const statuses = tvAgentStatuses();
+  const scheduledNow = statuses.filter(s=>s.scheduledNow).length;
+  const readyNow = (liveK && liveK.agentsReady!=null) ? liveK.agentsReady : statuses.filter(s=>s.status==='ready').length;
+  const denom = Math.max(scheduledNow, readyNow);
+  const fmtWait = s => s>0 ? (Math.floor(s/60)+'m'+(s%60?(String(s%60).padStart(2,'0'))+'s':'')) : '—';
+  const avgWaitSec = liveK ? liveK.avgWaitSec : null;
+
+  // ── HEADER ──
+  const hd = el('div','grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid '+PANELB+';padding-bottom:10px;');
+  const left = el('div','display:flex;align-items:center;gap:14px;');
+  const wm = el('div',"font-family:'Fira Sans';font-weight:900;font-size:24px;color:"+LIGHT+";letter-spacing:-0.03em;");
+  wm.innerHTML = 'munu.<span style="color:'+PINK+';font-size:11px;font-weight:400;letter-spacing:0.14em;margin-left:10px;">SUPPORT WALL</span>';
+  const live = el('div','display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:0.12em;color:'+GREEN+';');
+  live.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:'+GREEN+';"></span>LIVE';
+  left.appendChild(wm); left.appendChild(live);
+  const clockWrap = el('div','text-align:right;');
+  clockWrap.appendChild(el('div',"font-family:'Fira Sans';font-weight:900;font-size:24px;color:"+LIGHT+";",''));
+  clockWrap.lastChild.id='tv-clock';
+  clockWrap.appendChild(el('div','font-size:10px;color:'+DIM+';',''));
+  clockWrap.lastChild.id='tv-date';
+  const exitBtn = el('button','font-family:inherit;font-size:11px;color:'+DIM2+';background:none;border:1px solid '+PANELB+';border-radius:6px;padding:4px 10px;cursor:pointer;margin-left:16px;','✕ Exit');
+  exitBtn.onclick = exitTvMode;
+  const rightHd = el('div','display:flex;align-items:center;'); rightHd.appendChild(clockWrap); rightHd.appendChild(exitBtn);
+  hd.appendChild(left); hd.appendChild(rightHd);
+  tvRoot.appendChild(hd);
+
+  // ── KPI STRIP ──
+  const kpis = el('div','grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);gap:12px;');
+  const mkKpi = (val, label, color, sub) => {
+    const c = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:12px;padding:12px 14px;');
+    c.appendChild(el('div',fira+'font-size:38px;line-height:1;color:'+color+';', val));
+    c.appendChild(el('div','font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:'+DIM+';margin-top:6px;', label));
+    if (sub) c.appendChild(el('div','font-size:9px;color:'+DIM2+';margin-top:2px;', sub));
+    return c;
+  };
+  const openV = tvStats.open!=null?tvStats.open:'—';
+  const unV   = tvStats.unassigned!=null?tvStats.unassigned:'—';
+  const solV  = tvStats.solvedToday!=null?tvStats.solvedToday:'—';
+  kpis.appendChild(mkKpi(openV, 'Open tickets', (+openV>100?RED:+openV>60?AMBER:LIGHT), 'backlog'));
+  kpis.appendChild(mkKpi(unV, 'Unassigned', (+unV>10?RED:+unV>3?AMBER:GREEN), 'needs pickup'));
+  kpis.appendChild(mkKpi(solV, 'Solved today', GREEN, 'group total'));
+  kpis.appendChild(mkKpi(avgWaitSec!=null?fmtWait(avgWaitSec):'—', 'Avg wait', (avgWaitSec>180?RED:avgWaitSec>120?AMBER:GREEN), 'answered · active queue'));
+  kpis.appendChild(mkKpi(readyNow+'/'+(denom||0), 'Queue ready', (readyNow===0?RED:readyNow/(denom||1)<0.6?AMBER:GREEN), 'of scheduled now'));
+  kpis.appendChild(mkKpi(scheduledNow, 'On shift now', LIGHT, 'scheduled'));
+  tvRoot.appendChild(kpis);
+
+  // ── MAIN ──
+  const main = el('div','display:grid;grid-template-columns:1.85fr 1fr;gap:14px;min-height:0;');
+
+  // Leaderboard
+  const lbPanel = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;min-height:0;');
+  const zf = document.getElementById('zd-from')?.value || localToday();
+  const zt = document.getElementById('zd-to')?.value || localToday();
+  const rangeLabel = (zf===localToday() && zt===localToday()) ? 'today' : (zf===zt ? zf : 'selected range');
+  const lbH = el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:10px;display:flex;justify-content:space-between;');
+  lbH.innerHTML = '<span>Agent leaderboard — solved '+rangeLabel+'</span><span>solved · live status</span>';
+  lbPanel.appendChild(lbH);
+  const lb = el('div','display:flex;flex-direction:column;gap:5px;flex:1;justify-content:space-around;');
+  const statusByName = {}; statuses.forEach(s=>statusByName[s.name.split(' ')[0]]=s);
+  if (typeof zdAgents !== 'undefined' && zdAgents.length) {
+    const rows = zdAgents
+      .filter(a => MY_TEAM.some(n => n.split(' ')[0]===a.name.split(' ')[0]))
+      .map(a => ({ name:a.name, solved:(zdData[a.id]&&zdData[a.id].solved)||0 }))
+      .sort((x,y)=>y.solved-x.solved).slice(0,9);
+    const max = Math.max(...rows.map(r=>r.solved), 1);
+    rows.forEach((r,i) => {
+      const st = statusByName[r.name.split(' ')[0]];
+      const row = el('div','display:grid;grid-template-columns:20px 116px 1fr 38px 96px;gap:10px;align-items:center;');
+      row.appendChild(el('div',fira+'font-size:13px;color:'+DIM2+';text-align:center;', (i+1)));
+      const nm = el('div','display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:'+LIGHT+';');
+      nm.innerHTML = '<span style="width:9px;height:9px;border-radius:50%;background:'+AC[i%AC.length]+';flex-shrink:0;"></span>'+r.name.split(' ')[0];
+      row.appendChild(nm);
+      const bw = el('div','height:18px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;');
+      bw.appendChild(el('div','height:100%;width:'+Math.round(r.solved/max*100)+'%;background:'+AC[i%AC.length]+';border-radius:5px;'));
+      row.appendChild(bw);
+      row.appendChild(el('div',fira+'font-size:18px;text-align:right;color:'+LIGHT+';', r.solved));
+      const pill = el('div','font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:20px;text-align:center;white-space:nowrap;');
+      if (st) { pill.style.background='rgba(255,255,255,0.06)'; pill.style.color=st.color; pill.textContent='● '+st.label; }
+      else { pill.style.color=DIM2; pill.textContent='—'; }
+      row.appendChild(pill);
+      lb.appendChild(row);
     });
+  } else {
+    lb.appendChild(el('div','font-size:13px;color:'+DIM2+';padding:20px 0;','Waiting for ticket data… (load Tickets tab once)'));
   }
+  lbPanel.appendChild(lb);
+  main.appendChild(lbPanel);
 
-  // Solved today
-  const tEl = document.getElementById('tv-tickets');
-  if (tEl) {
-    tEl.innerHTML = '';
-    const todaySolved = Object.values(zdData).reduce((s,d)=>s+(d.solved||0),0);
-    const big = document.createElement('div'); big.style.cssText="font-family:'Fira Sans',sans-serif;font-size:80px;font-weight:900;color:#D6F3FF;letter-spacing:-0.06em;line-height:1;text-align:center;";
-    big.textContent = zdAgents.length ? todaySolved : '—';
-    tEl.appendChild(big);
-  }
+  // Right column
+  const rcol = el('div','display:flex;flex-direction:column;gap:14px;min-height:0;');
+  // Coverage
+  const covP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:14px;padding:14px 16px;flex:0 0 auto;');
+  covP.appendChild(el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;','Live queue coverage'));
+  const covRow = el('div','display:flex;align-items:baseline;gap:10px;');
+  covRow.appendChild(el('div',fira+'font-size:50px;line-height:1;color:'+(readyNow===0?RED:readyNow/(denom||1)<0.6?AMBER:GREEN)+';', readyNow+'/'+(denom||0)));
+  const covLbl = el('div','font-size:11px;color:'+DIM+';'); covLbl.innerHTML='ready of<br>scheduled now'; covRow.appendChild(covLbl);
+  covP.appendChild(covRow);
+  const wRow = el('div','display:flex;gap:10px;margin-top:12px;');
+  const wq = el('div','flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:8px 10px;');
+  wq.appendChild(el('div',fira+'font-size:22px;color:'+(avgWaitSec>180?RED:avgWaitSec>120?AMBER:GREEN)+';', avgWaitSec!=null?fmtWait(avgWaitSec):'—'));
+  wq.appendChild(el('div','font-size:8.5px;text-transform:uppercase;letter-spacing:0.08em;color:'+DIM+';margin-top:3px;','Avg wait (answered)'));
+  wRow.appendChild(wq);
+  covP.appendChild(wRow);
+  rcol.appendChild(covP);
 
-  // Calls today
-  const cEl = document.getElementById('tv-calls');
-  if (cEl) {
-    cEl.innerHTML = '';
-    const todayUnifonData = loadUnifonData().filter(d=>d.date===today);
-    const offered = todayUnifonData.reduce((s,d)=>s+(d.offered||0),0);
-    const answered = todayUnifonData.reduce((s,d)=>s+(d.answered||0),0);
-    const ar = offered > 0 ? Math.round(answered/offered*100) : null;
-    [
-      { label:'Offered', val:offered, color:'rgba(214,243,255,0.9)' },
-      { label:'Answered', val:answered, color:'#69db7c' },
-      { label:'Answer rate', val:ar!=null?ar+'%':'—', color:ar==null?'rgba(214,243,255,0.3)':ar>=90?'#69db7c':ar>=80?'#ffa94d':'#ff8787' },
-    ].forEach(q => {
-      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;justify-content:space-between;';
-      const lbl = document.createElement('div'); lbl.style.cssText='font-size:14px;color:rgba(214,243,255,0.6);'; lbl.textContent=q.label;
-      const val = document.createElement('div'); val.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:28px;font-weight:900;color:${q.color};letter-spacing:-0.03em;line-height:1;`; val.textContent=q.val;
-      row.appendChild(lbl); row.appendChild(val); cEl.appendChild(row);
+  // On shift now roster
+  const rosP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:14px;padding:14px 16px;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;');
+  const rosH = el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;display:flex;justify-content:space-between;');
+  rosH.innerHTML = '<span>On shift now</span><span>'+scheduledNow+' scheduled</span>';
+  rosP.appendChild(rosH);
+  const ros = el('div','display:flex;flex-direction:column;gap:5px;overflow:hidden;');
+  const onShift = statuses.filter(s=>s.scheduledNow);
+  if (onShift.length) {
+    onShift.forEach(s => {
+      const r = el('div','display:flex;align-items:center;gap:9px;font-size:13px;');
+      r.innerHTML = '<span style="width:9px;height:9px;border-radius:50%;background:'+s.color+';flex-shrink:0;"></span>'
+        + '<span style="flex:1;color:'+LIGHT+';font-weight:500;">'+s.name.split(' ')[0]+'</span>'
+        + '<span style="font-size:10px;color:'+DIM+';">'+(s.shiftLabel||'')+' · '+s.label+'</span>';
+      ros.appendChild(r);
     });
+  } else {
+    ros.appendChild(el('div','font-size:12px;color:'+DIM2+';padding:8px 0;','No one scheduled right now'));
   }
+  rosP.appendChild(ros);
+  rcol.appendChild(rosP);
+  main.appendChild(rcol);
+  tvRoot.appendChild(main);
 
-  // Team today
-  const tmEl = document.getElementById('tv-team');
-  if (tmEl) {
-    tmEl.innerHTML = '';
-    MY_TEAM.forEach(name => {
-      const w = SCHEDULE.find(s => s.dates.includes(today));
-      const p = w?.people.find(p=>p.name===name);
-      const shiftIdx = w?.dates.indexOf(today);
-      const shift = shiftIdx>=0 ? (p?.shifts[shiftIdx]||'').toUpperCase() : '';
-      const isOff = ['SO','H','HD','OS','ABS','OL',''].includes(shift);
-      const chip = document.createElement('div');
-      chip.style.cssText = `display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:${isOff?'rgba(255,255,255,0.03)':'rgba(214,243,255,0.08)'};border:1px solid ${isOff?'rgba(255,255,255,0.05)':'rgba(214,243,255,0.12)'};`;
-      const av = document.createElement('div'); av.style.cssText=`width:28px;height:28px;border-radius:50%;background:hsl(${(name.charCodeAt(0)*47)%360},50%,${isOff?'20':'35'}%);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,${isOff?'0.3':'0.9'});flex-shrink:0;`; av.textContent=name.slice(0,2).toUpperCase();
-      const nm = document.createElement('div'); nm.style.cssText=`font-size:13px;font-weight:600;color:rgba(214,243,255,${isOff?'0.25':'0.85'});`; nm.textContent=name.split(' ')[0];
-      const sh = document.createElement('div'); sh.style.cssText=`font-size:10px;color:rgba(214,243,255,${isOff?'0.2':'0.4'});`; sh.textContent=shift||'—';
-      chip.appendChild(av); chip.appendChild(nm); chip.appendChild(sh);
-      tmEl.appendChild(chip);
-    });
-  }
+  // ── BOTTOM BAND ──
+  const bot = el('div','grid-column:1/-1;display:grid;grid-template-columns:1fr 1.4fr;gap:14px;');
+  // Team output today
+  const toP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:12px;padding:12px 16px;');
+  toP.appendChild(el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;','Team output — solved '+rangeLabel));
+  const activeSolvers = (typeof zdAgents!=='undefined') ? zdAgents.filter(a=>MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0]) && (zdData[a.id]&&zdData[a.id].solved>0)).length : 0;
+  const teamSolved = (typeof zdAgents!=='undefined') ? zdAgents.filter(a=>MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0])).reduce((s,a)=>s+((zdData[a.id]&&zdData[a.id].solved)||0),0) : 0;
+  const toGrid = el('div','display:flex;gap:18px;');
+  [[teamSolved,'Solved'],[activeSolvers,'Active agents'],[activeSolvers?Math.round(teamSolved/activeSolvers*10)/10:'—','Avg / agent']].forEach(([v,l])=>{
+    const c=el('div'); c.appendChild(el('div',fira+'font-size:30px;color:'+LIGHT+';', v)); c.appendChild(el('div','font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:'+DIM+';margin-top:3px;', l)); toGrid.appendChild(c);
+  });
+  toP.appendChild(toGrid);
+  bot.appendChild(toP);
 
-  // Top agents this week
-  const aEl = document.getElementById('tv-agents');
-  if (aEl && zdAgents.length) {
-    aEl.innerHTML = '';
-    const sorted = [...zdAgents]
-      .filter(a => MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0]))
-      .sort((a,b)=>(zdData[b.id]?.solved||0)-(zdData[a.id]?.solved||0))
-      .slice(0,8);
-    const max = Math.max(...sorted.map(a=>zdData[a.id]?.solved||0), 1);
-    sorted.forEach((agent,i) => {
-      const solved = zdData[agent.id]?.solved||0;
-      const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787'];
-      const color = barColors[i % barColors.length];
-      const row = document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:10px;';
-      const nm = document.createElement('div'); nm.style.cssText=`font-size:13px;font-weight:600;color:rgba(214,243,255,0.7);width:80px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`; nm.textContent=agent.name.split(' ')[0];
-      const barWrap = document.createElement('div'); barWrap.style.cssText='flex:1;height:16px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;';
-      const fill = document.createElement('div'); fill.style.cssText=`height:100%;width:${Math.round(solved/max*100)}%;background:${color};border-radius:4px;`;
-      barWrap.appendChild(fill);
-      const cnt = document.createElement('div'); cnt.style.cssText=`font-family:'Fira Sans',sans-serif;font-size:14px;font-weight:900;color:${color};width:28px;text-align:right;flex-shrink:0;`; cnt.textContent=solved;
-      row.appendChild(nm); row.appendChild(barWrap); row.appendChild(cnt); aEl.appendChild(row);
-    });
-  } else if (aEl) {
-    aEl.innerHTML = '<div style="font-size:12px;color:rgba(214,243,255,0.3);padding:10px 0;">Load Tickets tab first</div>';
+  // Weekly solved trend (from snapshots)
+  const trP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:12px;padding:12px 16px;');
+  const weeks = [];
+  if (typeof getWeeklySnapshot==='function' && typeof getMonday==='function') {
+    for (let i=5;i>=0;i--) {
+      const snap = getWeeklySnapshot(fmtLocal(getMonday(-i)));
+      const tot = snap && snap.agents ? Object.values(snap.agents).reduce((s,a)=>s+((a.zdSolved)||0),0) : 0;
+      weeks.push(tot);
+    }
   }
+  const wMax = Math.max(...weeks, 1);
+  trP.appendChild(el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;','Solved per week — last 6 weeks'));
+  const spark = el('div','display:flex;align-items:flex-end;gap:6px;height:48px;');
+  weeks.forEach((v,i)=>{
+    const col = el('div','flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;justify-content:flex-end;height:100%;');
+    col.appendChild(el('div','font-size:9px;color:'+DIM+';', v||''));
+    col.appendChild(el('div','width:100%;height:'+Math.max(4,Math.round((v/wMax)*36))+'px;background:'+(i===weeks.length-1?GREEN:'rgba(77,171,247,0.7)')+';border-radius:3px 3px 0 0;',''));
+    spark.appendChild(col);
+  });
+  trP.appendChild(spark);
+  bot.appendChild(trP);
+  tvRoot.appendChild(bot);
 }
 
 function exitTvMode() {
@@ -15550,6 +15646,19 @@ function saveGhToken() {
     renderDashboard(); renderPlanner(); renderSchedule();
     const _syncSecs = parseInt(localStorage.getItem('wtp_sync_interval') || '300');
     if (_syncSecs > 0) ghSyncIntervalTimer = setInterval(ghLoad, _syncSecs * 1000);
+    // If non-admin sync is set up, prompt to re-encrypt with the new token
+    if (localStorage.getItem('wtp_encrypted_token')) {
+      const pp = prompt('Non-admin sync passphrase — re-enter to update the shared token:');
+      if (pp && pp.trim()) {
+        encryptToken(ghToken, pp.trim()).then(encrypted => {
+          localStorage.setItem('wtp_encrypted_token', encrypted);
+          ghLoad(); // push updated encrypted token immediately
+          showToast('\u2713 Non-admin sync token updated');
+        }).catch(e => showToast('\u26a0 Re-encryption failed: ' + e.message));
+      } else {
+        showToast('\u26a0 Non-admin users still have the old token \u2014 re-save passphrase in Settings');
+      }
+    }
   }).catch(() => {
     const _syncSecs2 = parseInt(localStorage.getItem('wtp_sync_interval') || '300');
     if (_syncSecs2 > 0) ghSyncIntervalTimer = setInterval(ghLoad, _syncSecs2 * 1000);
