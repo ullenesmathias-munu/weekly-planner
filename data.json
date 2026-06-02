@@ -13515,11 +13515,85 @@
       }
     },
     "2026-06-01": {
-      "Vetle Bengtson": {
-        "answered": 1,
-        "totalTalkSec": 522,
-        "totalWaitSec": 43,
+      "Thomas Hildre": {
+        "answered": 11,
+        "totalTalkSec": 3026,
+        "totalWaitSec": 996,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 20,
+        "totalTalkSec": 9441,
+        "totalWaitSec": 2901,
         "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 25,
+        "totalTalkSec": 11796,
+        "totalWaitSec": 986,
+        "missed": 2
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 23,
+        "totalTalkSec": 5404,
+        "totalWaitSec": 3642,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 17,
+        "totalTalkSec": 6707,
+        "totalWaitSec": 884,
+        "missed": 1
+      },
+      "Andreas Bergevik": {
+        "answered": 20,
+        "totalTalkSec": 9786,
+        "totalWaitSec": 247,
+        "missed": 1
+      }
+    },
+    "2026-06-02": {
+      "Thomas Hildre": {
+        "answered": 11,
+        "totalTalkSec": 4559,
+        "totalWaitSec": 800,
+        "missed": 2
+      },
+      "Cecilie Steinkopf": {
+        "answered": 30,
+        "totalTalkSec": 11113,
+        "totalWaitSec": 5461,
+        "missed": 1
+      },
+      "Marie Gjengedal": {
+        "answered": 16,
+        "totalTalkSec": 6556,
+        "totalWaitSec": 6711,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 20,
+        "totalTalkSec": 6487,
+        "totalWaitSec": 1930,
+        "missed": 2
+      },
+      "Jonas Johannes": {
+        "answered": 23,
+        "totalTalkSec": 6853,
+        "totalWaitSec": 3135,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 23,
+        "totalTalkSec": 4850,
+        "totalWaitSec": 5441,
+        "missed": 4
+      },
+      "Andreas Bergevik": {
+        "answered": 34,
+        "totalTalkSec": 6437,
+        "totalWaitSec": 717,
+        "missed": 3
       }
     }
   },
