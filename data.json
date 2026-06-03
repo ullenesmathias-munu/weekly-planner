@@ -13595,6 +13595,62 @@
         "totalWaitSec": 717,
         "missed": 3
       }
+    },
+    "2026-06-03": {
+      "Thomas Hildre": {
+        "answered": 10,
+        "totalTalkSec": 4301,
+        "totalWaitSec": 167,
+        "missed": 1
+      },
+      "Cecilie Steinkopf": {
+        "answered": 19,
+        "totalTalkSec": 13511,
+        "totalWaitSec": 6175,
+        "missed": 1
+      },
+      "Marie Gjengedal": {
+        "answered": 15,
+        "totalTalkSec": 5263,
+        "totalWaitSec": 3272,
+        "missed": 1
+      },
+      "Vetle Bengtson": {
+        "answered": 15,
+        "totalTalkSec": 5073,
+        "totalWaitSec": 4837,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 27,
+        "totalTalkSec": 12868,
+        "totalWaitSec": 11358,
+        "missed": 4
+      },
+      "Andreas Bergevik": {
+        "answered": 20,
+        "totalTalkSec": 11485,
+        "totalWaitSec": 772,
+        "missed": 1
+      },
+      "Mathias Ullenes": {
+        "answered": 1,
+        "totalTalkSec": 93,
+        "totalWaitSec": 437,
+        "missed": 0
+      },
+      "Heming Marczenko": {
+        "answered": 4,
+        "totalTalkSec": 2856,
+        "totalWaitSec": 138,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 5,
+        "totalTalkSec": 1185,
+        "totalWaitSec": 130,
+        "missed": 0
+      }
     }
   },
   "wtp_intel_snap_2026-01-19": {
