@@ -6967,9 +6967,137 @@
       "date": "2026-06-03",
       "hour": 20,
       "answered": 2,
+      "missed": 1,
+      "avgWaitSec": 168,
+      "avgHandleSec": 724
+    },
+    "2026-06-03T21": {
+      "date": "2026-06-03",
+      "hour": 21,
+      "answered": 5,
+      "missed": 2,
+      "avgWaitSec": 170,
+      "avgHandleSec": 424
+    },
+    "2026-06-04T00": {
+      "date": "2026-06-04",
+      "hour": 0,
+      "answered": 0,
+      "missed": 1,
+      "avgWaitSec": 48,
+      "avgHandleSec": 0
+    },
+    "2026-06-04T08": {
+      "date": "2026-06-04",
+      "hour": 8,
+      "answered": 3,
       "missed": 0,
       "avgWaitSec": 15,
-      "avgHandleSec": 724
+      "avgHandleSec": 326
+    },
+    "2026-06-04T09": {
+      "date": "2026-06-04",
+      "hour": 9,
+      "answered": 13,
+      "missed": 0,
+      "avgWaitSec": 22,
+      "avgHandleSec": 245
+    },
+    "2026-06-04T10": {
+      "date": "2026-06-04",
+      "hour": 10,
+      "answered": 9,
+      "missed": 1,
+      "avgWaitSec": 285,
+      "avgHandleSec": 500
+    },
+    "2026-06-04T11": {
+      "date": "2026-06-04",
+      "hour": 11,
+      "answered": 9,
+      "missed": 0,
+      "avgWaitSec": 129,
+      "avgHandleSec": 417
+    },
+    "2026-06-04T12": {
+      "date": "2026-06-04",
+      "hour": 12,
+      "answered": 8,
+      "missed": 2,
+      "avgWaitSec": 423,
+      "avgHandleSec": 366
+    },
+    "2026-06-04T13": {
+      "date": "2026-06-04",
+      "hour": 13,
+      "answered": 17,
+      "missed": 1,
+      "avgWaitSec": 691,
+      "avgHandleSec": 754
+    },
+    "2026-06-04T14": {
+      "date": "2026-06-04",
+      "hour": 14,
+      "answered": 10,
+      "missed": 6,
+      "avgWaitSec": 240,
+      "avgHandleSec": 577
+    },
+    "2026-06-04T15": {
+      "date": "2026-06-04",
+      "hour": 15,
+      "answered": 19,
+      "missed": 6,
+      "avgWaitSec": 863,
+      "avgHandleSec": 583
+    },
+    "2026-06-04T16": {
+      "date": "2026-06-04",
+      "hour": 16,
+      "answered": 19,
+      "missed": 7,
+      "avgWaitSec": 1321,
+      "avgHandleSec": 339
+    },
+    "2026-06-04T17": {
+      "date": "2026-06-04",
+      "hour": 17,
+      "answered": 4,
+      "missed": 1,
+      "avgWaitSec": 263,
+      "avgHandleSec": 536
+    },
+    "2026-06-04T18": {
+      "date": "2026-06-04",
+      "hour": 18,
+      "answered": 3,
+      "missed": 1,
+      "avgWaitSec": 38,
+      "avgHandleSec": 232
+    },
+    "2026-06-04T20": {
+      "date": "2026-06-04",
+      "hour": 20,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 122,
+      "avgHandleSec": 277
+    },
+    "2026-06-04T21": {
+      "date": "2026-06-04",
+      "hour": 21,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 64,
+      "avgHandleSec": 263
+    },
+    "2026-06-04T22": {
+      "date": "2026-06-04",
+      "hour": 22,
+      "answered": 3,
+      "missed": 1,
+      "avgWaitSec": 44,
+      "avgHandleSec": 214
     }
   },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\nMarvin, does it fetch Slack.\n\n\n\n",
@@ -8410,16 +8538,30 @@
     },
     {
       "date": "2026-06-03",
-      "offered": 142,
-      "answered": 117,
-      "missed": 25,
-      "avgWaitSec": 408,
-      "avgHandleSec": 486,
-      "avgWaitAnsweredSec": 466,
-      "avgWaitMissedSec": 157,
+      "offered": 150,
+      "answered": 122,
+      "missed": 28,
+      "avgWaitSec": 397,
+      "avgHandleSec": 484,
+      "avgWaitAnsweredSec": 455,
+      "avgWaitMissedSec": 161,
       "callbackRequests": 2,
-      "overKpi": 109,
-      "savedAt": "2026-06-03T18:55:13.233Z",
+      "overKpi": 114,
+      "savedAt": "2026-06-04T21:00:52.521Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-06-04",
+      "offered": 148,
+      "answered": 121,
+      "missed": 27,
+      "avgWaitSec": 560,
+      "avgHandleSec": 463,
+      "avgWaitAnsweredSec": 613,
+      "avgWaitMissedSec": 323,
+      "callbackRequests": 0,
+      "overKpi": 118,
+      "savedAt": "2026-06-04T21:00:52.521Z",
       "source": "import"
     }
   ],
@@ -13740,9 +13882,9 @@
     },
     "2026-06-03": {
       "Thomas Hildre": {
-        "answered": 10,
-        "totalTalkSec": 4301,
-        "totalWaitSec": 167,
+        "answered": 15,
+        "totalTalkSec": 6421,
+        "totalWaitSec": 929,
         "missed": 1
       },
       "Cecilie Steinkopf": {
@@ -13792,6 +13934,44 @@
         "totalTalkSec": 1185,
         "totalWaitSec": 130,
         "missed": 0
+      }
+    },
+    "2026-06-04": {
+      "Thomas Hildre": {
+        "answered": 11,
+        "totalTalkSec": 3138,
+        "totalWaitSec": 498,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 28,
+        "totalTalkSec": 11217,
+        "totalWaitSec": 11667,
+        "missed": 2
+      },
+      "Marie Gjengedal": {
+        "answered": 31,
+        "totalTalkSec": 11656,
+        "totalWaitSec": 12239,
+        "missed": 3
+      },
+      "Vetle Bengtson": {
+        "answered": 19,
+        "totalTalkSec": 8881,
+        "totalWaitSec": 10524,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 15,
+        "totalTalkSec": 9347,
+        "totalWaitSec": 4863,
+        "missed": 2
+      },
+      "Andreas Bergevik": {
+        "answered": 16,
+        "totalTalkSec": 11420,
+        "totalWaitSec": 1463,
+        "missed": 1
       }
     }
   },
