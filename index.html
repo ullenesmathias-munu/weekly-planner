@@ -14497,7 +14497,21 @@ function enterTvMode() {
 }
 
 // Live aggregate stats fetched directly (range-independent, always current)
-let tvStats = { open:null, solvedToday:null, unassigned:null, ts:null };
+let tvStats = { open:null, solvedToday:null, unassigned:null, csat:null, ts:null };
+
+// Weather widget for the wall — free, no API key (Open-Meteo). Set location below.
+function tvFetchWeather() {
+  const WEATHER = { lat: 59.9139, lon: 10.7522, city: 'Oslo' }; // ← set to your office location
+  const icon = c => c===0?'☀️':c<=3?'⛅':(c===45||c===48)?'🌫️':(c>=51&&c<=57)?'🌦️':(c>=61&&c<=67)?'🌧️':(c>=71&&c<=77)?'❄️':(c>=80&&c<=82)?'🌦️':(c>=85&&c<=86)?'🌨️':c>=95?'⛈️':'🌡️';
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+WEATHER.lat+'&longitude='+WEATHER.lon+'&current=temperature_2m,weather_code&timezone=auto')
+    .then(r=>r.json()).then(d=>{
+      const elx = document.getElementById('tv-weather');
+      if (!elx || !d.current) return;
+      elx.innerHTML = '<span style="font-size:22px;line-height:1;">'+icon(d.current.weather_code)+'</span>'
+        + '<span style="font-size:20px;font-weight:700;">'+Math.round(d.current.temperature_2m)+'°</span>'
+        + '<span style="font-size:10px;opacity:0.55;">'+WEATHER.city+'</span>';
+    }).catch(()=>{});
+}
 
 async function tvLiveRefresh() {
   if (typeof zdReady === 'function' && zdReady()) {
@@ -14516,6 +14530,21 @@ async function tvLiveRefresh() {
     try { await zdRefresh(); } catch(e){}   // refresh per-agent zdData for the leaderboard
   }
   try { if (typeof hasUnifonApi === 'function' && hasUnifonApi()) await fetchUnifonLiveKpis(); } catch(e){}
+  // CSAT — team, last 30 days
+  if (typeof zdReady === 'function' && zdReady()) {
+    try {
+      const endTs = Math.floor(Date.now()/1000), startTs = endTs - 30*24*3600;
+      const cs = await zdFetch('/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100');
+      const teamIds = new Set((typeof zdAgents!=='undefined' && Array.isArray(zdAgents) ? zdAgents : [])
+        .filter(a => MY_TEAM.some(n => n.split(' ')[0].toLowerCase() === (a.name||'').split(' ')[0].toLowerCase()))
+        .map(a => String(a.id)));
+      let ratings = (cs && cs.satisfaction_ratings) || [];
+      if (teamIds.size) ratings = ratings.filter(r => teamIds.has(String(r.assignee_id)));
+      const good = ratings.filter(r => r.score==='good').length;
+      const bad  = ratings.filter(r => r.score==='bad').length;
+      tvStats.csat = (good+bad) > 0 ? Math.round(good/(good+bad)*100) : null;
+    } catch(e){}
+  }
   window.__tvLastFetch = new Date();
   tvStats.ts = Date.now();
   renderTvData();
@@ -14600,7 +14629,8 @@ function renderTvData() {
   clockWrap.lastChild.id='tv-date';
   const exitBtn = el('button','font-family:inherit;font-size:11px;color:'+DIM2+';background:none;border:1px solid '+PANELB+';border-radius:6px;padding:4px 10px;cursor:pointer;margin-left:16px;','✕ Exit');
   exitBtn.onclick = exitTvMode;
-  const rightHd = el('div','display:flex;align-items:center;'); rightHd.appendChild(clockWrap); rightHd.appendChild(exitBtn);
+  const wx = el('div','display:flex;align-items:center;gap:7px;color:'+LIGHT+';margin-right:22px;'); wx.id='tv-weather';
+  const rightHd = el('div','display:flex;align-items:center;'); rightHd.appendChild(wx); rightHd.appendChild(clockWrap); rightHd.appendChild(exitBtn);
   hd.appendChild(left); hd.appendChild(rightHd);
   tvRoot.appendChild(hd);
 
@@ -14621,7 +14651,8 @@ function renderTvData() {
   kpis.appendChild(mkKpi(solV, 'Solved today', GREEN, 'group total'));
   kpis.appendChild(mkKpi(avgWaitSec!=null?fmtWait(avgWaitSec):'—', 'Avg wait', (avgWaitSec>180?RED:avgWaitSec>120?AMBER:GREEN), 'answered · active queue'));
   kpis.appendChild(mkKpi(readyNow+'/'+(denom||0), 'Queue ready', (readyNow===0?RED:readyNow/(denom||1)<0.6?AMBER:GREEN), 'of scheduled now'));
-  kpis.appendChild(mkKpi(scheduledNow, 'On shift now', LIGHT, 'scheduled'));
+  const csatV = tvStats.csat!=null ? tvStats.csat+'%' : '—';
+  kpis.appendChild(mkKpi(csatV, 'CSAT', (tvStats.csat==null?LIGHT:tvStats.csat>=90?GREEN:tvStats.csat>=75?AMBER:RED), 'last 30 days'));
   tvRoot.appendChild(kpis);
 
   // ── MAIN ──
@@ -14742,6 +14773,7 @@ function renderTvData() {
   trP.appendChild(spark);
   bot.appendChild(trP);
   tvRoot.appendChild(bot);
+  try { tvFetchWeather(); } catch(e){}
 }
 
 function exitTvMode() {
