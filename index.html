@@ -7287,20 +7287,15 @@ function agentLivePresence(name) {
 }
 
 // Re-fetch the live queue state and re-render all queue panels.
-async function refreshLogoffPanels() {
+async function refreshQueuePanels() {
   try {
     if (typeof fetchUnifonQueueSummary === 'function') {
       const s = await fetchUnifonQueueSummary(true);
       if (s && typeof processQueueStateChange === 'function') processQueueStateChange(s);
     }
   } catch(e){}
-  const t = document.getElementById('queue-logoff-today');
-  const w = document.getElementById('queue-logoff-panel');
-  const q = document.getElementById('queue-log-panel');
-  if (t) renderLogoffPanel(t, { fromTs: fmtLocal(new Date()), queueId: 43500 });
-  if (w) renderLogoffPanel(w, { fromTs: fmtLocal(getMonday(0)), queueId: 43500 });
-  if (q) renderQueueLogPanel(q);
-  if (typeof showToast === 'function') showToast('\u2713 Queue data refreshed');
+  document.querySelectorAll('[id^="queue-log-panel"]').forEach(p => renderQueueLogPanel(p));
+  if (typeof showToast === 'function') showToast('\u2713 Queue activity refreshed');
 }
 
 function renderLogoffPanel(container, opts) {
@@ -7331,9 +7326,44 @@ function renderLogoffPanel(container, opts) {
 }
 
 // ── Queue log panel renderer ───────────────────────────────────────────────
-function renderQueueLogPanel(container) {
+function renderQueueLogPanel(container, opts) {
+  opts = opts || {};
+  const filter = opts.filter || null;  // agent first-name to filter to, or null for all
   container.innerHTML = '';
-  const log = loadQueueLog().slice().reverse(); // newest first
+  const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const log = loadQueueLog().slice();
+
+  // ── "On the queue now" strip — the one signal the data reports accurately ──
+  const nowStrip = document.createElement('div');
+  nowStrip.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 0 9px;border-bottom:1px solid var(--border);margin-bottom:9px;';
+  const nowLbl = document.createElement('span');
+  nowLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);';
+  nowLbl.textContent = 'On the queue now';
+  nowStrip.appendChild(nowLbl);
+  const onNow = [];
+  try {
+    const c = JSON.parse(localStorage.getItem(UNIFON_QUEUE_CACHE_KEY)||'{}');
+    const members = (c.data && c.data.entries || []).flatMap(q => q.members||[]);
+    members.forEach(m => {
+      const ready = !!(m.fixed?.ready || m.mobile?.ready);
+      const fn = (m.firstname||'').split(' ')[0];
+      if (ready && MY_TEAM.some(t => norm(t.split(' ')[0]) === norm(fn)) && !onNow.includes(fn)) onNow.push(fn);
+    });
+  } catch(e){}
+  if (onNow.length) {
+    onNow.forEach(n => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--text);';
+      chip.innerHTML = '<span style="width:8px;height:8px;border-radius:50%;background:#34d399;"></span>' + n;
+      nowStrip.appendChild(chip);
+    });
+  } else {
+    const none = document.createElement('span');
+    none.style.cssText = 'font-size:12px;color:var(--text3);font-style:italic;';
+    none.textContent = 'no one ready right now';
+    nowStrip.appendChild(none);
+  }
+  container.appendChild(nowStrip);
 
   if (!log.length) {
     const empty = document.createElement('div');
@@ -7343,17 +7373,45 @@ function renderQueueLogPanel(container) {
     return;
   }
 
-  // Group by date
+  // ── Agent filter chips ──
+  const agentsInLog = [...new Set(log.map(e => (e.name||'').split(' ')[0]))].filter(Boolean).sort();
+  if (agentsInLog.length > 1) {
+    const filterRow = document.createElement('div');
+    filterRow.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;';
+    const mkChip = (label, val) => {
+      const b = document.createElement('button');
+      const active = (val === filter);
+      b.style.cssText = 'font-family:inherit;font-size:10px;padding:3px 9px;border-radius:12px;cursor:pointer;border:1px solid '
+        + (active ? '#4dabf7' : 'var(--border)') + ';background:' + (active ? 'rgba(77,171,247,0.15)' : 'transparent')
+        + ';color:' + (active ? 'var(--text)' : 'var(--text3)') + ';';
+      b.textContent = label;
+      b.onclick = () => renderQueueLogPanel(container, { filter: val });
+      return b;
+    };
+    filterRow.appendChild(mkChip('All', null));
+    agentsInLog.forEach(a => filterRow.appendChild(mkChip(a, a)));
+    container.appendChild(filterRow);
+  }
+
+  // ── Chronological feed (newest first), grouped by date ──
+  let events = log.slice().reverse();
+  if (filter) events = events.filter(e => norm((e.name||'').split(' ')[0]) === norm(filter));
+  if (!events.length) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'font-size:12px;color:var(--text3);padding:8px 0;font-style:italic;';
+    empty.textContent = 'No events for ' + filter + ' yet.';
+    container.appendChild(empty);
+    return;
+  }
+
   const today     = localToday();
   const yesterday = fmtLocal(new Date(new Date().setDate(new Date().getDate()-1)));
-
   let lastDate = null;
-  log.slice(0, 60).forEach(entry => {
-    const entryDate = entry.ts.slice(0,10);
+  events.slice(0, 80).forEach(entry => {
+    const entryDate = (entry.ts||'').slice(0,10);
     const dateLabel = entryDate === today ? 'Today'
       : entryDate === yesterday ? 'Yesterday'
       : new Date(entry.ts).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-
     if (entryDate !== lastDate) {
       const sep = document.createElement('div');
       sep.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);padding:8px 0 4px;border-top:1px solid var(--border);margin-top:4px;';
@@ -7361,26 +7419,19 @@ function renderQueueLogPanel(container) {
       container.appendChild(sep);
       lastDate = entryDate;
     }
-
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
-
     const dot = document.createElement('div');
-    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;flex-shrink:0;background:'
-      + (entry.event==='logged_on' ? '#34d399' : '#f87171') + ';';
-
+    dot.style.cssText = 'width:7px;height:7px;border-radius:50%;flex-shrink:0;background:' + (entry.event==='logged_on' ? '#34d399' : '#f87171') + ';';
     const time = document.createElement('div');
     time.style.cssText = 'font-size:10px;color:var(--text3);flex-shrink:0;width:38px;';
     time.textContent = new Date(entry.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-
     const name = document.createElement('div');
     name.style.cssText = 'font-size:12px;font-weight:600;color:var(--text);flex-shrink:0;min-width:70px;';
     name.textContent = (entry.name||'').split(' ')[0];
-
     const desc = document.createElement('div');
     desc.style.cssText = 'font-size:11px;color:var(--text3);';
     desc.textContent = (entry.event==='logged_on' ? '→ ' : '← ') + (entry.queue||'');
-
     row.appendChild(dot); row.appendChild(time); row.appendChild(name); row.appendChild(desc);
     container.appendChild(row);
   });
@@ -7425,9 +7476,7 @@ function clearQueueLog() {
     localStorage.setItem(QUEUE_LOG_KEY, '[]');
     localStorage.removeItem(QUEUE_STATE_KEY);
     if (typeof scheduleSyncSave === 'function') scheduleSyncSave(); // push cleared state so it isn't reloaded from GitHub
-    const q = document.getElementById('queue-log-panel');     if (q) renderQueueLogPanel(q);
-    const t = document.getElementById('queue-logoff-today');  if (t) renderLogoffPanel(t, { fromTs: fmtLocal(new Date()), queueId: 43500 });
-    const w = document.getElementById('queue-logoff-panel');  if (w) renderLogoffPanel(w, { fromTs: fmtLocal(getMonday(0)), queueId: 43500 });
+    document.querySelectorAll('[id^="queue-log-panel"]').forEach(p => renderQueueLogPanel(p));
     if (typeof showToast === 'function') showToast('\u2713 Queue log cleared');
   }
 }
@@ -9710,39 +9759,17 @@ function renderAdminDashboard(root, viewerMode=false) {
     const qLogSec = dbSection('Queue activity');
     const qLogBody = document.createElement('div');
     qLogBody.id = 'queue-log-panel';
-    qLogBody.style.cssText = 'max-height:220px;overflow-y:auto;';
+    qLogBody.style.cssText = 'max-height:340px;overflow-y:auto;';
     qLogSec.appendChild(qLogBody);
     renderQueueLogPanel(qLogBody);
-    col5.appendChild(qLogSec);
-
-    // Queue presence — log-offs TODAY (day queue, within scheduled shift)
-    const qOffTodaySec = dbSection('Log-offs today');
-    const qOffTodayBody = document.createElement('div');
-    qOffTodayBody.id = 'queue-logoff-today';
-    renderLogoffPanel(qOffTodayBody, { fromTs: fmtLocal(new Date()), queueId: 43500 });
-    qOffTodaySec.appendChild(qOffTodayBody);
-    col5.appendChild(qOffTodaySec);
-
-    // Queue presence — log-offs THIS WEEK
-    const qOffSec = dbSection('Log-offs this week');
-    const qOffBody = document.createElement('div');
-    qOffBody.id = 'queue-logoff-panel';
-    renderLogoffPanel(qOffBody, { fromTs: fmtLocal(getMonday(0)), queueId: 43500 });
-    qOffSec.appendChild(qOffBody);
-    const qOffNote = document.createElement('div');
-    qOffNote.style.cssText = 'font-size:9px;color:var(--text3);margin-top:8px;font-style:italic;';
-    qOffNote.textContent = 'Day queue · counted only within each agent\'s scheduled shift · 🟢 online · 🔴 off now';
-    qOffSec.appendChild(qOffNote);
-    // Refresh / Clear controls
-    const qOffCtl = document.createElement('div');
-    qOffCtl.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+    const qCtl = document.createElement('div');
+    qCtl.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
     const mkBtn = (label, title, fn) => { const b=document.createElement('button'); b.textContent=label; b.title=title; b.style.cssText='font-family:inherit;font-size:11px;padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;'; b.onclick=fn; return b; };
-    qOffCtl.appendChild(mkBtn('↻ Refresh', 'Re-fetch live queue state and recompute', refreshLogoffPanels));
-    qOffCtl.appendChild(mkBtn('🗑 Clear log', 'Wipe the stored queue log and start fresh (syncs to all users)', clearQueueLog));
-    qOffSec.appendChild(qOffCtl);
-    col5.appendChild(qOffSec);
+    qCtl.appendChild(mkBtn('↻ Refresh', 'Re-fetch live queue state', refreshQueuePanels));
+    qCtl.appendChild(mkBtn('🗑 Clear log', 'Wipe the stored queue log and start fresh (syncs to all users)', clearQueueLog));
+    qLogSec.appendChild(qCtl);
+    col5.appendChild(qLogSec);
   }
-
   rowBottom.appendChild(col5);
   body.appendChild(rowBottom);
 
@@ -15147,6 +15174,28 @@ function zdRender(agents, fromDate, toDate) {
     heatmapCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-top:14px;';
     renderUnifonHeatmap(heatmapCard, fromDate, toDate);
     body.appendChild(heatmapCard);
+  }
+
+  // Queue activity (live) — same feed as the dashboard, filterable by agent
+  if (hasUnifonApi()) {
+    const qaCard = document.createElement('div');
+    qaCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-top:14px;';
+    const qaTitle = document.createElement('div');
+    qaTitle.style.cssText = 'font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px;';
+    qaTitle.textContent = 'Queue activity';
+    qaCard.appendChild(qaTitle);
+    const qaBody = document.createElement('div');
+    qaBody.id = 'queue-log-panel-zd';
+    qaBody.style.cssText = 'max-height:380px;overflow-y:auto;';
+    qaCard.appendChild(qaBody);
+    renderQueueLogPanel(qaBody);
+    const qaCtl = document.createElement('div');
+    qaCtl.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+    const mkQB = (label, fn) => { const b=document.createElement('button'); b.textContent=label; b.style.cssText='font-family:inherit;font-size:11px;padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;'; b.onclick=fn; return b; };
+    qaCtl.appendChild(mkQB('↻ Refresh', refreshQueuePanels));
+    qaCtl.appendChild(mkQB('🗑 Clear log', clearQueueLog));
+    qaCard.appendChild(qaCtl);
+    body.appendChild(qaCard);
   }
 }
 
