@@ -14501,7 +14501,7 @@ let tvStats = { open:null, solvedToday:null, unassigned:null, csat:null, ts:null
 
 // Weather widget for the wall — free, no API key (Open-Meteo). Set location below.
 function tvFetchWeather() {
-  const WEATHER = { lat: 59.9139, lon: 10.7522, city: 'Oslo' }; // ← set to your office location
+  const WEATHER = { lat: 58.9700, lon: 5.7331, city: 'Stavanger' }; // ← set to your office location
   const icon = c => c===0?'☀️':c<=3?'⛅':(c===45||c===48)?'🌫️':(c>=51&&c<=57)?'🌦️':(c>=61&&c<=67)?'🌧️':(c>=71&&c<=77)?'❄️':(c>=80&&c<=82)?'🌦️':(c>=85&&c<=86)?'🌨️':c>=95?'⛈️':'🌡️';
   fetch('https://api.open-meteo.com/v1/forecast?latitude='+WEATHER.lat+'&longitude='+WEATHER.lon+'&current=temperature_2m,weather_code&timezone=auto')
     .then(r=>r.json()).then(d=>{
