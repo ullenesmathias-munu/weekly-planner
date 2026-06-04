@@ -7270,6 +7270,39 @@ function computeLogoffStats(opts) {
     .sort((x,y) => y.offMs - x.offMs);
 }
 
+// Current live presence of an agent from the cached queue summary.
+// 'online' = ready or on a call (present); 'off' = logged out / not present; null = unknown.
+function agentLivePresence(name) {
+  try {
+    const c = JSON.parse(localStorage.getItem(UNIFON_QUEUE_CACHE_KEY)||'{}');
+    const members = (c.data && c.data.entries || []).flatMap(q => q.members||[]);
+    if (!members.length) return null;
+    const norm = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+    const nf = norm(name.split(' ')[0]);
+    const m = members.find(x => norm(x.firstname||'')===nf || norm((x.firstname||'')+' '+(x.lastname||''))===norm(name));
+    if (!m) return 'off';
+    const present = !!(m.fixed?.ready||m.mobile?.ready||m.fixed?.restore_ready||m.mobile?.restore_ready);
+    return present ? 'online' : 'off';
+  } catch(e) { return null; }
+}
+
+// Re-fetch the live queue state and re-render all queue panels.
+async function refreshLogoffPanels() {
+  try {
+    if (typeof fetchUnifonQueueSummary === 'function') {
+      const s = await fetchUnifonQueueSummary(true);
+      if (s && typeof processQueueStateChange === 'function') processQueueStateChange(s);
+    }
+  } catch(e){}
+  const t = document.getElementById('queue-logoff-today');
+  const w = document.getElementById('queue-logoff-panel');
+  const q = document.getElementById('queue-log-panel');
+  if (t) renderLogoffPanel(t, { fromTs: fmtLocal(new Date()), queueId: 43500 });
+  if (w) renderLogoffPanel(w, { fromTs: fmtLocal(getMonday(0)), queueId: 43500 });
+  if (q) renderQueueLogPanel(q);
+  if (typeof showToast === 'function') showToast('\u2713 Queue data refreshed');
+}
+
 function renderLogoffPanel(container, opts) {
   container.innerHTML = '';
   const stats = computeLogoffStats(opts || {});
@@ -7284,7 +7317,11 @@ function renderLogoffPanel(container, opts) {
   container.appendChild(hdr);
   stats.forEach(s=>{
     const row=document.createElement('div'); row.style.cssText=GR+'padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);';
-    const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);'; nm.textContent=s.name.split(' ')[0]+(s.currentlyOff?' 🔴':''); if(s.currentlyOff)nm.title='Currently logged off';
+    const nm=document.createElement('div'); nm.style.cssText='font-size:12px;font-weight:600;color:var(--text);';
+    const live = agentLivePresence(s.name);
+    const dot = live==='online' ? ' 🟢' : (live==='off' || s.currentlyOff) ? ' 🔴' : '';
+    nm.textContent = s.name.split(' ')[0] + dot;
+    nm.title = live==='online' ? 'Online now' : (live==='off'||s.currentlyOff) ? 'Currently logged off' : '';
     const cnt=document.createElement('div'); cnt.style.cssText='font-size:12px;font-weight:700;text-align:right;color:var(--text);'; cnt.textContent=s.logoffs;
     const tot=document.createElement('div'); tot.style.cssText='font-size:12px;text-align:right;color:var(--text2);'; tot.textContent=fmtDur(s.offMs);
     const al=document.createElement('div'); al.style.cssText='font-size:10px;text-align:right;color:var(--text3);'; al.textContent=fmtDur(s.avgMs)+' / '+fmtDur(s.longestMs);
@@ -7384,11 +7421,14 @@ function updateNotifStatus() {
 }
 
 function clearQueueLog() {
-  if (confirm('Clear the queue activity log? This cannot be undone.')) {
-    localStorage.removeItem(QUEUE_LOG_KEY);
+  if (confirm('Clear the queue activity log and log-off history? This cannot be undone, and the cleared state will sync to all users.')) {
+    localStorage.setItem(QUEUE_LOG_KEY, '[]');
     localStorage.removeItem(QUEUE_STATE_KEY);
-    const panel = document.getElementById('queue-log-panel');
-    if (panel) renderQueueLogPanel(panel);
+    if (typeof scheduleSyncSave === 'function') scheduleSyncSave(); // push cleared state so it isn't reloaded from GitHub
+    const q = document.getElementById('queue-log-panel');     if (q) renderQueueLogPanel(q);
+    const t = document.getElementById('queue-logoff-today');  if (t) renderLogoffPanel(t, { fromTs: fmtLocal(new Date()), queueId: 43500 });
+    const w = document.getElementById('queue-logoff-panel');  if (w) renderLogoffPanel(w, { fromTs: fmtLocal(getMonday(0)), queueId: 43500 });
+    if (typeof showToast === 'function') showToast('\u2713 Queue log cleared');
   }
 }
 
@@ -9691,8 +9731,15 @@ function renderAdminDashboard(root, viewerMode=false) {
     qOffSec.appendChild(qOffBody);
     const qOffNote = document.createElement('div');
     qOffNote.style.cssText = 'font-size:9px;color:var(--text3);margin-top:8px;font-style:italic;';
-    qOffNote.textContent = 'Day queue · counted only within each agent\'s scheduled shift · 🔴 = off now';
+    qOffNote.textContent = 'Day queue · counted only within each agent\'s scheduled shift · 🟢 online · 🔴 off now';
     qOffSec.appendChild(qOffNote);
+    // Refresh / Clear controls
+    const qOffCtl = document.createElement('div');
+    qOffCtl.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+    const mkBtn = (label, title, fn) => { const b=document.createElement('button'); b.textContent=label; b.title=title; b.style.cssText='font-family:inherit;font-size:11px;padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;'; b.onclick=fn; return b; };
+    qOffCtl.appendChild(mkBtn('↻ Refresh', 'Re-fetch live queue state and recompute', refreshLogoffPanels));
+    qOffCtl.appendChild(mkBtn('🗑 Clear log', 'Wipe the stored queue log and start fresh (syncs to all users)', clearQueueLog));
+    qOffSec.appendChild(qOffCtl);
     col5.appendChild(qOffSec);
   }
 
