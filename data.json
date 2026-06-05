@@ -8900,19 +8900,19 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-05",
     "toDate": "2026-06-05",
-    "generated": "2026-06-05T11:59:00.750Z",
+    "generated": "2026-06-05T12:04:00.296Z",
     "agents": {
       "Jonas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 11,
+        "zdSolved": 12,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 1,
         "zdEmail": 1,
-        "zdPhone": 10,
+        "zdPhone": 11,
         "zdOpen": 7,
         "zdPending": 6
       },
@@ -8997,7 +8997,7 @@
         "dayDays": 1,
         "zdEmail": 2,
         "zdPhone": 9,
-        "zdOpen": 18,
+        "zdOpen": 19,
         "zdPending": 6
       },
       "Andreas": {
