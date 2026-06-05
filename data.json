@@ -9155,7 +9155,7 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
     "toDate": "2026-06-07",
-    "generated": "2026-06-05T21:57:55.848Z",
+    "generated": "2026-06-05T22:02:54.975Z",
     "agents": {
       "Jonas": {
         "answered": 92,
@@ -9176,13 +9176,13 @@
         "missed": 7,
         "avgTalk": 368,
         "avgWait": 97,
-        "zdSolved": 74,
+        "zdSolved": 76,
         "isNight": true,
         "nightDays": 5,
         "dayDays": 0,
         "zdEmail": 2,
-        "zdPhone": 72,
-        "zdOpen": 7,
+        "zdPhone": 74,
+        "zdOpen": 5,
         "zdPending": 1
       },
       "Maylen": {
