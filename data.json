@@ -8760,7 +8760,7 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
     "toDate": "2026-06-07",
-    "generated": "2026-06-05T08:15:32.898Z",
+    "generated": "2026-06-05T08:20:33.458Z",
     "agents": {
       "Jonas": {
         "answered": 65,
@@ -8773,7 +8773,7 @@
         "dayDays": 4,
         "zdEmail": 13,
         "zdPhone": 58,
-        "zdOpen": 7,
+        "zdOpen": 6,
         "zdPending": 5
       },
       "Thomas": {
@@ -8795,12 +8795,12 @@
         "missed": 4,
         "avgTalk": 224,
         "avgWait": 181,
-        "zdSolved": 41,
+        "zdSolved": 40,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 2,
         "zdEmail": 2,
-        "zdPhone": 39,
+        "zdPhone": 38,
         "zdOpen": 0,
         "zdPending": 3
       },
@@ -8827,8 +8827,8 @@
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
-        "zdEmail": 0,
-        "zdPhone": 83,
+        "zdEmail": 1,
+        "zdPhone": 82,
         "zdOpen": 9,
         "zdPending": 1
       },
@@ -8851,12 +8851,12 @@
         "missed": 6,
         "avgTalk": 405,
         "avgWait": 267,
-        "zdSolved": 90,
+        "zdSolved": 89,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 16,
-        "zdPhone": 74,
+        "zdPhone": 73,
         "zdOpen": 10,
         "zdPending": 6
       },
@@ -8865,12 +8865,12 @@
         "missed": 6,
         "avgTalk": 435,
         "avgWait": 36,
-        "zdSolved": 111,
+        "zdSolved": 109,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 41,
-        "zdPhone": 70,
+        "zdEmail": 40,
+        "zdPhone": 69,
         "zdOpen": 7,
         "zdPending": 8
       },
@@ -8893,12 +8893,12 @@
         "missed": 3,
         "avgTalk": 382,
         "avgWait": 256,
-        "zdSolved": 67,
+        "zdSolved": 68,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 9,
-        "zdPhone": 58,
+        "zdPhone": 59,
         "zdOpen": 18,
         "zdPending": 5
       }
