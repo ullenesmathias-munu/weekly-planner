@@ -7436,6 +7436,19 @@ function renderQueueLogPanel(container, opts) {
   const today     = localToday();
   const yesterday = fmtLocal(new Date(new Date().setDate(new Date().getDate()-1)));
   let lastDate = null;
+  // Pair each "joined" with the agent's preceding "left" to show how long they were off the queue
+  const offDur = {};
+  const _lastOff = {};
+  log.forEach(e => {
+    const k = (e.name||'') + '|' + (e.queueId||'');
+    if (e.event === 'logged_off') { _lastOff[k] = e.ts; }
+    else if (e.event === 'logged_on' && _lastOff[k]) {
+      const mins = Math.round((new Date(e.ts) - new Date(_lastOff[k])) / 60000);
+      if (mins >= 0 && mins < 1440) offDur[(e.ts||'')+'|'+(e.name||'')+'|'+(e.queueId||'')] = mins;
+      _lastOff[k] = null;
+    }
+  });
+  const fmtDur = m => m < 60 ? m+'m' : Math.floor(m/60)+'h '+(m%60)+'m';
   // Show ALL of today's events (so the full day stays visible until 23:59), plus a tail of older ones
   const _todayStr = today;
   let _olderShown = 0;
@@ -7468,7 +7481,10 @@ function renderQueueLogPanel(container, opts) {
     name.textContent = (entry.name||'').split(' ')[0];
     const desc = document.createElement('div');
     desc.style.cssText = 'font-size:11px;color:var(--text3);';
-    desc.textContent = (entry.event==='logged_on' ? '→ ' : '← ') + (entry.queue||'');
+    const _dk = (entry.ts||'')+'|'+(entry.name||'')+'|'+(entry.queueId||'');
+    const _off = (entry.event==='logged_on') ? offDur[_dk] : null;
+    desc.innerHTML = (entry.event==='logged_on' ? '→ ' : '← ') + (entry.queue||'')
+      + (_off!=null ? ' <span style="color:'+(_off>=20?'#ffd43b':'var(--text3)')+';">· off '+fmtDur(_off)+'</span>' : '');
     row.appendChild(dot); row.appendChild(time); row.appendChild(name); row.appendChild(desc);
     container.appendChild(row);
   });
