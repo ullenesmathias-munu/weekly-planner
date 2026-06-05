@@ -9005,7 +9005,7 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-05",
     "toDate": "2026-06-05",
-    "generated": "2026-06-05T17:24:51.857Z",
+    "generated": "2026-06-05T17:29:51.891Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -9116,8 +9116,8 @@
         "dayDays": 1,
         "zdEmail": 10,
         "zdPhone": 23,
-        "zdOpen": 6,
-        "zdPending": 10
+        "zdOpen": 5,
+        "zdPending": 11
       },
       "Julie": {
         "answered": 0,
