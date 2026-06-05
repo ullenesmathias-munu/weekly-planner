@@ -3881,7 +3881,7 @@ function renderHistory() {
 }
 
 // ─── Schedule tab ─────────────────────────────────────────────────
-const ALL_ROLES = ['', 'Phone Guru', 'Inbox Champion', 'SLA Sherpa', 'Freelancer'];
+const ALL_ROLES = ['', 'Inbox Champion'];
 function roleClass(role) {
   if (role === 'Phone Guru') return 'role-phone-guru';
   if (role === 'Inbox Champion') return 'role-inbox-champ';
@@ -5206,7 +5206,7 @@ function getOffReason(person, dayIndices) {
 function checkRoleConflicts(w) {
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
   // Only alert on these roles — Freelancer excluded
-  const ALERT_ROLES = ['Phone Guru', 'Inbox Champion', 'SLA Sherpa'];
+  const ALERT_ROLES = ['Inbox Champion'];
   const blocks = [
     { label: 'Mon–Wed', days: [0,1,2], roles: ['Phone Guru', 'Inbox Champion', 'SLA Sherpa'] },
     { label: 'Thu–Fri', days: [3,4],   roles: ['Inbox Champion', 'SLA Sherpa'] }, // No Phone Guru Thu-Fri
@@ -5307,8 +5307,8 @@ function renderRoleSummary(w) {
   }
 
   const myTeam = w.people.filter(p => MY_TEAM.includes(p.name));
-  const ROLES = ['Phone Guru', 'Inbox Champion', 'SLA Sherpa', 'Freelancer'];
-  const ROLE_ICONS = { 'Phone Guru': '📞', 'Inbox Champion': '📬', 'SLA Sherpa': '⏱', 'Freelancer': '🔄' };
+  const ROLES = ['Inbox Champion'];
+  const ROLE_ICONS = { 'Inbox Champion': '👑' };
   const ROLE_CHIP_CLASS = { 'Phone Guru': 'chip-phone-guru', 'Inbox Champion': 'chip-inbox-champ', 'SLA Sherpa': 'chip-sla-sherpa', 'Freelancer': 'chip-freelancer' };
   const blocks = [
     { label: 'Mon – Wed', days: [0, 1, 2] },
@@ -7373,6 +7373,35 @@ function renderQueueLogPanel(container, opts) {
     return;
   }
 
+  // ── Queue exits today (per agent) — includes calls & breaks, not just log-offs ──
+  const _today = (typeof localToday === 'function') ? localToday() : new Date().toISOString().slice(0,10);
+  const exitsToday = {};
+  log.forEach(e => {
+    if (e.event === 'logged_off' && (e.ts||'').slice(0,10) === _today) {
+      const fn = (e.name||'').split(' ')[0];
+      if (fn) exitsToday[fn] = (exitsToday[fn]||0) + 1;
+    }
+  });
+  const exitRows = Object.entries(exitsToday).sort((a,b)=>b[1]-a[1]);
+  if (exitRows.length) {
+    const sumWrap = document.createElement('div');
+    sumWrap.style.cssText = 'padding:0 0 9px;border-bottom:1px solid var(--border);margin-bottom:9px;';
+    const sumLbl = document.createElement('div');
+    sumLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;';
+    sumLbl.textContent = 'Queue exits today · incl. calls & breaks';
+    sumWrap.appendChild(sumLbl);
+    const chips = document.createElement('div');
+    chips.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+    exitRows.forEach(([n,c]) => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:3px 9px;';
+      chip.innerHTML = '<span style="font-weight:600;">'+n+'</span><span style="color:var(--text3);">\u00d7'+c+'</span>';
+      chips.appendChild(chip);
+    });
+    sumWrap.appendChild(chips);
+    container.appendChild(sumWrap);
+  }
+
   // ── Agent filter chips ──
   const agentsInLog = [...new Set(log.map(e => (e.name||'').split(' ')[0]))].filter(Boolean).sort();
   if (agentsInLog.length > 1) {
@@ -7407,7 +7436,15 @@ function renderQueueLogPanel(container, opts) {
   const today     = localToday();
   const yesterday = fmtLocal(new Date(new Date().setDate(new Date().getDate()-1)));
   let lastDate = null;
-  events.slice(0, 80).forEach(entry => {
+  // Show ALL of today's events (so the full day stays visible until 23:59), plus a tail of older ones
+  const _todayStr = today;
+  let _olderShown = 0;
+  events.filter(e => {
+    const d = (e.ts||'').slice(0,10);
+    if (d === _todayStr) return true;
+    if (_olderShown < 30) { _olderShown++; return true; }
+    return false;
+  }).forEach(entry => {
     const entryDate = (entry.ts||'').slice(0,10);
     const dateLabel = entryDate === today ? 'Today'
       : entryDate === yesterday ? 'Yesterday'
@@ -14520,7 +14557,10 @@ function tvFetchWeather() {
 // without re-pulling the heavy stuff (ticket counts, CSAT, weather).
 async function tvQueueRefresh() {
   try {
-    if (typeof fetchUnifonQueueSummary === 'function') await fetchUnifonQueueSummary(true); // force-fresh queue summary
+    if (typeof fetchUnifonQueueSummary === 'function') {
+      const s = await fetchUnifonQueueSummary(true); // force-fresh queue summary
+      if (s && typeof processQueueStateChange === 'function') processQueueStateChange(s); // log transitions (both queues) even from the wall
+    }
     if (typeof fetchUnifonLiveKpis === 'function') await fetchUnifonLiveKpis();              // recompute queue-ready KPI from it
   } catch(e){}
   try { renderTvData(); } catch(e){}
@@ -14579,10 +14619,11 @@ function tvAgentStatuses() {
     return members.find(m => norm(m.firstname||'')===nf || norm((m.firstname||'')+' '+(m.lastname||''))===norm(name));
   };
   return MY_TEAM.map(name => {
-    let shiftCode='', scheduledNow=false, isNight=false, shiftLabel='';
+    let shiftCode='', scheduledNow=false, isNight=false, shiftLabel='', champion=false;
     if (week && idx>=0) {
       const person = week.people.find(p => norm(p.name.split(' ')[0])===norm(name.split(' ')[0]) || norm(p.name)===norm(name));
       shiftCode = person ? (person.shifts[idx]||'') : '';
+      champion = !!(person && person.roles && person.roles[idx]==='Inbox Champion');
       if (shiftCode && !(typeof ABSENT_SHIFTS!=='undefined' && ABSENT_SHIFTS.has(shiftCode.toLowerCase()))) {
         const tt = (typeof getShiftTimes==='function') ? getShiftTimes(shiftCode) : null;
         if (tt) {
@@ -14603,7 +14644,7 @@ function tvAgentStatuses() {
       else             { status='offq';  color='#ff6b7d'; label='logged off'; }
     } else if (present){ status='busy';  color='#ffb74d'; label='ready · off-shift'; }
     else if (shiftCode){ status='off';   color='rgba(214,243,255,0.3)'; label='off now'; }
-    return { name, shiftCode, scheduledNow, isNight, shiftLabel, idle, present, status, color, label };
+    return { name, shiftCode, scheduledNow, isNight, shiftLabel, idle, present, status, color, label, champion };
   });
 }
 
@@ -14694,7 +14735,7 @@ function renderTvData() {
       const row = el('div','display:grid;grid-template-columns:20px 116px 1fr 38px 96px;gap:10px;align-items:center;');
       row.appendChild(el('div',fira+'font-size:13px;color:'+DIM2+';text-align:center;', (i+1)));
       const nm = el('div','display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:'+LIGHT+';');
-      nm.innerHTML = '<span style="width:9px;height:9px;border-radius:50%;background:'+AC[i%AC.length]+';flex-shrink:0;"></span>'+r.name.split(' ')[0];
+      nm.innerHTML = '<span style="width:9px;height:9px;border-radius:50%;background:'+AC[i%AC.length]+';flex-shrink:0;"></span>'+r.name.split(' ')[0]+(st&&st.champion?' 👑':'');
       row.appendChild(nm);
       const bw = el('div','height:18px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;');
       bw.appendChild(el('div','height:100%;width:'+Math.round(r.solved/max*100)+'%;background:'+AC[i%AC.length]+';border-radius:5px;'));
@@ -14754,7 +14795,7 @@ function renderTvData() {
     onShift.forEach(s => {
       const r = el('div','display:flex;align-items:center;gap:9px;font-size:13px;');
       r.innerHTML = '<span style="width:9px;height:9px;border-radius:50%;background:'+s.color+';flex-shrink:0;"></span>'
-        + '<span style="flex:1;color:'+LIGHT+';font-weight:500;">'+s.name.split(' ')[0]+'</span>'
+        + '<span style="flex:1;color:'+LIGHT+';font-weight:500;">'+s.name.split(' ')[0]+(s.champion?' 👑':'')+'</span>'
         + '<span style="font-size:10px;color:'+DIM+';">'+(s.shiftLabel||'')+' · '+s.label+'</span>';
       ros.appendChild(r);
     });
@@ -15417,6 +15458,23 @@ async function ghLoad() {
     if (Object.keys(data).length > 0) {
       Object.entries(data).forEach(([k, v]) => {
         if (/[^\x00-\x7F]/.test(k)) return; // skip corrupted keys
+        // Queue log: MERGE remote + local (union, dedup) so two computers don't wipe each other's events
+        if (k === QUEUE_LOG_KEY) {
+          try {
+            const remote = JSON.parse(typeof v === 'string' ? v : JSON.stringify(v)) || [];
+            const local  = JSON.parse(localStorage.getItem(QUEUE_LOG_KEY) || '[]') || [];
+            const seen = new Set(), merged = [];
+            local.concat(remote).forEach(e => {
+              const key = (e.ts||'') + '|' + (e.name||'') + '|' + (e.event||'') + '|' + (e.queueId||'');
+              if (!seen.has(key)) { seen.add(key); merged.push(e); }
+            });
+            merged.sort((a,b) => (a.ts||'').localeCompare(b.ts||''));
+            localStorage.setItem(QUEUE_LOG_KEY, JSON.stringify(merged.slice(-MAX_LOG_ENTRIES)));
+          } catch(e) {
+            localStorage.setItem(k, sanitizeStoredData(typeof v === 'string' ? v : JSON.stringify(v)));
+          }
+          return;
+        }
         localStorage.setItem(k, sanitizeStoredData(typeof v === 'string' ? v : JSON.stringify(v)));
       });
       runMigrations();
