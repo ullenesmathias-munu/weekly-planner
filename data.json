@@ -6810,10 +6810,10 @@
     "2026-06-05T21": {
       "date": "2026-06-05",
       "hour": 21,
-      "answered": 0,
+      "answered": 1,
       "missed": 2,
-      "avgWaitSec": 39,
-      "avgHandleSec": 0
+      "avgWaitSec": 201,
+      "avgHandleSec": 755
     }
   },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\nMarvin, does it fetch Slack.\n\n\n\n",
@@ -8193,7 +8193,7 @@
       "avgWaitMissedSec": 142,
       "callbackRequests": 0,
       "overKpi": 38,
-      "savedAt": "2026-05-31T17:52:27.501Z",
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     },
     {
@@ -8207,7 +8207,7 @@
       "avgWaitMissedSec": 107,
       "callbackRequests": 1,
       "overKpi": 15,
-      "savedAt": "2026-06-01T06:19:05.527Z",
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     },
     {
@@ -8235,7 +8235,7 @@
       "avgWaitMissedSec": 124,
       "callbackRequests": 2,
       "overKpi": 79,
-      "savedAt": "2026-06-02T19:04:08.698Z",
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     },
     {
@@ -8249,7 +8249,7 @@
       "avgWaitMissedSec": 136,
       "callbackRequests": 1,
       "overKpi": 172,
-      "savedAt": "2026-06-03T18:55:13.233Z",
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     },
     {
@@ -8263,7 +8263,7 @@
       "avgWaitMissedSec": 161,
       "callbackRequests": 2,
       "overKpi": 114,
-      "savedAt": "2026-06-04T21:00:52.521Z",
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     },
     {
@@ -8277,21 +8277,21 @@
       "avgWaitMissedSec": 323,
       "callbackRequests": 0,
       "overKpi": 118,
-      "savedAt": "2026-06-05T19:42:04.785Z",
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     },
     {
       "date": "2026-06-05",
-      "offered": 152,
-      "answered": 118,
+      "offered": 153,
+      "answered": 119,
       "missed": 34,
-      "avgWaitSec": 246,
-      "avgHandleSec": 477,
-      "avgWaitAnsweredSec": 289,
+      "avgWaitSec": 248,
+      "avgHandleSec": 479,
+      "avgWaitAnsweredSec": 292,
       "avgWaitMissedSec": 100,
       "callbackRequests": 1,
-      "overKpi": 90,
-      "savedAt": "2026-06-05T19:42:04.785Z",
+      "overKpi": 91,
+      "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
     }
   ],
