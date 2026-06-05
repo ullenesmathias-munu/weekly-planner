@@ -8935,19 +8935,19 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-05",
     "toDate": "2026-06-05",
-    "generated": "2026-06-05T13:24:52.215Z",
+    "generated": "2026-06-05T13:29:50.979Z",
     "agents": {
       "Jonas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 19,
+        "zdSolved": 20,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 1,
         "zdEmail": 2,
-        "zdPhone": 17,
+        "zdPhone": 18,
         "zdOpen": 7,
         "zdPending": 6
       },
