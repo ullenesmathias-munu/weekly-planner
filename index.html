@@ -14491,9 +14491,12 @@ function enterTvMode() {
   renderTvData();   // instant paint from cache
   tickClock();
   tvLiveRefresh();  // pull fresh data
+  tvFetchWeather(); // initial weather paint
 
-  const refreshTimer = setInterval(tvLiveRefresh, 300000); // 5 min
+  const refreshTimer = setInterval(tvLiveRefresh, 300000); // 5 min — counts, CSAT, weather
   overlay.dataset.refreshTimer = refreshTimer;
+  const queueTimer = setInterval(tvQueueRefresh, 15000);   // ~15s — live queue presence
+  overlay.dataset.queueTimer = queueTimer;
 }
 
 // Live aggregate stats fetched directly (range-independent, always current)
@@ -14513,6 +14516,16 @@ function tvFetchWeather() {
     }).catch(()=>{});
 }
 
+// Fast, queue-only refresh so "on the queue now" is effectively live (~15s),
+// without re-pulling the heavy stuff (ticket counts, CSAT, weather).
+async function tvQueueRefresh() {
+  try {
+    if (typeof fetchUnifonQueueSummary === 'function') await fetchUnifonQueueSummary(true); // force-fresh queue summary
+    if (typeof fetchUnifonLiveKpis === 'function') await fetchUnifonLiveKpis();              // recompute queue-ready KPI from it
+  } catch(e){}
+  try { renderTvData(); } catch(e){}
+}
+
 async function tvLiveRefresh() {
   if (typeof zdReady === 'function' && zdReady()) {
     const t = localToday();
@@ -14530,22 +14543,24 @@ async function tvLiveRefresh() {
     try { await zdRefresh(); } catch(e){}   // refresh per-agent zdData for the leaderboard
   }
   try { if (typeof hasUnifonApi === 'function' && hasUnifonApi()) await fetchUnifonLiveKpis(); } catch(e){}
-  // CSAT — team, last 30 days
+  // CSAT — team last 30 days, falling back to all ratings if the team filter empties it
   if (typeof zdReady === 'function' && zdReady()) {
     try {
       const endTs = Math.floor(Date.now()/1000), startTs = endTs - 30*24*3600;
-      const cs = await zdFetch('/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100');
+      const cs = await zdFetch('/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]}));
+      const all = (cs && cs.satisfaction_ratings) || [];
       const teamIds = new Set((typeof zdAgents!=='undefined' && Array.isArray(zdAgents) ? zdAgents : [])
         .filter(a => MY_TEAM.some(n => n.split(' ')[0].toLowerCase() === (a.name||'').split(' ')[0].toLowerCase()))
         .map(a => String(a.id)));
-      let ratings = (cs && cs.satisfaction_ratings) || [];
-      if (teamIds.size) ratings = ratings.filter(r => teamIds.has(String(r.assignee_id)));
-      const good = ratings.filter(r => r.score==='good').length;
-      const bad  = ratings.filter(r => r.score==='bad').length;
-      tvStats.csat = (good+bad) > 0 ? Math.round(good/(good+bad)*100) : null;
+      const teamR = teamIds.size ? all.filter(r => teamIds.has(String(r.assignee_id))) : all;
+      const useR = teamR.length ? teamR : all;   // don't let the team filter blank it out
+      const good  = useR.filter(r => r.score==='good').length;
+      const total = useR.filter(r => r.score==='good' || r.score==='bad').length;
+      tvStats.csat = total > 0 ? Math.round(good/total*100) : null;
     } catch(e){}
   }
   window.__tvLastFetch = new Date();
+  try { tvFetchWeather(); } catch(e){}
   tvStats.ts = Date.now();
   renderTvData();
 }
@@ -14699,20 +14714,34 @@ function renderTvData() {
 
   // Right column
   const rcol = el('div','display:flex;flex-direction:column;gap:14px;min-height:0;');
-  // Coverage
-  const covP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:14px;padding:14px 16px;flex:0 0 auto;');
-  covP.appendChild(el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;','Live queue coverage'));
-  const covRow = el('div','display:flex;align-items:baseline;gap:10px;');
-  covRow.appendChild(el('div',fira+'font-size:50px;line-height:1;color:'+(readyNow===0?RED:readyNow/(denom||1)<0.6?AMBER:GREEN)+';', readyNow+'/'+(denom||0)));
-  const covLbl = el('div','font-size:11px;color:'+DIM+';'); covLbl.innerHTML='ready of<br>scheduled now'; covRow.appendChild(covLbl);
-  covP.appendChild(covRow);
-  const wRow = el('div','display:flex;gap:10px;margin-top:12px;');
-  const wq = el('div','flex:1;background:rgba(255,255,255,0.03);border-radius:8px;padding:8px 10px;');
-  wq.appendChild(el('div',fira+'font-size:22px;color:'+(avgWaitSec>180?RED:avgWaitSec>120?AMBER:GREEN)+';', avgWaitSec!=null?fmtWait(avgWaitSec):'—'));
-  wq.appendChild(el('div','font-size:8.5px;text-transform:uppercase;letter-spacing:0.08em;color:'+DIM+';margin-top:3px;','Avg wait (answered)'));
-  wRow.appendChild(wq);
-  covP.appendChild(wRow);
-  rcol.appendChild(covP);
+  // Open tickets per agent (current workload) — reuses zdData, no extra queries
+  const opP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:14px;padding:14px 16px;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;');
+  const opTeam = (typeof zdAgents!=='undefined' && zdAgents.length)
+    ? zdAgents.filter(a=>MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0]))
+        .map(a=>({ name:a.name, open:(zdData[a.id]&&zdData[a.id].open)||0 }))
+        .sort((x,y)=>y.open-x.open)
+    : [];
+  const opTotal = opTeam.reduce((s,r)=>s+r.open,0);
+  const opH = el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;display:flex;justify-content:space-between;');
+  opH.innerHTML = '<span>Open tickets per agent</span><span>'+opTotal+' assigned</span>';
+  opP.appendChild(opH);
+  const opList = el('div','display:flex;flex-direction:column;gap:5px;flex:1;justify-content:space-around;overflow:hidden;');
+  if (opTeam.length) {
+    const omax = Math.max(...opTeam.map(r=>r.open), 1);
+    opTeam.forEach(r => {
+      const row = el('div','display:grid;grid-template-columns:86px 1fr 30px;gap:9px;align-items:center;');
+      row.appendChild(el('div','font-size:13px;color:'+LIGHT+';font-weight:500;', r.name.split(' ')[0]));
+      const bw = el('div','height:14px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;');
+      bw.appendChild(el('div','height:100%;width:'+Math.round(r.open/omax*100)+'%;background:rgba(77,171,247,0.75);border-radius:4px;',''));
+      row.appendChild(bw);
+      row.appendChild(el('div',fira+'font-size:16px;text-align:right;color:'+LIGHT+';', r.open));
+      opList.appendChild(row);
+    });
+  } else {
+    opList.appendChild(el('div','font-size:12px;color:'+DIM2+';padding:8px 0;','Waiting for ticket data… (load Tickets tab once)'));
+  }
+  opP.appendChild(opList);
+  rcol.appendChild(opP);
 
   // On shift now roster
   const rosP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:14px;padding:14px 16px;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;');
@@ -14738,18 +14767,7 @@ function renderTvData() {
   tvRoot.appendChild(main);
 
   // ── BOTTOM BAND ──
-  const bot = el('div','grid-column:1/-1;display:grid;grid-template-columns:1fr 1.4fr;gap:14px;');
-  // Team output today
-  const toP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:12px;padding:12px 16px;');
-  toP.appendChild(el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;','Team output — solved '+rangeLabel));
-  const activeSolvers = (typeof zdAgents!=='undefined') ? zdAgents.filter(a=>MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0]) && (zdData[a.id]&&zdData[a.id].solved>0)).length : 0;
-  const teamSolved = (typeof zdAgents!=='undefined') ? zdAgents.filter(a=>MY_TEAM.some(n=>n.split(' ')[0]===a.name.split(' ')[0])).reduce((s,a)=>s+((zdData[a.id]&&zdData[a.id].solved)||0),0) : 0;
-  const toGrid = el('div','display:flex;gap:18px;');
-  [[teamSolved,'Solved'],[activeSolvers,'Active agents'],[activeSolvers?Math.round(teamSolved/activeSolvers*10)/10:'—','Avg / agent']].forEach(([v,l])=>{
-    const c=el('div'); c.appendChild(el('div',fira+'font-size:30px;color:'+LIGHT+';', v)); c.appendChild(el('div','font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:'+DIM+';margin-top:3px;', l)); toGrid.appendChild(c);
-  });
-  toP.appendChild(toGrid);
-  bot.appendChild(toP);
+  const bot = el('div','grid-column:1/-1;');
 
   // Weekly solved trend (from snapshots)
   const trP = el('div','background:'+PANEL+';border:1px solid '+PANELB+';border-radius:12px;padding:12px 16px;');
@@ -14773,7 +14791,6 @@ function renderTvData() {
   trP.appendChild(spark);
   bot.appendChild(trP);
   tvRoot.appendChild(bot);
-  try { tvFetchWeather(); } catch(e){}
 }
 
 function exitTvMode() {
@@ -14783,6 +14800,7 @@ function exitTvMode() {
   // Clear timers
   if (overlay.dataset.clockTimer) clearInterval(parseInt(overlay.dataset.clockTimer));
   if (overlay.dataset.refreshTimer) clearInterval(parseInt(overlay.dataset.refreshTimer));
+  if (overlay.dataset.queueTimer) clearInterval(parseInt(overlay.dataset.queueTimer));
   const tvRoot = document.getElementById('tv-root');
   if (tvRoot) tvRoot.innerHTML = '';
 }
