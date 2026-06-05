@@ -6678,6 +6678,142 @@
       "missed": 1,
       "avgWaitSec": 44,
       "avgHandleSec": 214
+    },
+    "2026-06-05T01": {
+      "date": "2026-06-05",
+      "hour": 1,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 74,
+      "avgHandleSec": 183
+    },
+    "2026-06-05T06": {
+      "date": "2026-06-05",
+      "hour": 6,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 12,
+      "avgHandleSec": 129
+    },
+    "2026-06-05T07": {
+      "date": "2026-06-05",
+      "hour": 7,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 11,
+      "avgHandleSec": 283
+    },
+    "2026-06-05T08": {
+      "date": "2026-06-05",
+      "hour": 8,
+      "answered": 10,
+      "missed": 1,
+      "avgWaitSec": 23,
+      "avgHandleSec": 333
+    },
+    "2026-06-05T09": {
+      "date": "2026-06-05",
+      "hour": 9,
+      "answered": 7,
+      "missed": 1,
+      "avgWaitSec": 70,
+      "avgHandleSec": 322
+    },
+    "2026-06-05T10": {
+      "date": "2026-06-05",
+      "hour": 10,
+      "answered": 11,
+      "missed": 2,
+      "avgWaitSec": 77,
+      "avgHandleSec": 389
+    },
+    "2026-06-05T11": {
+      "date": "2026-06-05",
+      "hour": 11,
+      "answered": 13,
+      "missed": 1,
+      "avgWaitSec": 111,
+      "avgHandleSec": 566
+    },
+    "2026-06-05T12": {
+      "date": "2026-06-05",
+      "hour": 12,
+      "answered": 9,
+      "missed": 1,
+      "avgWaitSec": 18,
+      "avgHandleSec": 466
+    },
+    "2026-06-05T13": {
+      "date": "2026-06-05",
+      "hour": 13,
+      "answered": 11,
+      "missed": 8,
+      "avgWaitSec": 491,
+      "avgHandleSec": 526
+    },
+    "2026-06-05T14": {
+      "date": "2026-06-05",
+      "hour": 14,
+      "answered": 15,
+      "missed": 3,
+      "avgWaitSec": 102,
+      "avgHandleSec": 485
+    },
+    "2026-06-05T15": {
+      "date": "2026-06-05",
+      "hour": 15,
+      "answered": 8,
+      "missed": 6,
+      "avgWaitSec": 307,
+      "avgHandleSec": 790
+    },
+    "2026-06-05T16": {
+      "date": "2026-06-05",
+      "hour": 16,
+      "answered": 8,
+      "missed": 2,
+      "avgWaitSec": 124,
+      "avgHandleSec": 504
+    },
+    "2026-06-05T17": {
+      "date": "2026-06-05",
+      "hour": 17,
+      "answered": 4,
+      "missed": 3,
+      "avgWaitSec": 40,
+      "avgHandleSec": 960
+    },
+    "2026-06-05T18": {
+      "date": "2026-06-05",
+      "hour": 18,
+      "answered": 9,
+      "missed": 2,
+      "avgWaitSec": 667,
+      "avgHandleSec": 235
+    },
+    "2026-06-05T19": {
+      "date": "2026-06-05",
+      "hour": 19,
+      "answered": 5,
+      "missed": 2,
+      "avgWaitSec": 696,
+      "avgHandleSec": 502
+    },
+    "2026-06-05T20": {
+      "date": "2026-06-05",
+      "hour": 20,
+      "answered": 5,
+      "missed": 0,
+      "avgWaitSec": 923,
+      "avgHandleSec": 473
+    },
+    "2026-06-05T21": {
+      "date": "2026-06-05",
+      "hour": 21,
+      "answered": 0,
+      "missed": 2,
+      "avgWaitSec": 39,
+      "avgHandleSec": 0
     }
   },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\nMarvin, does it fetch Slack.\n\n\n\n",
@@ -8141,7 +8277,21 @@
       "avgWaitMissedSec": 323,
       "callbackRequests": 0,
       "overKpi": 118,
-      "savedAt": "2026-06-04T21:00:52.521Z",
+      "savedAt": "2026-06-05T19:42:04.785Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-06-05",
+      "offered": 152,
+      "answered": 118,
+      "missed": 34,
+      "avgWaitSec": 246,
+      "avgHandleSec": 477,
+      "avgWaitAnsweredSec": 289,
+      "avgWaitMissedSec": 100,
+      "callbackRequests": 1,
+      "overKpi": 90,
+      "savedAt": "2026-06-05T19:42:04.785Z",
       "source": "import"
     }
   ],
