@@ -2411,9 +2411,9 @@
   .role-summary-card-new { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
   .role-summary-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .role-summary-header-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
-  .role-summary-cols { display: grid; grid-template-columns: 1fr 1fr; }
-  .role-summary-col { padding: 16px 20px; }
-  .role-summary-col:first-child { border-right: 1px solid var(--border); }
+  .role-summary-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  .role-summary-col { padding: 14px 18px; border-right: 1px solid var(--border); }
+  .role-summary-col:last-child { border-right: none; }
   .role-summary-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
   .role-summary-col-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
   .role-summary-role-row { display: flex; align-items: center; gap: 0; margin-bottom: 10px; }
@@ -4383,6 +4383,8 @@ function renderWingman() {
   const container = document.getElementById('wingman-section');
   if (!container) return;
   container.innerHTML = '';
+  container.style.display = 'none'; // Project Wingman removed — no card, no conflict alerts
+  return;
   const today = localToday();
 
   // Check for conflicts in current week
@@ -5208,8 +5210,11 @@ function checkRoleConflicts(w) {
   // Only alert on these roles — Freelancer excluded
   const ALERT_ROLES = ['Inbox Champion'];
   const blocks = [
-    { label: 'Mon–Wed', days: [0,1,2], roles: ['Phone Guru', 'Inbox Champion', 'SLA Sherpa'] },
-    { label: 'Thu–Fri', days: [3,4],   roles: ['Inbox Champion', 'SLA Sherpa'] }, // No Phone Guru Thu-Fri
+    { label: 'Mon', days: [0], roles: ['Inbox Champion'] },
+    { label: 'Tue', days: [1], roles: ['Inbox Champion'] },
+    { label: 'Wed', days: [2], roles: ['Inbox Champion'] },
+    { label: 'Thu', days: [3], roles: ['Inbox Champion'] },
+    { label: 'Fri', days: [4], roles: ['Inbox Champion'] },
   ];
   const conflicts = [];
   blocks.forEach(block => {
@@ -5227,10 +5232,7 @@ function checkRoleConflicts(w) {
           });
         }
       });
-      // Alert if no one assigned (only for roles we care about in this block)
-      if (!assigned.length) {
-        conflicts.push({ role, person: null, block: block.label, reason: 'UNASSIGNED', days: block.label, severity: 'warn' });
-      }
+      // (no "unassigned" alert — a day without an Inbox Champion isn't a conflict)
     });
   });
   return conflicts;
@@ -5311,8 +5313,11 @@ function renderRoleSummary(w) {
   const ROLE_ICONS = { 'Inbox Champion': '👑' };
   const ROLE_CHIP_CLASS = { 'Phone Guru': 'chip-phone-guru', 'Inbox Champion': 'chip-inbox-champ', 'SLA Sherpa': 'chip-sla-sherpa', 'Freelancer': 'chip-freelancer' };
   const blocks = [
-    { label: 'Mon – Wed', days: [0, 1, 2] },
-    { label: 'Thu – Fri', days: [3, 4] },
+    { label: 'Mon', days: [0] },
+    { label: 'Tue', days: [1] },
+    { label: 'Wed', days: [2] },
+    { label: 'Thu', days: [3] },
+    { label: 'Fri', days: [4] },
   ];
 
   const card = document.createElement('div'); card.className = 'role-summary-card-new';
@@ -14599,19 +14604,14 @@ async function tvLiveRefresh() {
     try { await zdRefresh(); } catch(e){}   // refresh per-agent zdData for the leaderboard
   }
   try { if (typeof hasUnifonApi === 'function' && hasUnifonApi()) await fetchUnifonLiveKpis(); } catch(e){}
-  // CSAT — team last 30 days, falling back to all ratings if the team filter empties it
+  // CSAT — last 30 days (all received ratings, mirroring the report view that works)
   if (typeof zdReady === 'function' && zdReady()) {
     try {
       const endTs = Math.floor(Date.now()/1000), startTs = endTs - 30*24*3600;
       const cs = await zdFetch('/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]}));
       const all = (cs && cs.satisfaction_ratings) || [];
-      const teamIds = new Set((typeof zdAgents!=='undefined' && Array.isArray(zdAgents) ? zdAgents : [])
-        .filter(a => MY_TEAM.some(n => n.split(' ')[0].toLowerCase() === (a.name||'').split(' ')[0].toLowerCase()))
-        .map(a => String(a.id)));
-      const teamR = teamIds.size ? all.filter(r => teamIds.has(String(r.assignee_id))) : all;
-      const useR = teamR.length ? teamR : all;   // don't let the team filter blank it out
-      const good  = useR.filter(r => r.score==='good').length;
-      const total = useR.filter(r => r.score==='good' || r.score==='bad').length;
+      const good  = all.filter(r => r.score==='good').length;
+      const total = all.filter(r => r.score==='good' || r.score==='bad').length;
       tvStats.csat = total > 0 ? Math.round(good/total*100) : null;
     } catch(e){}
   }
@@ -14671,6 +14671,16 @@ function renderTvData() {
   const PANEL='rgba(255,255,255,0.04)', PANELB='rgba(214,243,255,0.1)';
   const GREEN='#69db7c', AMBER='#ffb74d', RED='#ff6b7d';
   const AC=['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  // Stable colour per agent by solved-rank, so the open-per-agent bars match the solved leaderboard
+  const _teamAgentsTv = (typeof zdAgents!=='undefined' && Array.isArray(zdAgents) ? zdAgents : [])
+    .filter(a => MY_TEAM.some(n => n.split(' ')[0] === (a.name||'').split(' ')[0]));
+  const _solvedSorted = _teamAgentsTv
+    .map(a => ({ fn:(a.name||'').split(' ')[0], solved:(zdData[a.id]&&zdData[a.id].solved)||0 }))
+    .sort((x,y)=>y.solved-x.solved);
+  const solvedColor = {};
+  _solvedSorted.forEach((r,i)=>{ if (solvedColor[r.fn]===undefined) solvedColor[r.fn]=AC[i%AC.length]; });
+  const _hasZd = _teamAgentsTv.some(a => zdData[a.id]);
+  const _teamOpen = _hasZd ? _teamAgentsTv.reduce((s,a)=>s+((zdData[a.id]&&zdData[a.id].open)||0),0) : null;
   const fira = "font-family:'Fira Sans',sans-serif;font-weight:900;letter-spacing:-0.03em;";
   const el = (t,css,txt) => { const d=document.createElement(t); if(css)d.style.cssText=css; if(txt!=null)d.textContent=txt; return d; };
 
@@ -14715,10 +14725,10 @@ function renderTvData() {
     if (sub) c.appendChild(el('div','font-size:9px;color:'+DIM2+';margin-top:2px;', sub));
     return c;
   };
-  const openV = tvStats.open!=null?tvStats.open:'—';
+  const openV = _teamOpen!=null ? _teamOpen : (tvStats.open!=null?tvStats.open:'—');
   const unV   = tvStats.unassigned!=null?tvStats.unassigned:'—';
   const solV  = tvStats.solvedToday!=null?tvStats.solvedToday:'—';
-  kpis.appendChild(mkKpi(openV, 'Open tickets', (+openV>100?RED:+openV>60?AMBER:LIGHT), 'backlog'));
+  kpis.appendChild(mkKpi(openV, 'Open tickets', (+openV>100?RED:+openV>60?AMBER:LIGHT), 'assigned to L1'));
   kpis.appendChild(mkKpi(unV, 'Unassigned', (+unV>10?RED:+unV>3?AMBER:GREEN), 'needs pickup'));
   kpis.appendChild(mkKpi(solV, 'Solved today', GREEN, 'group total'));
   kpis.appendChild(mkKpi(avgWaitSec!=null?fmtWait(avgWaitSec):'—', 'Avg wait', (avgWaitSec>180?RED:avgWaitSec>120?AMBER:GREEN), 'answered · active queue'));
@@ -14767,6 +14777,28 @@ function renderTvData() {
     lb.appendChild(el('div','font-size:13px;color:'+DIM2+';padding:20px 0;','Waiting for ticket data… (load Tickets tab once)'));
   }
   lbPanel.appendChild(lb);
+  // Solved today vs the average day (trailing weekly snapshots, working-day basis)
+  let _avgDaily = null;
+  if (typeof getWeeklySnapshot==='function' && typeof getMonday==='function') {
+    const _wtot = [];
+    for (let i=4;i>=1;i--) {
+      const _snap = getWeeklySnapshot(fmtLocal(getMonday(-i)));
+      if (_snap && _snap.agents) _wtot.push(Object.values(_snap.agents).reduce((s,a)=>s+((a.zdSolved)||0),0));
+    }
+    if (_wtot.length) _avgDaily = (_wtot.reduce((s,v)=>s+v,0)/_wtot.length)/5;
+  }
+  const _solToday = tvStats.solvedToday;
+  if (_solToday!=null && _avgDaily && _avgDaily>0) {
+    const _delta = Math.round((_solToday - _avgDaily)/_avgDaily*100);
+    const _up = _delta >= 0;
+    const cmp = el('div','display:flex;align-items:baseline;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid '+PANELB+';');
+    cmp.appendChild(el('div',fira+'font-size:26px;color:'+LIGHT+';', _solToday));
+    cmp.appendChild(el('div','font-size:12px;color:'+DIM+';','solved today'));
+    const badge = el('div','font-size:13px;font-weight:700;margin-left:auto;color:'+(_up?GREEN:'#ff8787')+';');
+    badge.textContent = (_up?'▲ ':'▼ ')+Math.abs(_delta)+'% vs avg day ('+Math.round(_avgDaily)+')';
+    cmp.appendChild(badge);
+    lbPanel.appendChild(cmp);
+  }
   main.appendChild(lbPanel);
 
   // Right column
@@ -14789,7 +14821,7 @@ function renderTvData() {
       const row = el('div','display:grid;grid-template-columns:86px 1fr 30px;gap:9px;align-items:center;');
       row.appendChild(el('div','font-size:13px;color:'+LIGHT+';font-weight:500;', r.name.split(' ')[0]));
       const bw = el('div','height:14px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;');
-      bw.appendChild(el('div','height:100%;width:'+Math.round(r.open/omax*100)+'%;background:rgba(77,171,247,0.75);border-radius:4px;',''));
+      bw.appendChild(el('div','height:100%;width:'+Math.round(r.open/omax*100)+'%;background:'+(solvedColor[r.name.split(' ')[0]]||'rgba(77,171,247,0.75)')+';border-radius:4px;',''));
       row.appendChild(bw);
       row.appendChild(el('div',fira+'font-size:16px;text-align:right;color:'+LIGHT+';', r.open));
       opList.appendChild(row);
