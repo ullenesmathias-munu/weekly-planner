@@ -13703,6 +13703,44 @@
         "totalWaitSec": 1463,
         "missed": 1
       }
+    },
+    "2026-06-05": {
+      "Thomas Hildre": {
+        "answered": 22,
+        "totalTalkSec": 8672,
+        "totalWaitSec": 3985,
+        "missed": 3
+      },
+      "Marie Gjengedal": {
+        "answered": 20,
+        "totalTalkSec": 8824,
+        "totalWaitSec": 3081,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 15,
+        "totalTalkSec": 8839,
+        "totalWaitSec": 3373,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 14,
+        "totalTalkSec": 7642,
+        "totalWaitSec": 1921,
+        "missed": 1
+      },
+      "Jonas Johannes": {
+        "answered": 27,
+        "totalTalkSec": 11222,
+        "totalWaitSec": 3310,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 19,
+        "totalTalkSec": 6281,
+        "totalWaitSec": 1476,
+        "missed": 0
+      }
     }
   },
   "wtp_intel_snap_2026-01-19": {
