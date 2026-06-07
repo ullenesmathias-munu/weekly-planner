@@ -5358,15 +5358,23 @@ function renderRoleSummary(w) {
           chip.appendChild(dot);
           chip.appendChild(document.createTextNode(name));
           if (isAdmin()) {
-            chip.title = 'Click to change role';
-            chip.onclick = () => showRoleEditPopup(chip, name, block.days, w, role);
+            chip.title = 'Click to change or clear the champion';
+            chip.onclick = () => showChampionPicker(chip, block.days, w);
           } else {
             chip.style.cursor = 'default';
           }
           peopleWrap.appendChild(chip);
         });
       } else {
-        const empty = document.createElement('span'); empty.className = 'role-summary-empty'; empty.textContent = 'none';
+        const empty = document.createElement('span'); empty.className = 'role-summary-empty';
+        if (isAdmin()) {
+          empty.textContent = '+ assign';
+          empty.style.cssText = 'cursor:pointer;color:var(--cal-text);font-weight:600;';
+          empty.title = 'Assign an Inbox Champion for this day';
+          empty.onclick = () => showChampionPicker(empty, block.days, w);
+        } else {
+          empty.textContent = 'none';
+        }
         peopleWrap.appendChild(empty);
       }
 
@@ -5426,6 +5434,54 @@ function showRoleEditPopup(anchor, personName, dayIdxs, w, currentRole) {
   setTimeout(() => document.addEventListener('click', () => popup.remove(), { once: true }), 0);
 }
 
+// Pick / switch / clear the Inbox Champion for a given day (or block of days). One champion per day.
+function showChampionPicker(anchor, dayIdxs, w) {
+  document.querySelectorAll('.role-edit-popup').forEach(p => p.remove());
+  if (!w || !w.people) return;
+  const popup = document.createElement('div');
+  popup.className = 'role-edit-popup';
+  popup.style.cssText = 'position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-md);box-shadow:0 4px 20px rgba(0,0,0,0.5);z-index:300;min-width:180px;max-height:340px;overflow-y:auto;animation:fadeIn 0.1s ease;';
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'padding:8px 12px 6px;font-size:11px;color:var(--text3);border-bottom:0.5px solid var(--border);font-weight:600;';
+  hdr.textContent = 'Inbox Champion';
+  popup.appendChild(hdr);
+  const apply = fn => {
+    dayIdxs.forEach(di => {
+      w.people.forEach(p => { if (p.roles && p.roles[di] === 'Inbox Champion') p.roles[di] = ''; }); // one champion per day
+      fn(di);
+    });
+    localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE));
+    scheduleSyncSave();
+    popup.remove();
+    renderRoleSummary(w);
+    if (typeof renderSchedule === 'function') renderSchedule();
+  };
+  const clearItem = document.createElement('div');
+  clearItem.style.cssText = 'padding:7px 12px;cursor:pointer;font-size:12px;color:var(--text3);border-bottom:0.5px solid var(--border);';
+  clearItem.textContent = '— No champion';
+  clearItem.onmouseover = () => clearItem.style.background = 'var(--surface3)';
+  clearItem.onmouseout = () => clearItem.style.background = '';
+  clearItem.onclick = () => apply(() => {});
+  popup.appendChild(clearItem);
+  w.people.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(person => {
+    const isChamp = dayIdxs.some(di => person.roles && person.roles[di] === 'Inbox Champion');
+    const item = document.createElement('div');
+    item.style.cssText = 'padding:7px 12px;cursor:pointer;font-size:12px;display:flex;align-items:center;gap:8px;' + (isChamp ? 'background:var(--surface2);' : '');
+    item.onmouseover = () => item.style.background = 'var(--surface3)';
+    item.onmouseout = () => item.style.background = isChamp ? 'var(--surface2)' : '';
+    item.textContent = (isChamp ? '👑 ' : '') + person.name;
+    item.onclick = () => apply(di => { if (!person.roles) person.roles = ['','','','','','','']; person.roles[di] = 'Inbox Champion'; });
+    popup.appendChild(item);
+  });
+  const rect = anchor.getBoundingClientRect();
+  document.body.appendChild(popup);
+  const pw = popup.offsetWidth, ph = popup.offsetHeight;
+  let top = rect.bottom + 4, left = rect.left;
+  if (top + ph > window.innerHeight - 10) top = rect.top - ph - 4;
+  if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+  popup.style.top = top + 'px'; popup.style.left = left + 'px';
+  setTimeout(() => document.addEventListener('click', () => popup.remove(), { once: true }), 0);
+}
 // ─── Planner tab ──────────────────────────────────────────────────
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 let weekOffset = 0;
