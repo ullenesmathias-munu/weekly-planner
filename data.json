@@ -10982,19 +10982,19 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
     "toDate": "2026-06-07",
-    "generated": "2026-06-08T07:23:45.374Z",
+    "generated": "2026-06-08T09:40:17.496Z",
     "agents": {
       "Jonas": {
         "answered": 92,
         "missed": 6,
         "avgTalk": 438,
         "avgWait": 246,
-        "zdSolved": 104,
+        "zdSolved": 103,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 4,
         "zdEmail": 14,
-        "zdPhone": 90,
+        "zdPhone": 89,
         "zdOpen": 9,
         "zdPending": 6
       },
@@ -11023,8 +11023,8 @@
         "dayDays": 2,
         "zdEmail": 2,
         "zdPhone": 39,
-        "zdOpen": 5,
-        "zdPending": 3
+        "zdOpen": 6,
+        "zdPending": 4
       },
       "Benjamin": {
         "answered": 0,
@@ -11037,21 +11037,21 @@
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
-        "zdOpen": 5,
-        "zdPending": 0
+        "zdOpen": 8,
+        "zdPending": 3
       },
       "Cecilie": {
         "answered": 112,
         "missed": 4,
         "avgTalk": 483,
         "avgWait": 264,
-        "zdSolved": 126,
+        "zdSolved": 125,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
         "zdEmail": 1,
-        "zdPhone": 125,
-        "zdOpen": 16,
+        "zdPhone": 124,
+        "zdOpen": 8,
         "zdPending": 4
       },
       "Tord": {
@@ -11079,22 +11079,22 @@
         "dayDays": 5,
         "zdEmail": 18,
         "zdPhone": 88,
-        "zdOpen": 10,
-        "zdPending": 7
+        "zdOpen": 8,
+        "zdPending": 6
       },
       "Andreas": {
         "answered": 109,
         "missed": 6,
         "avgTalk": 417,
         "avgWait": 43,
-        "zdSolved": 140,
+        "zdSolved": 137,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 47,
-        "zdPhone": 93,
-        "zdOpen": 5,
-        "zdPending": 9
+        "zdPhone": 90,
+        "zdOpen": 6,
+        "zdPending": 8
       },
       "Julie": {
         "answered": 0,
@@ -11121,7 +11121,7 @@
         "dayDays": 5,
         "zdEmail": 11,
         "zdPhone": 74,
-        "zdOpen": 14,
+        "zdOpen": 12,
         "zdPending": 1
       }
     },
