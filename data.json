@@ -2234,6 +2234,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-08T06:39:04.122Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -8590,7 +8597,7 @@
       "queueId": 43500
     },
     "43500_Mayl\u00e9n_Milson": {
-      "ready": true,
+      "ready": false,
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
