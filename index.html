@@ -7682,6 +7682,237 @@ function getAgentQueueStats(agentName, fromDate, toDate) {
   };
 }
 
+// ─── AGENT REVIEW (manager-facing, last 4 complete weeks) ────────────────
+async function openAgentReview(agentName) {
+  const first = agentName.split(' ')[0];
+
+  // Modal shell
+  const ov = document.createElement('div');
+  ov.className = 'agent-review-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.62);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px;';
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--surface,#1a1a1f);border:1px solid var(--border,#2a2a30);border-radius:16px;max-width:780px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.55);';
+  ov.appendChild(modal);
+  ov.onclick = e => { if (e.target === ov) document.body.removeChild(ov); };
+  document.body.appendChild(ov);
+
+  const head = document.createElement('div');
+  head.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);gap:12px;';
+  const htxt = document.createElement('div');
+  htxt.innerHTML = '<div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#F1B7F2);">Performance review</div>'
+    + '<div style="font-size:23px;font-weight:900;font-family:\'Fira Sans\',sans-serif;color:var(--text);line-height:1.1;margin-top:2px;">' + agentName + '</div>'
+    + '<div id="ar-period" style="font-size:11px;color:var(--text3);margin-top:3px;">Last 4 complete weeks</div>';
+  const btns = document.createElement('div'); btns.style.cssText = 'display:flex;gap:8px;flex-shrink:0;';
+  const copyBtn = document.createElement('button'); copyBtn.className = 'btn-save'; copyBtn.style.cssText = 'font-size:12px;padding:6px 12px;'; copyBtn.textContent = 'Copy summary'; copyBtn.disabled = true;
+  const printBtn = document.createElement('button'); printBtn.className = 'btn-save'; printBtn.style.cssText = 'font-size:12px;padding:6px 12px;'; printBtn.textContent = 'Print / PDF'; printBtn.disabled = true;
+  const closeBtn = document.createElement('button'); closeBtn.style.cssText = 'background:none;border:none;color:var(--text3);font-size:24px;cursor:pointer;line-height:1;padding:0 2px;'; closeBtn.textContent = '×'; closeBtn.onclick = () => { try { document.body.removeChild(ov); } catch(e){} };
+  btns.appendChild(copyBtn); btns.appendChild(printBtn); btns.appendChild(closeBtn);
+  head.appendChild(htxt); head.appendChild(btns);
+  modal.appendChild(head);
+
+  const bodyEl = document.createElement('div'); bodyEl.style.cssText = 'padding:18px 24px 24px;';
+  bodyEl.innerHTML = '<div style="text-align:center;color:var(--text3);font-size:13px;padding:46px 0;">Gathering 4 weeks of Zendesk, Unifon and presence data…</div>';
+  modal.appendChild(bodyEl);
+
+  // ── Period: last 4 COMPLETE weeks ──
+  const startMon = fmtLocal(getMonday(-4));
+  const endSun   = fmtLocal(new Date(getMonday(0).getTime() - 86400000));
+  document.getElementById('ar-period').textContent = startMon + ' → ' + endSun + '  ·  4 complete weeks';
+
+  // ── Snapshots: weekly solved + calls (trend + team avg) ──
+  const teamList = (typeof MY_TEAM !== 'undefined' && MY_TEAM) ? MY_TEAM : [];
+  const snapAgentSolved = name => { let s = 0; for (let i = 4; i >= 1; i--) { const sn = (typeof getWeeklySnapshot === 'function') ? getWeeklySnapshot(fmtLocal(getMonday(-i))) : null; const a = sn && sn.agents ? sn.agents[name] : null; s += (a && a.zdSolved) || 0; } return s; };
+  const weeks = [];
+  for (let i = 4; i >= 1; i--) {
+    const wMon = fmtLocal(getMonday(-i));
+    const sn = (typeof getWeeklySnapshot === 'function') ? getWeeklySnapshot(wMon) : null;
+    const a = sn && sn.agents ? sn.agents[agentName] : null;
+    weeks.push({ week: wMon, solved: (a && a.zdSolved) || 0, answered: (a && a.answered) || 0, missed: (a && a.missed) || 0 });
+  }
+  const teamSolved4 = teamList.map(snapAgentSolved).filter((v, i) => true);
+  const avgSolved4  = teamSolved4.length ? teamSolved4.reduce((s, v) => s + v, 0) / teamSolved4.length : null;
+
+  // ── Unifon 4wk (live helper) ──
+  const uni = (typeof getUnifonAgentStats === 'function') ? getUnifonAgentStats(agentName, startMon, endSun) : null;
+  const answered4 = uni ? uni.answered : weeks.reduce((s, w) => s + w.answered, 0);
+  const missed4   = uni ? uni.missed   : weeks.reduce((s, w) => s + w.missed, 0);
+  const talk4     = uni ? (uni.avgTalkSec || null) : null;
+  const teamAnswered = teamList.map(n => { const u = getUnifonAgentStats ? getUnifonAgentStats(n, startMon, endSun) : null; return u ? u.answered : null; }).filter(v => v != null);
+  const avgAnswered4 = teamAnswered.length ? teamAnswered.reduce((s, v) => s + v, 0) / teamAnswered.length : null;
+  const teamMissedArr = teamList.map(n => { const u = getUnifonAgentStats ? getUnifonAgentStats(n, startMon, endSun) : null; return u ? u.missed : null; }).filter(v => v != null);
+  const avgMissed4 = teamMissedArr.length ? teamMissedArr.reduce((s, v) => s + v, 0) / teamMissedArr.length : null;
+
+  // ── Presence 4wk ──
+  const q = (typeof getAgentQueueStats === 'function') ? getAgentQueueStats(agentName, startMon, endSun) : null;
+
+  // ── Workload now ──
+  const live = (typeof loadAgentLiveStats === 'function') ? (loadAgentLiveStats()[agentName] || {}) : {};
+
+  // ── ZD live: CSAT + MTTR (agent + L1 group) ──
+  let solved4Zd = null, agentCsat = null, agentCsatN = 0, teamCsat = null, teamCsatN = 0;
+  let agentMttr = null, agentMttrN = 0, teamMttr = null, teamMttrN = 0;
+  if (typeof zdReady === 'function' && zdReady()) {
+    try {
+      const fromTs = Math.floor(new Date(startMon + 'T00:00:00').getTime() / 1000);
+      const toTs   = Math.floor(new Date(endSun + 'T23:59:59').getTime() / 1000);
+      const gId = (typeof zdGroupId !== 'undefined' && zdGroupId) || (typeof zdGetGroupId === 'function' ? await zdGetGroupId().catch(() => null) : null);
+      const grpQ = gId ? ' group:' + gId : '';
+      const zid = live.zdAgentId
+        || (typeof loadProfile === 'function' && (loadProfile(agentName) || {}).zdAgentId)
+        || (((typeof zdAgents !== 'undefined' && zdAgents) || []).find(a => normName(a.name) === normName(agentName) || normName(a.name.split(' ')[0]) === normName(agentName.split(' ')[0])) || {}).id;
+      const l1Ids = new Set(((typeof zdAgents !== 'undefined' && zdAgents) || []).map(a => a.id));
+
+      // accurate solved count for agent over window
+      if (zid && typeof zdCount === 'function') {
+        solved4Zd = await zdCount('type:ticket' + grpQ + ' assignee:' + zid + ' status>=solved solved>=' + startMon + ' solved<=' + endSun).catch(() => null);
+      }
+
+      // CSAT — paginate the whole window once, split agent vs L1 team
+      let allR = [], u = '/satisfaction_ratings.json?start_time=' + fromTs + '&end_time=' + toTs + '&per_page=100&sort_by=id&sort_order=asc';
+      for (let p = 0; p < 10 && u; p++) { const r = await zdFetch(u).catch(() => ({})); allR = allR.concat(r.satisfaction_ratings || []); u = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null; }
+      const score = arr => { const g = arr.filter(r => r.score === 'good').length, b = arr.filter(r => r.score === 'bad').length; return { pct: (g + b) > 0 ? Math.round(g / (g + b) * 100) : null, n: g + b }; };
+      if (zid) { const ac = score(allR.filter(r => String(r.assignee_id) === String(zid))); agentCsat = ac.pct; agentCsatN = ac.n; }
+      const tc = score(l1Ids.size ? allR.filter(r => l1Ids.has(r.assignee_id)) : allR); teamCsat = tc.pct; teamCsatN = tc.n;
+
+      // MTTR — solved tickets, business-hours (matches Tickets tab)
+      const fetchSolved = async extraQ => { let t = [], uu = '/search.json?query=' + encodeURIComponent('type:ticket' + grpQ + extraQ + ' status>=solved solved>=' + startMon + ' solved<=' + endSun) + '&per_page=100&sort_by=solved_at&sort_order=asc'; for (let p = 0; p < 20 && uu; p++) { const r = await zdFetch(uu).catch(() => ({ results: [] })); t = t.concat(r.results || []); uu = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null; } return t; };
+      const mttrOf = async tickets => { if (!tickets.length) return { med: null, n: 0 }; const biz = await fetchTicketBizMinutes(tickets.map(t => t.id)).catch(() => new Map()); const rt = tickets.map(t => { const b = biz.get(t.id); if (b != null) return b; const sv = t.solved_at || t.updated_at; return sv ? Math.round((new Date(sv) - new Date(t.created_at)) / 60000) : null; }).filter(v => v != null && v >= 0).sort((a, b) => a - b); if (!rt.length) return { med: null, n: 0 }; return { med: rt[Math.floor(rt.length / 2)], n: rt.length }; };
+      const aT = zid ? await fetchSolved(' assignee:' + zid) : [];
+      const gT = await fetchSolved('');
+      const am = await mttrOf(aT); agentMttr = am.med; agentMttrN = am.n;
+      const gm = await mttrOf(gT); teamMttr = gm.med; teamMttrN = gm.n;
+    } catch (e) { console.warn('[AgentReview] ZD fetch failed:', e.message); }
+  }
+
+  const solvedHeadline = (solved4Zd != null) ? solved4Zd : weeks.reduce((s, w) => s + w.solved, 0);
+
+  // ── Formatting ──
+  const fmtM = m => m == null ? '—' : (m < 60 ? Math.round(m) + 'm' : m < 1440 ? Math.floor(m / 60) + 'h ' + Math.round(m % 60) + 'm' : Math.floor(m / 1440) + 'd ' + Math.floor((m % 1440) / 60) + 'h');
+  const fmtT = s => { if (s == null) return '—'; const m = Math.floor(s / 60), ss = Math.round(s % 60); return m + 'm ' + String(ss).padStart(2, '0') + 's'; };
+
+  // ── Metric model ──
+  const M = [
+    { grp: 'Output', label: 'Tickets solved', val: solvedHeadline, bench: avgSolved4, fmt: v => String(Math.round(v)), dir: 'up', bl: 'team avg' },
+    { grp: 'Output', label: 'Calls answered', val: (answered4 || 0), bench: avgAnswered4, fmt: v => String(Math.round(v)), dir: 'up', bl: 'team avg' },
+    { grp: 'Output', label: 'Calls missed', val: (missed4 || 0), bench: avgMissed4, fmt: v => String(Math.round(v)), dir: 'down', bl: 'team avg' },
+    { grp: 'Output', label: 'Avg talk time', val: talk4, bench: null, fmt: fmtT, dir: 'flat', bl: '' },
+    { grp: 'Quality', label: 'CSAT', val: agentCsat, bench: teamCsat, fmt: v => Math.round(v) + '%', dir: 'up', bl: 'L1 team', note: (agentCsatN || 0) + ' rated' },
+    { grp: 'Quality', label: 'Avg resolution (MTTR)', val: agentMttr, bench: teamMttr, fmt: fmtM, dir: 'down', bl: 'L1 team', note: (agentMttrN || 0) + ' tickets · biz hrs' },
+    { grp: 'Workload (now)', label: 'Open tickets', val: (live.openTickets != null ? live.openTickets : null), bench: null, fmt: v => String(Math.round(v)), dir: 'flat', bl: '' },
+    { grp: 'Workload (now)', label: 'Pending', val: (live.pendingTickets != null ? live.pendingTickets : null), bench: null, fmt: v => String(Math.round(v)), dir: 'flat', bl: '' },
+  ];
+
+  const deltaOf = mt => {
+    if (mt.val == null || mt.bench == null || mt.bench === 0 || mt.dir === 'flat') return null;
+    const pct = Math.round((mt.val - mt.bench) / mt.bench * 100);
+    const above = mt.val >= mt.bench;
+    const good = mt.dir === 'up' ? above : !above;
+    return { pct, above, good };
+  };
+
+  // ── Render dark modal body ──
+  bodyEl.innerHTML = '';
+  const noZd = !(typeof zdReady === 'function' && zdReady());
+  if (noZd) {
+    const warn = document.createElement('div');
+    warn.style.cssText = 'background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);border-radius:8px;padding:9px 12px;font-size:11px;color:#fbbf24;margin-bottom:14px;';
+    warn.textContent = 'Zendesk not connected — CSAT and resolution time are unavailable. Solved, calls and presence are from saved snapshots.';
+    bodyEl.appendChild(warn);
+  }
+
+  const groups = ['Output', 'Quality', 'Workload (now)'];
+  groups.forEach(gname => {
+    const rows = M.filter(m => m.grp === gname && m.val != null);
+    if (!rows.length) return;
+    const gl = document.createElement('div');
+    gl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:var(--text3);margin:4px 0 10px;';
+    gl.textContent = gname;
+    bodyEl.appendChild(gl);
+    rows.forEach(mt => {
+      const d = deltaOf(mt);
+      const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);';
+      const left = document.createElement('div');
+      left.innerHTML = '<span style="font-size:13px;color:var(--text2);">' + mt.label + '</span>'
+        + (mt.note ? '<span style="font-size:10px;color:var(--text3);margin-left:7px;">' + mt.note + '</span>' : '')
+        + (mt.bench != null ? '<span style="font-size:10px;color:var(--text3);margin-left:7px;">' + mt.bl + ' ' + mt.fmt(mt.bench) + '</span>' : '');
+      const right = document.createElement('div'); right.style.cssText = 'display:flex;align-items:baseline;gap:9px;white-space:nowrap;';
+      const v = document.createElement('span'); v.style.cssText = 'font-size:18px;font-weight:800;color:var(--text);'; v.textContent = mt.fmt(mt.val);
+      right.appendChild(v);
+      if (d) {
+        const b = document.createElement('span');
+        b.style.cssText = 'font-size:11px;font-weight:700;color:' + (d.pct === 0 ? 'var(--text3)' : d.good ? '#34d399' : '#f87171') + ';';
+        b.textContent = (d.pct === 0 ? '·' : d.above ? '▲' : '▼') + ' ' + Math.abs(d.pct) + '%';
+        right.appendChild(b);
+      }
+      wrap.appendChild(left); wrap.appendChild(right);
+      bodyEl.appendChild(wrap);
+    });
+  });
+
+  // ── Presence ──
+  if (q && (q.daysLoggedIn || q.avgLoginTime)) {
+    const gl = document.createElement('div'); gl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:var(--text3);margin:16px 0 8px;'; gl.textContent = 'Presence — queue'; bodyEl.appendChild(gl);
+    const pr = document.createElement('div'); pr.style.cssText = 'font-size:12px;color:var(--text2);line-height:1.8;';
+    pr.innerHTML = 'Avg log-on <b>' + (q.avgLoginTime || '—') + '</b> · avg log-off <b>' + (q.avgLogoffTime || '—') + '</b> · <b>' + (q.daysLoggedIn || 0) + '</b> days on queue'
+      + '<span style="display:block;font-size:10px;color:var(--text3);margin-top:2px;">From queue presence — a stretch on a call can read like time off, so treat as context, not attendance.</span>';
+    bodyEl.appendChild(pr);
+  }
+
+  // ── Trend (weekly solved) ──
+  if (weeks.some(w => w.solved > 0)) {
+    const gl = document.createElement('div'); gl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;color:var(--text3);margin:16px 0 8px;'; gl.textContent = 'Trend — tickets solved / week'; bodyEl.appendChild(gl);
+    const maxS = Math.max(1, ...weeks.map(w => w.solved));
+    const bars = document.createElement('div'); bars.style.cssText = 'display:flex;align-items:flex-end;gap:10px;height:74px;';
+    weeks.forEach((w, i) => {
+      const col = document.createElement('div'); col.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;';
+      const val = document.createElement('div'); val.style.cssText = 'font-size:11px;font-weight:700;color:var(--text2);'; val.textContent = w.solved;
+      const bar = document.createElement('div'); bar.style.cssText = 'width:100%;max-width:46px;border-radius:4px 4px 0 0;background:var(--accent,#F1B7F2);opacity:' + (0.55 + 0.45 * (i / 3)) + ';height:' + Math.max(4, w.solved / maxS * 50) + 'px;';
+      const lbl = document.createElement('div'); lbl.style.cssText = 'font-size:9px;color:var(--text3);'; lbl.textContent = 'wk ' + (i + 1);
+      col.appendChild(val); col.appendChild(bar); col.appendChild(lbl); bars.appendChild(col);
+    });
+    bodyEl.appendChild(bars);
+    const dir = weeks[3].solved - weeks[0].solved;
+    const dnote = document.createElement('div'); dnote.style.cssText = 'font-size:11px;color:var(--text3);margin-top:7px;';
+    dnote.textContent = dir > 0 ? '▲ Trending up (' + weeks[0].solved + ' → ' + weeks[3].solved + ' solved/wk)' : dir < 0 ? '▼ Trending down (' + weeks[0].solved + ' → ' + weeks[3].solved + ' solved/wk)' : '· Flat (' + weeks[3].solved + ' solved/wk)';
+    bodyEl.appendChild(dnote);
+  }
+
+  // ── Plain-text summary (for Copy) ──
+  const line = mt => { const d = deltaOf(mt); return '- ' + mt.label + ': ' + mt.fmt(mt.val) + (mt.note ? ' (' + mt.note + ')' : '') + (mt.bench != null ? '  [' + mt.bl + ' ' + mt.fmt(mt.bench) + (d ? ', ' + (d.above ? '+' : '') + d.pct + '%' + (d.good ? ' ✓' : '') : '') + ']' : ''); };
+  const textOf = () => {
+    let t = 'PERFORMANCE REVIEW — ' + agentName + '\n';
+    t += 'Period: ' + startMon + ' → ' + endSun + ' (4 complete weeks)\n\n';
+    groups.forEach(g => { const rows = M.filter(m => m.grp === g && m.val != null); if (!rows.length) return; t += g.toUpperCase() + '\n' + rows.map(line).join('\n') + '\n\n'; });
+    if (q && (q.daysLoggedIn || q.avgLoginTime)) t += 'PRESENCE\n- Avg log-on ' + (q.avgLoginTime || '—') + ', log-off ' + (q.avgLogoffTime || '—') + ', ' + (q.daysLoggedIn || 0) + ' days on queue (queue presence; not strict attendance)\n\n';
+    if (weeks.some(w => w.solved > 0)) t += 'TREND (solved/wk): ' + weeks.map(w => w.solved).join(' → ') + '\n';
+    return t;
+  };
+
+  // ── Light print HTML ──
+  const printHtml = () => {
+    const row = mt => { const d = deltaOf(mt); const dc = d ? (d.pct === 0 ? '#666' : d.good ? '#15803d' : '#b91c1c') : '#666'; return '<tr><td style="padding:6px 0;border-bottom:1px solid #eee;">' + mt.label + (mt.note ? ' <span style="color:#999;font-size:11px;">(' + mt.note + ')</span>' : '') + '</td><td style="padding:6px 0;border-bottom:1px solid #eee;text-align:right;font-weight:700;">' + mt.fmt(mt.val) + '</td><td style="padding:6px 0;border-bottom:1px solid #eee;text-align:right;color:#666;">' + (mt.bench != null ? mt.bl + ' ' + mt.fmt(mt.bench) : '') + '</td><td style="padding:6px 0;border-bottom:1px solid #eee;text-align:right;color:' + dc + ';font-weight:600;">' + (d ? (d.above ? '+' : '') + d.pct + '%' : '') + '</td></tr>'; };
+    let h = '<html><head><meta charset="utf-8"><title>' + agentName + ' — Performance review</title></head><body style="font-family:Inter,Arial,sans-serif;color:#111;max-width:720px;margin:30px auto;padding:0 20px;">';
+    h += '<div style="color:#b45fb0;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;">Performance review</div>';
+    h += '<h1 style="margin:2px 0 0;font-size:26px;">' + agentName + '</h1>';
+    h += '<div style="color:#666;font-size:13px;margin-bottom:18px;">' + startMon + ' → ' + endSun + ' · last 4 complete weeks</div>';
+    groups.forEach(g => { const rows = M.filter(m => m.grp === g && m.val != null); if (!rows.length) return; h += '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#888;margin:18px 0 4px;">' + g + '</h3><table style="width:100%;border-collapse:collapse;font-size:14px;">' + rows.map(row).join('') + '</table>'; });
+    if (q && (q.daysLoggedIn || q.avgLoginTime)) h += '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#888;margin:18px 0 4px;">Presence — queue</h3><div style="font-size:14px;">Avg log-on <b>' + (q.avgLoginTime || '—') + '</b>, log-off <b>' + (q.avgLogoffTime || '—') + '</b>, <b>' + (q.daysLoggedIn || 0) + '</b> days on queue.<div style="color:#999;font-size:11px;margin-top:3px;">From queue presence — a long call can read as time off, so this is context, not attendance.</div></div>';
+    if (weeks.some(w => w.solved > 0)) h += '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#888;margin:18px 0 4px;">Trend — solved / week</h3><div style="font-size:18px;font-weight:700;">' + weeks.map(w => w.solved).join(' &rarr; ') + '</div>';
+    h += '<div style="color:#aaa;font-size:10px;margin-top:24px;">CSAT/MTTR benchmarked against the L1 Support group; solved/calls against the team average. Generated from the Munu Weekly Planner.</div>';
+    h += '</body></html>';
+    return h;
+  };
+
+  copyBtn.disabled = false; printBtn.disabled = false;
+  copyBtn.onclick = () => {
+    const t = textOf();
+    const done = () => { copyBtn.textContent = 'Copied ✓'; setTimeout(() => copyBtn.textContent = 'Copy summary', 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done).catch(() => { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); done(); });
+    else { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta); done(); }
+  };
+  printBtn.onclick = () => { const w = window.open('', '_blank', 'width=820,height=1000'); if (w) { w.document.write(printHtml()); w.document.close(); setTimeout(() => { try { w.focus(); w.print(); } catch(e){} }, 350); } };
+}
+
 function renderAgentQueueStats(agentName, container) {
   // Per-agent performance, benchmarked against the team average for the SAME period.
   // Data: live per-agent ZD cache (wtp_agent_live_stats) + Unifon per-agent stats.
@@ -7689,6 +7920,8 @@ function renderAgentQueueStats(agentName, container) {
   const wkFrom  = fmtLocal(getMonday(0));
   const wkTo    = localToday();
   const fmtSecSafe = (typeof fmtSec === 'function') ? fmtSec : (s => (s==null?'—':Math.round(s/60)+'m'));
+  const hm2min = s => { if (!s || String(s).indexOf(':') < 0) return null; const p = String(s).split(':'); return (+p[0])*60 + (+p[1]); };
+  const min2hm = v => { if (v == null) return '—'; const h = Math.floor(v/60), m = Math.round(v%60); return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'); };
 
   // Build a metric row per team member (for averaging + bar scaling)
   const teamVals = (MY_TEAM || []).map(name => {
@@ -7705,6 +7938,10 @@ function renderAgentQueueStats(agentName, container) {
       missed:   uni ? (uni.missed   || 0) : null,
       talk:     uni && uni.avgTalkSec ? uni.avgTalkSec : null,
       days:     q && q.daysLoggedIn ? q.daysLoggedIn : null,
+      loginMin:  q ? hm2min(q.avgLoginTime)  : null,
+      logoffMin: q ? hm2min(q.avgLogoffTime) : null,
+      exits:     q && q.sessions ? q.sessions.length : null,
+      earlyOff:  q && q.earlyLogoffs != null ? q.earlyLogoffs : null,
     };
   });
   const me = teamVals.find(t => t.name === agentName) || {};
@@ -7714,6 +7951,17 @@ function renderAgentQueueStats(agentName, container) {
   const maxOf  = key => { const a = colOf(key); return a.length ? Math.max(...a) : null; };
 
   const hasAny = ['solved','open','pending','csat','answered','missed'].some(k => me[k] != null);
+
+  // Manager review trigger (always available — pulls a 4-week review on demand)
+  const revBar = document.createElement('div');
+  revBar.style.cssText = 'display:flex;justify-content:flex-end;margin:0 0 8px;';
+  const revBtn = document.createElement('button');
+  revBtn.className = 'btn-save';
+  revBtn.style.cssText = 'font-size:11px;padding:5px 12px;';
+  revBtn.textContent = '📋 Manager review (4 wks)';
+  revBtn.onclick = () => { if (typeof openAgentReview === 'function') openAgentReview(agentName); };
+  revBar.appendChild(revBtn);
+  container.appendChild(revBar);
 
   const sec = document.createElement('div'); sec.className = 'oto-section';
   const hdr = document.createElement('div'); hdr.className = 'oto-section-hdr';
@@ -7812,9 +8060,42 @@ function renderAgentQueueStats(agentName, container) {
 
     const sub = document.createElement('div');
     sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;';
-    sub.textContent = 'team avg ' + (avg != null ? fmt(avg) : '—');
+    sub.textContent = 'team avg ' + (avg != null ? fmt(avg) : '—') + (opts.note ? ' · ' + opts.note : '');
     wrap.appendChild(sub);
 
+    body.appendChild(wrap);
+  }
+
+  // clock-time metric (login/logoff) — value + diff-vs-avg, no proportional bar
+  function timeRow(label, key, sublabel) {
+    const myMin = me[key];
+    const avg = avgOf(key);
+    if (myMin == null && avg == null) return;
+    const wrap = document.createElement('div'); wrap.style.cssText = 'margin:0 0 12px;';
+    const top = document.createElement('div');
+    top.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;gap:8px;';
+    const lab = document.createElement('span');
+    lab.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);';
+    lab.textContent = label;
+    const right = document.createElement('span');
+    right.style.cssText = 'display:flex;align-items:baseline;gap:8px;white-space:nowrap;';
+    const valEl = document.createElement('span');
+    valEl.style.cssText = 'font-size:17px;font-weight:800;color:var(--text);';
+    valEl.textContent = min2hm(myMin);
+    right.appendChild(valEl);
+    if (myMin != null && avg != null) {
+      const diff = Math.round(myMin - avg);
+      const badge = document.createElement('span');
+      badge.style.cssText = 'font-size:10px;font-weight:600;color:var(--text3);';
+      badge.textContent = diff === 0 ? '· on avg' : (diff > 0 ? '▲ ' + diff + 'm later' : '▼ ' + (-diff) + 'm earlier');
+      right.appendChild(badge);
+    }
+    top.appendChild(lab); top.appendChild(right);
+    wrap.appendChild(top);
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;';
+    sub.textContent = 'team avg ' + min2hm(avg) + (sublabel ? ' · ' + sublabel : '');
+    wrap.appendChild(sub);
     body.appendChild(wrap);
   }
 
@@ -7838,9 +8119,12 @@ function renderAgentQueueStats(agentName, container) {
     if (me.talk != null) row('Avg talk time', 'talk', { fmt: fTalk });
   }
 
-  if (me.days != null) {
-    groupLbl('Presence', '15px');
-    row('Days on queue (wk)', 'days', {});
+  if (me.days != null || me.loginMin != null || me.exits != null) {
+    groupLbl('Presence — queue', '15px');
+    if (me.loginMin  != null) timeRow('Avg log-on',  'loginMin');
+    if (me.logoffMin != null) timeRow('Avg log-off', 'logoffMin');
+    if (me.exits != null)     row('Queue exits (wk)', 'exits', { note: 'incl. calls & breaks' });
+    if (me.days  != null)     row('Days on queue (wk)', 'days', {});
   }
 
   sec.appendChild(body);
