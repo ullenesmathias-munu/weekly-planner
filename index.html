@@ -11410,7 +11410,7 @@ function renderPrepBrief(personName, container) {
       else if (pct <= -25) concerns.push('Call volume down '+Math.abs(pct)+'% vs last week ('+twA.answered+' vs '+lwA.answered+')');
     }
     // Only flag mid-week+ with schedule check
-    const _pdEl = Math.round((new Date(today+'T00:00:00') - new Date(thisMonday+'T00:00:00'))/86400000);
+    const _pdEl = Math.round((new Date(localToday()+'T00:00:00') - new Date(thisMonday+'T00:00:00'))/86400000);
     if (_pdEl >= 2 && (thisSnap&&thisSnap.totals&&thisSnap.totals.offered||0) >= 10 && (lwA.answered||0) > 10 && (twA.answered||0) === 0) {
       concerns.push('No calls answered this week — absent or not logged in?');
     }
