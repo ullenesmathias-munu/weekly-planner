@@ -11872,7 +11872,7 @@
   "wtp_intel_snap_2026-06-08": {
     "fromDate": "2026-06-08",
     "toDate": "2026-06-14",
-    "generated": "2026-06-08T09:39:36.115Z",
+    "generated": "2026-06-08T12:42:16.749Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -11907,28 +11907,28 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 4,
+        "zdSolved": 7,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 0,
-        "zdPhone": 4,
-        "zdOpen": 6,
-        "zdPending": 4
+        "zdPhone": 7,
+        "zdOpen": 9,
+        "zdPending": 3
       },
       "Benjamin": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 10,
+        "zdSolved": 18,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 2,
-        "zdPhone": 8,
-        "zdOpen": 8,
-        "zdPending": 3
+        "zdPhone": 16,
+        "zdOpen": 7,
+        "zdPending": 4
       },
       "Cecilie": {
         "answered": 0,
@@ -11963,13 +11963,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 15,
+        "zdSolved": 20,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 5,
         "zdEmail": 3,
-        "zdPhone": 12,
-        "zdOpen": 8,
+        "zdPhone": 17,
+        "zdOpen": 14,
         "zdPending": 6
       },
       "Andreas": {
@@ -11977,12 +11977,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 15,
+        "zdSolved": 24,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
         "zdEmail": 1,
-        "zdPhone": 14,
+        "zdPhone": 23,
         "zdOpen": 6,
         "zdPending": 8
       },
@@ -12005,14 +12005,14 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 3,
+        "zdSolved": 5,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 0,
-        "zdPhone": 3,
-        "zdOpen": 12,
-        "zdPending": 1
+        "zdPhone": 5,
+        "zdOpen": 10,
+        "zdPending": 2
       }
     },
     "totals": {
