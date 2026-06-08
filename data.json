@@ -16237,6 +16237,14 @@
         "totalWaitSec": 1476,
         "missed": 0
       }
+    },
+    "2026-06-08": {
+      "Thomas Hildre": {
+        "answered": 10,
+        "totalTalkSec": 2800,
+        "totalWaitSec": 205,
+        "missed": 0
+      }
     }
   },
   "wtp_intel_snap_2026-01-19": {
