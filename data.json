@@ -11046,8 +11046,30 @@
       "answered": 641,
       "missed": 161,
       "ansRate": 80,
-      "avgWait": 319
-    }
+      "avgWait": 319,
+      "zdTotalSolved": 813,
+      "zdOpenEow": 198,
+      "zdCsatGood": 21,
+      "zdCsatBad": 0,
+      "zdCsatTotal": 21,
+      "zdCsatPct": 100,
+      "zdMttrMean": 1316,
+      "zdMttrMedian": 12,
+      "zdEmailTotal": 175,
+      "zdPhoneTotal": 638,
+      "zdTicketCount": 813,
+      "zdSolvedPerDay": {
+        "2026-06-01": 0,
+        "2026-06-02": 0,
+        "2026-06-03": 0,
+        "2026-06-04": 0,
+        "2026-06-05": 0,
+        "2026-06-06": 0,
+        "2026-06-07": 0
+      }
+    },
+    "zdEnriched": true,
+    "zdEnrichedAt": "2026-06-08T06:48:33.695Z"
   },
   "wtp_profile_vetle": {
     "log": [
