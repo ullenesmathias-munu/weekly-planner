@@ -10919,7 +10919,7 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
     "toDate": "2026-06-07",
-    "generated": "2026-06-08T06:47:55.541Z",
+    "generated": "2026-06-08T07:23:45.374Z",
     "agents": {
       "Jonas": {
         "answered": 92,
@@ -10932,7 +10932,7 @@
         "dayDays": 4,
         "zdEmail": 14,
         "zdPhone": 90,
-        "zdOpen": 10,
+        "zdOpen": 9,
         "zdPending": 6
       },
       "Thomas": {
@@ -10974,7 +10974,7 @@
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
-        "zdOpen": 4,
+        "zdOpen": 5,
         "zdPending": 0
       },
       "Cecilie": {
@@ -10988,7 +10988,7 @@
         "dayDays": 7,
         "zdEmail": 1,
         "zdPhone": 125,
-        "zdOpen": 20,
+        "zdOpen": 16,
         "zdPending": 4
       },
       "Tord": {
@@ -11016,7 +11016,7 @@
         "dayDays": 5,
         "zdEmail": 18,
         "zdPhone": 88,
-        "zdOpen": 11,
+        "zdOpen": 10,
         "zdPending": 7
       },
       "Andreas": {
@@ -11024,14 +11024,14 @@
         "missed": 6,
         "avgTalk": 417,
         "avgWait": 43,
-        "zdSolved": 142,
+        "zdSolved": 140,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 47,
-        "zdPhone": 95,
-        "zdOpen": 6,
-        "zdPending": 10
+        "zdPhone": 93,
+        "zdOpen": 5,
+        "zdPending": 9
       },
       "Julie": {
         "answered": 0,
@@ -11058,7 +11058,7 @@
         "dayDays": 5,
         "zdEmail": 11,
         "zdPhone": 74,
-        "zdOpen": 15,
+        "zdOpen": 14,
         "zdPending": 1
       }
     },
@@ -11067,30 +11067,8 @@
       "answered": 641,
       "missed": 161,
       "ansRate": 80,
-      "avgWait": 319,
-      "zdTotalSolved": 813,
-      "zdOpenEow": 198,
-      "zdCsatGood": 21,
-      "zdCsatBad": 0,
-      "zdCsatTotal": 21,
-      "zdCsatPct": 100,
-      "zdMttrMean": 1316,
-      "zdMttrMedian": 12,
-      "zdEmailTotal": 175,
-      "zdPhoneTotal": 638,
-      "zdTicketCount": 813,
-      "zdSolvedPerDay": {
-        "2026-06-01": 0,
-        "2026-06-02": 0,
-        "2026-06-03": 0,
-        "2026-06-04": 0,
-        "2026-06-05": 0,
-        "2026-06-06": 0,
-        "2026-06-07": 0
-      }
-    },
-    "zdEnriched": true,
-    "zdEnrichedAt": "2026-06-08T06:48:33.695Z"
+      "avgWait": 319
+    }
   },
   "wtp_profile_vetle": {
     "log": [
