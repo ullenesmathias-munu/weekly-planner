@@ -9275,13 +9275,15 @@ function renderAdminDashboard(root, viewerMode=false) {
         const fromTs = Math.floor(new Date(from30+'T00:00:00').getTime()/1000);
         const toTs   = Math.floor(Date.now()/1000);
 
-        // CSAT
-        const [csatData, solvedData] = await Promise.all([
-          zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
-          zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+from30+' solved<='+t)+'&per_page=100').catch(()=>({results:[]})),
-        ]);
+        // CSAT — paginate all rating pages (like the report) so we don't miss scored ratings beyond the first 100
+        let _allRatings = [], _csUrl = '/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100&sort_by=id&sort_order=asc';
+        for (let _p=0; _p<10 && _csUrl; _p++) {
+          try { const _rr = await zdFetch(_csUrl); _allRatings = _allRatings.concat(_rr.satisfaction_ratings||[]); _csUrl = _rr.next_page ? _rr.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null; }
+          catch(e) { break; }
+        }
+        const solvedData = await zdFetch('/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+from30+' solved<='+t)+'&per_page=100').catch(()=>({results:[]}));
 
-        const ratings = csatData.satisfaction_ratings || [];
+        const ratings = _allRatings;
         const good    = ratings.filter(r=>r.score==='good').length;
         const bad     = ratings.filter(r=>r.score==='bad').length;
         const total   = good + bad;
@@ -11682,15 +11684,20 @@ async function zdRenderInsights(body, fromDate, toDate) {
   try {
     const fromTs = Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
     const toTs   = Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
-    // Fetch CSAT (single page) + paginate solved tickets (all pages)
-    const csatData = await zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]}));
+    // Paginate CSAT through all pages (like the report) + paginate solved tickets
+    let _allRatings = [], _csUrl = '/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100&sort_by=id&sort_order=asc';
+    for (let _p=0; _p<10 && _csUrl; _p++) {
+      const _rr = await zdFetch(_csUrl).catch(()=>({satisfaction_ratings:[]}));
+      _allRatings = _allRatings.concat(_rr.satisfaction_ratings||[]);
+      _csUrl = _rr.next_page ? _rr.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+    }
     let allTickets2 = [], tkUrl2 = '/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
     for (let p=0; p<20&&tkUrl2; p++) {
       const r2 = await zdFetch(tkUrl2).catch(()=>({results:[]}));
       allTickets2 = allTickets2.concat(r2.results||[]);
       tkUrl2 = r2.next_page ? r2.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
     }
-    const ratings = csatData.satisfaction_ratings || [];
+    const ratings = _allRatings;
     if (!ratings.length && !allTickets2.length) return;
 
     const insWrap = document.createElement('div'); insWrap.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;';
@@ -14664,8 +14671,12 @@ async function tvLiveRefresh() {
   if (typeof zdReady === 'function' && zdReady()) {
     try {
       const endTs = Math.floor(Date.now()/1000), startTs = endTs - 30*24*3600;
-      const cs = await zdFetch('/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]}));
-      const all = (cs && cs.satisfaction_ratings) || [];
+      let all = [], _u = '/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100&sort_by=id&sort_order=asc';
+      for (let _p=0; _p<10 && _u; _p++) {
+        const _rr = await zdFetch(_u).catch(()=>({satisfaction_ratings:[]}));
+        all = all.concat(_rr.satisfaction_ratings||[]);
+        _u = _rr.next_page ? _rr.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
+      }
       const good  = all.filter(r => r.score==='good').length;
       const total = all.filter(r => r.score==='good' || r.score==='bad').length;
       tvStats.csat = total > 0 ? Math.round(good/total*100) : null;
