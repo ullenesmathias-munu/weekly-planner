@@ -2290,6 +2290,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-08T08:08:12.841Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -8646,7 +8653,7 @@
       "queueId": 43500
     },
     "43500_Mayl\u00e9n_Milson": {
-      "ready": false,
+      "ready": true,
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -11959,17 +11966,17 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1780903092628,
+    "_refreshedAt": 1780906064353,
     "Jonas": {
       "zdAgentId": "24587351617949",
-      "openTickets": 9,
-      "pendingTickets": 6,
-      "solvedThisWeek": 0,
+      "openTickets": null,
+      "pendingTickets": null,
+      "solvedThisWeek": null,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:13.032Z"
+      "updatedAt": "2026-06-08T08:08:03.096Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
@@ -11980,40 +11987,40 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:13.352Z"
+      "updatedAt": "2026-06-08T08:08:03.821Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
       "openTickets": 5,
-      "pendingTickets": 3,
+      "pendingTickets": 4,
       "solvedThisWeek": 2,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:13.655Z"
+      "updatedAt": "2026-06-08T08:08:04.465Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
       "openTickets": 5,
-      "pendingTickets": 0,
-      "solvedThisWeek": 4,
+      "pendingTickets": 3,
+      "solvedThisWeek": 8,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:15.036Z"
+      "updatedAt": "2026-06-08T08:08:06.736Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
-      "openTickets": 16,
+      "openTickets": 8,
       "pendingTickets": 4,
-      "solvedThisWeek": 3,
+      "solvedThisWeek": 11,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:15.254Z"
+      "updatedAt": "2026-06-08T08:08:07.538Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -12024,29 +12031,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:15.487Z"
+      "updatedAt": "2026-06-08T08:08:08.064Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
       "openTickets": 10,
       "pendingTickets": 7,
-      "solvedThisWeek": 7,
+      "solvedThisWeek": 8,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:17.121Z"
+      "updatedAt": "2026-06-08T08:08:09.143Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 5,
-      "pendingTickets": 10,
-      "solvedThisWeek": 3,
+      "openTickets": 6,
+      "pendingTickets": 8,
+      "solvedThisWeek": 10,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:17.337Z"
+      "updatedAt": "2026-06-08T08:08:09.417Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -12057,18 +12064,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:17.601Z"
+      "updatedAt": "2026-06-08T08:08:09.855Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 14,
+      "openTickets": 13,
       "pendingTickets": 1,
-      "solvedThisWeek": 1,
+      "solvedThisWeek": 2,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-08T07:18:19.029Z"
+      "updatedAt": "2026-06-08T08:08:11.100Z"
     }
   },
   "wtp_announcements": [
