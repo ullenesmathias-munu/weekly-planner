@@ -16379,6 +16379,16 @@
       "displayName": "Benjamin",
       "scheduleName": "Benjamin",
       "privileges": []
+    },
+    {
+      "name": "Andreas.Bergevik@munu.cloud",
+      "hash": "27a9b39aac21089576a1476aded358178fdeda449d1d073bd33681ac1b238099",
+      "isAdmin": false,
+      "displayName": "Andreas",
+      "privileges": [
+        "zendesk"
+      ],
+      "scheduleName": "Andreas"
     }
   ],
   "wtp_profile_julie": {
