@@ -16825,7 +16825,7 @@
   "wtp_intel_snap_2026-05-25": {
     "fromDate": "2026-05-25",
     "toDate": "2026-05-31",
-    "generated": "2026-06-09T12:51:59.022Z",
+    "generated": "2026-06-09T13:14:19.916Z",
     "agents": {
       "Jonas": {
         "answered": 87,
@@ -16838,7 +16838,7 @@
         "dayDays": 6,
         "zdEmail": 26,
         "zdPhone": 125,
-        "zdOpen": 9,
+        "zdOpen": 8,
         "zdPending": 6
       },
       "Thomas": {
@@ -16880,7 +16880,7 @@
         "dayDays": 2,
         "zdEmail": 3,
         "zdPhone": 49,
-        "zdOpen": 9,
+        "zdOpen": 11,
         "zdPending": 7
       },
       "Cecilie": {
@@ -16894,7 +16894,7 @@
         "dayDays": 0,
         "zdEmail": 2,
         "zdPhone": 68,
-        "zdOpen": 7,
+        "zdOpen": 8,
         "zdPending": 5
       },
       "Tord": {
@@ -16923,7 +16923,7 @@
         "zdEmail": 10,
         "zdPhone": 66,
         "zdOpen": 13,
-        "zdPending": 4
+        "zdPending": 3
       },
       "Andreas": {
         "answered": 30,
@@ -16964,7 +16964,7 @@
         "dayDays": 4,
         "zdEmail": 4,
         "zdPhone": 20,
-        "zdOpen": 15,
+        "zdOpen": 16,
         "zdPending": 3
       }
     },
