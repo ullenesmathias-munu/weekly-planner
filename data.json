@@ -2201,41 +2201,6 @@
       "event": "logged_off"
     },
     {
-      "ts": "2026-06-06T05:00:47.097Z",
-      "name": "Cecilie Steinkopf",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
-      "ts": "2026-06-06T15:00:45.937Z",
-      "name": "Jonas Johannes",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
-      "ts": "2026-06-06T15:00:45.937Z",
-      "name": "Cecilie Steinkopf",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-06-07T04:00:45.894Z",
-      "name": "Jonas Johannes",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-06-07T04:59:45.925Z",
-      "name": "Cecilie Steinkopf",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
       "ts": "2026-06-08T05:31:53.733Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
@@ -2579,18 +2544,25 @@
       "event": "logged_off"
     },
     {
-      "ts": "2026-06-09T04:00:14.458Z",
-      "name": "Thomas Hildre",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-06-09T05:00:41.464Z",
+      "ts": "2026-06-09T06:35:47.964Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T06:35:47.970Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T06:35:47.973Z",
+      "name": "Thomas Hildre",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -8893,214 +8865,6 @@
       "missed": 2,
       "avgWaitSec": 201,
       "avgHandleSec": 755
-    },
-    "2026-06-07T00": {
-      "date": "2026-06-07",
-      "hour": 0,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 12,
-      "avgHandleSec": 2519
-    },
-    "2026-06-07T01": {
-      "date": "2026-06-07",
-      "hour": 1,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 8,
-      "avgHandleSec": 62
-    },
-    "2026-06-07T09": {
-      "date": "2026-06-07",
-      "hour": 9,
-      "answered": 2,
-      "missed": 0,
-      "avgWaitSec": 18,
-      "avgHandleSec": 253
-    },
-    "2026-06-07T10": {
-      "date": "2026-06-07",
-      "hour": 10,
-      "answered": 2,
-      "missed": 0,
-      "avgWaitSec": 13,
-      "avgHandleSec": 778
-    },
-    "2026-06-07T11": {
-      "date": "2026-06-07",
-      "hour": 11,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 16,
-      "avgHandleSec": 193
-    },
-    "2026-06-07T12": {
-      "date": "2026-06-07",
-      "hour": 12,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 13,
-      "avgHandleSec": 130
-    },
-    "2026-06-07T13": {
-      "date": "2026-06-07",
-      "hour": 13,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 13,
-      "avgHandleSec": 896
-    },
-    "2026-06-07T15": {
-      "date": "2026-06-07",
-      "hour": 15,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 15,
-      "avgHandleSec": 375
-    },
-    "2026-06-07T16": {
-      "date": "2026-06-07",
-      "hour": 16,
-      "answered": 2,
-      "missed": 0,
-      "avgWaitSec": 13,
-      "avgHandleSec": 262
-    },
-    "2026-06-07T17": {
-      "date": "2026-06-07",
-      "hour": 17,
-      "answered": 3,
-      "missed": 1,
-      "avgWaitSec": 11,
-      "avgHandleSec": 643
-    },
-    "2026-06-07T19": {
-      "date": "2026-06-07",
-      "hour": 19,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 12,
-      "avgHandleSec": 267
-    },
-    "2026-06-08T06": {
-      "date": "2026-06-08",
-      "hour": 6,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 10,
-      "avgHandleSec": 20
-    },
-    "2026-06-08T07": {
-      "date": "2026-06-08",
-      "hour": 7,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 6,
-      "avgHandleSec": 351
-    },
-    "2026-06-08T08": {
-      "date": "2026-06-08",
-      "hour": 8,
-      "answered": 4,
-      "missed": 0,
-      "avgWaitSec": 21,
-      "avgHandleSec": 65
-    },
-    "2026-06-08T09": {
-      "date": "2026-06-08",
-      "hour": 9,
-      "answered": 4,
-      "missed": 0,
-      "avgWaitSec": 8,
-      "avgHandleSec": 163
-    },
-    "2026-06-08T10": {
-      "date": "2026-06-08",
-      "hour": 10,
-      "answered": 9,
-      "missed": 1,
-      "avgWaitSec": 26,
-      "avgHandleSec": 364
-    },
-    "2026-06-08T11": {
-      "date": "2026-06-08",
-      "hour": 11,
-      "answered": 13,
-      "missed": 5,
-      "avgWaitSec": 212,
-      "avgHandleSec": 564
-    },
-    "2026-06-08T12": {
-      "date": "2026-06-08",
-      "hour": 12,
-      "answered": 15,
-      "missed": 2,
-      "avgWaitSec": 353,
-      "avgHandleSec": 727
-    },
-    "2026-06-08T13": {
-      "date": "2026-06-08",
-      "hour": 13,
-      "answered": 11,
-      "missed": 2,
-      "avgWaitSec": 27,
-      "avgHandleSec": 417
-    },
-    "2026-06-08T14": {
-      "date": "2026-06-08",
-      "hour": 14,
-      "answered": 10,
-      "missed": 0,
-      "avgWaitSec": 20,
-      "avgHandleSec": 447
-    },
-    "2026-06-08T15": {
-      "date": "2026-06-08",
-      "hour": 15,
-      "answered": 12,
-      "missed": 6,
-      "avgWaitSec": 103,
-      "avgHandleSec": 615
-    },
-    "2026-06-08T16": {
-      "date": "2026-06-08",
-      "hour": 16,
-      "answered": 12,
-      "missed": 1,
-      "avgWaitSec": 396,
-      "avgHandleSec": 476
-    },
-    "2026-06-08T17": {
-      "date": "2026-06-08",
-      "hour": 17,
-      "answered": 1,
-      "missed": 0,
-      "avgWaitSec": 27,
-      "avgHandleSec": 503
-    },
-    "2026-06-08T18": {
-      "date": "2026-06-08",
-      "hour": 18,
-      "answered": 4,
-      "missed": 0,
-      "avgWaitSec": 184,
-      "avgHandleSec": 316
-    },
-    "2026-06-08T19": {
-      "date": "2026-06-08",
-      "hour": 19,
-      "answered": 3,
-      "missed": 0,
-      "avgWaitSec": 26,
-      "avgHandleSec": 254
-    },
-    "2026-06-08T20": {
-      "date": "2026-06-08",
-      "hour": 20,
-      "answered": 2,
-      "missed": 0,
-      "avgWaitSec": 19,
-      "avgHandleSec": 135
     }
   },
   "wtp_notepad_mathias": "Routines when leaving at 17:00. Check the queue, answer if possible, inform night shift that there are calls.\n\nMaylen:\n25% - 60% 100% july 1st\nMight be brought back in desparate teams. \n\n27\u00c3\u00a2\u00c2\u0080\u00c2\u009328 April: Maylen\n29\u00c3\u00a2\u00c2\u0080\u00c2\u009330 April: Bernadett\n4\u00c3\u00a2\u00c2\u0080\u00c2\u00935 May: Cecilie\n6\u00c3\u00a2\u00c2\u0080\u00c2\u00937 May: Marie\n18\u00c3\u00a2\u00c2\u0080\u00c2\u009319 May: Thomas\n20\u00c3\u00a2\u00c2\u0080\u00c2\u009321 May: Julie\n26. May: Vetle\n1-2 June: Jonas\n3-4June: Benjamin\n8-9 June: Andreas\n\n\nTest\n\nPartallsuker passer best for kveld/helger. \n\nDely\n\nGo Live Pilots 19th May\nGo live for all locations june 1st\n\nStandup 18th. \n\nFriday - Saturday sync before major events.  May 17th, Utopia, World Cup. Need to plan these events. \n\nStandup - Monday morning, find which issues ocurred during the weekend. \n\nMarvin, does it fetch Slack.\n\n\n\n",
@@ -9155,7 +8919,7 @@
       "queueId": 43500
     },
     "43500_Mayl\u00e9n_Milson": {
-      "ready": false,
+      "ready": true,
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -10580,34 +10344,6 @@
       "overKpi": 91,
       "savedAt": "2026-06-05T19:43:48.327Z",
       "source": "import"
-    },
-    {
-      "date": "2026-06-07",
-      "offered": 17,
-      "answered": 16,
-      "missed": 1,
-      "avgWaitSec": 13,
-      "avgHandleSec": 560,
-      "avgWaitAnsweredSec": 13,
-      "avgWaitMissedSec": 16,
-      "callbackRequests": 0,
-      "overKpi": 0,
-      "savedAt": "2026-06-08T21:01:48.109Z",
-      "source": "import"
-    },
-    {
-      "date": "2026-06-08",
-      "offered": 119,
-      "answered": 102,
-      "missed": 17,
-      "avgWaitSec": 159,
-      "avgHandleSec": 468,
-      "avgWaitAnsweredSec": 149,
-      "avgWaitMissedSec": 209,
-      "callbackRequests": 2,
-      "overKpi": 62,
-      "savedAt": "2026-06-08T21:01:48.109Z",
-      "source": "import"
     }
   ],
   "wtp_profile_tord": {
@@ -11855,6 +11591,7 @@
     "ts": "2026-05-12T08:58:56.097Z"
   },
   "wtp_outlook_synced": "2026-05-25T05:17:31.330Z",
+  "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -12210,7 +11947,6 @@
       "done": false
     }
   ],
-  "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_review_2026-05-18": {
     "good": "Thomas really stepped up his game. Not that much negativity.",
     "improve": "Need to figure out how to handle e-mails as well as calls. ",
@@ -12220,7 +11956,7 @@
   "wtp_intel_snap_2026-06-08": {
     "fromDate": "2026-06-08",
     "toDate": "2026-06-14",
-    "generated": "2026-06-08T21:03:04.037Z",
+    "generated": "2026-06-08T12:42:16.749Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -12237,17 +11973,17 @@
         "zdPending": 6
       },
       "Thomas": {
-        "answered": 10,
+        "answered": 0,
         "missed": 0,
-        "avgTalk": 280,
-        "avgWait": 21,
-        "zdSolved": 12,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
         "isNight": true,
         "nightDays": 5,
         "dayDays": 0,
         "zdEmail": 0,
-        "zdPhone": 12,
-        "zdOpen": 2,
+        "zdPhone": 0,
+        "zdOpen": 1,
         "zdPending": 0
       },
       "Maylen": {
@@ -12255,28 +11991,28 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 9,
+        "zdSolved": 7,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 0,
-        "zdPhone": 9,
-        "zdOpen": 7,
-        "zdPending": 4
+        "zdPhone": 7,
+        "zdOpen": 9,
+        "zdPending": 3
       },
       "Benjamin": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 20,
+        "zdSolved": 18,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 3,
-        "zdPhone": 17,
-        "zdOpen": 8,
-        "zdPending": 7
+        "zdEmail": 2,
+        "zdPhone": 16,
+        "zdOpen": 7,
+        "zdPending": 4
       },
       "Cecilie": {
         "answered": 0,
@@ -12311,28 +12047,28 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 23,
+        "zdSolved": 20,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 5,
-        "zdEmail": 2,
-        "zdPhone": 21,
-        "zdOpen": 12,
-        "zdPending": 5
+        "zdEmail": 3,
+        "zdPhone": 17,
+        "zdOpen": 14,
+        "zdPending": 6
       },
       "Andreas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 37,
+        "zdSolved": 24,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
-        "zdEmail": 3,
-        "zdPhone": 34,
+        "zdEmail": 1,
+        "zdPhone": 23,
         "zdOpen": 6,
-        "zdPending": 9
+        "zdPending": 8
       },
       "Julie": {
         "answered": 0,
@@ -12353,22 +12089,22 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 8,
+        "zdSolved": 5,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 1,
-        "zdPhone": 7,
-        "zdOpen": 8,
-        "zdPending": 3
+        "zdEmail": 0,
+        "zdPhone": 5,
+        "zdOpen": 10,
+        "zdPending": 2
       }
     },
     "totals": {
-      "offered": 119,
-      "answered": 102,
-      "missed": 17,
-      "ansRate": 86,
-      "avgWait": 159
+      "offered": 0,
+      "answered": 0,
+      "missed": 0,
+      "ansRate": null,
+      "avgWait": 0
     }
   },
   "wtp_intel_snap_2026-02-09": {
@@ -12518,7 +12254,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1780981183356,
+    "_refreshedAt": 1780987084932,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 9,
@@ -12528,7 +12264,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:43.644Z"
+      "updatedAt": "2026-06-09T06:38:06.148Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
@@ -12539,18 +12275,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:43.912Z"
+      "updatedAt": "2026-06-09T06:38:06.356Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
-      "openTickets": 7,
-      "pendingTickets": 4,
-      "solvedThisWeek": 9,
+      "openTickets": 6,
+      "pendingTickets": 5,
+      "solvedThisWeek": 10,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:44.087Z"
+      "updatedAt": "2026-06-09T06:38:06.918Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -12561,7 +12297,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:45.642Z"
+      "updatedAt": "2026-06-09T06:38:08.785Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
@@ -12572,7 +12308,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:45.886Z"
+      "updatedAt": "2026-06-09T06:38:09.398Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -12583,18 +12319,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:46.087Z"
+      "updatedAt": "2026-06-09T06:38:09.701Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 11,
+      "openTickets": 9,
       "pendingTickets": 5,
-      "solvedThisWeek": 24,
+      "solvedThisWeek": 28,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:47.644Z"
+      "updatedAt": "2026-06-09T06:38:10.580Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
@@ -12605,7 +12341,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:47.882Z"
+      "updatedAt": "2026-06-09T06:38:10.822Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -12616,7 +12352,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T04:59:48.070Z"
+      "updatedAt": "2026-06-09T06:38:11.344Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -12627,7 +12363,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-09T05:00:07.657Z"
+      "updatedAt": "2026-06-09T06:38:12.380Z"
     }
   },
   "wtp_announcements": [
@@ -16249,14 +15985,6 @@
         "answered": 19,
         "totalTalkSec": 6281,
         "totalWaitSec": 1476,
-        "missed": 0
-      }
-    },
-    "2026-06-08": {
-      "Thomas Hildre": {
-        "answered": 10,
-        "totalTalkSec": 2800,
-        "totalWaitSec": 205,
         "missed": 0
       }
     }
