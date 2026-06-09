@@ -16430,7 +16430,8 @@
       "privileges": [
         "zendesk"
       ],
-      "scheduleName": "Andreas"
+      "scheduleName": "Andreas",
+      "email": "Andreas.Bergevik@munu.cloud"
     }
   ],
   "wtp_profile_julie": {
