@@ -6295,7 +6295,10 @@ function parseUnifonRows(rows2d) {
   for (const row of rows2d) {
     const label = String(row[0]||'').trim();
     if (!label || label === 'Periode') continue;
-    const dagMatch = label.match(/^Dag(\d{2})\.(\d{2})/);
+    // Day-total row. Multi-day exports label it "Dag08.06"; a single-day export
+    // labels it "I dag08.06" / "I går08.06" (or sometimes a bare "08.06").
+    const dagMatch = label.match(/^(?:Dag|I ?dag|I ?går)\s*(\d{2})\.(\d{2})/i)
+                  || label.match(/^(\d{2})\.(\d{2})(?:\.\d{4})?\s*$/);
     if (dagMatch) {
       const [, day, month] = dagMatch;
       currentDate = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
@@ -7913,11 +7916,12 @@ async function openAgentReview(agentName) {
   printBtn.onclick = () => { const w = window.open('', '_blank', 'width=820,height=1000'); if (w) { w.document.write(printHtml()); w.document.close(); setTimeout(() => { try { w.focus(); w.print(); } catch(e){} }, 350); } };
 }
 
-function renderAgentQueueStats(agentName, container) {
-  // Per-agent performance vs team average. Hardened so a single bad data
-  // record can never blank the whole Overview tab.
+function renderAgentQueueStats(agentName, container, _startOffset) {
+  // Per-agent performance vs team average, with week-by-week look-back.
+  // offset 0 = current week (live), -1 = last week, etc. Hardened so a single
+  // bad record can never blank the Overview tab.
 
-  // 1) Manager review button FIRST — the tab is never empty.
+  // 1) Manager review button FIRST — tab is never empty.
   try {
     const revBar = document.createElement('div');
     revBar.style.cssText = 'display:flex;justify-content:flex-end;margin:0 0 8px;';
@@ -7930,207 +7934,232 @@ function renderAgentQueueStats(agentName, container) {
     container.appendChild(revBar);
   } catch (e) { console.warn('[Overview] review button failed', e); }
 
-  try {
-    const liveAll = (typeof loadAgentLiveStats === 'function') ? (loadAgentLiveStats() || {}) : {};
-    const wkFrom  = fmtLocal(getMonday(0));
-    const wkTo    = localToday();
-    const fmtSecSafe = (typeof fmtSec === 'function') ? fmtSec : (s => (s==null?'—':Math.round(s/60)+'m'));
-    const hm2min = s => { if (!s || String(s).indexOf(':') < 0) return null; const p = String(s).split(':'); return (+p[0])*60 + (+p[1]); };
-    const min2hm = v => { if (v == null) return '—'; const h = Math.floor(v/60), m = Math.round(v%60); return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'); };
+  const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const shortD = d => d.getDate() + ' ' + MO[d.getMonth()];
+  const fmtSecSafe = (typeof fmtSec === 'function') ? fmtSec : (s => (s==null?'—':Math.round(s/60)+'m'));
+  const hm2min = s => { if (!s || String(s).indexOf(':') < 0) return null; const p = String(s).split(':'); return (+p[0])*60 + (+p[1]); };
+  const min2hm = v => { if (v == null) return '—'; const h = Math.floor(v/60), m = Math.round(v%60); return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0'); };
 
-    const teamVals = (MY_TEAM || []).map(name => {
-      let live = {}, uni = null, q = null;
-      try { live = liveAll[name] || ((typeof getAgentLiveStatsFor === 'function') ? (getAgentLiveStatsFor(name) || {}) : {}) || {}; } catch (e) { live = {}; }
-      try { uni = (typeof getUnifonAgentStats === 'function') ? getUnifonAgentStats(name, wkFrom, wkTo) : null; } catch (e) { uni = null; }
-      try { q = (typeof getAgentQueueStats === 'function') ? getAgentQueueStats(name, wkFrom, wkTo) : null; } catch (e) { q = null; }
-      return {
-        name,
-        solved:   live.solvedThisWeek != null ? live.solvedThisWeek : null,
-        open:     live.openTickets    != null ? live.openTickets    : null,
-        pending:  live.pendingTickets != null ? live.pendingTickets : null,
-        csat:     live.csatPct        != null ? live.csatPct        : null,
-        answered: uni ? (uni.answered || 0) : null,
-        missed:   uni ? (uni.missed   || 0) : null,
-        talk:     uni && uni.avgTalkSec ? uni.avgTalkSec : null,
-        days:     q && q.daysLoggedIn ? q.daysLoggedIn : null,
-        loginMin:  q ? hm2min(q.avgLoginTime)  : null,
-        logoffMin: q ? hm2min(q.avgLogoffTime) : null,
-        exits:     q && q.sessions ? q.sessions.length : null,
-      };
-    });
-    const me = teamVals.find(t => t.name === agentName) || {};
+  // Week navigation bar
+  let curOffset = _startOffset || 0;
+  const nav = document.createElement('div');
+  nav.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px;padding:6px 10px;background:var(--surface2,#1f1f25);border-radius:8px;';
+  const prevBtn = document.createElement('button'); prevBtn.textContent = '◄'; prevBtn.title = 'Previous week';
+  const nextBtn = document.createElement('button'); nextBtn.textContent = '►'; nextBtn.title = 'Next week';
+  [prevBtn, nextBtn].forEach(b => b.style.cssText = 'background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;padding:2px 8px;border-radius:5px;');
+  const wkLabel = document.createElement('div'); wkLabel.style.cssText = 'flex:1;text-align:center;font-size:12px;font-weight:700;color:var(--text);';
+  nav.appendChild(prevBtn); nav.appendChild(wkLabel); nav.appendChild(nextBtn);
+  container.appendChild(nav);
 
-    const colOf = key => teamVals.map(t => t[key]).filter(v => v != null && !isNaN(v));
-    const avgOf = key => { const a = colOf(key); return a.length ? a.reduce((s,v)=>s+v,0)/a.length : null; };
-    const maxOf = key => { const a = colOf(key); return a.length ? Math.max.apply(null, a) : null; };
+  const scoreWrap = document.createElement('div');
+  container.appendChild(scoreWrap);
 
-    const hasAny = ['solved','open','pending','csat','answered','missed'].some(k => me[k] != null);
+  prevBtn.onclick = () => renderWeek(curOffset - 1);
+  nextBtn.onclick = () => { if (curOffset < 0) renderWeek(curOffset + 1); };
 
-    const sec = document.createElement('div'); sec.className = 'oto-section';
-    const hdr = document.createElement('div'); hdr.className = 'oto-section-hdr';
+  function renderWeek(offset) {
+    curOffset = offset;
+    scoreWrap.dataset.offset = String(offset);
+    scoreWrap.innerHTML = '';
+    const isCurrent = offset === 0;
+    const mon = getMonday(offset);
+    const wkFrom = fmtLocal(mon);
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    const wkTo = isCurrent ? localToday() : fmtLocal(sun);
 
-    if (!hasAny) {
-      hdr.innerHTML = 'Performance overview';
+    // nav label + state
+    wkLabel.textContent = (isCurrent ? 'This week' : offset === -1 ? 'Last week' : 'W' + offset)
+      + '  ·  ' + shortD(mon) + '–' + shortD(sun);
+    nextBtn.style.visibility = isCurrent ? 'hidden' : 'visible';
+
+    try {
+      const liveAll = (isCurrent && typeof loadAgentLiveStats === 'function') ? (loadAgentLiveStats() || {}) : {};
+      const snap = (!isCurrent && typeof getWeeklySnapshot === 'function') ? getWeeklySnapshot(wkFrom) : null;
+
+      const teamVals = (MY_TEAM || []).map(name => {
+        let live = {}, uni = null, q = null, snA = null;
+        try { live = isCurrent ? (liveAll[name] || ((typeof getAgentLiveStatsFor === 'function') ? (getAgentLiveStatsFor(name) || {}) : {}) || {}) : {}; } catch (e) { live = {}; }
+        try { snA = (snap && snap.agents) ? snap.agents[name] : null; } catch (e) { snA = null; }
+        try { uni = (typeof getUnifonAgentStats === 'function') ? getUnifonAgentStats(name, wkFrom, wkTo) : null; } catch (e) { uni = null; }
+        try { q = (typeof getAgentQueueStats === 'function') ? getAgentQueueStats(name, wkFrom, wkTo) : null; } catch (e) { q = null; }
+        return {
+          name,
+          solved:   isCurrent ? (live.solvedThisWeek != null ? live.solvedThisWeek : null) : (snA && snA.zdSolved != null ? snA.zdSolved : null),
+          open:     isCurrent ? (live.openTickets    != null ? live.openTickets    : null) : null,
+          pending:  isCurrent ? (live.pendingTickets != null ? live.pendingTickets : null) : null,
+          csat:     isCurrent ? (live.csatPct        != null ? live.csatPct        : null) : null,
+          answered: uni ? (uni.answered || 0) : null,
+          missed:   uni ? (uni.missed   || 0) : null,
+          talk:     uni && uni.avgTalkSec ? uni.avgTalkSec : null,
+          days:     q && q.daysLoggedIn ? q.daysLoggedIn : null,
+          loginMin:  q ? hm2min(q.avgLoginTime)  : null,
+          logoffMin: q ? hm2min(q.avgLogoffTime) : null,
+          exits:     q && q.sessions ? q.sessions.length : null,
+        };
+      });
+      const me = teamVals.find(t => t.name === agentName) || {};
+      const colOf = key => teamVals.map(t => t[key]).filter(v => v != null && !isNaN(v));
+      const avgOf = key => { const a = colOf(key); return a.length ? a.reduce((s,v)=>s+v,0)/a.length : null; };
+      const maxOf = key => { const a = colOf(key); return a.length ? Math.max.apply(null, a) : null; };
+
+      const hasAny = ['solved','csat','answered','missed','days'].some(k => me[k] != null) || (isCurrent && (me.open != null || me.pending != null));
+
+      const sec = document.createElement('div'); sec.className = 'oto-section';
+      const hdr = document.createElement('div'); hdr.className = 'oto-section-hdr';
+
+      if (!hasAny) {
+        hdr.innerHTML = isCurrent ? 'Performance overview' : 'No data recorded';
+        sec.appendChild(hdr);
+        const empty = document.createElement('div');
+        empty.style.cssText = 'font-size:11px;color:var(--text3);line-height:1.6;padding:8px 2px;';
+        empty.innerHTML = isCurrent
+          ? 'No live Zendesk or Unifon figures for ' + (agentName.split(' ')[0]) + ' this week yet. Stats refresh every 30&nbsp;min. Use <b>Manager review</b> above for the full picture.'
+          : 'No snapshot, call or presence data stored for this week.';
+        sec.appendChild(empty);
+        scoreWrap.appendChild(sec);
+        if (isCurrent && typeof isAdmin === 'function' && isAdmin() && typeof refreshAgentLiveStats === 'function') { try { refreshAgentLiveStats(false); } catch (e) {} }
+        return;
+      }
+
+      const teamN = colOf('solved').length || colOf('answered').length || (MY_TEAM ? MY_TEAM.length : 0);
+      hdr.innerHTML = 'Performance vs team average '
+        + '<span style="font-weight:400;font-size:9px;color:var(--text3);">' + (isCurrent ? 'this week' : 'that week') + ' · across ' + teamN + ' agents</span>';
       sec.appendChild(hdr);
-      const empty = document.createElement('div');
-      empty.style.cssText = 'font-size:11px;color:var(--text3);line-height:1.6;padding:8px 2px;';
-      empty.innerHTML = 'No live Zendesk or Unifon figures for ' + (agentName.split(' ')[0]) + ' this week yet.<br>'
-        + 'Zendesk stats refresh automatically every 30&nbsp;min (you must be connected to ZD as admin). '
-        + 'Use <b>Manager review</b> above for the full 4-week picture.';
-      sec.appendChild(empty);
-      container.appendChild(sec);
-      if (typeof isAdmin === 'function' && isAdmin() && typeof refreshAgentLiveStats === 'function') {
-        try { refreshAgentLiveStats(false); } catch (e) {}
+      const body = document.createElement('div'); body.className = 'oto-section-body';
+
+      const fNum  = v => v == null ? '—' : String(Math.round(v));
+      const fPct  = v => v == null ? '—' : Math.round(v) + '%';
+      const fTalk = v => v == null ? '—' : fmtSecSafe(v);
+
+      function row(label, key, opts) {
+        opts = opts || {};
+        const fmt = opts.fmt || fNum;
+        const hb  = opts.higherBetter;
+        const myVal = me[key];
+        const avg   = avgOf(key);
+        const max   = maxOf(key);
+        if (myVal == null && avg == null) return;
+        const wrap = document.createElement('div'); wrap.style.cssText = 'margin:0 0 13px;';
+        const top = document.createElement('div');
+        top.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;gap:8px;';
+        const lab = document.createElement('span'); lab.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'; lab.textContent = label;
+        const right = document.createElement('span'); right.style.cssText = 'display:flex;align-items:baseline;gap:8px;white-space:nowrap;';
+        const valEl = document.createElement('span'); valEl.style.cssText = 'font-size:17px;font-weight:800;color:var(--text);'; valEl.textContent = fmt(myVal); right.appendChild(valEl);
+        let aboveAvg = null, good = null;
+        if (myVal != null && avg != null) { aboveAvg = myVal >= avg; if (hb !== undefined) good = hb ? aboveAvg : !aboveAvg; }
+        if (myVal != null && avg != null && avg > 0 && hb !== undefined) {
+          const deltaPct = Math.round((myVal - avg) / avg * 100);
+          const badge = document.createElement('span'); badge.style.cssText = 'font-size:11px;font-weight:700;color:' + (deltaPct === 0 ? 'var(--text3)' : good ? '#34d399' : '#f87171') + ';';
+          badge.textContent = (deltaPct === 0 ? '·' : aboveAvg ? '▲' : '▼') + ' ' + Math.abs(deltaPct) + '%'; right.appendChild(badge);
+        } else if (myVal != null && avg != null && hb === undefined) {
+          const badge = document.createElement('span'); badge.style.cssText = 'font-size:10px;font-weight:600;color:var(--text3);'; badge.textContent = (aboveAvg ? '▲' : '▼') + ' vs avg'; right.appendChild(badge);
+        }
+        top.appendChild(lab); top.appendChild(right); wrap.appendChild(top);
+        const barBg = document.createElement('div'); barBg.style.cssText = 'position:relative;height:8px;border-radius:5px;background:var(--surface2,#26262c);';
+        const scaleMax = (max && max > 0) ? max : (myVal || 1);
+        let fillCol = 'var(--accent,#F1B7F2)'; if (good !== null) fillCol = good ? '#34d399' : '#f87171';
+        const fill = document.createElement('div'); const fillPct = myVal != null ? Math.max(2, Math.min(100, myVal / scaleMax * 100)) : 0;
+        fill.style.cssText = 'height:100%;border-radius:5px;width:' + fillPct + '%;background:' + fillCol + ';transition:width .45s ease;'; barBg.appendChild(fill);
+        if (avg != null && scaleMax > 0) { const mk = document.createElement('div'); mk.title = 'Team average: ' + fmt(avg); mk.style.cssText = 'position:absolute;top:-3px;bottom:-3px;left:' + Math.max(0,Math.min(100, avg/scaleMax*100)) + '%;width:2px;background:var(--text);opacity:.5;'; barBg.appendChild(mk); }
+        wrap.appendChild(barBg);
+        const sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;'; sub.textContent = 'team avg ' + (avg != null ? fmt(avg) : '—') + (opts.note ? ' · ' + opts.note : ''); wrap.appendChild(sub);
+        body.appendChild(wrap);
       }
-      return;
-    }
 
-    const teamN = colOf('solved').length || (MY_TEAM ? MY_TEAM.length : 0);
-    hdr.innerHTML = 'Performance vs team average '
-      + '<span style="font-weight:400;font-size:9px;color:var(--text3);">this week · benchmarked across ' + teamN + ' agents</span>';
-    sec.appendChild(hdr);
-
-    const body = document.createElement('div'); body.className = 'oto-section-body';
-
-    const fNum  = v => v == null ? '—' : String(Math.round(v));
-    const fPct  = v => v == null ? '—' : Math.round(v) + '%';
-    const fTalk = v => v == null ? '—' : fmtSecSafe(v);
-
-    function row(label, key, opts) {
-      opts = opts || {};
-      const fmt = opts.fmt || fNum;
-      const hb  = opts.higherBetter;
-      const myVal = me[key];
-      const avg   = avgOf(key);
-      const max   = maxOf(key);
-      if (myVal == null && avg == null) return;
-
-      const wrap = document.createElement('div'); wrap.style.cssText = 'margin:0 0 13px;';
-      const top = document.createElement('div');
-      top.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;gap:8px;';
-      const lab = document.createElement('span');
-      lab.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);';
-      lab.textContent = label;
-      const right = document.createElement('span');
-      right.style.cssText = 'display:flex;align-items:baseline;gap:8px;white-space:nowrap;';
-      const valEl = document.createElement('span');
-      valEl.style.cssText = 'font-size:17px;font-weight:800;color:var(--text);';
-      valEl.textContent = fmt(myVal);
-      right.appendChild(valEl);
-
-      let aboveAvg = null, good = null;
-      if (myVal != null && avg != null) { aboveAvg = myVal >= avg; if (hb !== undefined) good = hb ? aboveAvg : !aboveAvg; }
-
-      if (myVal != null && avg != null && avg > 0 && hb !== undefined) {
-        const deltaPct = Math.round((myVal - avg) / avg * 100);
-        const badge = document.createElement('span');
-        const col = deltaPct === 0 ? 'var(--text3)' : good ? '#34d399' : '#f87171';
-        badge.style.cssText = 'font-size:11px;font-weight:700;color:' + col + ';';
-        badge.textContent = (deltaPct === 0 ? '·' : aboveAvg ? '▲' : '▼') + ' ' + Math.abs(deltaPct) + '%';
-        right.appendChild(badge);
-      } else if (myVal != null && avg != null && hb === undefined) {
-        const badge = document.createElement('span');
-        badge.style.cssText = 'font-size:10px;font-weight:600;color:var(--text3);';
-        badge.textContent = (aboveAvg ? '▲' : '▼') + ' vs avg';
-        right.appendChild(badge);
+      function timeRow(label, key) {
+        const myMin = me[key]; const avg = avgOf(key);
+        if (myMin == null && avg == null) return;
+        const wrap = document.createElement('div'); wrap.style.cssText = 'margin:0 0 12px;';
+        const top = document.createElement('div'); top.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;gap:8px;';
+        const lab = document.createElement('span'); lab.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'; lab.textContent = label;
+        const right = document.createElement('span'); right.style.cssText = 'display:flex;align-items:baseline;gap:8px;white-space:nowrap;';
+        const valEl = document.createElement('span'); valEl.style.cssText = 'font-size:17px;font-weight:800;color:var(--text);'; valEl.textContent = min2hm(myMin); right.appendChild(valEl);
+        if (myMin != null && avg != null) { const diff = Math.round(myMin - avg); const badge = document.createElement('span'); badge.style.cssText = 'font-size:10px;font-weight:600;color:var(--text3);'; badge.textContent = diff === 0 ? '· on avg' : (diff > 0 ? '▲ ' + diff + 'm later' : '▼ ' + (-diff) + 'm earlier'); right.appendChild(badge); }
+        top.appendChild(lab); top.appendChild(right); wrap.appendChild(top);
+        const sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;'; sub.textContent = 'team avg ' + min2hm(avg); wrap.appendChild(sub);
+        body.appendChild(wrap);
       }
-      top.appendChild(lab); top.appendChild(right);
-      wrap.appendChild(top);
 
-      const barBg = document.createElement('div');
-      barBg.style.cssText = 'position:relative;height:8px;border-radius:5px;background:var(--surface2,#26262c);';
-      const scaleMax = (max && max > 0) ? max : (myVal || 1);
-      let fillCol = 'var(--accent,#F1B7F2)';
-      if (good !== null) fillCol = good ? '#34d399' : '#f87171';
-      const fill = document.createElement('div');
-      const fillPct = myVal != null ? Math.max(2, Math.min(100, myVal / scaleMax * 100)) : 0;
-      fill.style.cssText = 'height:100%;border-radius:5px;width:' + fillPct + '%;background:' + fillCol + ';transition:width .45s ease;';
-      barBg.appendChild(fill);
-      if (avg != null && scaleMax > 0) {
-        const mk = document.createElement('div');
-        const mkPct = Math.max(0, Math.min(100, avg / scaleMax * 100));
-        mk.title = 'Team average: ' + fmt(avg);
-        mk.style.cssText = 'position:absolute;top:-3px;bottom:-3px;left:' + mkPct + '%;width:2px;background:var(--text);opacity:.5;';
-        barBg.appendChild(mk);
+      const groupLbl = (txt, mt) => { const g = document.createElement('div'); g.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin:' + (mt||'2px') + ' 0 9px;'; g.textContent = txt; body.appendChild(g); };
+
+      // ZENDESK
+      groupLbl('Zendesk');
+      row('Tickets solved', 'solved', { higherBetter: true });
+      if (isCurrent) {
+        row('CSAT', 'csat', { fmt: fPct, higherBetter: true });
+        row('Open tickets', 'open', { higherBetter: false });
+        row('Pending', 'pending', { higherBetter: false });
+      } else {
+        // CSAT fetched live for the past week; open/pending are live-only
+        const csatSlot = document.createElement('div'); body.appendChild(csatSlot);
+        if (typeof zdReady === 'function' && zdReady()) {
+          csatSlot.innerHTML = '<div style="font-size:11px;color:var(--text3);margin:0 0 13px;">CSAT — loading…</div>';
+          loadPastCsat(csatSlot, offset, wkFrom, wkTo);
+        }
+        const note = document.createElement('div'); note.style.cssText = 'font-size:10px;color:var(--text3);margin:-2px 0 6px;'; note.textContent = 'Open/pending are live-only — see the current week.'; body.appendChild(note);
       }
-      wrap.appendChild(barBg);
 
-      const sub = document.createElement('div');
-      sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;';
-      sub.textContent = 'team avg ' + (avg != null ? fmt(avg) : '—') + (opts.note ? ' · ' + opts.note : '');
-      wrap.appendChild(sub);
-      body.appendChild(wrap);
-    }
-
-    function timeRow(label, key) {
-      const myMin = me[key];
-      const avg = avgOf(key);
-      if (myMin == null && avg == null) return;
-      const wrap = document.createElement('div'); wrap.style.cssText = 'margin:0 0 12px;';
-      const top = document.createElement('div');
-      top.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;gap:8px;';
-      const lab = document.createElement('span');
-      lab.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);';
-      lab.textContent = label;
-      const right = document.createElement('span');
-      right.style.cssText = 'display:flex;align-items:baseline;gap:8px;white-space:nowrap;';
-      const valEl = document.createElement('span');
-      valEl.style.cssText = 'font-size:17px;font-weight:800;color:var(--text);';
-      valEl.textContent = min2hm(myMin);
-      right.appendChild(valEl);
-      if (myMin != null && avg != null) {
-        const diff = Math.round(myMin - avg);
-        const badge = document.createElement('span');
-        badge.style.cssText = 'font-size:10px;font-weight:600;color:var(--text3);';
-        badge.textContent = diff === 0 ? '· on avg' : (diff > 0 ? '▲ ' + diff + 'm later' : '▼ ' + (-diff) + 'm earlier');
-        right.appendChild(badge);
+      // UNIFON
+      if (me.answered != null || me.missed != null) {
+        groupLbl('Unifon — calls', '15px');
+        row('Calls answered', 'answered', { higherBetter: true });
+        row('Calls missed', 'missed', { higherBetter: false });
+        if (me.talk != null) row('Avg talk time', 'talk', { fmt: fTalk });
       }
-      top.appendChild(lab); top.appendChild(right);
-      wrap.appendChild(top);
-      const sub = document.createElement('div');
-      sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;';
-      sub.textContent = 'team avg ' + min2hm(avg);
-      wrap.appendChild(sub);
-      body.appendChild(wrap);
+
+      // PRESENCE
+      if (me.days != null || me.loginMin != null || me.exits != null) {
+        groupLbl('Presence — queue', '15px');
+        if (me.loginMin  != null) timeRow('Avg log-on',  'loginMin');
+        if (me.logoffMin != null) timeRow('Avg log-off', 'logoffMin');
+        if (me.exits != null)     row('Queue exits', 'exits', { note: 'incl. calls & breaks' });
+        if (me.days  != null)     row('Days on queue', 'days', {});
+      }
+
+      sec.appendChild(body);
+      scoreWrap.appendChild(sec);
+
+      // build the team-average context CSAT needs (L1 ids etc.) lazily inside loadPastCsat
+      function loadPastCsat(slot, offsetAtCall, from, to) {
+        (async () => {
+          try {
+            const fromTs = Math.floor(new Date(from + 'T00:00:00').getTime() / 1000);
+            const toTs   = Math.floor(new Date(to + 'T23:59:59').getTime() / 1000);
+            let all = [], u = '/satisfaction_ratings.json?start_time=' + fromTs + '&end_time=' + toTs + '&per_page=100&sort_by=id&sort_order=asc';
+            for (let p = 0; p < 10 && u; p++) { const r = await zdFetch(u).catch(() => ({})); all = all.concat(r.satisfaction_ratings || []); u = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null; }
+            if (scoreWrap.dataset.offset !== String(offsetAtCall)) return; // user navigated away
+            const zid = ((typeof getAgentLiveStatsFor === 'function' && getAgentLiveStatsFor(agentName)) || {}).zdAgentId
+              || (typeof loadProfile === 'function' && (loadProfile(agentName) || {}).zdAgentId)
+              || (((typeof zdAgents !== 'undefined' && zdAgents) || []).find(a => normName(a.name) === normName(agentName) || normName(a.name.split(' ')[0]) === normName(agentName.split(' ')[0])) || {}).id;
+            const l1 = new Set(((typeof zdAgents !== 'undefined' && zdAgents) || []).map(a => a.id));
+            const sc = arr => { const g = arr.filter(r => r.score === 'good').length, b = arr.filter(r => r.score === 'bad').length; return { pct: (g + b) > 0 ? Math.round(g / (g + b) * 100) : null, n: g + b }; };
+            const a = sc(all.filter(r => String(r.assignee_id) === String(zid)));
+            const t = sc(l1.size ? all.filter(r => l1.has(r.assignee_id)) : all);
+            slot.innerHTML = '';
+            const wrap = document.createElement('div'); wrap.style.cssText = 'margin:0 0 13px;';
+            const top = document.createElement('div'); top.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px;gap:8px;';
+            const lab = document.createElement('span'); lab.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);'; lab.textContent = 'CSAT';
+            const right = document.createElement('span'); right.style.cssText = 'display:flex;align-items:baseline;gap:8px;'; const v = document.createElement('span'); v.style.cssText = 'font-size:17px;font-weight:800;color:var(--text);'; v.textContent = a.pct == null ? '—' : a.pct + '%'; right.appendChild(v);
+            if (a.pct != null && t.pct != null && t.pct > 0) { const dp = Math.round((a.pct - t.pct) / t.pct * 100); const above = a.pct >= t.pct; const b = document.createElement('span'); b.style.cssText = 'font-size:11px;font-weight:700;color:' + (dp === 0 ? 'var(--text3)' : above ? '#34d399' : '#f87171') + ';'; b.textContent = (dp === 0 ? '·' : above ? '▲' : '▼') + ' ' + Math.abs(dp) + '%'; right.appendChild(b); }
+            top.appendChild(lab); top.appendChild(right); wrap.appendChild(top);
+            const barBg = document.createElement('div'); barBg.style.cssText = 'position:relative;height:8px;border-radius:5px;background:var(--surface2,#26262c);';
+            if (a.pct != null) { const good = t.pct != null ? a.pct >= t.pct : true; const fill = document.createElement('div'); fill.style.cssText = 'height:100%;border-radius:5px;width:' + Math.max(2, Math.min(100, a.pct)) + '%;background:' + (t.pct != null ? (good ? '#34d399' : '#f87171') : 'var(--accent,#F1B7F2)') + ';'; barBg.appendChild(fill); }
+            if (t.pct != null) { const mk = document.createElement('div'); mk.style.cssText = 'position:absolute;top:-3px;bottom:-3px;left:' + Math.max(0, Math.min(100, t.pct)) + '%;width:2px;background:var(--text);opacity:.5;'; barBg.appendChild(mk); }
+            wrap.appendChild(barBg);
+            const sub = document.createElement('div'); sub.style.cssText = 'font-size:10px;color:var(--text3);margin-top:4px;'; sub.textContent = 'L1 team ' + (t.pct != null ? t.pct + '%' : '—') + ' · ' + (a.n || 0) + ' rated'; wrap.appendChild(sub);
+            slot.appendChild(wrap);
+          } catch (e) { slot.innerHTML = ''; }
+        })();
+      }
+    } catch (err) {
+      console.error('[Overview] scorecard render failed:', err);
+      const note = document.createElement('div'); note.style.cssText = 'font-size:11px;color:var(--text3);padding:8px 2px;';
+      note.textContent = 'Stats unavailable for this week — use Manager review above for the full picture.';
+      scoreWrap.appendChild(note);
     }
-
-    const groupLbl = (txt, mt) => {
-      const g = document.createElement('div');
-      g.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);margin:' + (mt||'2px') + ' 0 9px;';
-      g.textContent = txt;
-      body.appendChild(g);
-    };
-
-    groupLbl('Zendesk');
-    row('Tickets solved (wk)', 'solved', { higherBetter: true });
-    row('CSAT', 'csat', { fmt: fPct, higherBetter: true });
-    row('Open tickets', 'open', { higherBetter: false });
-    row('Pending', 'pending', { higherBetter: false });
-
-    if (me.answered != null || me.missed != null) {
-      groupLbl('Unifon — calls', '15px');
-      row('Calls answered', 'answered', { higherBetter: true });
-      row('Calls missed', 'missed', { higherBetter: false });
-      if (me.talk != null) row('Avg talk time', 'talk', { fmt: fTalk });
-    }
-
-    if (me.days != null || me.loginMin != null || me.exits != null) {
-      groupLbl('Presence — queue', '15px');
-      if (me.loginMin  != null) timeRow('Avg log-on',  'loginMin');
-      if (me.logoffMin != null) timeRow('Avg log-off', 'logoffMin');
-      if (me.exits != null)     row('Queue exits (wk)', 'exits', { note: 'incl. calls & breaks' });
-      if (me.days  != null)     row('Days on queue (wk)', 'days', {});
-    }
-
-    sec.appendChild(body);
-    container.appendChild(sec);
-  } catch (err) {
-    console.error('[Overview] scorecard render failed:', err);
-    const note = document.createElement('div');
-    note.style.cssText = 'font-size:11px;color:var(--text3);padding:8px 2px;';
-    note.textContent = 'Live this-week stats are unavailable right now — use Manager review above for the full picture.';
-    container.appendChild(note);
   }
+
+  renderWeek(curOffset);
 }
 
 
@@ -16616,7 +16645,7 @@ function renderUserList() {
       const pw = inpPassword.value;
       if (pw) {
         if (pw.length < 6) { msg.style.color = 'var(--high-text)'; msg.textContent = 'Password must be at least 6 characters'; return; }
-        t.hash = await hashPassword(pw);
+        t.hash = await sha256(pw);
       }
 
       localStorage.setItem('wtp_users', JSON.stringify(all));
