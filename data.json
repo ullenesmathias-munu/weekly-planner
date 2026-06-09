@@ -2703,6 +2703,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T09:41:28.152Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -9029,7 +9036,7 @@
       "queueId": 43500
     },
     "43500_Marie_Gjengedal": {
-      "ready": true,
+      "ready": false,
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
