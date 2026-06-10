@@ -11521,7 +11521,7 @@
   "wtp_intel_snap_2026-06-01": {
     "fromDate": "2026-06-01",
     "toDate": "2026-06-07",
-    "generated": "2026-06-09T12:50:01.493Z",
+    "generated": "2026-06-10T08:24:20.534Z",
     "agents": {
       "Jonas": {
         "answered": 92,
@@ -11534,8 +11534,8 @@
         "dayDays": 4,
         "zdEmail": 14,
         "zdPhone": 89,
-        "zdOpen": 8,
-        "zdPending": 6
+        "zdOpen": 6,
+        "zdPending": 7
       },
       "Thomas": {
         "answered": 76,
@@ -11548,7 +11548,7 @@
         "dayDays": 0,
         "zdEmail": 3,
         "zdPhone": 76,
-        "zdOpen": 0,
+        "zdOpen": 1,
         "zdPending": 0
       },
       "Maylen": {
@@ -11562,8 +11562,8 @@
         "dayDays": 2,
         "zdEmail": 2,
         "zdPhone": 39,
-        "zdOpen": 6,
-        "zdPending": 6
+        "zdOpen": 0,
+        "zdPending": 5
       },
       "Benjamin": {
         "answered": 0,
@@ -11576,8 +11576,8 @@
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
-        "zdOpen": 9,
-        "zdPending": 7
+        "zdOpen": 13,
+        "zdPending": 6
       },
       "Cecilie": {
         "answered": 112,
@@ -11590,7 +11590,7 @@
         "dayDays": 7,
         "zdEmail": 1,
         "zdPhone": 124,
-        "zdOpen": 8,
+        "zdOpen": 11,
         "zdPending": 5
       },
       "Tord": {
@@ -11612,14 +11612,14 @@
         "missed": 6,
         "avgTalk": 412,
         "avgWait": 246,
-        "zdSolved": 105,
+        "zdSolved": 103,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 18,
-        "zdPhone": 87,
-        "zdOpen": 17,
-        "zdPending": 4
+        "zdPhone": 85,
+        "zdOpen": 7,
+        "zdPending": 5
       },
       "Andreas": {
         "answered": 109,
@@ -11632,8 +11632,8 @@
         "dayDays": 5,
         "zdEmail": 45,
         "zdPhone": 90,
-        "zdOpen": 5,
-        "zdPending": 13
+        "zdOpen": 6,
+        "zdPending": 12
       },
       "Julie": {
         "answered": 0,
@@ -11660,7 +11660,7 @@
         "dayDays": 5,
         "zdEmail": 11,
         "zdPhone": 74,
-        "zdOpen": 15,
+        "zdOpen": 18,
         "zdPending": 3
       }
     },
