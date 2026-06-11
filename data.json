@@ -3109,6 +3109,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-11T10:35:41.814Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -9471,7 +9478,7 @@
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": false,
+      "ready": true,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
