@@ -3333,6 +3333,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-11T15:04:41.833Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -9653,7 +9660,7 @@
       "queueId": 43500
     },
     "43500_Andreas_Bergevik": {
-      "ready": true,
+      "ready": false,
       "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
