@@ -13504,7 +13504,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1781252996931,
+    "_refreshedAt": 1781254797486,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 7,
@@ -13514,7 +13514,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:29:59.825Z"
+      "updatedAt": "2026-06-12T08:59:57.840Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
@@ -13525,40 +13525,40 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:00.386Z"
+      "updatedAt": "2026-06-12T08:59:58.027Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
       "openTickets": 1,
       "pendingTickets": 4,
-      "solvedThisWeek": 23,
+      "solvedThisWeek": 25,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:00.889Z"
+      "updatedAt": "2026-06-12T08:59:58.238Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
-      "openTickets": 14,
-      "pendingTickets": 3,
+      "openTickets": 11,
+      "pendingTickets": 1,
       "solvedThisWeek": 88,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:01.906Z"
+      "updatedAt": "2026-06-12T09:00:08.673Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
-      "openTickets": 7,
+      "openTickets": 9,
       "pendingTickets": 7,
-      "solvedThisWeek": 76,
+      "solvedThisWeek": 74,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:02.180Z"
+      "updatedAt": "2026-06-12T09:00:08.825Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -13569,29 +13569,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:02.687Z"
+      "updatedAt": "2026-06-12T09:00:09.178Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 8,
+      "openTickets": 7,
       "pendingTickets": 2,
-      "solvedThisWeek": 125,
+      "solvedThisWeek": 127,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:03.604Z"
+      "updatedAt": "2026-06-12T09:00:10.855Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 6,
-      "pendingTickets": 14,
-      "solvedThisWeek": 146,
+      "openTickets": 5,
+      "pendingTickets": 15,
+      "solvedThisWeek": 151,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:04.077Z"
+      "updatedAt": "2026-06-12T09:00:11.122Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -13602,7 +13602,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:04.358Z"
+      "updatedAt": "2026-06-12T09:00:11.538Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -13613,7 +13613,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T08:30:05.333Z"
+      "updatedAt": "2026-06-12T09:00:12.899Z"
     }
   },
   "wtp_announcements": [
