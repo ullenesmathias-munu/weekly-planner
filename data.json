@@ -3753,6 +3753,34 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-12T08:30:27.009Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-12T08:30:27.011Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-12T08:30:27.011Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-12T08:30:27.012Z",
+      "name": "Thomas Hildre",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -10097,7 +10125,7 @@
       "queueId": 43500
     },
     "43500_Vetle_Bengtson": {
-      "ready": false,
+      "ready": true,
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -10109,19 +10137,19 @@
       "queueId": 43500
     },
     "43500_Mayl\u00e9n_Milson": {
-      "ready": false,
+      "ready": true,
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": false,
+      "ready": true,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
     "43499_Thomas_Hildre": {
-      "ready": true,
+      "ready": false,
       "name": "Thomas Hildre",
       "queue": "Vakt",
       "queueId": 43499
