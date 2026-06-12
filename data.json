@@ -13318,7 +13318,7 @@
   "wtp_intel_snap_2026-06-08": {
     "fromDate": "2026-06-08",
     "toDate": "2026-06-14",
-    "generated": "2026-06-12T10:35:32.904Z",
+    "generated": "2026-06-12T10:40:32.843Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -13331,7 +13331,7 @@
         "dayDays": 3,
         "zdEmail": 0,
         "zdPhone": 4,
-        "zdOpen": 7,
+        "zdOpen": 8,
         "zdPending": 3
       },
       "Thomas": {
@@ -13353,12 +13353,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 29,
+        "zdSolved": 28,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 4,
-        "zdPhone": 25,
+        "zdPhone": 24,
         "zdOpen": 1,
         "zdPending": 4
       },
@@ -13367,12 +13367,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 89,
+        "zdSolved": 88,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 5,
-        "zdPhone": 84,
+        "zdPhone": 83,
         "zdOpen": 10,
         "zdPending": 1
       },
@@ -13409,12 +13409,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 129,
+        "zdSolved": 130,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 5,
         "zdEmail": 15,
-        "zdPhone": 114,
+        "zdPhone": 115,
         "zdOpen": 9,
         "zdPending": 1
       },
@@ -13423,14 +13423,14 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 155,
+        "zdSolved": 156,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
         "zdEmail": 57,
-        "zdPhone": 98,
+        "zdPhone": 99,
         "zdOpen": 6,
-        "zdPending": 12
+        "zdPending": 13
       },
       "Julie": {
         "answered": 0,
@@ -13451,12 +13451,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 45,
+        "zdSolved": 46,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 5,
-        "zdPhone": 40,
+        "zdPhone": 41,
         "zdOpen": 12,
         "zdPending": 4
       }
