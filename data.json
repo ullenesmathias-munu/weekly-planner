@@ -2201,6 +2201,41 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-06T05:00:47.097Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-06T15:00:45.937Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-06T15:00:45.937Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-07T04:00:45.894Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-07T04:59:45.925Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-08T05:31:53.733Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
@@ -2544,6 +2579,27 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T04:00:14.458Z",
+      "name": "Thomas Hildre",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T05:00:41.464Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T05:59:43.513Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T06:35:47.964Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
@@ -2565,8 +2621,22 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T07:00:43.508Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T07:00:51.318Z",
       "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T07:01:43.413Z",
+      "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
@@ -2586,7 +2656,21 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T07:05:43.418Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T07:08:05.403Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T07:08:43.422Z",
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2607,11 +2691,39 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T07:09:43.409Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T07:09:43.410Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T07:19:43.429Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T07:19:55.232Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T07:24:43.692Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     },
     {
       "ts": "2026-06-09T07:24:54.152Z",
@@ -2628,7 +2740,21 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T07:25:43.483Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T07:29:33.237Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T07:29:43.531Z",
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2642,7 +2768,21 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T07:34:43.531Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T07:45:33.223Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T07:45:42.202Z",
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2654,6 +2794,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T07:54:42.293Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T07:55:42.288Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     },
     {
       "ts": "2026-06-09T07:55:53.797Z",
@@ -2670,7 +2824,21 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T08:14:42.305Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T08:54:22.177Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T08:54:42.217Z",
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2682,6 +2850,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T08:56:42.201Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T09:20:42.226Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     },
     {
       "ts": "2026-06-09T09:20:43.153Z",
@@ -2698,7 +2880,21 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T09:32:42.325Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T09:37:51.130Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T09:38:42.321Z",
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2712,6 +2908,13 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T09:41:42.226Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T09:44:03.172Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
@@ -2719,8 +2922,29 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T09:44:42.280Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T09:52:42.310Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T09:52:50.197Z",
       "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T10:00:42.212Z",
+      "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
@@ -2740,11 +2964,32 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T10:09:42.218Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T10:33:06.116Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T10:33:42.236Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T10:33:42.237Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     },
     {
       "ts": "2026-06-09T10:34:08.153Z",
@@ -2756,6 +3001,20 @@
     {
       "ts": "2026-06-09T10:34:08.155Z",
       "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T10:34:42.213Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T10:37:42.253Z",
+      "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
@@ -2775,7 +3034,21 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T11:02:42.214Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T11:03:34.198Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T11:03:42.323Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2787,6 +3060,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T11:05:42.300Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T11:27:42.204Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     },
     {
       "ts": "2026-06-09T11:28:21.214Z",
@@ -2803,7 +3090,21 @@
       "event": "logged_on"
     },
     {
+      "ts": "2026-06-09T11:35:42.370Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
       "ts": "2026-06-09T11:46:26.120Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T11:46:42.210Z",
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2817,7 +3118,21 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T11:52:42.351Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T11:55:13.138Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T11:55:42.212Z",
       "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
@@ -2826,6 +3141,20 @@
     {
       "ts": "2026-06-09T11:55:44.085Z",
       "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T11:56:42.310Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T12:02:42.307Z",
+      "name": "Mayl\u00e9n Milson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
@@ -2845,6 +3174,20 @@
       "event": "logged_off"
     },
     {
+      "ts": "2026-06-09T12:44:42.208Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T12:46:42.205Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
       "ts": "2026-06-09T12:46:43.124Z",
       "name": "Benjamin \u00d8deg\u00e5rd",
       "queue": "Innenfor \u00e5pningstid",
@@ -2857,6 +3200,76 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T12:55:42.350Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T13:25:42.306Z",
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T14:03:42.352Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T14:14:42.315Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T14:17:42.292Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T14:27:42.315Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T14:55:42.321Z",
+      "name": "Thomas Hildre",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-09T15:00:42.472Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T15:00:42.472Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-09T15:01:42.297Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     },
     {
       "ts": "2026-06-10T08:23:42.272Z",
@@ -12346,7 +12759,6 @@
     "ts": "2026-05-12T08:58:56.097Z"
   },
   "wtp_outlook_synced": "2026-05-25T05:17:31.330Z",
-  "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_tasks_mathias": [
     {
       "id": "1777282594906",
@@ -12721,6 +13133,7 @@
       "done": false
     }
   ],
+  "wtp_agenda_seen_kate.rooke@munu.cloud": "2026-05-12T09:23:45.102Z",
   "wtp_review_2026-05-18": {
     "good": "Thomas really stepped up his game. Not that much negativity.",
     "improve": "Need to figure out how to handle e-mails as well as calls. ",
@@ -13028,7 +13441,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1781211731172,
+    "_refreshedAt": 1781252996931,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 7,
@@ -13038,7 +13451,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:11.563Z"
+      "updatedAt": "2026-06-12T08:29:59.825Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
@@ -13049,18 +13462,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:11.998Z"
+      "updatedAt": "2026-06-12T08:30:00.386Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
-      "openTickets": 0,
+      "openTickets": 1,
       "pendingTickets": 4,
       "solvedThisWeek": 23,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:12.229Z"
+      "updatedAt": "2026-06-12T08:30:00.889Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -13071,18 +13484,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:13.574Z"
+      "updatedAt": "2026-06-12T08:30:01.906Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
-      "openTickets": 19,
-      "pendingTickets": 4,
-      "solvedThisWeek": 65,
+      "openTickets": 7,
+      "pendingTickets": 7,
+      "solvedThisWeek": 76,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:13.949Z"
+      "updatedAt": "2026-06-12T08:30:02.180Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -13093,29 +13506,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:14.194Z"
+      "updatedAt": "2026-06-12T08:30:02.687Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 10,
+      "openTickets": 8,
       "pendingTickets": 2,
-      "solvedThisWeek": 118,
+      "solvedThisWeek": 125,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:15.765Z"
+      "updatedAt": "2026-06-12T08:30:03.604Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 10,
-      "pendingTickets": 11,
-      "solvedThisWeek": 139,
+      "openTickets": 6,
+      "pendingTickets": 14,
+      "solvedThisWeek": 146,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:15.875Z"
+      "updatedAt": "2026-06-12T08:30:04.077Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -13126,18 +13539,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:16.146Z"
+      "updatedAt": "2026-06-12T08:30:04.358Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 11,
-      "pendingTickets": 3,
+      "openTickets": 12,
+      "pendingTickets": 4,
       "solvedThisWeek": 42,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-11T21:02:17.527Z"
+      "updatedAt": "2026-06-12T08:30:05.333Z"
     }
   },
   "wtp_announcements": [
