@@ -13213,7 +13213,7 @@
   "wtp_intel_snap_2026-06-08": {
     "fromDate": "2026-06-08",
     "toDate": "2026-06-14",
-    "generated": "2026-06-12T09:20:32.677Z",
+    "generated": "2026-06-12T09:25:32.753Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -13276,13 +13276,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 76,
+        "zdSolved": 79,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 4,
-        "zdPhone": 72,
-        "zdOpen": 10,
+        "zdPhone": 75,
+        "zdOpen": 9,
         "zdPending": 7
       },
       "Tord": {
@@ -13304,12 +13304,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 128,
+        "zdSolved": 127,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 5,
         "zdEmail": 15,
-        "zdPhone": 113,
+        "zdPhone": 112,
         "zdOpen": 8,
         "zdPending": 2
       },
@@ -13346,12 +13346,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 41,
+        "zdSolved": 43,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 5,
-        "zdPhone": 36,
+        "zdPhone": 38,
         "zdOpen": 12,
         "zdPending": 4
       }
