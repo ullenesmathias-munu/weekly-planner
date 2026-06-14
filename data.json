@@ -37854,7 +37854,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1781298024487,
+    "_refreshedAt": 1781431068593,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 7,
@@ -37864,18 +37864,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:24.820Z"
+      "updatedAt": "2026-06-14T09:57:49.720Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
-      "openTickets": 7,
-      "pendingTickets": 1,
-      "solvedThisWeek": 68,
+      "openTickets": 3,
+      "pendingTickets": 0,
+      "solvedThisWeek": 79,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:25.065Z"
+      "updatedAt": "2026-06-14T09:57:49.948Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
@@ -37886,7 +37886,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:25.254Z"
+      "updatedAt": "2026-06-14T09:57:50.504Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -37897,7 +37897,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:26.845Z"
+      "updatedAt": "2026-06-14T09:57:51.627Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
@@ -37908,7 +37908,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:27.022Z"
+      "updatedAt": "2026-06-14T09:57:51.978Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -37919,29 +37919,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:27.345Z"
+      "updatedAt": "2026-06-14T09:57:52.189Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 5,
+      "openTickets": 6,
       "pendingTickets": 1,
-      "solvedThisWeek": 136,
+      "solvedThisWeek": 156,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:28.869Z"
+      "updatedAt": "2026-06-14T09:57:53.027Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
       "openTickets": 8,
       "pendingTickets": 10,
-      "solvedThisWeek": 195,
+      "solvedThisWeek": 211,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:29.082Z"
+      "updatedAt": "2026-06-14T09:57:53.283Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -37952,7 +37952,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:29.308Z"
+      "updatedAt": "2026-06-14T09:58:01.617Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -37963,7 +37963,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-12T21:00:30.831Z"
+      "updatedAt": "2026-06-14T09:58:02.452Z"
     }
   },
   "wtp_announcements": [
@@ -41585,6 +41585,98 @@
         "answered": 19,
         "totalTalkSec": 6281,
         "totalWaitSec": 1476,
+        "missed": 0
+      }
+    },
+    "2026-06-14": {
+      "Andreas Bergevik": {
+        "answered": 1,
+        "totalTalkSec": 118,
+        "totalWaitSec": 10,
+        "missed": 0
+      },
+      "Marie Gjengedal": {
+        "answered": 2,
+        "totalTalkSec": 781,
+        "totalWaitSec": 163,
+        "missed": 0
+      }
+    },
+    "2026-06-13": {
+      "Marie Gjengedal": {
+        "answered": 19,
+        "totalTalkSec": 6910,
+        "totalWaitSec": 318,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 28,
+        "totalTalkSec": 14101,
+        "totalWaitSec": 275,
+        "missed": 2
+      },
+      "Markus Dalsb\u00f8e": {
+        "answered": 3,
+        "totalTalkSec": 582,
+        "totalWaitSec": 1891,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 7,
+        "totalTalkSec": 1913,
+        "totalWaitSec": 143,
+        "missed": 0
+      }
+    },
+    "2026-06-12": {
+      "Thomas Hildre": {
+        "answered": 35,
+        "totalTalkSec": 8427,
+        "totalWaitSec": 2528,
+        "missed": 4
+      }
+    },
+    "2026-06-11": {
+      "Thomas Hildre": {
+        "answered": 20,
+        "totalTalkSec": 7916,
+        "totalWaitSec": 1653,
+        "missed": 0
+      }
+    },
+    "2026-06-10": {
+      "Thomas Hildre": {
+        "answered": 17,
+        "totalTalkSec": 6052,
+        "totalWaitSec": 427,
+        "missed": 0
+      }
+    },
+    "2026-06-09": {
+      "Thomas Hildre": {
+        "answered": 16,
+        "totalTalkSec": 5638,
+        "totalWaitSec": 1597,
+        "missed": 0
+      },
+      "Mathias Ullenes": {
+        "answered": 2,
+        "totalTalkSec": 411,
+        "totalWaitSec": 41,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 1,
+        "totalTalkSec": 252,
+        "totalWaitSec": 7,
+        "missed": 0
+      }
+    },
+    "2026-06-08": {
+      "Thomas Hildre": {
+        "answered": 10,
+        "totalTalkSec": 2800,
+        "totalWaitSec": 205,
         "missed": 0
       }
     }
