@@ -27308,6 +27308,20 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-14T09:58:18.737Z",
+      "name": "Thomas Hildre",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-14T09:58:18.742Z",
+      "name": "Andreas Bergevik",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -34436,7 +34450,7 @@
       "queueId": 43500
     },
     "43499_Thomas_Hildre": {
-      "ready": true,
+      "ready": false,
       "name": "Thomas Hildre",
       "queue": "Vakt",
       "queueId": 43499
@@ -34448,7 +34462,7 @@
       "queueId": 43499
     },
     "43499_Andreas_Bergevik": {
-      "ready": false,
+      "ready": true,
       "name": "Andreas Bergevik",
       "queue": "Vakt",
       "queueId": 43499
