@@ -27336,6 +27336,27 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-15T04:00:22.483Z",
+      "name": "Marie Gjengedal",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-15T04:57:22.523Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-15T07:00:22.506Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -34404,7 +34425,7 @@
   "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n01.Juni\nPiazza \n\n\n\n\n\n\n\n\n\n\n\n\n",
   "wtp_queue_state": {
     "43500_Thomas_Hildre": {
-      "ready": false,
+      "ready": true,
       "name": "Thomas Hildre",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -34458,7 +34479,7 @@
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": false,
+      "ready": true,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -34482,7 +34503,7 @@
       "queueId": 43499
     },
     "43499_Marie_Gjengedal": {
-      "ready": true,
+      "ready": false,
       "name": "Marie Gjengedal",
       "queue": "Vakt",
       "queueId": 43499
@@ -37882,61 +37903,61 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1781459902365,
+    "_refreshedAt": 1781507303797,
     "Jonas": {
       "zdAgentId": "24587351617949",
-      "openTickets": 7,
+      "openTickets": 8,
       "pendingTickets": 2,
-      "solvedThisWeek": 5,
+      "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:22.702Z"
+      "updatedAt": "2026-06-15T07:08:25.017Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
-      "openTickets": 3,
-      "pendingTickets": 0,
-      "solvedThisWeek": 79,
+      "openTickets": 1,
+      "pendingTickets": 4,
+      "solvedThisWeek": 6,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:22.886Z"
+      "updatedAt": "2026-06-15T07:08:25.545Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
-      "openTickets": 2,
-      "pendingTickets": 5,
-      "solvedThisWeek": 31,
+      "openTickets": 3,
+      "pendingTickets": 4,
+      "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:23.105Z"
+      "updatedAt": "2026-06-15T07:08:26.039Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
       "openTickets": 10,
       "pendingTickets": 1,
-      "solvedThisWeek": 89,
+      "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:24.699Z"
+      "updatedAt": "2026-06-15T07:08:27.686Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
       "openTickets": 5,
       "pendingTickets": 8,
-      "solvedThisWeek": 98,
+      "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:24.962Z"
+      "updatedAt": "2026-06-15T07:08:28.154Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -37947,29 +37968,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:25.156Z"
+      "updatedAt": "2026-06-15T07:08:28.354Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
       "openTickets": 6,
       "pendingTickets": 1,
-      "solvedThisWeek": 159,
+      "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:26.728Z"
+      "updatedAt": "2026-06-15T07:08:29.499Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 9,
+      "openTickets": 8,
       "pendingTickets": 9,
-      "solvedThisWeek": 215,
+      "solvedThisWeek": 1,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:26.908Z"
+      "updatedAt": "2026-06-15T07:08:29.694Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -37980,18 +38001,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:27.195Z"
+      "updatedAt": "2026-06-15T07:08:30.102Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 8,
+      "openTickets": 9,
       "pendingTickets": 4,
-      "solvedThisWeek": 58,
+      "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-14T17:58:28.702Z"
+      "updatedAt": "2026-06-15T07:08:30.959Z"
     }
   },
   "wtp_announcements": [
