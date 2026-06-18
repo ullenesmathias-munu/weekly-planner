@@ -17880,7 +17880,7 @@
   "wtp_intel_snap_2026-06-15": {
     "fromDate": "2026-06-15",
     "toDate": "2026-06-21",
-    "generated": "2026-06-18T11:43:27.305Z",
+    "generated": "2026-06-18T12:42:46.798Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -17894,21 +17894,21 @@
         "zdEmail": 3,
         "zdPhone": 12,
         "zdOpen": 6,
-        "zdPending": 0
+        "zdPending": 1
       },
       "Thomas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 83,
+        "zdSolved": 87,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 5,
-        "zdEmail": 11,
-        "zdPhone": 72,
-        "zdOpen": 9,
-        "zdPending": 2
+        "zdEmail": 13,
+        "zdPhone": 74,
+        "zdOpen": 5,
+        "zdPending": 3
       },
       "Maylen": {
         "answered": 0,
@@ -17929,27 +17929,27 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 68,
+        "zdSolved": 73,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 7,
-        "zdEmail": 3,
-        "zdPhone": 65,
-        "zdOpen": 13,
-        "zdPending": 4
+        "zdEmail": 4,
+        "zdPhone": 69,
+        "zdOpen": 15,
+        "zdPending": 2
       },
       "Cecilie": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 75,
+        "zdSolved": 76,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 7,
-        "zdPhone": 68,
-        "zdOpen": 6,
+        "zdPhone": 69,
+        "zdOpen": 8,
         "zdPending": 6
       },
       "Tord": {
@@ -17971,13 +17971,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 47,
+        "zdSolved": 48,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
-        "zdEmail": 8,
+        "zdEmail": 9,
         "zdPhone": 39,
-        "zdOpen": 8,
+        "zdOpen": 9,
         "zdPending": 3
       },
       "Andreas": {
