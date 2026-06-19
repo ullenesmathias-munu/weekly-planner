@@ -6084,17 +6084,25 @@ async function handleUnifonCallsImport(file) {
         reader.readAsArrayBuffer(file);
       });
     }
-    const result = parseUnifonCallsReport(text);
-    if (!result.rowCount) throw new Error('No call rows found.');
+    const isAgentSummary = /(^|\t|;|,)navn(\t|;|,|$)/im.test(text) && /besvart i/i.test(text);
+    const result = isAgentSummary ? parseUnifonAgentSummary(text) : parseUnifonCallsReport(text);
+    if (!result.rowCount) throw new Error('No rows found in report.');
 
     const existing = loadUnifonAgentCalls();
     Object.entries(result.byDate).forEach(([date, agents]) => { existing[date] = agents; });
     saveUnifonAgentCalls(existing);
     scheduleSyncSave();
 
-    const agentCount = new Set(Object.values(result.byDate).flatMap(d => Object.keys(d))).size;
-    if (status) { status.textContent = `✓ Imported ${result.rowCount} calls · ${result.dateCount} days · ${agentCount} agents`; status.style.color = 'var(--low-text)'; }
-    showToast(`✓ Calls report imported — ${result.rowCount} calls across ${agentCount} agents`);
+    if (result.isAgentSummary) {
+      const span = result.from === result.to ? result.from : (result.from + ' → ' + result.to);
+      const msg = `✓ Imported ${result.agents.length} agents · ${result.periodLabel || ''} ${span} · answer rate captured`;
+      if (status) { status.textContent = msg; status.style.color = 'var(--low-text)'; }
+      showToast(`✓ Agents report imported — ${result.agents.length} agents, answer rate included`);
+    } else {
+      const agentCount = new Set(Object.values(result.byDate).flatMap(d => Object.keys(d))).size;
+      if (status) { status.textContent = `✓ Imported ${result.rowCount} calls · ${result.dateCount} days · ${agentCount} agents`; status.style.color = 'var(--low-text)'; }
+      showToast(`✓ Calls report imported — ${result.rowCount} calls across ${agentCount} agents`);
+    }
   } catch(e) {
     if (status) { status.textContent = '✗ ' + e.message; status.style.color = 'var(--high-text)'; }
   }
@@ -6166,6 +6174,54 @@ function parseUnifonCallsReport(text) {
   }
 
   return { byDate, rowCount, dateCount: Object.keys(byDate).length };
+}
+
+// Parse the Unifon "Agents report" (per-agent summary grouped by queue, with answer rate).
+// Columns: Periode | Navn | Nummer | Besvart | Besvart i % | talk Snitt/Maks/Totalt | wait... | Plukket | Time-out | ...
+// Agents can appear once per queue, so we aggregate per agent across rows.
+function parseUnifonAgentSummary(text) {
+  const sep = text.split('\n')[0].includes('\t') ? '\t' : text.split('\n')[0].includes(';') ? ';' : ',';
+  const rows = text.split('\n').map(r => r.split(sep).map(c => c.replace(/^"|"$/g,'').trim()));
+  const hi = rows.findIndex(r => r.some(c => /^navn$/i.test(c)) && r.some(c => /besvart i/i.test(c)));
+  if (hi < 0) throw new Error('Not an agent summary report (missing Navn / Besvart i % columns)');
+  const H = rows[hi].map(h => h.toLowerCase().trim());
+  const find = (...ks) => H.findIndex(h => ks.some(k => h.includes(k)));
+  const iName = find('navn');
+  const iRate = H.findIndex(h => h.includes('besvart i'));
+  const iAns  = iRate - 1;                                   // "Besvart" count sits just before "Besvart i %"
+  const iTalkTot = find('totalt');
+  const iTimeout = find('time-out', 'timeout');
+  const iWaitAns = H.findIndex((h, ix) => h === 'snitt' && ix > iTalkTot); // first Snitt after talk Totalt = wait(answered) avg
+
+  // Report period / date range (e.g. "I dag18.06.2026 - 18.06.2026" or "Siste 7 dager13.06.2026 - 19.06.2026")
+  let from = null, to = null, periodLabel = '';
+  for (const r of rows) {
+    const m = String(r[0] || '').match(/(\d{2})\.(\d{2})\.(\d{4})\s*-\s*(\d{2})\.(\d{2})\.(\d{4})/);
+    if (m) { from = `${m[3]}-${m[2]}-${m[1]}`; to = `${m[6]}-${m[5]}-${m[4]}`; periodLabel = String(r[0]).split(/\d{2}\./)[0].trim(); break; }
+  }
+  if (!from) throw new Error('Could not find the report period/date range');
+
+  const agg = {}; let n = 0;
+  for (let i = hi + 1; i < rows.length; i++) {
+    const r = rows[i];
+    const name = (r[iName] || '').trim();
+    if (!name) continue;                                     // skip the period-total row and the Hour rows
+    const ans     = parseInt(r[iAns]) || 0;
+    const rate    = parseFloat(String(r[iRate]).replace('%',''));
+    const timeout = parseInt(r[iTimeout]) || 0;
+    const talkTot = parseDurToSec(r[iTalkTot] || '');
+    const waitAvg = iWaitAns >= 0 ? parseDurToSec(r[iWaitAns] || '') : 0;
+    // Reconstruct offered from answered + answer-rate so the rate aggregates correctly across queues/days
+    const offered = (rate > 0 && ans > 0) ? Math.round(ans / (rate / 100)) : (ans + timeout);
+    if (!agg[name]) agg[name] = { answered: 0, missed: 0, totalTalkSec: 0, totalWaitSec: 0, offered: 0 };
+    agg[name].answered     += ans;
+    agg[name].missed       += timeout;
+    agg[name].totalTalkSec += talkTot;
+    agg[name].totalWaitSec += waitAvg * ans;
+    agg[name].offered      += offered;
+    n++;
+  }
+  return { byDate: { [from]: agg }, from, to, periodLabel, rowCount: n, dateCount: 1, agents: Object.keys(agg), isAgentSummary: true };
 }
 
 // Get per-agent call stats for a date range → { 'Agent Name': { answered, avgTalkSec, avgWaitSec, missed } }
@@ -7744,6 +7800,9 @@ async function openAgentReview(agentName) {
   const avgAnswered4 = teamAnswered.length ? teamAnswered.reduce((s, v) => s + v, 0) / teamAnswered.length : null;
   const teamMissedArr = teamList.map(n => { const u = getUnifonAgentStats ? getUnifonAgentStats(n, startMon, endSun) : null; return u ? u.missed : null; }).filter(v => v != null);
   const avgMissed4 = teamMissedArr.length ? teamMissedArr.reduce((s, v) => s + v, 0) / teamMissedArr.length : null;
+  const ansRate4 = uni && uni.ansRate != null ? uni.ansRate : null;
+  const teamAnsRate = teamList.map(n => { const u = getUnifonAgentStats ? getUnifonAgentStats(n, startMon, endSun) : null; return u && u.ansRate != null ? u.ansRate : null; }).filter(v => v != null);
+  const avgAnsRate4 = teamAnsRate.length ? teamAnsRate.reduce((s, v) => s + v, 0) / teamAnsRate.length : null;
 
   // ── Presence 4wk ──
   const q = (typeof getAgentQueueStats === 'function') ? getAgentQueueStats(agentName, startMon, endSun) : null;
@@ -7798,6 +7857,7 @@ async function openAgentReview(agentName) {
     { grp: 'Output', label: 'Tickets solved', val: solvedHeadline, bench: avgSolved4, fmt: v => String(Math.round(v)), dir: 'up', bl: 'team avg' },
     { grp: 'Output', label: 'Calls answered', val: (answered4 || 0), bench: avgAnswered4, fmt: v => String(Math.round(v)), dir: 'up', bl: 'team avg' },
     { grp: 'Output', label: 'Calls missed', val: (missed4 || 0), bench: avgMissed4, fmt: v => String(Math.round(v)), dir: 'down', bl: 'team avg' },
+    { grp: 'Output', label: 'Answer rate', val: ansRate4, bench: avgAnsRate4, fmt: v => Math.round(v) + '%', dir: 'up', bl: 'team avg' },
     { grp: 'Output', label: 'Avg talk time', val: talk4, bench: null, fmt: fmtT, dir: 'flat', bl: '' },
     { grp: 'Quality', label: 'CSAT', val: agentCsat, bench: teamCsat, fmt: v => Math.round(v) + '%', dir: 'up', bl: 'L1 team', note: (agentCsatN || 0) + ' rated' },
     { grp: 'Quality', label: 'Avg resolution (MTTR)', val: agentMttr, bench: teamMttr, fmt: fmtM, dir: 'down', bl: 'L1 team', note: (agentMttrN || 0) + ' tickets · biz hrs' },
@@ -7990,6 +8050,7 @@ function renderAgentQueueStats(agentName, container, _startOffset) {
           csat:     isCurrent ? (live.csatPct        != null ? live.csatPct        : null) : null,
           answered: uni ? (uni.answered || 0) : null,
           missed:   uni ? (uni.missed   || 0) : null,
+          ansRate:  uni && uni.ansRate != null ? uni.ansRate : null,
           talk:     uni && uni.avgTalkSec ? uni.avgTalkSec : null,
           days:     q && q.daysLoggedIn ? q.daysLoggedIn : null,
           loginMin:  q ? hm2min(q.avgLoginTime)  : null,
@@ -8104,6 +8165,7 @@ function renderAgentQueueStats(agentName, container, _startOffset) {
         groupLbl('Unifon — calls', '15px');
         row('Calls answered', 'answered', { higherBetter: true });
         row('Calls missed', 'missed', { higherBetter: false });
+        if (me.ansRate != null) row('Answer rate', 'ansRate', { fmt: fPct, higherBetter: true });
         if (me.talk != null) row('Avg talk time', 'talk', { fmt: fTalk });
       }
 
@@ -12399,7 +12461,7 @@ function getUnifonAgentStats(agentName, fromDate, toDate) {
     const normFull  = norm(agentName);
     const normFirst = norm(firstName);
 
-    let answered = 0, missed = 0, totalTalk = 0, talkCount = 0, totalWait = 0, waitCount = 0;
+    let answered = 0, missed = 0, totalTalk = 0, talkCount = 0, totalWait = 0, waitCount = 0, offeredSum = 0;
     Object.entries(agentCalls).forEach(([date, agents]) => {
       if (date < fromDate || date > toDate) return;
       // Find this agent in the day's data using the same matching as resolveAgentCallStats
@@ -12416,6 +12478,7 @@ function getUnifonAgentStats(agentName, fromDate, toDate) {
       if (!a) return;
       answered += a.answered || 0;
       missed   += a.missed   || 0;
+      offeredSum += (a.offered != null) ? a.offered : ((a.answered||0) + (a.missed||0));
       if (a.totalTalkSec && a.answered) { totalTalk += a.totalTalkSec; talkCount += a.answered; }
       if (a.totalWaitSec && a.answered) { totalWait += a.totalWaitSec; waitCount += a.answered; }
     });
@@ -12424,8 +12487,8 @@ function getUnifonAgentStats(agentName, fromDate, toDate) {
       answered, missed,
       avgTalkSec: talkCount > 0 ? Math.round(totalTalk / talkCount) : 0,
       avgWaitSec: waitCount > 0 ? Math.round(totalWait / waitCount) : 0,
-      offered: answered + missed,
-      ansRate: (answered + missed) > 0 ? Math.round(answered / (answered + missed) * 100) : null,
+      offered: offeredSum || (answered + missed),
+      ansRate: offeredSum > 0 ? Math.round(answered / offeredSum * 100) : ((answered + missed) > 0 ? Math.round(answered / (answered + missed) * 100) : null),
     };
   } catch { return null; }
 }
