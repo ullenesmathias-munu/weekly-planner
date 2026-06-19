@@ -4292,6 +4292,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-19T08:21:49.612Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-19T08:21:49.616Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -10756,7 +10770,7 @@
       "queueId": 43500
     },
     "43500_Vetle_Bengtson": {
-      "ready": true,
+      "ready": false,
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -10774,7 +10788,7 @@
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": false,
+      "ready": true,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
