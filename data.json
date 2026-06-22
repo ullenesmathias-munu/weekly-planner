@@ -18286,21 +18286,21 @@
   "wtp_intel_snap_2026-06-22": {
     "fromDate": "2026-06-22",
     "toDate": "2026-06-28",
-    "generated": "2026-06-22T08:24:14.320Z",
+    "generated": "2026-06-22T10:53:37.018Z",
     "agents": {
       "Jonas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 8,
+        "zdSolved": 15,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 1,
-        "zdPhone": 7,
+        "zdPhone": 14,
         "zdOpen": 5,
-        "zdPending": 4
+        "zdPending": 5
       },
       "Thomas": {
         "answered": 0,
@@ -18321,13 +18321,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0,
+        "zdSolved": 6,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 2,
+        "zdPhone": 6,
+        "zdOpen": 3,
         "zdPending": 0
       },
       "Benjamin": {
@@ -18349,13 +18349,13 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 4,
+        "zdSolved": 10,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 2,
         "zdEmail": 0,
-        "zdPhone": 4,
-        "zdOpen": 11,
+        "zdPhone": 10,
+        "zdOpen": 12,
         "zdPending": 3
       },
       "Tord": {
@@ -18383,7 +18383,7 @@
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
-        "zdOpen": 5,
+        "zdOpen": 6,
         "zdPending": 7
       },
       "Andreas": {
@@ -18419,14 +18419,14 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 2,
+        "zdSolved": 8,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 0,
-        "zdPhone": 2,
-        "zdOpen": 13,
-        "zdPending": 10
+        "zdPhone": 8,
+        "zdOpen": 14,
+        "zdPending": 9
       }
     },
     "totals": {
