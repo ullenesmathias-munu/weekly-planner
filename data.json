@@ -4684,6 +4684,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-22T09:30:43.289Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -11148,7 +11155,7 @@
       "queueId": 43500
     },
     "43500_Vetle_Bengtson": {
-      "ready": true,
+      "ready": false,
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
