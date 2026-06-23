@@ -192,13 +192,6 @@
   },
   "wtp_queue_log": [
     {
-      "ts": "2026-06-13T16:15:23.567Z",
-      "name": "Thomas Hildre",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_off"
-    },
-    {
       "ts": "2026-06-13T16:15:23.569Z",
       "name": "Marie Gjengedal",
       "queue": "Vakt",
@@ -28190,6 +28183,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-23T13:05:27.108Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -34630,7 +34630,7 @@
       "queueId": 43500
     },
     "43500_Andreas_Bergevik": {
-      "ready": true,
+      "ready": false,
       "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
