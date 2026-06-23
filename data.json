@@ -38012,17 +38012,17 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1782219441938,
+    "_refreshedAt": 1782229071874,
     "Jonas": {
       "zdAgentId": "24587351617949",
-      "openTickets": 6,
+      "openTickets": 5,
       "pendingTickets": 5,
-      "solvedThisWeek": 40,
+      "solvedThisWeek": 43,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:22.468Z"
+      "updatedAt": "2026-06-23T15:37:57.811Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
@@ -38033,29 +38033,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:22.795Z"
+      "updatedAt": "2026-06-23T15:37:58.127Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
-      "openTickets": 4,
-      "pendingTickets": 3,
-      "solvedThisWeek": 22,
+      "openTickets": 0,
+      "pendingTickets": 0,
+      "solvedThisWeek": 29,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:23.046Z"
+      "updatedAt": "2026-06-23T15:37:58.338Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
-      "openTickets": 16,
+      "openTickets": 20,
       "pendingTickets": 0,
-      "solvedThisWeek": 16,
+      "solvedThisWeek": 19,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:24.290Z"
+      "updatedAt": "2026-06-23T15:38:00.018Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
@@ -38066,7 +38066,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:24.516Z"
+      "updatedAt": "2026-06-23T15:38:00.457Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -38077,29 +38077,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:24.704Z"
+      "updatedAt": "2026-06-23T15:38:00.559Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 1,
-      "pendingTickets": 8,
-      "solvedThisWeek": 20,
+      "openTickets": 2,
+      "pendingTickets": 7,
+      "solvedThisWeek": 24,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:26.273Z"
+      "updatedAt": "2026-06-23T15:38:01.597Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 8,
-      "pendingTickets": 7,
-      "solvedThisWeek": 32,
+      "openTickets": 6,
+      "pendingTickets": 8,
+      "solvedThisWeek": 33,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:26.684Z"
+      "updatedAt": "2026-06-23T15:38:01.836Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -38110,18 +38110,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:26.873Z"
+      "updatedAt": "2026-06-23T15:38:02.061Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 13,
-      "pendingTickets": 9,
-      "solvedThisWeek": 28,
+      "openTickets": 11,
+      "pendingTickets": 10,
+      "solvedThisWeek": 34,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-23T12:57:28.265Z"
+      "updatedAt": "2026-06-23T15:38:02.883Z"
     }
   },
   "wtp_announcements": [
@@ -39429,28 +39429,160 @@
       "title": "Weekly customer support meeting"
     }
   ],
-  "wtp_tasks_kate.rooke@munu.cloud": [
-    {
-      "id": "1778342571989",
-      "day": "Wednesday",
-      "title": "Test",
-      "priority": "",
-      "due": "8 May",
-      "note": "Test",
-      "people": [
-        "Marie"
-      ],
-      "isMeeting": false,
-      "timeStart": "09:00",
-      "timeEnd": "09:30",
-      "recurring": false,
-      "reminder": "",
-      "colour": "amber",
-      "pendingName": "",
-      "weekStamp": "2026-05-04",
-      "done": false
+  "wtp_intel_snap_2026-06-22": {
+    "fromDate": "2026-06-22",
+    "toDate": "2026-06-28",
+    "generated": "2026-06-23T11:27:47.649Z",
+    "agents": {
+      "Jonas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 35,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 2,
+        "zdPhone": 33,
+        "zdOpen": 8,
+        "zdPending": 5
+      },
+      "Thomas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 3,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Maylen": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 20,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 20,
+        "zdOpen": 4,
+        "zdPending": 3
+      },
+      "Benjamin": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 12,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 4,
+        "zdEmail": 1,
+        "zdPhone": 11,
+        "zdOpen": 14,
+        "zdPending": 0
+      },
+      "Cecilie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 30,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 2,
+        "zdEmail": 1,
+        "zdPhone": 29,
+        "zdOpen": 10,
+        "zdPending": 2
+      },
+      "Tord": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Marie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 20,
+        "isNight": true,
+        "nightDays": 5,
+        "dayDays": 0,
+        "zdEmail": 1,
+        "zdPhone": 19,
+        "zdOpen": 1,
+        "zdPending": 7
+      },
+      "Andreas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 27,
+        "isNight": false,
+        "nightDays": 2,
+        "dayDays": 5,
+        "zdEmail": 13,
+        "zdPhone": 14,
+        "zdOpen": 8,
+        "zdPending": 7
+      },
+      "Julie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Vetle": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 25,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 25,
+        "zdOpen": 13,
+        "zdPending": 10
+      }
+    },
+    "totals": {
+      "offered": 0,
+      "answered": 0,
+      "missed": 0,
+      "ansRate": null,
+      "avgWait": 0
     }
-  ],
+  },
   "wtp_intel_snap_2026-03-02": {
     "fromDate": "2026-03-02",
     "toDate": "2026-03-08",
@@ -39651,6 +39783,28 @@
     "focus": "",
     "_open": false
   },
+  "wtp_tasks_kate.rooke@munu.cloud": [
+    {
+      "id": "1778342571989",
+      "day": "Wednesday",
+      "title": "Test",
+      "priority": "",
+      "due": "8 May",
+      "note": "Test",
+      "people": [
+        "Marie"
+      ],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "amber",
+      "pendingName": "",
+      "weekStamp": "2026-05-04",
+      "done": false
+    }
+  ],
   "wtp_unifon_agent_calls": {
     "2026-05-16": {
       "Andreas Bergevik": {
@@ -41745,160 +41899,6 @@
         "totalWaitSec": 1476,
         "missed": 0
       }
-    }
-  },
-  "wtp_intel_snap_2026-06-22": {
-    "fromDate": "2026-06-22",
-    "toDate": "2026-06-28",
-    "generated": "2026-06-23T11:27:47.649Z",
-    "agents": {
-      "Jonas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 35,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 2,
-        "zdPhone": 33,
-        "zdOpen": 8,
-        "zdPending": 5
-      },
-      "Thomas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 3,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
-      },
-      "Maylen": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 20,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 20,
-        "zdOpen": 4,
-        "zdPending": 3
-      },
-      "Benjamin": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 12,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 4,
-        "zdEmail": 1,
-        "zdPhone": 11,
-        "zdOpen": 14,
-        "zdPending": 0
-      },
-      "Cecilie": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 30,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 2,
-        "zdEmail": 1,
-        "zdPhone": 29,
-        "zdOpen": 10,
-        "zdPending": 2
-      },
-      "Tord": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 0,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
-      },
-      "Marie": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 20,
-        "isNight": true,
-        "nightDays": 5,
-        "dayDays": 0,
-        "zdEmail": 1,
-        "zdPhone": 19,
-        "zdOpen": 1,
-        "zdPending": 7
-      },
-      "Andreas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 27,
-        "isNight": false,
-        "nightDays": 2,
-        "dayDays": 5,
-        "zdEmail": 13,
-        "zdPhone": 14,
-        "zdOpen": 8,
-        "zdPending": 7
-      },
-      "Julie": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
-      },
-      "Vetle": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 25,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 25,
-        "zdOpen": 13,
-        "zdPending": 10
-      }
-    },
-    "totals": {
-      "offered": 0,
-      "answered": 0,
-      "missed": 0,
-      "ansRate": null,
-      "avgWait": 0
     }
   },
   "wtp_intel_snap_2026-01-19": {
