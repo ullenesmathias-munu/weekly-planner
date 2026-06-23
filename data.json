@@ -192,20 +192,6 @@
   },
   "wtp_queue_log": [
     {
-      "ts": "2026-06-13T16:09:23.600Z",
-      "name": "Marie Gjengedal",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
-      "ts": "2026-06-13T16:10:23.579Z",
-      "name": "Thomas Hildre",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_off"
-    },
-    {
       "ts": "2026-06-13T16:10:23.582Z",
       "name": "Marie Gjengedal",
       "queue": "Vakt",
@@ -28190,6 +28176,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-23T11:27:51.771Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-23T11:27:51.779Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -34660,7 +34660,7 @@
       "queueId": 43500
     },
     "43500_Benjamin_\u00d8deg\u00e5rd": {
-      "ready": false,
+      "ready": true,
       "name": "Benjamin \u00d8deg\u00e5rd",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -34672,7 +34672,7 @@
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": true,
+      "ready": false,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
