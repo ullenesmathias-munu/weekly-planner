@@ -19100,6 +19100,164 @@
         "totalWaitSec": 1476,
         "missed": 0
       }
+    },
+    "2026-06-25": {
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 12,
+        "totalTalkSec": 4075,
+        "totalWaitSec": 673,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 9,
+        "totalTalkSec": 2503,
+        "totalWaitSec": 113,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 2,
+        "totalTalkSec": 444,
+        "totalWaitSec": 8,
+        "missed": 0
+      },
+      "Andreas Bergevik": {
+        "answered": 1,
+        "totalTalkSec": 187,
+        "totalWaitSec": 17,
+        "missed": 0
+      }
+    },
+    "2026-06-24": {
+      "Marie Gjengedal": {
+        "answered": 19,
+        "totalTalkSec": 7138,
+        "totalWaitSec": 384,
+        "missed": 0
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 25,
+        "totalTalkSec": 13059,
+        "totalWaitSec": 878,
+        "missed": 2
+      },
+      "Vetle Bengtson": {
+        "answered": 17,
+        "totalTalkSec": 10680,
+        "totalWaitSec": 3939,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 23,
+        "totalTalkSec": 8135,
+        "totalWaitSec": 3325,
+        "missed": 0
+      },
+      "Thomas Hildre": {
+        "answered": 14,
+        "totalTalkSec": 8499,
+        "totalWaitSec": 153,
+        "missed": 1
+      },
+      "Andreas Bergevik": {
+        "answered": 17,
+        "totalTalkSec": 4406,
+        "totalWaitSec": 295,
+        "missed": 1
+      },
+      "Truls Johansen": {
+        "answered": 7,
+        "totalTalkSec": 1610,
+        "totalWaitSec": 599,
+        "missed": 1
+      },
+      "Lohany Veloso": {
+        "answered": 3,
+        "totalTalkSec": 1525,
+        "totalWaitSec": 432,
+        "missed": 0
+      }
+    },
+    "2026-06-23": {
+      "Marie Gjengedal": {
+        "answered": 15,
+        "totalTalkSec": 4848,
+        "totalWaitSec": 1159,
+        "missed": 0
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 17,
+        "totalTalkSec": 8095,
+        "totalWaitSec": 3862,
+        "missed": 2
+      },
+      "Vetle Bengtson": {
+        "answered": 11,
+        "totalTalkSec": 8758,
+        "totalWaitSec": 2079,
+        "missed": 1
+      },
+      "Benjamin \u00d8deg\u00e5rd": {
+        "answered": 27,
+        "totalTalkSec": 13592,
+        "totalWaitSec": 1083,
+        "missed": 0
+      },
+      "Jonas Johannes": {
+        "answered": 21,
+        "totalTalkSec": 8492,
+        "totalWaitSec": 1516,
+        "missed": 2
+      },
+      "Andreas Bergevik": {
+        "answered": 17,
+        "totalTalkSec": 10679,
+        "totalWaitSec": 436,
+        "missed": 0
+      },
+      "Lohany Veloso": {
+        "answered": 1,
+        "totalTalkSec": 891,
+        "totalWaitSec": 20,
+        "missed": 0
+      }
+    },
+    "2026-06-22": {
+      "Marie Gjengedal": {
+        "answered": 18,
+        "totalTalkSec": 8065,
+        "totalWaitSec": 1358,
+        "missed": 0
+      },
+      "Cecilie Steinkopf": {
+        "answered": 30,
+        "totalTalkSec": 19485,
+        "totalWaitSec": 3488,
+        "missed": 3
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 24,
+        "totalTalkSec": 9946,
+        "totalWaitSec": 14957,
+        "missed": 3
+      },
+      "Mathias Ullenes": {
+        "answered": 7,
+        "totalTalkSec": 2250,
+        "totalWaitSec": 119,
+        "missed": 0
+      },
+      "Vetle Bengtson": {
+        "answered": 18,
+        "totalTalkSec": 11276,
+        "totalWaitSec": 8197,
+        "missed": 2
+      },
+      "Jonas Johannes": {
+        "answered": 25,
+        "totalTalkSec": 10171,
+        "totalWaitSec": 10540,
+        "missed": 1
+      }
     }
   },
   "wtp_intel_snap_2026-01-19": {
