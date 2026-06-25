@@ -16794,19 +16794,19 @@
   "wtp_intel_snap_2026-06-22": {
     "fromDate": "2026-06-22",
     "toDate": "2026-06-28",
-    "generated": "2026-06-25T12:13:05.532Z",
+    "generated": "2026-06-25T13:21:35.851Z",
     "agents": {
       "Jonas": {
         "answered": 78,
         "missed": 3,
         "avgTalk": 376,
         "avgWait": 199,
-        "zdSolved": 82,
+        "zdSolved": 86,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 7,
-        "zdPhone": 75,
+        "zdPhone": 79,
         "zdOpen": 6,
         "zdPending": 6
       },
@@ -16815,12 +16815,12 @@
         "missed": 1,
         "avgTalk": 559,
         "avgWait": 10,
-        "zdSolved": 21,
+        "zdSolved": 25,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
         "zdEmail": 2,
-        "zdPhone": 19,
+        "zdPhone": 23,
         "zdOpen": 5,
         "zdPending": 0
       },
@@ -16843,12 +16843,12 @@
         "missed": 2,
         "avgTalk": 480,
         "avgWait": 41,
-        "zdSolved": 58,
+        "zdSolved": 61,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 3,
-        "zdPhone": 55,
+        "zdPhone": 58,
         "zdOpen": 19,
         "zdPending": 2
       },
@@ -16899,13 +16899,13 @@
         "missed": 1,
         "avgTalk": 436,
         "avgWait": 21,
-        "zdSolved": 80,
+        "zdSolved": 83,
         "isNight": false,
         "nightDays": 2,
         "dayDays": 5,
-        "zdEmail": 39,
+        "zdEmail": 42,
         "zdPhone": 41,
-        "zdOpen": 7,
+        "zdOpen": 6,
         "zdPending": 11
       },
       "Julie": {
@@ -16927,14 +16927,14 @@
         "missed": 3,
         "avgTalk": 668,
         "avgWait": 309,
-        "zdSolved": 64,
+        "zdSolved": 63,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 1,
-        "zdPhone": 63,
-        "zdOpen": 11,
-        "zdPending": 7
+        "zdPhone": 62,
+        "zdOpen": 13,
+        "zdPending": 9
       }
     },
     "totals": {
