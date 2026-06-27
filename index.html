@@ -9485,307 +9485,9 @@ function renderAdminDashboard(root, viewerMode=false) {
   // ── Render Chart 2: CSAT trend ────────────────────────────────
 
 
-  async function renderChart2() {
-    const el = document.getElementById('db-chart2-body'); if (!el) return;
-    if (!zdReady()) { el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:12px;">Zendesk not configured</div>'; return; }
-
-    // Build 8 weekly windows going back from today
-    const weeks = [];
-    for (let i=7; i>=0; i--) {
-      const mon = new Date(getMonday(0)); mon.setDate(mon.getDate() - i*7);
-      const sun = new Date(mon); sun.setDate(mon.getDate()+6);
-      const to2 = new Date(Math.min(sun, new Date()));
-      weeks.push({ mon: fmtLocal(mon), sun: fmtLocal(to2), label: mon.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) });
-    }
-
-    try {
-      const l1Ids = new Set((zdAgents||[]).map(a=>a.id));
-      const fromTs8 = Math.floor(new Date(weeks[0].mon+'T00:00:00').getTime()/1000);
-      const toTs8   = Math.min(Math.floor(new Date(weeks[7].sun+'T23:59:59').getTime()/1000), Math.floor(Date.now()/1000)-3600);
-      let allRatings=[], url=`/satisfaction_ratings.json?start_time=${fromTs8}&end_time=${toTs8}&per_page=100&sort_by=id&sort_order=asc`;
-      for(let p=0;p<10&&url;p++){const r=await zdFetch(url);allRatings=allRatings.concat(r.satisfaction_ratings||[]);url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;}
-      const filtered = l1Ids.size>0 ? allRatings.filter(r=>l1Ids.has(r.assignee_id)) : allRatings;
-
-      const weeklyData = weeks.map(w => {
-        const wRatings = filtered.filter(r => { const d=r.created_at?.slice(0,10)||''; return d>=w.mon&&d<=w.sun; });
-        const good=wRatings.filter(r=>r.score==='good').length, bad=wRatings.filter(r=>r.score==='bad').length;
-        const total=good+bad;
-        return { pct: total>0?Math.round(good/total*100):null, total, label:w.label };
-      });
-
-      el.innerHTML='';
-      const W=el.offsetWidth||500, H=140;
-      const padL=28, padR=8, padT=10, padB=28;
-      const plotW=W-padL-padR, plotH=H-padT-padB;
-      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-      svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width','100%'); svg.setAttribute('height',H);
-
-      // Gridlines + Y labels
-      [0,25,50,75,100].forEach(v=>{
-        const y=padT+plotH*(1-v/100);
-        const gl=document.createElementNS('http://www.w3.org/2000/svg','line');
-        gl.setAttribute('x1',padL);gl.setAttribute('x2',W-padR);gl.setAttribute('y1',y);gl.setAttribute('y2',y);
-        gl.setAttribute('stroke','var(--border)');gl.setAttribute('stroke-width','0.5');
-        svg.appendChild(gl);
-        const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-        lbl.setAttribute('x',padL-4);lbl.setAttribute('y',y+3);lbl.setAttribute('text-anchor','end');
-        lbl.setAttribute('font-size','8');lbl.setAttribute('fill','var(--text3)');
-        lbl.textContent=v+'%';svg.appendChild(lbl);
-      });
-
-      // Target line at 85%
-      const targetY = padT+plotH*(1-0.85);
-      const tl=document.createElementNS('http://www.w3.org/2000/svg','line');
-      tl.setAttribute('x1',padL);tl.setAttribute('x2',W-padR);tl.setAttribute('y1',targetY);tl.setAttribute('y2',targetY);
-      tl.setAttribute('stroke','var(--med-text)');tl.setAttribute('stroke-width','1');tl.setAttribute('stroke-dasharray','4,3');tl.setAttribute('opacity','0.5');
-      svg.appendChild(tl);
-      const tlLbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-      tlLbl.setAttribute('x',W-padR);tlLbl.setAttribute('y',targetY-3);tlLbl.setAttribute('text-anchor','end');
-      tlLbl.setAttribute('font-size','8');tlLbl.setAttribute('fill','var(--med-text)');tlLbl.setAttribute('opacity','0.7');
-      tlLbl.textContent='target 85%';svg.appendChild(tlLbl);
-
-      // Line + area
-      const validPts = weeklyData.map((w,i)=>{
-        if(w.pct===null)return null;
-        return {x:padL+(i/(weeklyData.length-1))*plotW, y:padT+plotH*(1-w.pct/100), pct:w.pct, total:w.total, label:w.label};
-      }).filter(Boolean);
-
-      if(validPts.length>=2){
-        // Fill
-        const fillD=`M${validPts[0].x},${padT+plotH} ${validPts.map(p=>`L${p.x},${p.y}`).join(' ')} L${validPts[validPts.length-1].x},${padT+plotH} Z`;
-        const fillP=document.createElementNS('http://www.w3.org/2000/svg','path');
-        fillP.setAttribute('d',fillD);fillP.setAttribute('fill','var(--low-text)');fillP.setAttribute('opacity','0.08');svg.appendChild(fillP);
-        // Line
-        const lineP=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-        lineP.setAttribute('points',validPts.map(p=>`${p.x},${p.y}`).join(' '));
-        lineP.setAttribute('fill','none');lineP.setAttribute('stroke','var(--low-text)');lineP.setAttribute('stroke-width','2');
-        lineP.setAttribute('stroke-linecap','round');lineP.setAttribute('stroke-linejoin','round');svg.appendChild(lineP);
-      }
-
-      // Dots + x labels
-      weeklyData.forEach((w,i)=>{
-        const x=padL+(i/(weeklyData.length-1))*plotW;
-        // X label
-        const xlbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-        xlbl.setAttribute('x',x);xlbl.setAttribute('y',H-4);xlbl.setAttribute('text-anchor','middle');
-        xlbl.setAttribute('font-size','8');xlbl.setAttribute('fill','var(--text3)');
-        xlbl.textContent=w.label;svg.appendChild(xlbl);
-
-        if(w.pct!==null){
-          const y=padT+plotH*(1-w.pct/100);
-          const dotColor=w.pct>=90?'var(--low-text)':w.pct>=75?'var(--med-text)':'var(--high-text)';
-          const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
-          dot.setAttribute('cx',x);dot.setAttribute('cy',y);dot.setAttribute('r','3.5');dot.setAttribute('fill',dotColor);dot.setAttribute('stroke','var(--surface)');dot.setAttribute('stroke-width','1.5');
-          const tip=document.createElementNS('http://www.w3.org/2000/svg','title');tip.textContent=`${w.label}: ${w.pct}% (${w.total} rated)`;dot.appendChild(tip);
-          svg.appendChild(dot);
-          // Value label above dot
-          if(w.total>0){
-            const vlbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-            vlbl.setAttribute('x',x);vlbl.setAttribute('y',y-7);vlbl.setAttribute('text-anchor','middle');
-            vlbl.setAttribute('font-size','9');vlbl.setAttribute('font-weight','700');vlbl.setAttribute('fill',dotColor);
-            vlbl.textContent=w.pct+'%';svg.appendChild(vlbl);
-          }
-        } else {
-          const noD=document.createElementNS('http://www.w3.org/2000/svg','text');
-          noD.setAttribute('x',x);noD.setAttribute('y',padT+plotH/2+3);noD.setAttribute('text-anchor','middle');
-          noD.setAttribute('font-size','8');noD.setAttribute('fill','var(--text3)');noD.textContent='—';svg.appendChild(noD);
-        }
-      });
-
-      el.appendChild(svg);
-    } catch(e) {
-      el.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:12px;">Could not load: ${e.message}</div>`;
-    }
-  };
 
   // renderQueuePanel end
 }
-
-  // ── Right panel: SATISFACTION + MEDIAN RESOLUTION + VOLUME TREND ──
-  // These sections are created here but appended to col3 after col3 is declared below
-  const _zdRightSections = [];
-  if (zdReady()) {
-    // ── SATISFACTION ──────────────────────────────────────────────
-    const satSec = dbSection('Satisfaction (30d)', 'Operations', ()=>switchTab('zendesk', document.querySelector('[onclick*="zendesk"]')));
-    const satBody = document.createElement('div');
-    satBody.style.cssText = 'display:flex;align-items:center;gap:16px;padding:8px 0;';
-    satBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
-    satSec.appendChild(satBody);
-    _zdRightSections.push(satSec);
-
-    // ── MEDIAN RESOLUTION ─────────────────────────────────────────
-    const mttrSec = dbSection('Median resolution (30d)');
-    const mttrBody = document.createElement('div');
-    mttrBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
-    mttrSec.appendChild(mttrBody);
-    _zdRightSections.push(mttrSec);
-
-    // ── VOLUME TREND ──────────────────────────────────────────────
-    const volSec = dbSection('Volume trend');
-    const volBody = document.createElement('div');
-    volBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">Loading…</div>';
-    volSec.appendChild(volBody);
-    _zdRightSections.push(volSec);
-
-    // Fetch and populate all three async
-    (async () => {
-      try {
-        const t = localToday();
-        const d30 = new Date(); d30.setDate(d30.getDate()-29);
-        const from30 = fmtLocal(d30);
-        const fromTs = Math.floor(new Date(from30+'T00:00:00').getTime()/1000);
-        const toTs   = Math.floor(Date.now()/1000);
-
-        // CSAT — paginate all rating pages (like the report) so we don't miss scored ratings beyond the first 100
-        let _allRatings = [], _csUrl = '/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100&sort_by=id&sort_order=asc';
-        for (let _p=0; _p<10 && _csUrl; _p++) {
-          try { const _rr = await zdFetch(_csUrl); _allRatings = _allRatings.concat(_rr.satisfaction_ratings||[]); _csUrl = _rr.next_page ? _rr.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null; }
-          catch(e) { break; }
-        }
-        const _dgId = zdGroupId || (await zdGetGroupId().catch(()=>null));
-        const solvedData = await zdFetch('/search.json?query='+encodeURIComponent('type:ticket'+(_dgId?' group:'+_dgId:'')+' status>=solved solved>='+from30+' solved<='+t)+'&per_page=100').catch(()=>({results:[]}));
-
-        const ratings = _allRatings;
-        const good    = ratings.filter(r=>r.score==='good').length;
-        const bad     = ratings.filter(r=>r.score==='bad').length;
-        const total   = good + bad;
-        const pct     = total > 0 ? Math.round(good/total*100) : null;
-
-        // ── SATISFACTION — stat panel + donut ──────────────────────
-        satBody.innerHTML = '';
-        const pctCls2 = pct === null ? '' : pct >= 90 ? 'ok' : pct >= 75 ? 'warn' : 'danger';
-
-        if (pct !== null) {
-          // Big CSAT panel
-          const csatPanel = document.createElement('div'); csatPanel.className = 'db-stat-panel ' + pctCls2;
-          const csatLbl = document.createElement('div'); csatLbl.className = 'db-stat-label'; csatLbl.textContent = 'CSAT score';
-          const csatVal = document.createElement('div'); csatVal.className = 'db-stat-value large ' + pctCls2; csatVal.textContent = pct + '%';
-          const csatSub = document.createElement('div'); csatSub.className = 'db-stat-sub';
-          csatSub.textContent = good + ' good · ' + bad + ' bad · ' + total + ' rated';
-          const cGauge = document.createElement('div'); cGauge.className = 'db-gauge-track';
-          const cFill = document.createElement('div'); cFill.className = 'db-gauge-fill';
-          cFill.style.width = pct + '%';
-          cFill.style.background = pct >= 90 ? '#34d399' : pct >= 75 ? '#fbbf24' : '#f87171';
-          cGauge.appendChild(cFill);
-          csatPanel.appendChild(csatLbl); csatPanel.appendChild(csatVal); csatPanel.appendChild(csatSub); csatPanel.appendChild(cGauge);
-          satBody.appendChild(csatPanel);
-
-          // Good/Bad mini grid
-          const csatGrid = document.createElement('div'); csatGrid.className = 'db-stat-grid';
-          const mkSP2 = (val, label, cls) => {
-            const p = document.createElement('div'); p.className = 'db-stat-panel ' + cls;
-            const l = document.createElement('div'); l.className = 'db-stat-label'; l.textContent = label;
-            const v = document.createElement('div'); v.className = 'db-stat-value small ' + cls; v.textContent = val;
-            p.appendChild(l); p.appendChild(v); return p;
-          };
-          csatGrid.appendChild(mkSP2(good, 'Good', 'ok'));
-          csatGrid.appendChild(mkSP2(bad, 'Bad', bad > 0 ? 'danger' : ''));
-          satBody.appendChild(csatGrid);
-        } else {
-          satBody.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:8px 0;">No CSAT data for this period</div>';
-        }
-
-        // ── MEDIAN RESOLUTION — stat panels ──────────────────────────
-        const tickets = solvedData.results || [];
-        const resTimes = tickets.map(t2 =>
-          t2.solved_at ? (new Date(t2.solved_at)-new Date(t2.created_at))/60000 : null
-        ).filter(v=>v>0).sort((a,b)=>a-b);
-        const mean   = resTimes.length ? Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length) : null;
-        const median = resTimes.length ? resTimes[Math.floor(resTimes.length/2)] : null;
-        const p95    = resTimes.length ? resTimes[Math.floor(resTimes.length*0.95)] : null;
-
-        mttrBody.innerHTML = '';
-        if (mean !== null) {
-          const mttrGrid = document.createElement('div'); mttrGrid.className = 'db-stat-grid cols-1';
-          const mttrCls = mean < 240 ? 'ok' : mean < 480 ? 'warn' : 'danger'; // 4h ok, 8h warn
-
-          const mttrP = document.createElement('div'); mttrP.className = 'db-stat-panel ' + mttrCls;
-          const mttrL = document.createElement('div'); mttrL.className = 'db-stat-label'; mttrL.textContent = 'Avg resolution (mean)';
-          const mttrHr = Math.floor(mean/60), mttrMin = mean % 60;
-          const mttrV = document.createElement('div'); mttrV.className = 'db-stat-value ' + mttrCls;
-          mttrV.textContent = (mttrHr > 0 ? mttrHr + 'h ' : '') + mttrMin + 'm';
-          const mttrS = document.createElement('div'); mttrS.className = 'db-stat-sub';
-          mttrS.textContent = tickets.length + ' tickets · target <4h';
-          mttrP.appendChild(mttrL); mttrP.appendChild(mttrV); mttrP.appendChild(mttrS);
-          mttrBody.appendChild(mttrP);
-
-          // Median + p95 grid
-          const statGrid2 = document.createElement('div'); statGrid2.className = 'db-stat-grid';
-          const mkMP = (val, label) => {
-            const p = document.createElement('div'); p.className = 'db-stat-panel';
-            const l = document.createElement('div'); l.className = 'db-stat-label'; l.textContent = label;
-            const v = document.createElement('div'); v.className = 'db-stat-value small'; v.textContent = val;
-            p.appendChild(l); p.appendChild(v); return p;
-          };
-          if (median !== null) {
-            const medMin = Math.round(median);
-            statGrid2.appendChild(mkMP((medMin>=60?(Math.floor(medMin/60)+'h'+(medMin%60?medMin%60+'m':'')):(medMin+'m')), 'Median'));
-          }
-          if (p95 !== null) {
-            const p95Min = Math.round(p95);
-            statGrid2.appendChild(mkMP((p95Min>=60?(Math.floor(p95Min/60)+'h'+(p95Min%60?p95Min%60+'m':'')):(p95Min+'m')), 'p95'));
-          }
-          if (statGrid2.children.length) mttrBody.appendChild(statGrid2);
-        } else {
-          mttrBody.innerHTML = '<div style="font-size:11px;color:var(--text3);">No resolution data</div>';
-        }
-
-        // ── VOLUME TREND — stat panels with trend indicators ─────────
-        const mon = getMonday(0);
-        const lastMon = getMonday(-1);
-        const lastSun = new Date(mon.getTime()-86400000);
-        const daysElapsed = Math.max(1, Math.ceil((new Date(t+'T00:00:00')-mon)/86400000)+1);
-        const [twSolved, lwSolved, openNow] = await Promise.all([
-          zdCount('type:ticket status>=solved solved>='+fmtLocal(mon)+' solved<='+t).catch(()=>null),
-          zdCount('type:ticket status>=solved solved>='+fmtLocal(lastMon)+' solved<='+fmtLocal(lastSun)).catch(()=>null),
-          zdCount('type:ticket status:open').catch(()=>null),
-        ]);
-        const twoWksAgo = new Date(lastMon); twoWksAgo.setDate(twoWksAgo.getDate()-1);
-        const oldOpen = await zdCount('type:ticket status:open created<='+fmtLocal(twoWksAgo)).catch(()=>null);
-
-        volBody.innerHTML = '';
-        const lwAvg   = lwSolved !== null ? Math.round(lwSolved/7) : null;
-        const twRate  = twSolved !== null ? Math.round(twSolved/daysElapsed) : null;
-        const delta   = (twRate !== null && lwAvg !== null) ? twRate - lwAvg : null;
-        const deltaPct= (lwAvg !== null && lwAvg > 0 && delta !== null) ? Math.round(delta/lwAvg*100) : null;
-
-        // Solved/day big stat panel
-        if (twRate !== null) {
-          const volCls = delta === null ? '' : delta > 0 ? 'ok' : delta < -5 ? 'danger' : 'warn';
-          const volP = document.createElement('div'); volP.className = 'db-stat-panel ' + volCls;
-          const volL = document.createElement('div'); volL.className = 'db-stat-label'; volL.textContent = 'Solved / day this week';
-          const volV = document.createElement('div'); volV.className = 'db-stat-value large ' + volCls; volV.textContent = twRate;
-          const volS = document.createElement('div'); volS.className = 'db-stat-sub';
-          // Trend badge
-          if (delta !== null) {
-            const trendBadge = document.createElement('span');
-            trendBadge.className = 'db-stat-trend ' + (delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat');
-            trendBadge.textContent = (delta > 0 ? '↑ +' : delta < 0 ? '↓ ' : '→ ') + Math.abs(delta) + '/day vs last wk';
-            volS.appendChild(trendBadge);
-          }
-          volS.append(' ' + daysElapsed + 'd elapsed');
-          volP.appendChild(volL); volP.appendChild(volV); volP.appendChild(volS);
-          volBody.appendChild(volP);
-        }
-
-        // Grid: Last wk avg / Open now / Old open
-        const volGrid = document.createElement('div'); volGrid.className = 'db-stat-grid';
-        const mkVP = (val, label, cls) => {
-          const p = document.createElement('div'); p.className = 'db-stat-panel ' + (cls||'');
-          const l = document.createElement('div'); l.className = 'db-stat-label'; l.textContent = label;
-          const v = document.createElement('div'); v.className = 'db-stat-value small ' + (cls||''); v.textContent = val??'—';
-          p.appendChild(l); p.appendChild(v); return p;
-        };
-        if (lwAvg !== null) volGrid.appendChild(mkVP(lwAvg+'/day', 'Last wk avg', ''));
-        if (openNow !== null) volGrid.appendChild(mkVP(openNow, 'Open now', +openNow>80?'danger':+openNow>50?'warn':'ok'));
-        if (oldOpen !== null) volGrid.appendChild(mkVP(oldOpen, 'Backlog (>2wk old)', +oldOpen>30?'danger':+oldOpen>10?'warn':''));
-        if (volGrid.children.length) volBody.appendChild(volGrid);
-
-      } catch(e) {
-        console.warn('Dashboard right panel error:', e.message);
-      }
-    })();
-  }
 
   col2.appendChild(queueSec);
   rowTop.appendChild(col2);
@@ -9892,13 +9594,215 @@ function renderAdminDashboard(root, viewerMode=false) {
   perfSec.appendChild(chart1Body);
   col3.appendChild(perfSec);
 
-  // sat/mttr/vol go to colStats (top row 3rd panel) — see below
+  // ── Oldest open tickets ────────────────────────────────────────
+  const oldestSec = dbSection('Oldest open tickets', '→ Operations', () => switchTab('zendesk', document.querySelector('[onclick*="zendesk"]')));
+  const oldestBody = document.createElement('div');
+  oldestBody.id = 'db-oldest-body';
+  oldestBody.style.cssText = 'min-height:40px;';
+  oldestBody.innerHTML = zdReady() ? '<div style="font-size:11px;color:var(--text3);">Loading…</div>' : '<div style="font-size:11px;color:var(--text3);">Zendesk not configured</div>';
+  oldestSec.appendChild(oldestBody);
+  col3.appendChild(oldestSec);
 
-  // ── ZD Stats col (sat/mttr/vol) — 3rd panel in top row ─────────
-  const colStats = document.createElement('div'); colStats.className = 'db-col';
-  if (typeof _zdRightSections !== 'undefined') {
-    _zdRightSections.forEach(sec => colStats.appendChild(sec));
+  if (zdReady()) {
+    (async () => {
+      try {
+        const r = await zdFetch('/search.json?query=' + encodeURIComponent('type:ticket status:open') + '&sort_by=created_at&sort_order=asc&per_page=5');
+        const tickets = r.results || [];
+        const el = document.getElementById('db-oldest-body');
+        if (!el) return;
+        el.innerHTML = '';
+        if (!tickets.length) { el.innerHTML = '<div class="db-empty">No open tickets</div>'; return; }
+        tickets.forEach(t => {
+          const age = Math.floor((Date.now() - new Date(t.created_at).getTime()) / 86400000);
+          const ageColor = age > 7 ? 'var(--high-text)' : age > 3 ? 'var(--med-text)' : 'var(--text3)';
+          const row = document.createElement('div'); row.className = 'db-ticket-row'; row.style.cursor = 'pointer';
+          row.onclick = () => switchTab('zendesk', document.querySelector('[onclick*="zendesk"]'));
+          const idEl = document.createElement('span'); idEl.className = 'db-ticket-id'; idEl.textContent = '#' + t.id;
+          const subEl = document.createElement('span'); subEl.className = 'db-ticket-subject'; subEl.textContent = t.subject || '(no subject)';
+          const ageEl = document.createElement('span'); ageEl.className = 'db-ticket-age'; ageEl.style.color = ageColor; ageEl.textContent = age + 'd';
+          row.appendChild(idEl); row.appendChild(subEl); row.appendChild(ageEl);
+          el.appendChild(row);
+        });
+      } catch(e) {
+        const el = document.getElementById('db-oldest-body');
+        if (el) el.innerHTML = '<div class="db-empty">Could not load</div>';
+      }
+    })();
   }
+
+  // ═══════════════════════════════════════════════════════════════
+  // COL STATS: Team performance table + week-level KPIs
+  // ═══════════════════════════════════════════════════════════════
+  const colStats = document.createElement('div'); colStats.className = 'db-col';
+
+  // ── Week KPIs: CSAT / Created / Solved ────────────────────────
+  const wkKpiSec = dbSection('This week');
+  const wkKpiGrid = document.createElement('div'); wkKpiGrid.className = 'db-stat-grid';
+  const mkWkP = (id, label, cls) => {
+    const p = document.createElement('div'); p.className = 'db-stat-panel ' + (cls||'');
+    const l = document.createElement('div'); l.className = 'db-stat-label'; l.textContent = label;
+    const v = document.createElement('div'); v.className = 'db-stat-value small ' + (cls||''); v.id = id; v.textContent = '…';
+    p.appendChild(l); p.appendChild(v); return p;
+  };
+  wkKpiGrid.appendChild(mkWkP('db-wk-csat',   'CSAT',    ''));
+  wkKpiGrid.appendChild(mkWkP('db-wk-created', 'Created', ''));
+  wkKpiGrid.appendChild(mkWkP('db-wk-solved',  'Solved',  'ok'));
+  wkKpiSec.appendChild(wkKpiGrid);
+  colStats.appendChild(wkKpiSec);
+
+  if (zdReady()) {
+    // CSAT this week
+    (async () => {
+      try {
+        const wkFrom = fmtLocal(getMonday(0));
+        const wkTo   = localToday();
+        const fromTs = Math.floor(new Date(wkFrom + 'T00:00:00').getTime() / 1000);
+        const toTs   = Math.floor(new Date(wkTo   + 'T23:59:59').getTime() / 1000);
+        let ratings = [], url = '/satisfaction_ratings.json?start_time=' + fromTs + '&end_time=' + toTs + '&per_page=100';
+        for (let pg = 0; pg < 5 && url; pg++) {
+          const r = await zdFetch(url);
+          ratings = ratings.concat(r.satisfaction_ratings || []);
+          url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+        }
+        const good  = ratings.filter(r => r.score === 'good').length;
+        const total = ratings.filter(r => r.score === 'good' || r.score === 'bad').length;
+        const el = document.getElementById('db-wk-csat');
+        if (el) {
+          if (total > 0) {
+            const pct = Math.round(good / total * 100);
+            const cls = pct >= 90 ? 'ok' : pct >= 75 ? 'warn' : 'danger';
+            el.textContent = pct + '%';
+            el.className = 'db-stat-value small ' + cls;
+            const panel = el.closest('.db-stat-panel');
+            if (panel) panel.className = 'db-stat-panel ' + cls;
+          } else { el.textContent = '—'; }
+        }
+      } catch(e) { const el = document.getElementById('db-wk-csat'); if (el) el.textContent = '—'; }
+    })();
+
+    // Created + Solved this week totals
+    const wkF = fmtLocal(getMonday(0)), wkT = localToday();
+    zdCount('type:ticket created>=' + wkF + ' created<=' + wkT).then(v => {
+      const el = document.getElementById('db-wk-created'); if (el) el.textContent = v;
+    }).catch(() => {});
+    zdCount('type:ticket status>=solved solved>=' + wkF + ' solved<=' + wkT).then(v => {
+      const el = document.getElementById('db-wk-solved');
+      if (el) { el.textContent = v; el.style.color = 'var(--low-text)'; }
+    }).catch(() => {});
+  }
+
+  // ── Team performance table ────────────────────────────────────
+  const teamPerfSec = dbSection('Team performance', 'My Team', () => switchTab('zendesk', document.querySelector('[onclick*="zendesk"]')));
+
+  const tpMonday = fmtLocal(getMonday(0));
+  const tpSnap   = typeof getWeeklySnapshot === 'function' ? getWeeklySnapshot(tpMonday) : null;
+
+  const tpTable = document.createElement('table');
+  tpTable.style.cssText = 'width:100%;border-collapse:collapse;font-size:11px;';
+
+  // Header row
+  const tpHead = document.createElement('tr');
+  tpHead.style.cssText = 'border-bottom:1px solid var(--border);';
+  ['Agent', 'Solved', 'Calls', 'Ans%'].forEach((h, i) => {
+    const th = document.createElement('th');
+    th.style.cssText = 'padding:4px 6px;font-size:10px;font-weight:600;color:var(--text3);text-align:' + (i === 0 ? 'left' : 'right') + ';white-space:nowrap;';
+    th.textContent = h;
+    tpHead.appendChild(th);
+  });
+  tpTable.appendChild(tpHead);
+
+  // Agent rows
+  MY_TEAM.forEach(name => {
+    const ag       = tpSnap?.agents?.[name];
+    const answered = ag?.answered || 0;
+    const missed   = ag?.missed   || 0;
+    const offered  = answered + missed;
+    const ansRate  = offered > 0 ? Math.round(answered / offered * 100) : null;
+    const ansColor = ansRate === null ? 'var(--text3)' : ansRate >= 85 ? 'var(--low-text)' : ansRate >= 70 ? 'var(--med-text)' : 'var(--high-text)';
+
+    const tr = document.createElement('tr');
+    tr.style.cssText = 'border-bottom:1px solid rgba(255,255,255,0.04);';
+
+    const mkTd = (content, css, attr) => {
+      const td = document.createElement('td'); td.style.cssText = css;
+      if (attr) td.setAttribute(attr[0], attr[1]);
+      td.textContent = content; return td;
+    };
+    tr.appendChild(mkTd(name.split(' ')[0], 'padding:5px 6px;font-weight:500;color:var(--text);white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;'));
+    tr.appendChild(mkTd('…', 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text3);', ['data-tp-solved', name]));
+    tr.appendChild(mkTd(offered === 0 ? '—' : String(answered), 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text);'));
+    tr.appendChild(mkTd(ansRate !== null ? ansRate + '%' : '—', 'padding:5px 6px;text-align:right;font-weight:700;color:' + ansColor + ';'));
+    tpTable.appendChild(tr);
+  });
+
+  // Totals row
+  const totAns   = MY_TEAM.reduce((s, n) => s + (tpSnap?.agents?.[n]?.answered || 0), 0);
+  const totMis   = MY_TEAM.reduce((s, n) => s + (tpSnap?.agents?.[n]?.missed   || 0), 0);
+  const totOff   = totAns + totMis;
+  const totRate  = totOff > 0 ? Math.round(totAns / totOff * 100) : null;
+  const totColor = totRate === null ? 'var(--text3)' : totRate >= 85 ? 'var(--low-text)' : totRate >= 70 ? 'var(--med-text)' : 'var(--high-text)';
+
+  const totTr = document.createElement('tr');
+  totTr.style.cssText = 'border-top:1px solid var(--border);';
+  const mkTotTd = (content, css, attr) => {
+    const td = document.createElement('td'); td.style.cssText = css;
+    if (attr) td.setAttribute(attr[0], attr[1]);
+    td.textContent = content; return td;
+  };
+  totTr.appendChild(mkTotTd('Team', 'padding:5px 6px;font-weight:700;color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:0.05em;'));
+  totTr.appendChild(mkTotTd('…', 'padding:5px 6px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text3);', ['data-tp-total-solved', '1']));
+  totTr.appendChild(mkTotTd(totOff === 0 ? '—' : String(totAns), 'padding:5px 6px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text);'));
+  totTr.appendChild(mkTotTd(totRate !== null ? totRate + '%' : '—', 'padding:5px 6px;text-align:right;font-weight:700;color:' + totColor + ';'));
+  tpTable.appendChild(totTr);
+
+  teamPerfSec.appendChild(tpTable);
+
+  if (!tpSnap || !Object.keys(tpSnap.agents || {}).length) {
+    const hint = document.createElement('div');
+    hint.style.cssText = 'font-size:10px;color:var(--text3);font-style:italic;margin-top:6px;';
+    hint.textContent = 'Upload a Unifon report in the Reports tab to see call data.';
+    teamPerfSec.appendChild(hint);
+  }
+
+  colStats.appendChild(teamPerfSec);
+
+  // Async: fill per-agent solved from ZD (one batched search query)
+  if (zdReady()) {
+    (async () => {
+      try {
+        const wkFrom = fmtLocal(getMonday(0)), wkTo = localToday();
+        let allSolved = [], url = '/search.json?query=' + encodeURIComponent('type:ticket status>=solved solved>=' + wkFrom + ' solved<=' + wkTo) + '&per_page=100';
+        for (let pg = 0; pg < 5 && url; pg++) {
+          const r = await zdFetch(url);
+          allSolved = allSolved.concat(r.results || []);
+          url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+        }
+        const solvedMap = {};
+        allSolved.forEach(t => { if (t.assignee_id) solvedMap[t.assignee_id] = (solvedMap[t.assignee_id] || 0) + 1; });
+
+        let teamTotal = 0;
+        (zdAgents || []).forEach(agent => {
+          const count = solvedMap[agent.id] || 0;
+          const displayName = MY_TEAM.find(n =>
+            normName(n) === normName(agent.name) ||
+            normName(n.split(' ')[0]) === normName(agent.name.split(' ')[0])
+          );
+          if (displayName) {
+            teamTotal += count;
+            const cell = document.querySelector('[data-tp-solved="' + displayName + '"]');
+            if (cell) { cell.textContent = count; cell.style.color = count > 0 ? 'var(--low-text)' : 'var(--text3)'; }
+          }
+        });
+        const totCell = document.querySelector('[data-tp-total-solved]');
+        if (totCell) { totCell.textContent = teamTotal; totCell.style.color = teamTotal > 0 ? 'var(--low-text)' : 'var(--text3)'; }
+      } catch(e) {
+        document.querySelectorAll('[data-tp-solved]').forEach(el => { el.textContent = '—'; });
+        const totCell = document.querySelector('[data-tp-total-solved]');
+        if (totCell) totCell.textContent = '—';
+      }
+    })();
+  }
+
   rowTop.appendChild(colStats);
   body.appendChild(rowTop);
 
@@ -10241,7 +10145,6 @@ function renderAdminDashboard(root, viewerMode=false) {
     return{from:t3,to:t3};
   })();
   renderChart1(initFrom, initTo);
-  renderChart2();
 }
 
 async function renderTeamMemberDashboard(root) {
