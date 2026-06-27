@@ -13478,6 +13478,16 @@ function renderReportsTab() {
   };
   topbar.appendChild(saveBtn);
 
+  // ── Upload Unifon report ──────────────────────────────────────
+  const unifonSep = document.createElement('div'); unifonSep.style.cssText='width:1px;background:var(--border2);align-self:stretch;height:16px;margin:0 2px;'; topbar.appendChild(unifonSep);
+  const unifonInput = document.createElement('input'); unifonInput.type='file'; unifonInput.accept='.xlsx'; unifonInput.style.display='none'; topbar.appendChild(unifonInput);
+  const unifonBtn = document.createElement('button');
+  unifonBtn.style.cssText='font-family:inherit;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--cal-border);background:none;color:var(--cal-text);white-space:nowrap;';
+  unifonBtn.textContent='↑ Unifon Report';
+  unifonBtn.onclick = () => unifonInput.click();
+  unifonInput.onchange = () => { const rb = document.getElementById('report-body'); if (unifonInput.files[0] && rb) handleUnifonReportUpload(unifonInput.files[0], rb); unifonInput.value=''; };
+  topbar.appendChild(unifonBtn);
+
   const printBtn = document.createElement('button');
   printBtn.style.cssText='font-family:inherit;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border2);background:none;color:var(--text2);';
   printBtn.textContent='Print / PDF'; printBtn.onclick=()=>window.print();
@@ -13520,6 +13530,316 @@ function renderReportsTab() {
 
   // Auto-select this week
   if (chipWrap.firstChild) chipWrap.firstChild.click();
+}
+
+// --- UNIFON REPORT UPLOAD (Reports tab) --------------------------------
+
+async function handleUnifonReportUpload(file, container) {
+  if (!file) return;
+  container.innerHTML = '<div style="padding:60px;text-align:center;font-size:13px;color:var(--text3);">Parsing report…</div>';
+  try {
+    const rows2d = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          if (typeof XLSX === 'undefined') { reject(new Error('SheetJS not available')); return; }
+          const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', raw: false });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          resolve(XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' }));
+        } catch(err) { reject(new Error('Could not parse file: ' + err.message)); }
+      };
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsArrayBuffer(file);
+    });
+
+    const h2 = rows2d[1] ? rows2d[1].map(c => String(c).toLowerCase()) : [];
+    const isAgentReport = h2.some(h => /^navn$/.test(h));
+    const isMainReport  = h2.some(h => /^tapte$/.test(h)) && !isAgentReport;
+
+    if (!isAgentReport && !isMainReport) {
+      throw new Error('Unrecognised format. Expected a Unifon Agent-Report or Main-Number-Report.');
+    }
+
+    container.innerHTML = '';
+    if (isAgentReport) {
+      renderUnifonAgentCards(parseUnifonAgentReportXlsx(rows2d), container);
+    } else {
+      renderUnifonMainReport(parseUnifonMainReportXlsx(rows2d), container);
+    }
+  } catch(e) {
+    container.innerHTML = '<div style="padding:48px;text-align:center;font-size:13px;color:var(--high-text);">✗ ' + e.message + '</div>';
+  }
+}
+
+function parseUnifonAgentReportXlsx(rows2d) {
+  const H = (rows2d[1] || []).map(c => String(c).trim());
+  const iName     = H.findIndex(h => /^navn$/i.test(h));
+  const iNum      = H.findIndex(h => /^nummer$/i.test(h));
+  const iAns      = H.findIndex(h => /^besvart$/i.test(h));
+  const iRate     = H.findIndex(h => /besvart i/i.test(h));
+  const iTalkAvg  = iRate >= 0 ? iRate + 1 : -1;
+  const iTalkTot  = H.findIndex((h, i) => /^totalt$/i.test(h) && i > iRate);
+  const iWaitAvg  = iTalkTot >= 0 ? iTalkTot + 1 : -1;
+  const iTimeout  = H.findIndex(h => /time.?out/i.test(h));
+  const iAvail    = H.findIndex(h => /tilgjengelig/i.test(h));
+
+  const periodCell = String((rows2d[2] || [])[0] || '');
+  let period = '', from = '', to = '';
+  const dm = periodCell.match(/(\d{2})\.(\d{2})\.(\d{4})\s*-\s*(\d{2})\.(\d{2})\.(\d{4})/);
+  if (dm) {
+    from = dm[3]+'-'+dm[2]+'-'+dm[1]; to = dm[6]+'-'+dm[5]+'-'+dm[4];
+    period = (from === to) ? dm[1]+'.'+dm[2]+'.'+dm[3] : dm[1]+'.'+dm[2]+'.'+dm[3]+' – '+dm[4]+'.'+dm[5]+'.'+dm[6];
+  } else {
+    const dm2 = periodCell.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+    if (dm2) { from = to = dm2[3]+'-'+dm2[2]+'-'+dm2[1]; period = dm2[1]+'.'+dm2[2]+'.'+dm2[3]; }
+  }
+
+  const gRow = rows2d[2] || [];
+  const grandTotal = {
+    answered:    parseInt(gRow[iAns]) || 0,
+    rate:        parseFloat(String(gRow[iRate]||'').replace('%','')) || 0,
+    avgTalkSec:  parseDurToSec(gRow[iTalkAvg]),
+    avgWaitSec:  parseDurToSec(gRow[iWaitAvg])
+  };
+
+  const barColors = ['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  const byAgent = {};
+  let currentQueue = '';
+
+  for (let i = 3; i < rows2d.length; i++) {
+    const r = rows2d[i];
+    const col0 = String(r[0] || '').trim();
+    const col1 = String(r[1] || '').trim();
+    if (/^hour/i.test(col0)) break;
+    if (/^k[oø]/i.test(col0) || /^overflow/i.test(col0)) { currentQueue = col0; continue; }
+    const name = col1 || col0;
+    if (!name) continue;
+
+    const ans      = parseInt(r[iAns]) || 0;
+    const rate     = parseFloat(String(r[iRate]||'').replace('%','')) || 0;
+    const talkAvg  = parseDurToSec(r[iTalkAvg]);
+    const talkTot  = parseDurToSec(r[iTalkTot]);
+    const waitAvg  = parseDurToSec(r[iWaitAvg]);
+    const timeout  = iTimeout >= 0 ? (parseInt(r[iTimeout]) || 0) : 0;
+    const avail    = iAvail >= 0 ? String(r[iAvail] || '').trim() : '';
+    const num      = iNum >= 0 ? String(r[iNum] || '').trim() : '';
+
+    if (!byAgent[name]) byAgent[name] = { name, num, queues: [], totAnswered:0, totTalkSec:0, totWaitSec:0, totTimeout:0, offered:0, avail:'' };
+    byAgent[name].queues.push({ queue: currentQueue || 'Alle', answered: ans, rate, talkAvgSec: talkAvg, talkTotSec: talkTot, waitAvgSec: waitAvg, timeout });
+    byAgent[name].totAnswered += ans;
+    byAgent[name].totTalkSec  += talkTot;
+    byAgent[name].totWaitSec  += waitAvg * ans;
+    byAgent[name].totTimeout  += timeout;
+    byAgent[name].offered     += (rate > 0 && ans > 0) ? Math.round(ans / (rate / 100)) : (ans + timeout);
+    if (avail && avail !== '-') byAgent[name].avail = avail;
+    if (num) byAgent[name].num = num;
+  }
+
+  const agents = Object.values(byAgent)
+    .filter(a => a.totAnswered > 0 || a.totTimeout > 0)
+    .sort((a, b) => b.totAnswered - a.totAnswered)
+    .map((a, i) => ({
+      ...a,
+      color:      barColors[i % barColors.length],
+      rate:       a.offered > 0 ? Math.round(a.totAnswered / a.offered * 100) : 0,
+      avgTalkSec: a.totAnswered > 0 ? Math.round(a.totTalkSec / a.totAnswered) : 0,
+      avgWaitSec: a.totAnswered > 0 ? Math.round(a.totWaitSec / a.totAnswered) : 0
+    }));
+
+  return { period, from, to, grandTotal, agents };
+}
+
+function parseUnifonMainReportXlsx(rows2d) {
+  const H = (rows2d[1] || []).map(c => String(c).trim());
+  const iAns     = H.findIndex(h => /^besvart$/i.test(h));
+  const iAband   = H.findIndex(h => /^tapte$/i.test(h));
+  const iRate    = H.findIndex(h => /besvart i/i.test(h));
+  const iCb      = H.findIndex(h => /tilbakering/i.test(h));
+  const iTot     = H.findIndex(h => /^totalt$/i.test(h));
+  const iWaitAvg = iTot >= 0 ? iTot + 1 : -1;
+  const iWaitMax = iTot >= 0 ? iTot + 2 : -1;
+  const iOverKPI = H.findIndex(h => /over kpi/i.test(h));
+  const iTalkAvg = iOverKPI >= 0 ? iOverKPI + 1 : -1;
+
+  const periodCell = String((rows2d[2] || [])[0] || '');
+  let period = periodCell.replace(/\d{2}\.\d{2}(\.\d{4})?\s*-\s*\d{2}\.\d{2}(\.\d{4})?/g,'').trim();
+  const dm = periodCell.match(/(\d{2})\.(\d{2})/);
+  const dShort = dm ? dm[1]+'.'+dm[2] : '';
+  period = (period||'Report') + (dShort ? ' '+dShort : '');
+
+  const parseRow = r => ({
+    answered:  parseInt(r[iAns]) || 0,
+    abandoned: parseInt(r[iAband]) || 0,
+    rate:      parseFloat(String(r[iRate]||'').replace('%','')) || 0,
+    callbacks: iCb >= 0 ? (parseInt(r[iCb]) || 0) : 0,
+    total:     iTot >= 0 ? (parseInt(r[iTot]) || 0) : 0,
+    avgWait:   iWaitAvg >= 0 ? String(r[iWaitAvg]||'').trim() : '',
+    maxWait:   iWaitMax >= 0 ? String(r[iWaitMax]||'').trim() : '',
+    overKPI:   iOverKPI >= 0 ? (parseInt(r[iOverKPI]) || 0) : 0,
+    avgTalk:   iTalkAvg >= 0 ? String(r[iTalkAvg]||'').trim() : ''
+  });
+
+  const grandTotal = parseRow(rows2d[2] || []);
+  const queues = [], hourly = [];
+  for (let i = 3; i < rows2d.length; i++) {
+    const r = rows2d[i];
+    const lbl = String(r[0]||'').trim();
+    if (!lbl) continue;
+    if (/^hour/i.test(lbl)) {
+      hourly.push({ hour: lbl.replace(/^Hour/i,'').trim(), ...parseRow(r) });
+    } else if (/^dag\s*\d/i.test(lbl)) {
+      // skip "Dag 22.06" sub-rows in weekly
+    } else {
+      queues.push({ name: lbl, ...parseRow(r) });
+    }
+  }
+
+  return { period, grandTotal, queues, hourly };
+}
+
+function renderUnifonAgentCards(data, container) {
+  const { period, grandTotal, agents } = data;
+  const page = document.createElement('div'); page.className = 'report-page';
+
+  // Hero
+  const hero = document.createElement('div'); hero.className = 'report-hero';
+  const heroLeft = document.createElement('div');
+  const titleEl = document.createElement('div'); titleEl.className = 'report-hero-period'; titleEl.textContent = period || 'Unifon Agent Report';
+  const subEl = document.createElement('div'); subEl.className = 'report-hero-sub'; subEl.textContent = 'UNIFON · AGENT REPORT';
+  heroLeft.appendChild(titleEl); heroLeft.appendChild(subEl); hero.appendChild(heroLeft);
+  const kpis = document.createElement('div'); kpis.className = 'report-hero-kpis';
+  const rateCls = grandTotal.rate >= 80 ? 'ok' : grandTotal.rate >= 60 ? 'warn' : 'danger';
+  const mkKpi = (val, lbl, cls) => {
+    const k = document.createElement('div'); k.className = 'report-hero-kpi';
+    const v = document.createElement('div'); v.className = 'report-hero-kpi-val'+(cls?' '+cls:''); v.textContent = val||'—';
+    const l = document.createElement('div'); l.className = 'report-hero-kpi-label'; l.textContent = lbl;
+    k.appendChild(v); k.appendChild(l); return k;
+  };
+  kpis.appendChild(mkKpi(grandTotal.answered, 'ANSWERED'));
+  kpis.appendChild(mkKpi((grandTotal.rate||0)+'%', 'ANSWER RATE', rateCls));
+  kpis.appendChild(mkKpi(fmtSec(grandTotal.avgTalkSec), 'AVG TALK'));
+  kpis.appendChild(mkKpi(fmtSec(grandTotal.avgWaitSec), 'AVG WAIT'));
+  hero.appendChild(kpis); page.appendChild(hero);
+
+  // Agent grid using existing zd-agent-card classes
+  const grid = document.createElement('div'); grid.className = 'zd-agent-grid';
+  agents.forEach(a => {
+    const parts = a.name.trim().split(' ');
+    const initials = (parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
+    const rateDot = a.rate >= 80 ? 'var(--low-text)' : a.rate >= 60 ? 'var(--med-text)' : 'var(--high-text)';
+
+    const card = document.createElement('div'); card.className = 'zd-agent-card'; card.style.borderTop = '3px solid '+a.color;
+    const hdr = document.createElement('div'); hdr.className = 'zd-agent-header';
+    const av = document.createElement('div'); av.className = 'zd-agent-avatar'; av.textContent = initials; av.style.background = a.color; av.style.color = '#0f0f11';
+    const info = document.createElement('div');
+    const nm = document.createElement('div'); nm.className = 'zd-agent-name'; nm.textContent = a.name;
+    const sub2 = document.createElement('div'); sub2.className = 'zd-agent-sub'; sub2.textContent = a.totAnswered + ' answered';
+    info.appendChild(nm); info.appendChild(sub2); hdr.appendChild(av); hdr.appendChild(info); card.appendChild(hdr);
+
+    const bdy = document.createElement('div'); bdy.className = 'zd-agent-body';
+    const rows = [
+      { dot: rateDot,            label: 'Answer rate', val: a.rate+'%', bold: true },
+      { dot: 'var(--cal-text)',  label: 'Avg talk',    val: fmtSec(a.avgTalkSec) },
+      { dot: 'var(--text3)',     label: 'Avg wait',    val: fmtSec(a.avgWaitSec) },
+      { dot: 'var(--med-text)',  label: 'Timeouts',    val: String(a.totTimeout||0) }
+    ];
+    if (a.avail) rows.push({ dot: 'var(--text3)', label: 'Available', val: a.avail });
+    if (a.queues.length > 1) {
+      rows.push({ dividerLabel: 'By queue' });
+      a.queues.forEach(q => {
+        if (q.answered > 0 || q.timeout > 0) rows.push({ dot: 'var(--border2)', label: (q.queue||'').replace('KØ - ',''), val: q.answered+' ans · '+q.rate+'%' });
+      });
+    }
+    rows.forEach(r => {
+      if (r.dividerLabel) { const d = document.createElement('div'); d.className = 'zd-stat-divider'; d.textContent = r.dividerLabel; bdy.appendChild(d); return; }
+      const row = document.createElement('div'); row.className = 'zd-stat-row';
+      const dot = document.createElement('div'); dot.className = 'zd-stat-dot'; dot.style.background = r.dot||'var(--text3)';
+      const lbl = document.createElement('div'); lbl.className = 'zd-stat-label'; lbl.textContent = r.label;
+      const val = document.createElement('div'); val.className = 'zd-stat-val'+(r.bold?' highlight':''); val.textContent = r.val||'—';
+      row.appendChild(dot); row.appendChild(lbl); row.appendChild(val); bdy.appendChild(row);
+    });
+    card.appendChild(bdy); grid.appendChild(card);
+  });
+  page.appendChild(grid);
+  container.appendChild(page);
+}
+
+function renderUnifonMainReport(data, container) {
+  const { period, grandTotal, queues, hourly } = data;
+  const page = document.createElement('div'); page.className = 'report-page';
+
+  // Hero
+  const hero = document.createElement('div'); hero.className = 'report-hero';
+  const heroLeft = document.createElement('div');
+  const titleEl = document.createElement('div'); titleEl.className = 'report-hero-period'; titleEl.textContent = period || 'Unifon Report';
+  const subEl = document.createElement('div'); subEl.className = 'report-hero-sub'; subEl.textContent = 'UNIFON · MAIN NUMBER REPORT';
+  heroLeft.appendChild(titleEl); heroLeft.appendChild(subEl); hero.appendChild(heroLeft);
+  const kpis = document.createElement('div'); kpis.className = 'report-hero-kpis';
+  const rateCls = grandTotal.rate >= 80 ? 'ok' : grandTotal.rate >= 60 ? 'warn' : 'danger';
+  const mkKpi = (val, lbl, cls) => {
+    const k = document.createElement('div'); k.className = 'report-hero-kpi';
+    const v = document.createElement('div'); v.className = 'report-hero-kpi-val'+(cls?' '+cls:''); v.textContent = val||'—';
+    const l = document.createElement('div'); l.className = 'report-hero-kpi-label'; l.textContent = lbl;
+    k.appendChild(v); k.appendChild(l); return k;
+  };
+  kpis.appendChild(mkKpi(grandTotal.answered, 'ANSWERED'));
+  kpis.appendChild(mkKpi(grandTotal.abandoned, 'ABANDONED'));
+  kpis.appendChild(mkKpi((grandTotal.rate||0)+'%', 'ANSWER RATE', rateCls));
+  kpis.appendChild(mkKpi(grandTotal.avgWait||'—', 'AVG WAIT'));
+  kpis.appendChild(mkKpi(grandTotal.avgTalk||'—', 'AVG TALK'));
+  hero.appendChild(kpis); page.appendChild(hero);
+
+  // Queue breakdown
+  if (queues.length) {
+    const panel = document.createElement('div'); panel.className = 'report-panel';
+    const phdr = document.createElement('div'); phdr.className = 'report-panel-header';
+    const ptit = document.createElement('div'); ptit.className = 'report-panel-title'; ptit.textContent = 'BY QUEUE';
+    phdr.appendChild(ptit); panel.appendChild(phdr);
+    const pbdy = document.createElement('div'); pbdy.className = 'report-panel-body';
+    const statRow = document.createElement('div'); statRow.className = 'report-stat-row';
+    queues.forEach(q => {
+      const cls = q.rate >= 80 ? 'ok' : q.rate >= 60 ? 'warn' : 'danger';
+      const s = document.createElement('div'); s.className = 'report-stat '+cls;
+      const v = document.createElement('div'); v.className = 'report-stat-val '+cls; v.textContent = q.rate+'%';
+      const l = document.createElement('div'); l.className = 'report-stat-label'; l.textContent = q.name.replace('KØ - ','');
+      const sb = document.createElement('div'); sb.className = 'report-stat-sub'; sb.textContent = q.answered+' ans · '+q.abandoned+' lost';
+      s.appendChild(v); s.appendChild(l); s.appendChild(sb); statRow.appendChild(s);
+    });
+    pbdy.appendChild(statRow);
+    const table = document.createElement('table'); table.className = 'report-table';
+    const thead = document.createElement('thead'); const hrow = document.createElement('tr');
+    ['Queue','Answered','Abandoned','Rate','Avg Wait','Avg Talk','Over KPI'].forEach((h,i)=>{ const th=document.createElement('th'); if(i>0)th.className='r'; th.textContent=h; hrow.appendChild(th); });
+    thead.appendChild(hrow); table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    queues.forEach(q => {
+      const tr = document.createElement('tr');
+      [q.name.replace('KØ - ',''),q.answered,q.abandoned,q.rate+'%',q.avgWait||'—',q.avgTalk||'—',q.overKPI].forEach((c,i)=>{ const td=document.createElement('td'); if(i>0)td.className='r'; td.textContent=c; tr.appendChild(td); });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); pbdy.appendChild(table); panel.appendChild(pbdy); page.appendChild(panel);
+  }
+
+  // Hourly table
+  if (hourly.length) {
+    const panel2 = document.createElement('div'); panel2.className = 'report-panel';
+    const phdr2 = document.createElement('div'); phdr2.className = 'report-panel-header';
+    const ptit2 = document.createElement('div'); ptit2.className = 'report-panel-title'; ptit2.textContent = 'BY HOUR';
+    phdr2.appendChild(ptit2); panel2.appendChild(phdr2);
+    const pbdy2 = document.createElement('div'); pbdy2.className = 'report-panel-body'; pbdy2.style.padding = '0';
+    const table2 = document.createElement('table'); table2.className = 'report-table';
+    const thead2 = document.createElement('thead'); const hrow2 = document.createElement('tr');
+    ['Hour','Answered','Abandoned','Rate','Avg Wait','Avg Talk'].forEach((h,i)=>{ const th=document.createElement('th'); if(i>0)th.className='r'; th.textContent=h; hrow2.appendChild(th); });
+    thead2.appendChild(hrow2); table2.appendChild(thead2);
+    const tbody2 = document.createElement('tbody');
+    hourly.forEach(h => {
+      const tr = document.createElement('tr');
+      [h.hour,h.answered,h.abandoned,(h.rate||0)+'%',h.avgWait||'—',h.avgTalk||'—'].forEach((c,i)=>{ const td=document.createElement('td'); if(i>0)td.className='r'; td.textContent=c; tr.appendChild(td); });
+      tbody2.appendChild(tr);
+    });
+    table2.appendChild(tbody2); pbdy2.appendChild(table2); panel2.appendChild(pbdy2); page.appendChild(panel2);
+  }
+
+  container.appendChild(page);
 }
 
 // --- SETTINGS TAB -------------------------------------------------------
