@@ -17129,8 +17129,8 @@
   ],
   "wtp_intel_snap_2026-06-22": {
     "fromDate": "2026-06-22",
-    "toDate": "2026-06-28",
-    "generated": "2026-06-27T14:26:29.295Z",
+    "toDate": "2026-06-27",
+    "generated": "2026-06-27T14:27:47.579Z",
     "agents": {
       "Jonas": {
         "answered": 180,
@@ -17237,7 +17237,7 @@
         "avgWait": 12,
         "zdSolved": 109,
         "isNight": false,
-        "nightDays": 2,
+        "nightDays": 1,
         "dayDays": 5,
         "zdEmail": 59,
         "zdPhone": 50,
@@ -17284,7 +17284,7 @@
       "zdEmailTotal": 88,
       "zdPhoneTotal": 494,
       "zdFetchedFrom": "2026-06-22",
-      "zdFetchedTo": "2026-06-28"
+      "zdFetchedTo": "2026-06-27"
     }
   },
   "wtp_intel_snap_2026-03-02": {
@@ -20799,8 +20799,8 @@
             "D3 (9-17)",
             "H",
             "H",
-            "",
-            ""
+            "W1 (7-17)",
+            "W1 (7-17)"
           ],
           "roles": [
             "Inbox Champion",
