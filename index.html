@@ -2000,8 +2000,7 @@
   #tv-root {
     background: #000743;
     background-image:
-      radial-gradient(ellipse at 20% 0%, rgba(214,243,255,0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, rgba(241,183,242,0.04) 0%, transparent 50%);
+      radial-gradient(ellipse at 20% 0%, rgba(214,243,255,0.06) 0%, transparent 50%);
   }
 
   /* Header — generous, readable from across the room */
@@ -2024,7 +2023,7 @@
     letter-spacing: -0.03em;
     line-height: 1;
   }
-  .tv-wordmark-dot { color: #F1B7F2; }
+  .tv-wordmark-dot { color: rgba(214,243,255,0.5); }
   .tv-divider-v { width: 1px; height: 28px; background: rgba(214,243,255,0.15); }
   .tv-title {
     font-family: 'Inter', sans-serif;
@@ -2100,9 +2099,9 @@
     height: 2px;
     background: rgba(214,243,255,0.1);
   }
-  .tv-kpi-big.danger::before { background: #fca5a5; }
-  .tv-kpi-big.warn::before   { background: #fcd34d; }
-  .tv-kpi-big.ok::before     { background: #6ee7b7; }
+  .tv-kpi-big.danger::before { background: #E63745; }
+  .tv-kpi-big.warn::before   { background: #F6C34A; }
+  .tv-kpi-big.ok::before     { background: #42B970; }
   .tv-kpi-big.neutral::before{ background: rgba(214,243,255,0.3); }
   .tv-kpi-big-label {
     font-size: 11px;
@@ -2120,9 +2119,9 @@
     color: #D6F3FF;
     font-variant-numeric: tabular-nums;
   }
-  .tv-kpi-big-val.danger { color: #fca5a5; }
-  .tv-kpi-big-val.warn   { color: #fcd34d; }
-  .tv-kpi-big-val.ok     { color: #6ee7b7; }
+  .tv-kpi-big-val.danger { color: #E63745; }
+  .tv-kpi-big-val.warn   { color: #F6C34A; }
+  .tv-kpi-big-val.ok     { color: #42B970; }
   .tv-kpi-big-val.neutral{ color: #D6F3FF; }
   @keyframes tvKpiFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
@@ -2197,7 +2196,7 @@
   .tv-agent-info { flex: 1; min-width: 0; }
   .tv-agent-name {
     font-family: 'Fira Sans', sans-serif;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 900;
     color: #D6F3FF;
     letter-spacing: -0.02em;
@@ -2217,9 +2216,9 @@
     border-radius: 20px;
     letter-spacing: -0.01em;
   }
-  .tv-stat-chip.solved  { background: rgba(110,231,183,0.12); color: #6ee7b7; border: 1px solid rgba(110,231,183,0.2); }
-  .tv-stat-chip.open    { background: rgba(252,165,165,0.12); color: #fca5a5; border: 1px solid rgba(252,165,165,0.2); }
-  .tv-stat-chip.pending { background: rgba(252,211,77,0.12);  color: #fcd34d; border: 1px solid rgba(252,211,77,0.2);  }
+  .tv-stat-chip.solved  { background: rgba(66,185,112,0.14);  color: #42B970; border: 1px solid rgba(66,185,112,0.25); }
+  .tv-stat-chip.open    { background: rgba(227,55,69,0.14);   color: #E63745; border: 1px solid rgba(227,55,69,0.25);  }
+  .tv-stat-chip.pending { background: rgba(246,195,74,0.14);  color: #F6C34A; border: 1px solid rgba(246,195,74,0.25); }
 
   /* Ticket rows — big enough to read from a TV */
   .tv-ticket-row {
@@ -2233,7 +2232,7 @@
     margin-bottom: 5px;
     transition: background 0.15s;
   }
-  .tv-ticket-row.urgent { border-left: 3px solid #fca5a5; }
+  .tv-ticket-row.urgent { border-left: 3px solid #E63745; }
   .tv-ticket-id {
     font-size: 11px;
     color: rgba(214,243,255,0.3);
@@ -2244,7 +2243,7 @@
   }
   .tv-ticket-subject {
     flex: 1;
-    font-size: 13px;
+    font-size: 15px;
     color: rgba(214,243,255,0.85);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2260,7 +2259,7 @@
     min-width: 32px;
     text-align: right;
   }
-  .tv-ticket-age.old { color: #fcd34d; }
+  .tv-ticket-age.old { color: #F6C34A; }
   .tv-ticket-assignee {
     font-size: 11px;
     color: rgba(214,243,255,0.3);
@@ -8211,8 +8210,7 @@ function renderAgentQueueStats(agentName, container, _startOffset) {
           try {
             const fromTs = Math.floor(new Date(from + 'T00:00:00').getTime() / 1000);
             const toTs   = Math.floor(new Date(to + 'T23:59:59').getTime() / 1000);
-            let all = [], u = '/satisfaction_ratings.json?start_time=' + fromTs + '&end_time=' + toTs + '&per_page=100&sort_by=id&sort_order=asc';
-            for (let p = 0; p < 10 && u; p++) { const r = await zdFetch(u).catch(() => ({})); all = all.concat(r.satisfaction_ratings || []); u = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null; }
+            const all = await zdFetchCsat(fromTs, toTs, 10);
             if (scoreWrap.dataset.offset !== String(offsetAtCall)) return; // user navigated away
             const zid = ((typeof getAgentLiveStatsFor === 'function' && getAgentLiveStatsFor(agentName)) || {}).zdAgentId
               || (typeof loadProfile === 'function' && (loadProfile(agentName) || {}).zdAgentId)
@@ -9492,7 +9490,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   col2.appendChild(queueSec);
   rowTop.appendChild(col2);
 
-  // renderChart1 — solved per day bars (full-height in new layout)
+  // renderChart1 — solved per day bars (one batched query, grouped client-side)
   const renderChart1 = (fromDate, toDate) => {
     const el = document.getElementById('db-chart1-body'); if (!el) return;
     if (!zdReady()) { el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:16px 0;">Zendesk not configured</div>'; return; }
@@ -9501,15 +9499,13 @@ function renderAdminDashboard(root, viewerMode=false) {
     const fD=new Date(fromDate+'T00:00:00'), tD=new Date(toDate+'T00:00:00');
     for(let d=new Date(fD);d<=tD;d.setDate(d.getDate()+1)) days.push(fmtLocal(new Date(d)));
     if(!days.length){el.innerHTML='';return;}
-    const promises = days.map(day =>
-      zdCount('type:ticket status>=solved solved>='+day+' solved<='+day).catch(()=>0)
-    );
-    Promise.all(promises).then(counts => {
+
+    const drawBars = counts => {
       el.innerHTML='';
-      const maxC = Math.max(...counts, 1);
+      const maxC=Math.max(...counts,1);
       const W=el.offsetWidth||300, H=160;
-      const barW=Math.max(4, Math.floor((W-20)/days.length)-2);
-      const gap=Math.max(1, Math.floor((W-20-barW*days.length)/(days.length)));
+      const barW=Math.max(4,Math.floor((W-20)/days.length)-2);
+      const gap=Math.max(1,Math.floor((W-20-barW*days.length)/(days.length)));
       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
       svg.setAttribute('viewBox','0 0 '+W+' '+H);
       svg.setAttribute('width','100%');svg.setAttribute('height','100%');
@@ -9527,14 +9523,12 @@ function renderAdminDashboard(root, viewerMode=false) {
         const title=document.createElementNS('http://www.w3.org/2000/svg','title');
         title.textContent=day+': '+v+' solved';rect.appendChild(title);
         svg.appendChild(rect);
-        // Value label if space
         if(v>0&&barW>=12){
           const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
           lbl.setAttribute('x',x+barW/2);lbl.setAttribute('y',H-20-bH-3);
           lbl.setAttribute('text-anchor','middle');lbl.setAttribute('font-size','9');
           lbl.setAttribute('fill','var(--text3)');lbl.textContent=v;svg.appendChild(lbl);
         }
-        // Day label
         if(days.length<=14||(i===0||i===days.length-1||isToday2)){
           const dlbl=document.createElementNS('http://www.w3.org/2000/svg','text');
           dlbl.setAttribute('x',x+barW/2);dlbl.setAttribute('y',H-4);
@@ -9546,7 +9540,29 @@ function renderAdminDashboard(root, viewerMode=false) {
         }
       });
       el.appendChild(svg);
-    }).catch(()=>{el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Could not load</div>';});
+    };
+
+    const cacheKey='rc1:'+fromDate+':'+toDate;
+    const hit=window._zdRc1Cache?.[cacheKey];
+    if(hit&&Date.now()-hit.ts<5*60*1000){drawBars(hit.counts);return;}
+
+    (async()=>{
+      try{
+        const countMap={};days.forEach(d=>countMap[d]=0);
+        let url='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
+        for(let pg=0;pg<15&&url;pg++){
+          const r=await zdFetch(url);
+          (r.results||[]).forEach(t=>{
+            if(t.solved_at){const k=t.solved_at.substring(0,10);if(k in countMap)countMap[k]++;}
+          });
+          url=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
+        }
+        const counts=days.map(d=>countMap[d]||0);
+        if(!window._zdRc1Cache)window._zdRc1Cache={};
+        window._zdRc1Cache[cacheKey]={ts:Date.now(),counts};
+        drawBars(counts);
+      }catch(e){el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px 0;">Could not load</div>';}
+    })();
   };
 
   // ═══════════════════════════════════════════════════════════════
@@ -9658,12 +9674,7 @@ function renderAdminDashboard(root, viewerMode=false) {
         const wkTo   = localToday();
         const fromTs = Math.floor(new Date(wkFrom + 'T00:00:00').getTime() / 1000);
         const toTs   = Math.floor(new Date(wkTo   + 'T23:59:59').getTime() / 1000);
-        let ratings = [], url = '/satisfaction_ratings.json?start_time=' + fromTs + '&end_time=' + toTs + '&per_page=100';
-        for (let pg = 0; pg < 5 && url; pg++) {
-          const r = await zdFetch(url);
-          ratings = ratings.concat(r.satisfaction_ratings || []);
-          url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
-        }
+        const ratings = await zdFetchCsat(fromTs, toTs, 5);
         const good  = ratings.filter(r => r.score === 'good').length;
         const total = ratings.filter(r => r.score === 'good' || r.score === 'bad').length;
         const el = document.getElementById('db-wk-csat');
@@ -9730,7 +9741,7 @@ function renderAdminDashboard(root, viewerMode=false) {
     };
     tr.appendChild(mkTd(name.split(' ')[0], 'padding:5px 6px;font-weight:500;color:var(--text);white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;'));
     tr.appendChild(mkTd('…', 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text3);', ['data-tp-solved', name]));
-    tr.appendChild(mkTd(offered === 0 ? '—' : String(answered), 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text);'));
+    tr.appendChild(mkTd(offered === 0 ? '—' : answered + '/' + offered, 'padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text);'));
     tr.appendChild(mkTd(ansRate !== null ? ansRate + '%' : '—', 'padding:5px 6px;text-align:right;font-weight:700;color:' + ansColor + ';'));
     tpTable.appendChild(tr);
   });
@@ -9751,7 +9762,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   };
   totTr.appendChild(mkTotTd('Team', 'padding:5px 6px;font-weight:700;color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:0.05em;'));
   totTr.appendChild(mkTotTd('…', 'padding:5px 6px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text3);', ['data-tp-total-solved', '1']));
-  totTr.appendChild(mkTotTd(totOff === 0 ? '—' : String(totAns), 'padding:5px 6px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text);'));
+  totTr.appendChild(mkTotTd(totOff === 0 ? '—' : totAns + '/' + totOff, 'padding:5px 6px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text);'));
   totTr.appendChild(mkTotTd(totRate !== null ? totRate + '%' : '—', 'padding:5px 6px;text-align:right;font-weight:700;color:' + totColor + ';'));
   tpTable.appendChild(totTr);
 
@@ -9771,14 +9782,21 @@ function renderAdminDashboard(root, viewerMode=false) {
     (async () => {
       try {
         const wkFrom = fmtLocal(getMonday(0)), wkTo = localToday();
-        let allSolved = [], url = '/search.json?query=' + encodeURIComponent('type:ticket status>=solved solved>=' + wkFrom + ' solved<=' + wkTo) + '&per_page=100';
-        for (let pg = 0; pg < 5 && url; pg++) {
-          const r = await zdFetch(url);
-          allSolved = allSolved.concat(r.results || []);
-          url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+        let solvedMap;
+        const _tpNow = Date.now();
+        if (_tpSolvedCache && _tpSolvedCache.week === wkFrom && _tpNow - _tpSolvedCache.ts < 5 * 60 * 1000) {
+          solvedMap = _tpSolvedCache.solvedMap;
+        } else {
+          let allSolved = [], url = '/search.json?query=' + encodeURIComponent('type:ticket status>=solved solved>=' + wkFrom + ' solved<=' + wkTo) + '&per_page=100';
+          for (let pg = 0; pg < 5 && url; pg++) {
+            const r = await zdFetch(url);
+            allSolved = allSolved.concat(r.results || []);
+            url = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+          }
+          solvedMap = {};
+          allSolved.forEach(t => { if (t.assignee_id) solvedMap[t.assignee_id] = (solvedMap[t.assignee_id] || 0) + 1; });
+          _tpSolvedCache = { week: wkFrom, solvedMap, ts: _tpNow };
         }
-        const solvedMap = {};
-        allSolved.forEach(t => { if (t.assignee_id) solvedMap[t.assignee_id] = (solvedMap[t.assignee_id] || 0) + 1; });
 
         let teamTotal = 0;
         (zdAgents || []).forEach(agent => {
@@ -15174,10 +15192,37 @@ async function zdFetch(path) {
   });
 }
 
+const _zdCountCache = {};
+const ZD_COUNT_CACHE_TTL = 90 * 1000; // 90 s — keeps tabs in sync without hammering
 async function zdCount(query) {
+  const _now = Date.now();
+  const _hit = _zdCountCache[query];
+  if (_hit && _now - _hit.ts < ZD_COUNT_CACHE_TTL) return _hit.v;
   const data = await zdFetch('/search/count.json?query=' + encodeURIComponent(query));
-  return data.count || 0;
+  const v = data.count || 0;
+  _zdCountCache[query] = { ts: _now, v };
+  return v;
 }
+
+// Cached satisfaction_ratings fetcher — reused by dashboard, TV, and 1:1 sections
+const _zdCsatCache = {};
+const ZD_CSAT_CACHE_TTL = 10 * 60 * 1000; // 10 min
+async function zdFetchCsat(startTs, endTs, maxPages) {
+  maxPages = maxPages || 10;
+  const key = startTs + '_' + endTs;
+  const _now = Date.now();
+  const _hit = _zdCsatCache[key];
+  if (_hit && _now - _hit.ts < ZD_CSAT_CACHE_TTL) return _hit.data;
+  let all = [], u = '/satisfaction_ratings.json?start_time=' + startTs + '&end_time=' + endTs + '&per_page=100&sort_by=id&sort_order=asc';
+  for (let p = 0; p < maxPages && u; p++) {
+    const r = await zdFetch(u).catch(() => ({}));
+    all = all.concat(r.satisfaction_ratings || []);
+    u = r.next_page ? r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/, '') : null;
+  }
+  _zdCsatCache[key] = { ts: _now, data: all };
+  return all;
+}
+let _tpSolvedCache = null; // { week, solvedMap, ts } — team performance solved-this-week
 
 function zdInitDates() {
   const mon = getMonday(0);
@@ -15295,12 +15340,7 @@ async function tvLiveRefresh() {
   if (typeof zdReady === 'function' && zdReady()) {
     try {
       const endTs = Math.floor(Date.now()/1000), startTs = endTs - 30*24*3600;
-      let all = [], _u = '/satisfaction_ratings.json?start_time='+startTs+'&end_time='+endTs+'&per_page=100&sort_by=id&sort_order=asc';
-      for (let _p=0; _p<10 && _u; _p++) {
-        const _rr = await zdFetch(_u).catch(()=>({satisfaction_ratings:[]}));
-        all = all.concat(_rr.satisfaction_ratings||[]);
-        _u = _rr.next_page ? _rr.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,'') : null;
-      }
+      const all = await zdFetchCsat(startTs, endTs, 10);
       const good  = all.filter(r => r.score==='good').length;
       const total = all.filter(r => r.score==='good' || r.score==='bad').length;
       tvStats.csat = total > 0 ? Math.round(good/total*100) : null;
@@ -15346,10 +15386,10 @@ function tvAgentStatuses() {
     const present = !!(m && (m.fixed?.ready||m.mobile?.ready||m.fixed?.restore_ready||m.mobile?.restore_ready));
     let status='off', color='rgba(214,243,255,0.3)', label='off today';
     if (scheduledNow) {
-      if (idle)        { status='ready'; color='#69db7c'; label='ready'; }
-      else if (present){ status='busy';  color='#ffb74d'; label='on call'; }
-      else             { status='offq';  color='#ff6b7d'; label='logged off'; }
-    } else if (present){ status='busy';  color='#ffb74d'; label='ready · off-shift'; }
+      if (idle)        { status='ready'; color='#42B970'; label='ready'; }
+      else if (present){ status='busy';  color='#F6C34A'; label='on call'; }
+      else             { status='offq';  color='#E63745'; label='logged off'; }
+    } else if (present){ status='busy';  color='#F6C34A'; label='ready · off-shift'; }
     else if (shiftCode){ status='off';   color='rgba(214,243,255,0.3)'; label='off now'; }
     return { name, shiftCode, scheduledNow, isNight, shiftLabel, idle, present, status, color, label, champion };
   });
@@ -15358,10 +15398,10 @@ function tvAgentStatuses() {
 function renderTvData() {
   const tvRoot = document.getElementById('tv-root');
   if (!tvRoot) return;
-  const LIGHT='#D6F3FF', PINK='#F1B7F2', DIM='rgba(214,243,255,0.5)', DIM2='rgba(214,243,255,0.3)';
+  const LIGHT='#D6F3FF', DIM='rgba(214,243,255,0.5)', DIM2='rgba(214,243,255,0.3)';
   const PANEL='rgba(255,255,255,0.04)', PANELB='rgba(214,243,255,0.1)';
-  const GREEN='#69db7c', AMBER='#ffb74d', RED='#ff6b7d';
-  const AC=['#4dabf7','#69db7c','#ffa94d','#da77f2','#f783ac','#74c0fc','#a9e34b','#ff8787','#63e6be','#ffd43b'];
+  const GREEN='#42B970', AMBER='#F6C34A', RED='#E63745';
+  const AC=['#5DA7EB','#42B970','#F6C34A','#8BCDF8','#26A65A','#4083DB','#A3E6BC','#EBAA1F','#B7E6FE','#6ED091'];
   // Stable colour per agent by solved-rank, so the open-per-agent bars match the solved leaderboard
   const _teamAgentsTv = (typeof zdAgents!=='undefined' && Array.isArray(zdAgents) ? zdAgents : [])
     .filter(a => MY_TEAM.some(n => n.split(' ')[0] === (a.name||'').split(' ')[0]));
@@ -15391,7 +15431,7 @@ function renderTvData() {
   const hd = el('div','grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid '+PANELB+';padding-bottom:10px;');
   const left = el('div','display:flex;align-items:center;gap:14px;');
   const wm = el('div',"font-family:'Fira Sans';font-weight:900;font-size:24px;color:"+LIGHT+";letter-spacing:-0.03em;");
-  wm.innerHTML = 'munu.<span style="color:'+PINK+';font-size:11px;font-weight:400;letter-spacing:0.14em;margin-left:10px;">SUPPORT WALL</span>';
+  wm.innerHTML = 'munu.<span style="color:'+DIM+';font-size:11px;font-weight:400;letter-spacing:0.14em;margin-left:10px;">SUPPORT WALL</span>';
   const live = el('div','display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:0.12em;color:'+GREEN+';');
   live.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:'+GREEN+';"></span>LIVE';
   left.appendChild(wm); left.appendChild(live);
@@ -15532,8 +15572,8 @@ function renderTvData() {
   const onShift = statuses.filter(s=>s.scheduledNow);
   if (onShift.length) {
     onShift.forEach(s => {
-      const r = el('div','display:flex;align-items:center;gap:9px;font-size:13px;');
-      r.innerHTML = '<span style="width:9px;height:9px;border-radius:50%;background:'+s.color+';flex-shrink:0;"></span>'
+      const r = el('div','display:flex;align-items:center;gap:10px;font-size:15px;');
+      r.innerHTML = '<span style="width:12px;height:12px;border-radius:50%;background:'+s.color+';flex-shrink:0;"></span>'
         + '<span style="flex:1;color:'+LIGHT+';font-weight:500;">'+s.name.split(' ')[0]+(s.champion?' 👑':'')+'</span>'
         + '<span style="font-size:10px;color:'+DIM+';">'+(s.shiftLabel||'')+' · '+s.label+'</span>';
       ros.appendChild(r);
@@ -15561,11 +15601,11 @@ function renderTvData() {
   }
   const wMax = Math.max(...weeks, 1);
   trP.appendChild(el('div','font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:'+DIM+';margin-bottom:8px;','Solved per week — last 6 weeks'));
-  const spark = el('div','display:flex;align-items:flex-end;gap:6px;height:48px;');
+  const spark = el('div','display:flex;align-items:flex-end;gap:6px;height:68px;');
   weeks.forEach((v,i)=>{
     const col = el('div','flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;justify-content:flex-end;height:100%;');
     col.appendChild(el('div','font-size:9px;color:'+DIM+';', v||''));
-    col.appendChild(el('div','width:100%;height:'+Math.max(4,Math.round((v/wMax)*36))+'px;background:'+(i===weeks.length-1?GREEN:'rgba(77,171,247,0.7)')+';border-radius:3px 3px 0 0;',''));
+    col.appendChild(el('div','width:100%;height:'+Math.max(4,Math.round((v/wMax)*56))+'px;background:'+(i===weeks.length-1?GREEN:'rgba(93,167,235,0.6)')+';border-radius:3px 3px 0 0;',''));
     spark.appendChild(col);
   });
   trP.appendChild(spark);
