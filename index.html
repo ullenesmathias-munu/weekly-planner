@@ -12,61 +12,73 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    /* Munu brand reference colours */
-    --munu-dark:   #000743;
-    --munu-light:  #D6F3FF;
-    --munu-white:  #F9FBFF;
-    --munu-pink:   #F1B7F2;
-    /* Dark mode — original dark theme */
-    --bg:      #0f0f11;
-    --surface: #1a1a1f;
-    --surface2: #222228;
-    --surface3: #2a2a32;
-    --border:  rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.14);
-    --border3: rgba(255,255,255,0.22);
-    --text:    #f0f0f2;
-    --text2:   #9090a0;
-    --text3:   #55555f;
-    --cal:     #141e35;
-    --cal-text: #7aadff;
-    --cal-border: #1e3260;
-    --accent:  #7aadff;
-    --radius-md: 8px; --radius-lg: 12px;
-    --high-bg: #2d1515; --high-text: #ff8080;
-    --med-bg:  #2a1f08; --med-text:  #ffb347;
-    --low-bg:  #0e2215; --low-text:  #5fcc7a;
-    --today-tint: rgba(122,173,255,0.05);
+    /* Mise — Munu palette anchors */
+    --munu-dark:   #000743;   /* primary-950 */
+    --munu-light:  #D6F3FF;   /* primary-100 */
+    --munu-white:  #F9FBFF;   /* neutral-50  */
+    /* Dark mode — Mise neutral-navy ground */
+    --bg:       #0D101A;  /* neutral-950 */
+    --surface:  #1C1E2B;  /* neutral-900 */
+    --surface2: #393E4B;  /* neutral-800 */
+    --surface3: #41465A;
+    --border:   rgba(57,62,75,0.55);
+    --border2:  #393E4B;  /* neutral-800 */
+    --border3:  rgba(82,87,107,0.75);
+    --text:     #F9FBFF;  /* neutral-50 */
+    --text2:    #8E90A2;  /* neutral-400 */
+    --text3:    #6B6E7D;  /* neutral-500 */
+    /* Primary tokens — dark: white fill / navy text */
+    --primary:       #F9FBFF;
+    --primary-fg:    #000743;
+    --primary-hover: #ECEFF6;  /* neutral-100 */
+    /* Cal tint — subtle blue for today highlights / hover fills */
+    --cal:       rgba(65,131,219,0.10);
+    --cal-text:  #D6F3FF;  /* primary-100 — headings and accent text on dark */
+    --cal-border: rgba(65,131,219,0.25);
+    --accent:    #D6F3FF;  /* primary-100 */
+    --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px;
+    /* Semantic — Mise spec */
+    --high-bg: rgba(230,55,69,0.12);   --high-text: #E63745;  /* error-500   */
+    --med-bg:  rgba(246,195,74,0.10);  --med-text:  #F6C34A;  /* warning-400 */
+    --low-bg:  rgba(38,166,90,0.12);   --low-text:  #26A65A;  /* success-500 */
+    --today-tint: rgba(214,243,255,0.04);
     --font-heading: 'Fira Sans', sans-serif;
     --font-body:    'Inter', sans-serif;
     --ease-snappy: cubic-bezier(1,0,0,1);
     --ease-smooth: cubic-bezier(0.5,0,0,1);
   }
   .light-mode {
-    --bg:      #f5f5f3;
-    --surface: #ffffff;
-    --surface2: #f0efed;
-    --surface3: #e8e7e5;
-    --border:  rgba(0,0,0,0.08);
-    --border2: rgba(0,0,0,0.16);
-    --border3: rgba(0,0,0,0.26);
-    --text:    #1a1a1a;
-    --text2:   #666;
-    --text3:   #999;
-    --cal:     #e8f0fe;
-    --cal-text: #1a56c4;
-    --cal-border: #b3c8f5;
-    --accent:  #1a56c4;
-    --high-bg: #fce8e8; --high-text: #b91c1c;
-    --med-bg:  #fef3e2; --med-text:  #92400e;
-    --low-bg:  #ecfdf5; --low-text:  #065f46;
-    --today-tint: rgba(26,86,196,0.05);
+    /* Mise light mode — neutral-50 ground, pure-white raised surfaces */
+    --bg:       #F9FBFF;  /* neutral-50  */
+    --surface:  #FFFFFF;  /* pure white — cards / raised */
+    --surface2: #ECEFF6;  /* neutral-100 */
+    --surface3: #ECEFF6;  /* neutral-100 */
+    --border:   #D9DAE2;  /* neutral-200 */
+    --border2:  #BABDC7;  /* neutral-300 */
+    --border3:  #8E90A2;  /* neutral-400 */
+    --text:     #0D101A;  /* neutral-950 */
+    --text2:    #53546F;  /* neutral-600 */
+    --text3:    #8E90A2;  /* neutral-400 */
+    /* Primary tokens — light: navy fill / white text */
+    --primary:       #000743;  /* primary-950 */
+    --primary-fg:    #F9FBFF;  /* neutral-50  */
+    --primary-hover: #002875;
+    /* Cal tint — primary-100 subtle fill */
+    --cal:       #D6F3FF;  /* primary-100 */
+    --cal-text:  #000743;  /* primary-950 */
+    --cal-border: #B7E6FE; /* primary-200 */
+    --accent:    #000743;  /* primary-950 */
+    /* Semantic — Mise spec light values */
+    --high-bg: #FFEDEC;  --high-text: #AE1129;  /* error-50,   error-700    */
+    --med-bg:  #FAF5E3;  --med-text:  #B96912;  /* warning-50, warning-700  */
+    --low-bg:  #E4F7EC;  --low-text:  #008447;  /* success-50, success-700  */
+    --today-tint: rgba(0,7,67,0.03);
   }
   .light-mode .badge-high { background: var(--high-bg) !important; color: var(--high-text) !important; }
   .light-mode .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
   .light-mode .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
-  .light-mode .btn-save { background: #1a1a1a !important; color: #fff !important; }
-  .light-mode .btn-save:hover { background: #333 !important; color: #fff !important; }
+  .light-mode .btn-save { background: #000743 !important; color: #F9FBFF !important; }
+  .light-mode .btn-save:hover { background: #002875 !important; color: #F9FBFF !important; }
   .light-mode .s-d1 { background: #b39ddb; color: #1a0040; }
   .light-mode .s-d2 { background: #9ccc65; color: #1a3300; }
   .light-mode .s-d3 { background: #7fb3d5; color: #002040; }
@@ -88,12 +100,16 @@
   #tab-dashboard.active { display: flex; flex-direction: column; }
 
   /* Munu typography hierarchy */
-  h1, h2, h3, .munu-heading, .lock-title, .oto-person-title { font-family: 'Fira Sans', sans-serif; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
-  .munu-subheading, .tab-btn, .topbar-left span, .sched-week-label { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+  /* Display — Fira Sans Black for 32px hero/display titles only */
+  .munu-heading, .lock-title { font-family: 'Fira Sans', sans-serif; font-weight: 900; letter-spacing: -0.01em; line-height: 1; }
+  /* Page / section titles — Inter Bold, brand colour */
+  h1, h2 { font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--cal-text); }
+  h3 { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.01em; }
+  .munu-subheading, .tab-btn, .sched-week-label { font-family: 'Inter', sans-serif; font-weight: 600; letter-spacing: -0.02em; }
 
   /* Munu button styles — original dark theme */
-  .btn-save { background: var(--surface3); color: var(--text); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
-  .btn-save:hover { background: var(--cal); color: var(--cal-text); border-color: var(--cal-border); }
+  .btn-save { background: var(--primary); color: var(--primary-fg); border: 1px solid transparent; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: background 0.15s; }
+  .btn-save:hover { background: var(--primary-hover); }
   .btn-cancel { background: transparent; color: var(--text2); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s; }
   .btn-cancel:hover { border-color: var(--border3); color: var(--text); }
   .btn-nav { background: transparent; color: var(--text2); border: 1px solid var(--border2); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; padding: 5px 12px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.15s; }
@@ -106,8 +122,8 @@
   .confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
   /* ─── Tab badges ─────────────────────────────────── */
-  .tab-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 10px; font-weight: 700; background: var(--cal-text); color: #0f0f11; border-radius: 8px; padding: 0 4px; margin-left: 5px; vertical-align: middle; }
-  .light-mode .tab-badge { color: #fff; background: var(--cal-text); }
+  .tab-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 10px; font-weight: 700; background: var(--cal-text); color: var(--primary-fg); border-radius: 8px; padding: 0 4px; margin-left: 5px; vertical-align: middle; }
+  .light-mode .tab-badge { color: var(--primary-fg); background: var(--cal-text); }
 
   /* ─── Sync skeleton pulse ────────────────────────── */
   @keyframes skeleton-pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 0.9; } }
@@ -126,7 +142,7 @@
     .tabs { display: none; }
     /* Hide everything below the tab bar — notes panel sits on top */
     #tab-planner > *, #tab-schedule, #tab-onetoone,
-    #tab-zendesk, #tab-feedback, #tab-settings { display: none !important; }
+    #tab-zendesk, #tab-settings { display: none !important; }
     #tab-planner { min-height: 0 !important; padding: 0 !important; }
     /* Bottom nav */
     .mobile-nav { display: flex !important; }
@@ -171,24 +187,25 @@
   .badge-medium { background: var(--med-bg) !important; color: var(--med-text) !important; }
   .badge-low { background: var(--low-bg) !important; color: var(--low-text) !important; }
   .badge-date { background: var(--surface3) !important; color: var(--text2) !important; border-color: var(--border2) !important; }
-  .btn-save { background: var(--cal-text) !important; color: #0f0f11 !important; }
-  .tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; align-items: center; }
-  .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; padding-bottom: 6px; }
+  .btn-save { background: var(--primary) !important; color: var(--primary-fg) !important; }
+  .btn-save:hover { background: var(--primary-hover) !important; }
+  .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: none; padding: 4px; background: var(--surface2); border-radius: var(--radius-lg); align-items: center; }
+  .clock-wrap { margin-left: auto; display: flex; align-items: center; gap: 8px; }
   #live-clock { font-family: 'Fira Sans', sans-serif; font-size: 18px; font-weight: 900; color: var(--cal-text); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
   #live-date { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text3); white-space: nowrap; font-weight: 500; }
-  .tab-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 10px 16px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.18s, border-color 0.18s, background 0.18s; border-radius: 6px 6px 0 0; letter-spacing: -0.01em; white-space: nowrap; }
-  .tab-btn:hover { color: var(--text2); background: rgba(255,255,255,0.03); }
-  .tab-btn.active { color: var(--text); border-bottom-color: var(--cal-text); font-weight: 700; }
-  .light-mode .tab-btn:hover { background: rgba(0,0,0,0.03); }
-  .light-mode .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 7px 14px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: none; margin-bottom: 0; transition: color 0.15s, background 0.15s; border-radius: var(--radius-md); letter-spacing: -0.01em; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text2); background: var(--surface); }
+  .tab-btn.active { background: var(--primary); color: var(--primary-fg); font-weight: 700; }
+  .light-mode .tab-btn:hover { background: rgba(0,0,0,0.04); }
+  .light-mode .tab-btn.active { background: var(--primary); color: var(--primary-fg); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   /* Card entrance animation — Munu smooth easing */
   @keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   .card { animation: cardIn 0.3s cubic-bezier(0.5,0,0,1) both; }
   /* Focus rings */
-  input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 2px rgba(122,173,255,0.2); }
-  .light-mode input:focus, .light-mode textarea:focus, .light-mode select:focus { box-shadow: 0 0 0 2px rgba(26,86,196,0.15); }
+  input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 2px rgba(249,251,255,0.18); }
+  .light-mode input:focus, .light-mode textarea:focus, .light-mode select:focus { box-shadow: 0 0 0 2px rgba(0,7,67,0.14); }
   /* Col-body drop target glow */
   .col-body { transition: border-color 0.18s, background 0.18s, box-shadow 0.18s; }
   .col-body.drag-over { border-color: var(--cal-text) !important; box-shadow: inset 0 0 0 1px var(--cal-text); }
@@ -255,16 +272,16 @@
   /* Carry forward banner */
   .carry-banner { background: var(--cal); border: 1px solid var(--cal-border); border-radius: var(--radius-md); padding: 10px 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
   .carry-banner-text { font-size: 12px; color: var(--cal-text); flex: 1; }
-  .carry-banner-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+  .carry-banner-btn { font-size: 11px; font-weight: 600; background: var(--primary); color: var(--primary-fg); border: none; border-radius: var(--radius-md); padding: 4px 10px; cursor: pointer; white-space: nowrap; }
   .carry-banner-dismiss { font-size: 11px; color: var(--cal-text); background: none; border: none; cursor: pointer; opacity: 0.7; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px 9px; cursor: grab; display: flex; flex-direction: column; gap: 7px; transition: border-color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s; }
   .card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .card:active { cursor: grabbing; transform: translateY(0); box-shadow: none; }
   .light-mode .card:hover { background: #f8f8f6 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .card-label-red    { border-left: 3px solid #ff5555 !important; }
-  .card-label-green  { border-left: 3px solid #5fcc7a !important; }
-  .card-label-blue   { border-left: 3px solid #7aadff !important; }
-  .card-label-amber  { border-left: 3px solid #ffb347 !important; }
+  .card-label-red    { border-left: 3px solid #E63745 !important; }
+  .card-label-green  { border-left: 3px solid #26A65A !important; }
+  .card-label-blue   { border-left: 3px solid #4083DB !important; }
+  .card-label-amber  { border-left: 3px solid #F6C34A !important; }
   .card-label-purple { border-left: 3px solid #c4b5fd !important; }
   .card.dragging { opacity: 0.3; transform: scale(0.97); }
   .card-top { display: flex; align-items: flex-start; gap: 8px; }
@@ -361,8 +378,8 @@
   .cal-allday-cell { border-right: 0.5px solid var(--border); padding: 2px 3px; position: relative; }
   .cal-allday-cell:last-child { border-right: none; }
   /* Current time line */
-  .cal-now-line { position: absolute; left: 0; right: 0; height: 2px; background: #ef5350; z-index: 3; pointer-events: none; }
-  .cal-now-dot { width: 10px; height: 10px; border-radius: 50%; background: #ef5350; position: absolute; left: -5px; top: -4px; }
+  .cal-now-line { position: absolute; left: 0; right: 0; height: 2px; background: #CF2141; z-index: 3; pointer-events: none; }
+  .cal-now-dot { width: 10px; height: 10px; border-radius: 50%; background: #CF2141; position: absolute; left: -5px; top: -4px; }
   /* Setup panel */
   .cal-setup-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; max-width: 600px; }
   .cal-setup-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
@@ -387,7 +404,7 @@
   .cal-month-cell.today { background: var(--today-tint); }
   .cal-month-cell:nth-child(7n) { border-right: none; }
   .cal-month-day-num { font-size: 12px; font-weight: 600; color: var(--text2); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; align-self: flex-start; }
-  .cal-month-cell.today .cal-month-day-num { background: var(--cal-text); color: #0f0f11; font-weight: 700; }
+  .cal-month-cell.today .cal-month-day-num { background: var(--cal-text); color: var(--primary-fg); font-weight: 700; }
   .cal-month-event { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: filter 0.12s; }
   .cal-month-event:hover { filter: brightness(1.2); }
   .cal-month-event.outlook { background: rgba(0,120,212,0.22); color: #60b4ff; border-left: 2px solid #0078d4; }
@@ -415,7 +432,7 @@
 
   /* ─── Weekly review ──────────────────────────────── */
   .weekly-review-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; animation: cardIn 0.2s ease; }
-  .weekly-review-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(122,173,255,0.08) 0%, transparent 100%); }
+  .weekly-review-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(65,131,219,0.06) 0%, transparent 100%); }
   .weekly-review-title { font-size: 14px; font-weight: 700; color: var(--text); }
   .weekly-review-subtitle { font-size: 11px; color: var(--text3); margin-top: 2px; }
   .weekly-review-sections { display: grid; grid-template-columns: 1fr 1fr; }
@@ -500,7 +517,7 @@
   .oto-person-btn:hover { background: var(--surface2); }
   .oto-person-btn.active { background: var(--cal); border-left: 2.5px solid var(--cal-text); }
   .oto-person-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-  .oto-person-btn.active .oto-person-avatar { background: var(--cal-text); color: #0f0f11; }
+  .oto-person-btn.active .oto-person-avatar { background: var(--cal-text); color: var(--primary-fg); }
   .oto-person-info { flex: 1; min-width: 0; }
   .oto-person-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .oto-person-meta { font-size: 10px; color: var(--text3); margin-top: 1px; }
@@ -534,7 +551,7 @@
   .oto-action-text.done { text-decoration: line-through; color: var(--text3); }
   .oto-action-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 0 4px; }
   .oto-action-del:hover { color: var(--high-text); }
-  .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+  .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--primary); color: var(--primary-fg); border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
   .oto-session-toggle { font-size: 12px; color: var(--text3); transition: transform 0.2s; display: inline-block; }
   .oto-feedback-section { border-top: 1px solid var(--border); padding: 14px 20px; flex-shrink: 0; background: var(--surface); }
   .oto-feedback-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -545,7 +562,7 @@
   .oto-feedback-post-meta { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
   .oto-feedback-post-text { font-size: 12px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
   .oto-feedback-none { font-size: 12px; color: var(--text3); font-style: italic; }
-  .oto-new-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 9px; font-weight: 700; background: var(--low-text); color: #0f0f11; border-radius: 8px; padding: 0 4px; margin-left: 5px; }
+  .oto-new-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 9px; font-weight: 700; background: var(--low-text); color: var(--primary-fg); border-radius: 8px; padding: 0 4px; margin-left: 5px; }
   .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
   .oto-add-person-btn:hover { color: var(--cal-text); }
 
@@ -1978,10 +1995,6 @@
   .ap-anim-5 { animation-delay: 0.25s; }
 
 
-  .tabs { border-bottom: 1px solid var(--border); }
-  .tab-btn { position: relative; }
-  .tab-btn.active { color: var(--text) !important; font-weight: 700 !important; }
-  .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 12px; right: 12px; height: 2px; background: var(--cal-text); border-radius: 2px 2px 0 0; }
   /* ─── TV View ────────────────────────────────────────────────── */
   #tv-overlay { font-family: 'Inter', sans-serif; }
 
@@ -2641,7 +2654,7 @@
   .oto-person-btn:hover { background: var(--surface2); }
   .oto-person-btn.active { background: var(--cal); border-left: 2.5px solid var(--cal-text); }
   .oto-person-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--text2); flex-shrink: 0; }
-  .oto-person-btn.active .oto-person-avatar { background: var(--cal-text); color: #0f0f11; }
+  .oto-person-btn.active .oto-person-avatar { background: var(--cal-text); color: var(--primary-fg); }
   .oto-person-info { flex: 1; min-width: 0; }
   .oto-person-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .oto-person-meta { font-size: 10px; color: var(--text3); margin-top: 1px; }
@@ -2675,7 +2688,7 @@
   .oto-action-text.done { text-decoration: line-through; color: var(--text3); }
   .oto-action-del { font-size: 11px; color: var(--text3); background: none; border: none; cursor: pointer; padding: 0 4px; }
   .oto-action-del:hover { color: var(--high-text); }
-  .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--cal-text); color: #0f0f11; border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+  .oto-send-btn { font-size: 11px; font-weight: 600; background: var(--primary); color: var(--primary-fg); border: none; border-radius: var(--radius-md); padding: 5px 10px; cursor: pointer; white-space: nowrap; }
   .oto-session-toggle { font-size: 12px; color: var(--text3); transition: transform 0.2s; display: inline-block; }
   .oto-feedback-section { border-top: 1px solid var(--border); padding: 14px 20px; flex-shrink: 0; background: var(--surface); }
   .oto-feedback-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -2686,11 +2699,11 @@
   .oto-feedback-post-meta { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
   .oto-feedback-post-text { font-size: 12px; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
   .oto-feedback-none { font-size: 12px; color: var(--text3); font-style: italic; }
-  .oto-new-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 9px; font-weight: 700; background: var(--low-text); color: #0f0f11; border-radius: 8px; padding: 0 4px; margin-left: 5px; }
+  .oto-new-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; font-size: 9px; font-weight: 700; background: var(--low-text); color: var(--primary-fg); border-radius: 8px; padding: 0 4px; margin-left: 5px; }
   .oto-add-person-btn { display: flex; align-items: center; justify-content: center; padding: 10px 14px; cursor: pointer; border: none; background: none; width: 100%; color: var(--text3); font-size: 12px; gap: 6px; transition: color 0.15s; }
   .oto-add-person-btn:hover { color: var(--cal-text); }
   .settings-card:hover { border-color: var(--border2); }
-  .settings-card-title { font-family: 'Fira Sans', sans-serif; font-size: 13px; font-weight: 900; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
+  .settings-card-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
   .settings-card-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
   /* ── Settings overhaul ────────────────────────────────────── */
   .settings-layout {
@@ -2810,11 +2823,11 @@
   .lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
   .lock-box { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 36px 40px; width: 90%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
   @media (max-width: 768px) {
-    .lock-screen { background: #0f0f11; }
-    .lock-box { background: #1a1a1f; border-color: #2a2a32; }
-    .lock-box input { background: #222228 !important; color: #f0f0f2 !important; border-color: #2a2a32 !important; }
-    .lock-box .lock-title { color: #f0f0f2 !important; }
-    .lock-box .lock-sub { color: #9090a0 !important; }
+    .lock-screen { background: #000743; }
+    .lock-box { background: rgba(255,255,255,0.04); border-color: rgba(214,243,255,0.10); }
+    .lock-box input { background: rgba(255,255,255,0.08) !important; color: #F9FBFF !important; border-color: rgba(214,243,255,0.15) !important; }
+    .lock-box .lock-title { color: rgba(214,243,255,0.45) !important; }
+    .lock-box .lock-sub { color: rgba(214,243,255,0.45) !important; }
   }
   /* ─── Munu Lock Screen ───────────────────────────── */
   .lock-screen { position: fixed; inset: 0; background: #000743; z-index: 9999; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -3046,7 +3059,6 @@ window.tryUnlock = async function() {
   <button class="tab-btn" onclick="switchTab('schedule', this)">Team Schedule</button>
   <button class="tab-btn" id="tab-btn-onetoone" style="display:none" onclick="switchTab('onetoone', this)">My Team</button>
   <button class="tab-btn" id="tab-btn-zendesk" style="display:none" onclick="switchTab('zendesk', this)">Operations</button>
-  <button class="tab-btn" id="tab-btn-feedback" onclick="switchTab('feedback', this)">Feedback</button>
   <button class="tab-btn" id="tab-btn-reports" style="display:none" onclick="switchTab('reports', this)">Reports</button>
   <button class="tab-btn" onclick="switchTab('settings', this)">Settings</button>
   <div class="clock-wrap">
@@ -3167,17 +3179,6 @@ window.tryUnlock = async function() {
   </div>
 </div>
 
-
-<!-- FEEDBACK TAB -->
-<div id="tab-feedback" class="tab-content">
-  <div class="topbar">
-    <div class="topbar-left">
-      <span id="feedback-tab-title" style="font-size:14px;font-weight:700;color:var(--text);">💡 Thoughts & Ideas</span>
-    </div>
-    <div class="topbar-right" id="feedback-topbar-right"></div>
-  </div>
-  <div id="feedback-body" style="margin-top:8px;"></div>
-</div>
 
 <!-- ZENDESK TAB -->
 <div id="tab-zendesk" class="tab-content">
@@ -3803,6 +3804,7 @@ function switchTab(name, btn) {
   if (name === 'settings') { initSettingsTab(); }
   if (name === 'schedule') { renderSchedule(); }
   if (name === 'dashboard') { renderDashboard(); }
+  if (name === 'planner') { renderPlanner(); }
   if (name === 'onetoone') { renderOtoTab(); }
   const reportsBtn = document.getElementById('tab-btn-reports');
   if (reportsBtn) reportsBtn.style.display = (isAdmin() || hasPrivilege('manager_view')) ? '' : 'none';
@@ -13054,86 +13056,71 @@ async function generateReport(fromDate, toDate, container) {
   let callStats = {};
   try { callStats = getAgentCallStats(fromDate, toDate) || {}; } catch(e) {}
 
-  if (zdReady()) {
-    try {
-      if (isPast) {
-        const weekSnaps=[];
-        const startMon=new Date(fromDate+'T00:00:00');
-        while(startMon.getDay()!==1) startMon.setDate(startMon.getDate()-1);
-        for(let w=new Date(startMon);fmtLocal(new Date(w))<=toDate;w.setDate(w.getDate()+7)){
-          const wMon=fmtLocal(new Date(w));
-          const wSun=fmtLocal(new Date(new Date(wMon+'T00:00:00').getTime()+6*86400000));
-          if(wSun<today){ const snap=await getOrBuildSnapshot(wMon); if(snap) weekSnaps.push(snap); }
-        }
-        if(weekSnaps.length&&weekSnaps.every(s=>s.zdEnriched)){
-          const totalSolved=weekSnaps.reduce((s,w)=>s+(w.totals.zdTotalSolved||0),0);
-          const csatGood=weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatGood||0),0);
-          const csatBad=weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatBad||0),0);
-          const csatTotal=csatGood+csatBad;
-          const mttrWeights=weekSnaps.filter(s=>s.totals.zdMttrMean&&s.totals.zdTicketCount);
-          const mttrMean=mttrWeights.length?Math.round(mttrWeights.reduce((s,w)=>s+w.totals.zdMttrMean*w.totals.zdTicketCount,0)/mttrWeights.reduce((s,w)=>s+w.totals.zdTicketCount,0)):null;
-          const solvedPerDay={};
-          weekSnaps.forEach(s=>{ if(s.totals.zdSolvedPerDay) Object.assign(solvedPerDay,s.totals.zdSolvedPerDay); });
-          const agentSolved={};
-          MY_TEAM.forEach(name=>{ agentSolved[name]=weekSnaps.reduce((s,w)=>s+((w.agents[name]&&w.agents[name].zdSolved)||0),0); });
-          zd={totalSolved,csatGood,csatBad,csatTotal,csatPct:csatTotal>0?Math.round(csatGood/csatTotal*100):null,
-            mttrMean,mttrMedian:weekSnaps[weekSnaps.length-1]?.totals?.zdMttrMedian||null,
-            emailTotal:weekSnaps.reduce((s,w)=>s+(w.totals.zdEmailTotal||0),0),
-            phoneTotal:weekSnaps.reduce((s,w)=>s+(w.totals.zdPhoneTotal||0),0),
-            openNow:weekSnaps[weekSnaps.length-1]?.totals?.zdOpenEow||null,
-            solvedPerDay,agentSolved,fromSnapshot:true,snapshotWeeks:weekSnaps.length,
-            dailyAvg:Math.round(totalSolved/daysInPeriod)};
-        }
+  // Gather ZD data from session cache or stored snapshots — no API calls
+  try {
+    const sessionHasData = zdAgents && zdAgents.length && zdData && Object.keys(zdData).length > 0;
+    if (sessionHasData && !isPast) {
+      // Current period: read straight from the in-memory zdData populated by the Tickets tab
+      let totalSolved=0, emailTotal=0, phoneTotal=0, openNow=0, emailKnown=false, phoneKnown=false;
+      const agentSolved={};
+      zdAgents.forEach(agent => {
+        const d = zdData[agent.id] || {};
+        totalSolved += d.solved || 0;
+        openNow     += d.open   || 0;
+        if (d.email != null) { emailTotal += d.email; emailKnown = true; }
+        if (d.phone != null) { phoneTotal += d.phone; phoneKnown = true; }
+        const teamName = MY_TEAM.find(n => normName(n.split(' ')[0]) === normName(agent.name.split(' ')[0]));
+        if (teamName) agentSolved[teamName] = (agentSolved[teamName]||0) + (d.solved||0);
+      });
+      zd = {
+        totalSolved, openNow,
+        emailTotal: emailKnown ? emailTotal : null,
+        phoneTotal: phoneKnown ? phoneTotal : null,
+        agentSolved,
+        fromSession: true,
+        dailyAvg: Math.round(totalSolved / daysInPeriod),
+      };
+    } else {
+      // Past period (or no live session data): read from stored snapshots only, no API
+      const weekSnaps = [];
+      const startMon = new Date(fromDate+'T00:00:00');
+      while (startMon.getDay() !== 1) startMon.setDate(startMon.getDate()-1);
+      for (let w=new Date(startMon); fmtLocal(new Date(w))<=toDate; w.setDate(w.getDate()+7)) {
+        const wMon = fmtLocal(new Date(w));
+        const snap = getWeeklySnapshot(wMon); // read-only, no API
+        if (snap) weekSnaps.push(snap);
       }
-      if(!zd.totalSolved&&!zd.fromSnapshot){
-        const fromTs=Math.floor(new Date(fromDate+'T00:00:00').getTime()/1000);
-        const toTs=Math.floor(new Date(toDate+'T23:59:59').getTime()/1000);
-        const [totalSolved,openNow,csatData]=await Promise.all([
-          zdCount('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate).catch(()=>0),
-          zdCount('type:ticket status:open').catch(()=>0),
-          zdFetch('/satisfaction_ratings.json?start_time='+fromTs+'&end_time='+toTs+'&per_page=100').catch(()=>({satisfaction_ratings:[]})),
-        ]);
-        let allTickets=[];
-        let tkUrl='/search.json?query='+encodeURIComponent('type:ticket status>=solved solved>='+fromDate+' solved<='+toDate)+'&per_page=100&sort_by=solved_at&sort_order=asc';
-        for(let p=0;p<20&&tkUrl;p++){
-          const r=await zdFetch(tkUrl).catch(()=>({results:[]}));
-          allTickets=allTickets.concat(r.results||[]);
-          tkUrl=r.next_page?r.next_page.replace(/^https?:\/\/[^/]+\/api\/v2/,''):null;
-        }
-        const ratings=csatData.satisfaction_ratings||[];
-        const csatGood=ratings.filter(r=>r.score==='good').length;
-        const csatBad=ratings.filter(r=>r.score==='bad').length;
-        const csatTotal=csatGood+csatBad;
-        const bizMap3 = await fetchTicketBizMinutes(allTickets.map(t=>t.id));
-        const resTimes=allTickets.map(t=>{
-          const biz=bizMap3.get(t.id);
-          if(biz!=null)return biz;
-          const sv=t.solved_at||t.updated_at;
-          return sv?Math.round((new Date(sv)-new Date(t.created_at))/60000):null;
-        }).filter(v=>v!==null&&v>=0).sort((a,b)=>a-b);
-        const solvedPerDay={};
-        const days2=[];
-        for(let d=new Date(fromDate+'T00:00:00');fmtLocal(new Date(d))<=toDate;d.setDate(d.getDate()+1)) days2.push(fmtLocal(new Date(d)));
-        days2.forEach(d=>{ solvedPerDay[d]=0; });
-        allTickets.forEach(t=>{const d=t.solved_at?fmtLocal(new Date(t.solved_at)):null;if(d&&solvedPerDay[d]!==undefined)solvedPerDay[d]++;});
-        const agentSolved={};
-        if(zdAgents&&zdAgents.length){
-          allTickets.forEach(t=>{
-            const agent=zdAgents.find(a=>a.id===t.assignee_id);
-            if(!agent)return;
-            const teamName=MY_TEAM.find(n=>normName(n.split(' ')[0])===normName(agent.name.split(' ')[0]));
-            if(teamName) agentSolved[teamName]=(agentSolved[teamName]||0)+1;
-          });
-        }
-        zd={totalSolved,openNow,csatGood,csatBad,csatTotal,csatPct:csatTotal>0?Math.round(csatGood/csatTotal*100):null,
-          mttrMean:resTimes.length?Math.round(resTimes.reduce((s,v)=>s+v,0)/resTimes.length):null,
-          mttrMedian:resTimes.length?Math.round(resTimes[Math.floor(resTimes.length/2)]):null,
-          emailTotal:allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length,
-          phoneTotal:allTickets.length-allTickets.filter(t=>(t.via&&t.via.channel==='email')||t.channel==='email').length,
-          solvedPerDay,agentSolved,dailyAvg:Math.round(totalSolved/daysInPeriod),fromSnapshot:false};
+      if (weekSnaps.length) {
+        const totalSolved = weekSnaps.reduce((s,w)=>s+(w.totals.zdTotalSolved||0),0);
+        const emailTotal  = weekSnaps.reduce((s,w)=>s+(w.totals.zdEmailTotal||0),0);
+        const phoneTotal  = weekSnaps.reduce((s,w)=>s+(w.totals.zdPhoneTotal||0),0);
+        const openNow     = weekSnaps[weekSnaps.length-1]?.totals?.zdOpenEow
+                         || weekSnaps[weekSnaps.length-1]?.totals?.zdOpenNow || null;
+        const agentSolved = {};
+        MY_TEAM.forEach(name => {
+          agentSolved[name] = weekSnaps.reduce((s,w)=>s+((w.agents[name]&&w.agents[name].zdSolved)||0), 0);
+        });
+        // Richer stats only available when snapshot was enriched (full backfill run)
+        const allEnriched = weekSnaps.every(s=>s.zdEnriched);
+        const csatGood  = allEnriched ? weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatGood||0),0)  : null;
+        const csatBad   = allEnriched ? weekSnaps.reduce((s,w)=>s+(w.totals.zdCsatBad||0),0)   : null;
+        const csatTotal = csatGood != null ? csatGood + csatBad : null;
+        const mttrWeights = allEnriched ? weekSnaps.filter(s=>s.totals.zdMttrMean&&s.totals.zdTicketCount) : [];
+        const mttrMean  = mttrWeights.length ? Math.round(mttrWeights.reduce((s,w)=>s+w.totals.zdMttrMean*w.totals.zdTicketCount,0)/mttrWeights.reduce((s,w)=>s+w.totals.zdTicketCount,0)) : null;
+        const solvedPerDay = {};
+        if (allEnriched) weekSnaps.forEach(s=>{ if(s.totals.zdSolvedPerDay) Object.assign(solvedPerDay,s.totals.zdSolvedPerDay); });
+        zd = {
+          totalSolved, emailTotal, phoneTotal, openNow, agentSolved,
+          csatGood, csatBad, csatTotal,
+          csatPct: csatTotal > 0 ? Math.round(csatGood/csatTotal*100) : null,
+          mttrMean, mttrMedian: weekSnaps[weekSnaps.length-1]?.totals?.zdMttrMedian||null,
+          solvedPerDay: Object.keys(solvedPerDay).length ? solvedPerDay : null,
+          fromSnapshot: true, snapshotWeeks: weekSnaps.length, enriched: allEnriched,
+          dailyAvg: Math.round(totalSolved / daysInPeriod),
+        };
       }
-    } catch(e) { console.warn('Report ZD error:',e.message); }
-  }
+    }
+  } catch(e) { console.warn('Report data error:', e.message); }
 
   // ── Render ─────────────────────────────────────────────────────
   container.innerHTML='';
@@ -13145,7 +13132,7 @@ async function generateReport(fromDate, toDate, container) {
   tx(m('div','report-hero-period'),periodLabel).then ? null : heroLeft.appendChild(tx(m('div','report-hero-period'),periodLabel));
   const heroPeriodEl=m('div','report-hero-period'); heroPeriodEl.textContent=periodLabel;
   const heroSubEl=m('div','report-hero-sub');
-  heroSubEl.textContent=daysInPeriod+'d \u00b7 '+(zd.fromSnapshot?zd.snapshotWeeks+' cached weeks':'live data');
+  heroSubEl.textContent=daysInPeriod+'d \u00b7 '+(zd.fromSession?'live session data':zd.fromSnapshot?(zd.snapshotWeeks+' saved week'+(zd.snapshotWeeks!==1?'s':'')+(zd.enriched?' \u00b7 full':' \u00b7 basic')):'no data');
   heroLeft.appendChild(heroPeriodEl); heroLeft.appendChild(heroSubEl);
   hero.appendChild(heroLeft);
   const heroKpis=m('div','report-hero-kpis');
@@ -13178,8 +13165,16 @@ async function generateReport(fromDate, toDate, container) {
     cw.appendChild(mkSVGBar(days3,vals3,130));
     b1.appendChild(cw);
   } else {
-    const nd=m('div'); nd.style.cssText='padding:20px;font-size:12px;color:var(--text3);font-style:italic;';
-    nd.textContent='No daily data. Run backfill in Settings \u2192 Data & Import to populate historical snapshots.';
+    // No per-day breakdown \u2014 still show aggregate totals if available
+    if (zd.totalSolved != null) {
+      const statRow=m('div','report-stat-row');
+      const openCls=zd.openNow>80?'danger':zd.openNow>50?'warn':zd.openNow!=null?'ok':null;
+      statRow.appendChild(mkStatBox(zd.totalSolved||0,'Total solved',(zd.dailyAvg||0)+'/day avg'));
+      statRow.appendChild(mkStatBox(zd.openNow!=null?zd.openNow:'\u2014','Open now',null,openCls));
+      b1.appendChild(statRow);
+    }
+    const nd=m('div'); nd.style.cssText='padding:12px 0 0;font-size:12px;color:var(--text3);font-style:italic;';
+    nd.textContent='Daily breakdown not available for this period. Run a full backfill in Settings \u2192 Data & Import to enrich snapshots with per-day data.';
     b1.appendChild(nd);
   }
   page.appendChild(p1);
@@ -13216,24 +13211,27 @@ async function generateReport(fromDate, toDate, container) {
     sr.appendChild(mkStatBox(mttrStr,'Mean (target <4h)',null,mCls));
     if(zd.mttrMedian){const medMin=zd.mttrMedian,medStr=medMin>=60?(Math.floor(medMin/60)+'h'+(medMin%60?medMin%60+'m':'')):(medMin+'m');sr.appendChild(mkStatBox(medStr,'Median'));}
     mttrWrap.appendChild(sr);
-    const chTotal=(zd.emailTotal||0)+(zd.phoneTotal||0);
-    if(chTotal>0){
-      const emailPct=Math.round((zd.emailTotal||0)/chTotal*100);
-      const chW=m('div');chW.style.cssText='margin-top:12px;';
-      const chL=m('div');chL.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';chL.textContent='Channel split';
-      const chB=m('div');chB.style.cssText='display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:6px;';
-      const eF=m('div');eF.style.cssText='background:#60a5fa;width:'+emailPct+'%;';
-      const pF=m('div');pF.style.cssText='background:#a78bfa;flex:1;';
-      chB.appendChild(eF);chB.appendChild(pF);
-      const chLg=m('div');chLg.style.cssText='display:flex;gap:12px;font-size:11px;color:var(--text2);';
-      const eLg=m('div');eLg.innerHTML='<span style="color:#60a5fa;font-weight:700;">\u25cf</span> Email: '+(zd.emailTotal||0)+' ('+emailPct+'%)';
-      const pLg=m('div');pLg.innerHTML='<span style="color:#a78bfa;font-weight:700;">\u25cf</span> Phone: '+(zd.phoneTotal||0)+' ('+(100-emailPct)+'%)';
-      chLg.appendChild(eLg);chLg.appendChild(pLg);
-      chW.appendChild(chL);chW.appendChild(chB);chW.appendChild(chLg);
-      mttrWrap.appendChild(chW);
-    }
   } else {
-    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;';nd.textContent='No resolution data';mttrWrap.appendChild(nd);
+    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;margin-bottom:8px;';nd.textContent='Resolution time not available \u2014 requires an enriched snapshot.';mttrWrap.appendChild(nd);
+  }
+  // Channel split \u2014 shown whenever email/phone data is available (always from session or snapshot)
+  const chTotal=(zd.emailTotal||0)+(zd.phoneTotal||0);
+  if(chTotal>0){
+    const emailPct=Math.round((zd.emailTotal||0)/chTotal*100);
+    const chW=m('div');chW.style.cssText='margin-top:8px;';
+    const chL=m('div');chL.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text3);margin-bottom:6px;';chL.textContent='Channel split';
+    const chB=m('div');chB.style.cssText='display:flex;height:8px;border-radius:var(--radius-sm);overflow:hidden;margin-bottom:6px;';
+    const eF=m('div');eF.style.cssText='background:#4083DB;width:'+emailPct+'%;';
+    const pF=m('div');pF.style.cssText='background:#8E90A2;flex:1;';
+    chB.appendChild(eF);chB.appendChild(pF);
+    const chLg=m('div');chLg.style.cssText='display:flex;gap:12px;font-size:11px;color:var(--text2);';
+    const eLg=m('div');eLg.innerHTML='<span style="color:#4083DB;font-weight:700;">\u25cf</span> Email: '+(zd.emailTotal||0)+' ('+emailPct+'%)';
+    const pLg=m('div');pLg.innerHTML='<span style="color:#8E90A2;font-weight:700;">\u25cf</span> Phone/other: '+(zd.phoneTotal||0)+' ('+(100-emailPct)+'%)';
+    chLg.appendChild(eLg);chLg.appendChild(pLg);
+    chW.appendChild(chL);chW.appendChild(chB);chW.appendChild(chLg);
+    mttrWrap.appendChild(chW);
+  } else if(zd.emailTotal===null){
+    const nd=m('div');nd.style.cssText='font-size:12px;color:var(--text3);font-style:italic;margin-top:8px;';nd.textContent='Channel data not available.';mttrWrap.appendChild(nd);
   }
   p2grid.appendChild(mttrWrap);
   b2.appendChild(p2grid);
@@ -13385,100 +13383,142 @@ function renderReportsTab() {
   if (!root) return;
   root.innerHTML = '';
   root.style.cssText = 'display:flex;flex-direction:column;height:100%;min-height:0;';
+
+  // ── Helper: check which weeks have snapshots ──────────────────
+  function snapExists(mondayStr) {
+    const snap = getWeeklySnapshot(mondayStr);
+    return snap ? (snap.zdEnriched ? 'full' : snap.totals && snap.totals.zdTotalSolved != null ? 'basic' : 'empty') : null;
+  }
+
+  // ── Topbar ────────────────────────────────────────────────────
   const topbar = document.createElement('div');
-  topbar.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;flex-wrap:wrap;';
+  topbar.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;flex-wrap:wrap;';
+
   const titleEl = document.createElement('div');
-  titleEl.style.cssText = "font-family:'Fira Sans',sans-serif;font-size:15px;font-weight:900;color:var(--text);letter-spacing:-0.02em;margin-right:6px;";
+  titleEl.style.cssText = 'font-family:Inter,sans-serif;font-size:14px;font-weight:700;color:var(--cal-text);letter-spacing:-0.02em;margin-right:4px;';
   titleEl.textContent = 'Reports'; topbar.appendChild(titleEl);
+
   const fromInput = document.createElement('input'); fromInput.type='date';
-  fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 8px;outline:none;';
+  fromInput.style.cssText='font-family:inherit;font-size:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:var(--radius-md);padding:5px 8px;outline:none;';
   const toSep = document.createElement('span'); toSep.style.cssText='font-size:11px;color:var(--text3);'; toSep.textContent='to';
   const toInput = document.createElement('input'); toInput.type='date'; toInput.style.cssText = fromInput.style.cssText;
   const pm = new Date(); pm.setDate(1); pm.setMonth(pm.getMonth()-1);
   fromInput.value = fmtLocal(new Date(pm.getFullYear(), pm.getMonth(), 1));
   toInput.value   = fmtLocal(new Date(pm.getFullYear(), pm.getMonth()+1, 0));
   topbar.appendChild(fromInput); topbar.appendChild(toSep); topbar.appendChild(toInput);
-  const chipWrap = document.createElement('div'); chipWrap.style.cssText='display:flex;gap:4px;flex-wrap:wrap;';
+
+  // ── Week / month chips ────────────────────────────────────────
+  const chipWrap = document.createElement('div'); chipWrap.style.cssText='display:flex;gap:3px;flex-wrap:wrap;align-items:center;';
+
   const genBtn = document.createElement('button');
-  genBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:900;padding:6px 16px;border-radius:8px;cursor:pointer;border:none;background:var(--cal-text);color:#000743;";
-  genBtn.textContent='Generate';
+  genBtn.className = 'btn-save';
+  genBtn.style.cssText='font-size:11px;padding:5px 14px;';
+  genBtn.textContent='Show';
 
-  // ── This week chip ────────────────────────────────────────────
-  const thisWkChip = document.createElement('button');
-  thisWkChip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);';
-  thisWkChip.textContent='THIS WK';
-  thisWkChip.onclick = () => {
-    const mon = getMonday(0);
-    fromInput.value = fmtLocal(mon);
-    toInput.value   = localToday();
-    chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; });
-    thisWkChip.style.background='rgba(77,171,247,0.1)'; thisWkChip.style.color='var(--cal-text)';
-    genBtn.click();
-  };
-  chipWrap.appendChild(thisWkChip);
-
-  // ── Previous week chips (last 4 weeks) ────────────────────────
-  for (let i=1; i<=4; i++) {
-    const mon = getMonday(-i);
-    const sun = new Date(mon.getTime() + 6*86400000);
-    const wkChip = document.createElement('button');
-    wkChip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);';
-    const monStr = mon.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
-    wkChip.textContent = 'W-'+i+' '+monStr;
-    wkChip.dataset.from = fmtLocal(mon);
-    wkChip.dataset.to   = fmtLocal(sun);
-    wkChip.onclick = () => {
-      fromInput.value = wkChip.dataset.from;
-      toInput.value   = wkChip.dataset.to;
-      chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; });
-      wkChip.style.background='rgba(77,171,247,0.1)'; wkChip.style.color='var(--cal-text)';
+  function mkChip(label, fromVal, toVal, mondayStr) {
+    const chip = document.createElement('button');
+    const status = mondayStr ? snapExists(mondayStr) : null;
+    const dot = status==='full' ? ' ●' : status==='basic' ? ' ◉' : '';
+    const dotColor = status==='full' ? 'var(--low-text)' : 'var(--cal-text)';
+    chip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border2);background:none;color:var(--text3);white-space:nowrap;';
+    chip.innerHTML = label + (dot ? '<span style="color:'+dotColor+';font-size:8px;">'+dot+'</span>' : '');
+    chip.onclick = () => {
+      fromInput.value = fromVal; toInput.value = toVal;
+      chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; b.style.borderColor='var(--border2)'; });
+      chip.style.background='var(--cal)'; chip.style.color='var(--cal-text)'; chip.style.borderColor='var(--cal-border)';
       genBtn.click();
     };
-    chipWrap.appendChild(wkChip);
+    return chip;
   }
 
-  // ── Divider ───────────────────────────────────────────────────
-  const chipDiv = document.createElement('div');
-  chipDiv.style.cssText='width:1px;background:var(--border);margin:0 2px;align-self:stretch;';
-  chipWrap.appendChild(chipDiv);
+  // This week
+  const thisMon = getMonday(0);
+  chipWrap.appendChild(mkChip('This week', fmtLocal(thisMon), localToday(), fmtLocal(thisMon)));
 
-  // ── Month chips ───────────────────────────────────────────────
+  // Previous 4 weeks
+  for (let i=1; i<=4; i++) {
+    const mon = getMonday(-i); const sun = new Date(mon.getTime()+6*86400000);
+    const monStr = mon.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+    chipWrap.appendChild(mkChip('W-'+i+' '+monStr, fmtLocal(mon), fmtLocal(sun), fmtLocal(mon)));
+  }
+
+  // Divider
+  const sep = document.createElement('div'); sep.style.cssText='width:1px;background:var(--border2);margin:0 2px;align-self:stretch;height:16px;';
+  chipWrap.appendChild(sep);
+
+  // Previous 4 months
   for (let i=1; i<=4; i++) {
     const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-i);
-    const chip = document.createElement('button');
-    chip.style.cssText='font-family:inherit;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text3);';
-    chip.textContent = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}).toUpperCase();
-    chip.dataset.yr = d.getFullYear(); chip.dataset.mo = d.getMonth();
-    chip.onclick = () => {
-      const yr = +chip.dataset.yr, mo = +chip.dataset.mo;
-      fromInput.value = fmtLocal(new Date(yr, mo, 1));
-      toInput.value   = fmtLocal(new Date(yr, mo+1, 0));
-      chipWrap.querySelectorAll('button').forEach(b=>{ b.style.background='none'; b.style.color='var(--text3)'; });
-      chip.style.background='rgba(77,171,247,0.1)'; chip.style.color='var(--cal-text)';
-      genBtn.click();
-    };
-    chipWrap.appendChild(chip);
+    const lbl = d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}).toUpperCase();
+    const yr=d.getFullYear(), mo=d.getMonth();
+    const mon = new Date(yr,mo,1); const monStr = fmtLocal(mon);
+    chipWrap.appendChild(mkChip(lbl, fmtLocal(new Date(yr,mo,1)), fmtLocal(new Date(yr,mo+1,0)), monStr));
   }
+
   topbar.appendChild(chipWrap);
+
+  // ── Save snapshot button ──────────────────────────────────────
   const spacer = document.createElement('div'); spacer.style.flex='1'; topbar.appendChild(spacer);
-  const printBtn = document.createElement('button');
-  printBtn.style.cssText="font-family:'Fira Sans',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text);";
-  printBtn.textContent='Print / PDF'; printBtn.onclick=()=>window.print();
-  genBtn.onclick = () => {
-    genBtn.textContent='...'; genBtn.disabled=true;
-    setTimeout(()=>{ generateReport(fromInput.value, toInput.value, reportBody); genBtn.textContent='Generate'; genBtn.disabled=false; }, 50);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.style.cssText='font-family:inherit;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border2);background:none;color:var(--text2);white-space:nowrap;';
+  saveBtn.title = 'Save current Tickets tab data as a snapshot for this period';
+  saveBtn.textContent = 'Save current data';
+  saveBtn.onclick = () => {
+    if (!zdAgents || !zdAgents.length) { showToast('Refresh the Tickets tab first.'); return; }
+    const fromEl = document.getElementById('zd-from');
+    const toEl   = document.getElementById('zd-to');
+    const fDate  = fromEl?.value || localToday();
+    const tDate  = toEl?.value   || localToday();
+    const snap   = buildWeeklySnapshot(fDate, tDate);
+    const mon    = new Date(fDate+'T00:00:00'); while(mon.getDay()!==1) mon.setDate(mon.getDate()-1);
+    saveWeeklySnapshot(fmtLocal(mon), snap);
+    showToast('Snapshot saved for week of '+fmtLocal(mon)+'.');
+    renderReportsTab(); // refresh so dots update
   };
-  topbar.appendChild(printBtn); topbar.appendChild(genBtn);
+  topbar.appendChild(saveBtn);
+
+  const printBtn = document.createElement('button');
+  printBtn.style.cssText='font-family:inherit;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--radius-md);cursor:pointer;border:1px solid var(--border2);background:none;color:var(--text2);';
+  printBtn.textContent='Print / PDF'; printBtn.onclick=()=>window.print();
+  topbar.appendChild(printBtn);
+  topbar.appendChild(genBtn);
   root.appendChild(topbar);
+
+  // ── Report body ───────────────────────────────────────────────
   const reportBody = document.createElement('div');
   reportBody.id = 'report-body';
-  reportBody.style.cssText = 'flex:1;overflow-y:auto;padding:28px 32px;';
-  reportBody.innerHTML = '<div style="padding:60px;text-align:center;font-size:13px;color:var(--text3);">Select a period and click Generate</div>';
+  reportBody.style.cssText = 'flex:1;overflow-y:auto;padding:24px 28px;';
+
+  // Legend for dots
+  const legend = document.createElement('div');
+  legend.style.cssText = 'font-size:10px;color:var(--text3);margin-bottom:16px;display:flex;gap:12px;flex-wrap:wrap;';
+  legend.innerHTML = '<span><span style="color:var(--low-text);">●</span> Enriched snapshot (CSAT, MTTR, daily chart available)</span>'
+    + '<span><span style="color:var(--cal-text);">◉</span> Basic snapshot (solved counts only — from Tickets tab refresh)</span>'
+    + '<span>No indicator — no data saved for that period yet</span>';
+  reportBody.appendChild(legend);
+
+  const placeholder = document.createElement('div');
+  placeholder.style.cssText='padding:48px;text-align:center;font-size:13px;color:var(--text3);';
+  placeholder.textContent='Select a period above and click Show.';
+  reportBody.appendChild(placeholder);
   root.appendChild(reportBody);
+
+  genBtn.onclick = () => {
+    genBtn.textContent='…'; genBtn.disabled=true;
+    setTimeout(async ()=>{
+      await generateReport(fromInput.value, toInput.value, reportBody);
+      genBtn.textContent='Show'; genBtn.disabled=false;
+    }, 30);
+  };
+
+  // ── Footer note ───────────────────────────────────────────────
   const note = document.createElement('div');
-  note.style.cssText='padding:8px 24px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);flex-shrink:0;';
-  note.textContent='PDF: browser Print, Save as PDF, margins None';
+  note.style.cssText='padding:6px 20px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);flex-shrink:0;';
+  note.innerHTML='Data comes from Tickets tab refreshes — no extra Zendesk calls. &nbsp;CSAT &amp; MTTR require an enriched snapshot (run backfill in Settings). &nbsp;Print: browser Print → Save as PDF, margins None.';
   root.appendChild(note);
+
+  // Auto-select this week
   if (chipWrap.firstChild) chipWrap.firstChild.click();
 }
 
@@ -14233,6 +14273,23 @@ function buildWeeklySnapshot(fromDate, toDate) {
   snap.totals.ansRate = snap.totals.offered > 0 ? Math.round(snap.totals.answered/snap.totals.offered*100) : null;
   const waitEntries = unifonData.filter(d => d.avgWaitSec > 0);
   snap.totals.avgWait = waitEntries.length ? Math.round(waitEntries.reduce((s,d) => s+(d.avgWaitSec||0), 0)/waitEntries.length) : 0;
+  // Aggregate ZD totals from current session (no API call needed)
+  if (zdAgents && zdAgents.length) {
+    let _zdTot=0, _zdEmail=0, _zdPhone=0, _zdOpen=0, _zdEmailKnown=false, _zdPhoneKnown=false;
+    zdAgents.forEach(agent => {
+      const d = zdData[agent.id] || {};
+      _zdTot   += d.solved || 0;
+      _zdOpen  += d.open   || 0;
+      if (d.email  != null) { _zdEmail += d.email;  _zdEmailKnown = true; }
+      if (d.phone  != null) { _zdPhone += d.phone;  _zdPhoneKnown = true; }
+    });
+    snap.totals.zdTotalSolved = _zdTot;
+    snap.totals.zdOpenNow     = _zdOpen;
+    if (_zdEmailKnown) snap.totals.zdEmailTotal = _zdEmail;
+    if (_zdPhoneKnown) snap.totals.zdPhoneTotal = _zdPhone;
+    snap.totals.zdFetchedFrom = fromDate;
+    snap.totals.zdFetchedTo   = toDate;
+  }
   return snap;
 }
 
