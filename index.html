@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -654,8 +654,7 @@
   .db-hero {
     background: #000743;
     background-image:
-      radial-gradient(ellipse at 15% -20%, rgba(214,243,255,0.09) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 120%, rgba(241,183,242,0.05) 0%, transparent 50%);
+      radial-gradient(ellipse at 15% -20%, rgba(214,243,255,0.09) 0%, transparent 55%);
     padding: 30px 40px 28px;
     display: flex;
     align-items: flex-end;
@@ -721,9 +720,9 @@
     letter-spacing: -0.04em;
     color: #D6F3FF;
   }
-  .db-kpi-val.ok      { color: #6ee7b7; }
-  .db-kpi-val.warn    { color: #fcd34d; }
-  .db-kpi-val.danger  { color: #fca5a5; }
+  .db-kpi-val.ok      { color: var(--low-text); }
+  .db-kpi-val.warn    { color: var(--med-text); }
+  .db-kpi-val.danger  { color: var(--high-text); }
   .db-kpi-val.neutral { color: #D6F3FF; }
   .db-kpi-label {
     font-size: 9px;
@@ -774,10 +773,10 @@
   }
   .db-col {
     border-right: 1px solid var(--border);
-    padding: 20px 24px;
+    padding: 18px 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     min-width: 0;
     position: relative;
     animation: dbFadeIn 0.55s cubic-bezier(0.5,0,0,1) both;
@@ -799,18 +798,17 @@
     position: absolute;
     top: 0; left: 0; right: 0; height: 2px;
   }
-  .db-row-top .db-col:nth-child(1)::before  { background: rgba(96,165,250,0.4); }
-  .db-row-top .db-col:nth-child(2)::before  { background: rgba(52,211,153,0.35); }
-  .db-row-top .db-col:nth-child(3)::before  { background: rgba(167,139,250,0.35); }
-  .db-row-bottom .db-col:nth-child(1)::before { background: rgba(214,243,255,0.25); }
-  .db-row-bottom .db-col:nth-child(2)::before { background: rgba(251,191,36,0.3); }
-  .db-row-bottom .db-col:nth-child(3)::before { background: rgba(241,183,242,0.3); }
-  .db-row-bottom .db-col:nth-child(4)::before { background: rgba(167,139,250,0.3); }
-  .db-row-bottom .db-col:nth-child(5)::before { background: rgba(52,211,153,0.25); }
+  .db-row-top .db-col:nth-child(1)::before,
+  .db-row-top .db-col:nth-child(2)::before,
+  .db-row-top .db-col:nth-child(3)::before,
+  .db-row-bottom .db-col:nth-child(1)::before,
+  .db-row-bottom .db-col:nth-child(2)::before,
+  .db-row-bottom .db-col:nth-child(3)::before,
+  .db-row-bottom .db-col:nth-child(4)::before,
+  .db-row-bottom .db-col:nth-child(5)::before { background: rgba(183,230,254,0.18); }
 
   /* Chart containers — bigger than before */
   #db-chart1-body { min-height: 180px; }
-  #db-chart2-body { height: 200px; }
 
   /* Responsive */
   @media (max-width: 1300px) {
@@ -825,11 +823,11 @@
 
   /* Section headers */
   .db-section-title {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--text3);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text2);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -851,9 +849,9 @@
   /* Notification items */
   .db-notif-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--surface2); border-radius: var(--radius-md); border-left: 2px solid rgba(214,243,255,0.3); cursor: pointer; transition: background 0.12s; margin-bottom: 6px; }
   .db-notif-item:hover { background: var(--surface3); }
-  .db-notif-item.pink-border { border-left-color: rgba(241,183,242,0.5); }
+  .db-notif-item.pink-border { border-left-color: rgba(214,243,255,0.4); }
   .db-notif-item-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(214,243,255,0.5); flex-shrink: 0; margin-top: 4px; }
-  .db-notif-item-dot.pink { background: rgba(241,183,242,0.7); }
+  .db-notif-item-dot.pink { background: rgba(214,243,255,0.6); }
   .db-notif-body { flex: 1; min-width: 0; }
   .db-notif-title { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
   .db-notif-sub { font-size: 11px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -908,9 +906,9 @@
   .light-mode .db-kpi { background: rgba(214,243,255,0.07); border-color: rgba(214,243,255,0.14); }
   .light-mode .db-kpi:hover { background: rgba(214,243,255,0.14); }
   .light-mode .db-kpi-val { color: #D6F3FF; }
-  .light-mode .db-kpi-val.ok { color: #6ee7b7; }
-  .light-mode .db-kpi-val.warn { color: #fcd34d; }
-  .light-mode .db-kpi-val.danger { color: #fca5a5; }
+  .light-mode .db-kpi-val.ok { color: var(--low-text); }
+  .light-mode .db-kpi-val.warn { color: var(--med-text); }
+  .light-mode .db-kpi-val.danger { color: var(--high-text); }
   .light-mode .db-kpi-label { color: rgba(214,243,255,0.45); }
   .light-mode .db-today-shift { background: #000743; border-color: rgba(214,243,255,0.22); }
   .light-mode .db-shift-day.today { background: #000743; border-color: rgba(214,243,255,0.5); }
@@ -954,17 +952,17 @@
     border-radius: 8px 8px 0 0;
   }
   .db-stat-panel:hover { border-color: var(--border2); background: var(--surface3); }
-  .db-stat-panel.ok    { --stat-accent: #34d399; }
-  .db-stat-panel.warn  { --stat-accent: #fbbf24; }
-  .db-stat-panel.danger { --stat-accent: #f87171; }
-  .db-stat-panel.info  { --stat-accent: #60a5fa; }
-  .db-stat-panel.purple { --stat-accent: #a78bfa; }
+  .db-stat-panel.ok    { --stat-accent: var(--low-text); }
+  .db-stat-panel.warn  { --stat-accent: var(--med-text); }
+  .db-stat-panel.danger { --stat-accent: var(--high-text); }
+  .db-stat-panel.info  { --stat-accent: var(--cal-text); }
+  .db-stat-panel.purple { --stat-accent: var(--cal-text); }
 
   .db-stat-label {
-    font-size: 9px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.10em;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     color: var(--text3);
     white-space: nowrap;
     overflow: hidden;
@@ -981,12 +979,12 @@
   }
   .db-stat-value.large { font-size: 30px; }
   .db-stat-value.small { font-size: 18px; }
-  .db-stat-value.ok     { color: #34d399; }
-  .db-stat-value.warn   { color: #fbbf24; }
-  .db-stat-value.danger { color: #f87171; }
+  .db-stat-value.ok     { color: var(--low-text); }
+  .db-stat-value.warn   { color: var(--med-text); }
+  .db-stat-value.danger { color: var(--high-text); }
   .db-stat-value.muted  { color: var(--text3); }
-  .db-stat-value.blue   { color: #60a5fa; }
-  .db-stat-value.purple { color: #a78bfa; }
+  .db-stat-value.blue   { color: var(--cal-text); }
+  .db-stat-value.purple { color: var(--cal-text); }
 
   .db-stat-sub {
     font-size: 10px;
@@ -1005,8 +1003,8 @@
     padding: 1px 5px;
     border-radius: 4px;
   }
-  .db-stat-trend.up   { background: rgba(52,211,153,0.12); color: #34d399; }
-  .db-stat-trend.down { background: rgba(248,113,113,0.12); color: #f87171; }
+  .db-stat-trend.up   { background: var(--low-bg);  color: var(--low-text); }
+  .db-stat-trend.down { background: var(--high-bg); color: var(--high-text); }
   .db-stat-trend.flat { background: rgba(156,163,175,0.12); color: var(--text3); }
 
   /* ─── Sparkline canvas helper ────────────────────────────── */
@@ -3640,10 +3638,10 @@ window.tryUnlock = async function() {
 
 <script>
 // ─── Schedule data ───────────────────────────────────────────────
-let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylen", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W1 (7-17)", "W1 (7-17)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26"], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylen", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17"], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "H1 (7-17)", "D1 (7-15)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24"], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31"], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Maylen", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Maylen", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Bernadett", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Maylen", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Bernadett", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}];
+let SCHEDULE = [{"week": "Week 16", "dates": ["2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17", "2026-04-18", "2026-04-19"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "H", "H", "H", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "E2 (16-21)", "D3 (9-17)", "D3 (9-17)", "W3 (15-19)", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 17", "dates": ["2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26"], "people": [{"name": "Jonas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 18", "dates": ["2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 19", "dates": ["2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09", "2026-05-10"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 20", "dates": ["2026-05-11", "2026-05-12", "2026-05-13", "2026-05-14", "2026-05-15", "2026-05-16", "2026-05-17"], "people": [{"name": "Jonas", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Thomas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "H2 (17-6)", "E (17-6)", "", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Cecilie", "shifts": ["SO", "SO", "D3 (9-17)", "H", "H", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "H", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "H", "D2 (8-16)", "", "H"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 21", "dates": ["2026-05-18", "2026-05-19", "2026-05-20", "2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24"], "people": [{"name": "Jonas", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["H", "H", "H", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["", "", "", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 22", "dates": ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2026-05-31"], "people": [{"name": "Jonas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["H2 (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["H1 (7-17)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Andreas", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Julie", "shifts": ["H", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["H", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 23", "dates": ["2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05", "2026-06-06", "2026-06-07"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}]}, {"week": "Week 24", "dates": ["2026-06-08", "2026-06-09", "2026-06-10", "2026-06-11", "2026-06-12", "2026-06-13", "2026-06-14"], "people": [{"name": "Jonas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Thomas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "", ""], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["ABS", "ABS", "ABS", "ABS", "ABS", "ABS", "ABS"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "H2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "H1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W2 (17-6)", "H2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 25", "dates": ["2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-20", "2026-06-21"], "people": [{"name": "Jonas", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "W2 (17-6)", "W2 (17-6)"], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "W1 (7-17)", "W1 (7-17)"], "roles": ["Freelancer", "Freelancer", "Freelancer", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Andreas", "shifts": ["SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Julie", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}]}, {"week": "Week 26", "dates": ["2026-06-22", "2026-06-23", "2026-06-24", "2026-06-25", "2026-06-26", "2026-06-27", "2026-06-28"], "people": [{"name": "Jonas", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Phone Guru", "Phone Guru", "Phone Guru", "Freelancer", "Freelancer", "", ""]}, {"name": "Thomas", "shifts": ["SO", "SO", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Benjamin", "shifts": ["SO", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "D3 (9-17)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "SLA Sherpa", "SLA Sherpa", "", ""]}, {"name": "Cecilie", "shifts": ["D3 (9-17)", "D3 (9-17)", "H", "H", "H", "H", "H"], "roles": ["Inbox Champion", "Inbox Champion", "Inbox Champion", "", "", "", ""]}, {"name": "Tord", "shifts": ["H", "H", "H", "H", "H", "H", "H"], "roles": ["", "", "", "", "", "", ""]}, {"name": "Marie", "shifts": ["E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "E (17-6)", "", ""], "roles": ["", "", "", "", "", "", ""]}, {"name": "Andreas", "shifts": ["D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "D1 (7-15)", "W2 (17-6)", "W2 (17-6)"], "roles": ["SLA Sherpa", "SLA Sherpa", "SLA Sherpa", "Inbox Champion", "Inbox Champion", "", ""]}, {"name": "Julie", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}, {"name": "Vetle", "shifts": ["D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "D2 (8-16)", "", ""], "roles": ["Freelancer", "Freelancer", "Freelancer", "Freelancer", "Freelancer", "", ""]}]}];
 
 // MY_TEAM is now dynamic — stored in wtp_team, falling back to hardcoded defaults
-const MY_TEAM_DEFAULT = ['Jonas','Thomas','Bernadett','Benjamin','Cecilie','Tord','Marie','Andreas','Julie','Vetle'];
+const MY_TEAM_DEFAULT = ['Jonas','Thomas','Benjamin','Cecilie','Tord','Marie','Andreas','Julie','Vetle'];
 const MY_TEAM_KEY = 'wtp_team';
 let MY_TEAM = (() => {
   try {
@@ -4346,7 +4344,6 @@ let wingmanSlots = (() => {
   if (saved && v === '4') return JSON.parse(saved);
   // New default slots - reset cache
   const defaults = [
-    { dates: '27/4 - 28/4', days: 'Mon-Tue', person: 'Maylen',   from: '2026-04-27', to: '2026-04-28' },
     { dates: '29/4 - 30/4', days: 'Wed-Thu', person: 'Benjamin', from: '2026-04-29', to: '2026-04-30' },
     { dates: '4/5 - 5/5',   days: 'Mon-Tue', person: 'Cecilie',  from: '2026-05-04', to: '2026-05-05' },
     { dates: '6/5 - 7/5',   days: 'Wed-Thu', person: 'Marie',    from: '2026-05-06', to: '2026-05-07' },
@@ -9426,71 +9423,6 @@ function renderAdminDashboard(root, viewerMode=false) {
       zdCount('type:ticket status:hold').then(v=>{const el=document.getElementById('db-q-hold');if(el)el.textContent=v;}).catch(()=>{});
       zdCount(`type:ticket status>=solved solved>=${from} solved<=${to}`).then(v=>{const el=document.getElementById('db-q-solved');if(el){el.textContent=v;el.style.color='var(--low-text)';}}).catch(()=>{});
 
-      // ── Channel split (Email vs Web/Phone) ──────────────────
-      const chanDiv = document.createElement('div');
-      chanDiv.style.cssText = 'margin-top:10px;border-top:1px solid var(--border);padding-top:10px;';
-      const chanLbl = document.createElement('div');
-      chanLbl.style.cssText = 'font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.10em;color:var(--text3);margin-bottom:8px;';
-      chanLbl.textContent = 'Solved by channel';
-      chanDiv.appendChild(chanLbl);
-
-      const chanRow = document.createElement('div');
-      chanRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;';
-
-      const emailEl = document.createElement('div');
-      emailEl.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
-      emailEl.innerHTML = '<div style="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--cal-text);" id="db-ch-email">…</div>'
-        +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;">Email</div>';
-
-      const webEl = document.createElement('div');
-      webEl.style.cssText = 'background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;';
-      webEl.innerHTML = '<div style="font-family:\'Fira Sans\',sans-serif;font-size:20px;font-weight:900;letter-spacing:-0.03em;color:var(--med-text);" id="db-ch-phone">…</div>'
-        +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-top:2px;">Phone</div>';
-
-      chanRow.appendChild(emailEl); chanRow.appendChild(webEl);
-
-      // Split bar
-      const splitBar = document.createElement('div');
-      splitBar.id = 'db-ch-bar';
-      splitBar.style.cssText = 'display:flex;gap:2px;height:3px;border-radius:2px;overflow:hidden;margin-top:8px;';
-      const splitBarEmail = document.createElement('div');
-      splitBarEmail.id = 'db-ch-bar-email';
-      splitBarEmail.style.cssText = 'background:var(--cal-text);width:50%;transition:width 0.4s;';
-      const splitBarWeb = document.createElement('div');
-      splitBarWeb.style.cssText = 'flex:1;background:var(--med-text);opacity:0.45;';
-      splitBar.appendChild(splitBarEmail); splitBar.appendChild(splitBarWeb);
-
-      chanDiv.appendChild(chanRow); chanDiv.appendChild(splitBar);
-      container.appendChild(chanDiv);
-
-      // Use zdData cache (populated by zdGetStats with real ticket objects — not count queries)
-      // Only available after Tickets tab has been loaded; show from cache or defer
-      const eEl = document.getElementById('db-ch-email');
-      const wEl = document.getElementById('db-ch-phone');
-      const bEl = document.getElementById('db-ch-bar-email');
-      function applyChannelFromCache() {
-        if (!zdAgents || !zdAgents.length) {
-          if(eEl) eEl.textContent = '—';
-          if(wEl) wEl.textContent = '—';
-          return;
-        }
-        let emailCount = 0, phoneCount = 0, hasData = false;
-        zdAgents.forEach(function(a) {
-          const d = zdData[a.id] || {};
-          if (d.email != null) { emailCount += d.email; phoneCount += (d.phone||0); hasData = true; }
-        });
-        if (hasData) {
-          if(eEl) eEl.textContent = emailCount;
-          if(wEl) wEl.textContent = phoneCount;
-          const tot = emailCount + phoneCount;
-          if(bEl && tot > 0) bEl.style.width = Math.round(emailCount/tot*100)+'%';
-        } else {
-          if(eEl) eEl.textContent = '—';
-          if(wEl) wEl.textContent = '—';
-        }
-      }
-      applyChannelFromCache();
-
       // ── Queue concentration (who's holding most open tickets) ──
       if(zdAgents && zdAgents.length){
         const qcDiv = document.createElement('div');
@@ -9960,14 +9892,6 @@ function renderAdminDashboard(root, viewerMode=false) {
   perfSec.appendChild(chart1Body);
   col3.appendChild(perfSec);
 
-  // CSAT trend chart
-  const csatSec = dbSection('CSAT trend — 8 weeks');
-  const csatBody2 = document.createElement('div');
-  csatBody2.id = 'db-chart2-body';
-  csatBody2.style.cssText = 'height:160px;';
-  csatSec.appendChild(csatBody2);
-  col3.appendChild(csatSec);
-
   // sat/mttr/vol go to colStats (top row 3rd panel) — see below
 
   // ── ZD Stats col (sat/mttr/vol) — 3rd panel in top row ─────────
@@ -10105,17 +10029,6 @@ function renderAdminDashboard(root, viewerMode=false) {
         row.appendChild(lbl);row.appendChild(badge);odSec4.appendChild(row);
       });
       col4b.appendChild(odSec4);
-    }
-    const decisions4 = loadDecisions().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,4);
-    if (decisions4.length) {
-      const decSec4 = dbSection('Recent decisions');
-      decisions4.forEach(d => {
-        const row=document.createElement('div');row.className='db-row';
-        const lbl=document.createElement('div');lbl.className='db-row-label';lbl.textContent=d.title||d.text||'Decision';
-        const meta=document.createElement('div');meta.className='db-row-meta';meta.textContent=d.date||'';
-        row.appendChild(lbl);row.appendChild(meta);decSec4.appendChild(row);
-      });
-      col4b.appendChild(decSec4);
     }
   }
   rowBottom.appendChild(col1);
@@ -16154,6 +16067,7 @@ function zdRender(agents, fromDate, toDate) {
       { dividerLabel: 'Calls' },
       { dot:'var(--low-text)',  label:'Answered',      val: callStats ? callStats.answered : '—' },
       { dot:'var(--high-text)', label:'Missed',        val: callStats ? callStats.missed : '—' },
+      { dot:'var(--low-text)',  label:'Answer rate',   val: callStats ? (()=>{ const tot=(callStats.answered||0)+(callStats.missed||0); return tot>0 ? Math.round(callStats.answered/tot*100)+'%' : '—'; })() : '—' },
       { dot:'var(--cal-text)',  label:'Avg talk',      val: callStats ? fmtDurShort(callStats.avgTalkSec) : '—' },
       { dot:'var(--text3)',     label:'Avg wait',      val: callStats ? fmtDurShort(callStats.avgWaitSec) : '—' },
     ];
@@ -16161,12 +16075,9 @@ function zdRender(agents, fromDate, toDate) {
     // Presence — log-on / log-off / queue exits (from queue presence log; calls/breaks read as "off")
     let pres = null;
     try { pres = (typeof getAgentQueueStats === 'function') ? getAgentQueueStats(agent.name, fromDate, toDate) : null; } catch(e) { pres = null; }
-    if (pres && (pres.daysLoggedIn || pres.avgLoginTime)) {
+    if (pres && pres.sessions && pres.sessions.length) {
       fixedRows.push({ dividerLabel: 'Presence' });
-      fixedRows.push({ dot:'var(--low-text)', label:'Avg log-on',  val: pres.avgLoginTime  || '—' });
-      fixedRows.push({ dot:'var(--med-text)', label:'Avg log-off', val: pres.avgLogoffTime || '—' });
-      fixedRows.push({ dot:'var(--text3)',    label:'Queue exits', val: (pres.sessions ? pres.sessions.length : '—') });
-      fixedRows.push({ dot:'var(--text3)',    label:'Days on queue', val: (pres.daysLoggedIn != null ? pres.daysLoggedIn : '—') });
+      fixedRows.push({ dot:'var(--text3)', label:'Queue exits', val: pres.sessions.length });
     }
 
     fixedRows.forEach(r => {
