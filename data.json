@@ -192,13 +192,6 @@
   },
   "wtp_queue_log": [
     {
-      "ts": "2026-06-13T16:49:23.552Z",
-      "name": "Thomas Hildre",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_off"
-    },
-    {
       "ts": "2026-06-13T16:49:23.555Z",
       "name": "Marie Gjengedal",
       "queue": "Vakt",
@@ -28190,6 +28183,13 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-28T04:00:25.191Z",
+      "name": "Andreas Bergevik",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -35297,6 +35297,12 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
+    "43500_Mayl\u00e9n_Milson": {
+      "ready": false,
+      "name": "Mayl\u00e9n Milson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500
+    },
     "43500_Cecilie_Steinkopf": {
       "ready": false,
       "name": "Cecilie Steinkopf",
@@ -35316,7 +35322,7 @@
       "queueId": 43499
     },
     "43499_Andreas_Bergevik": {
-      "ready": true,
+      "ready": false,
       "name": "Andreas Bergevik",
       "queue": "Vakt",
       "queueId": 43499
@@ -35348,6 +35354,12 @@
     "43499_Benjamin_\u00d8deg\u00e5rd": {
       "ready": false,
       "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Vakt",
+      "queueId": 43499
+    },
+    "43499_Mayl\u00e9n_Milson": {
+      "ready": false,
+      "name": "Mayl\u00e9n Milson",
       "queue": "Vakt",
       "queueId": 43499
     },
