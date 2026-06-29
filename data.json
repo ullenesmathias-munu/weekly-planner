@@ -24037,7 +24037,7 @@
         {
           "name": "Andreas",
           "shifts": [
-            "",
+            "SO",
             "",
             "",
             "",
@@ -30283,7 +30283,7 @@
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
     "toDate": "2026-06-29",
-    "generated": "2026-06-29T13:18:44.741Z",
+    "generated": "2026-06-29T13:18:48.486Z",
     "agents": {
       "Jonas": {
         "answered": 0,
