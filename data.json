@@ -24037,11 +24037,11 @@
         {
           "name": "Andreas",
           "shifts": [
-            "SO",
-            "SO",
-            "",
-            "",
-            "",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
             "",
             ""
           ],
@@ -30283,7 +30283,7 @@
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
     "toDate": "2026-06-29",
-    "generated": "2026-06-29T13:18:50.694Z",
+    "generated": "2026-06-29T13:18:57.754Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -30391,7 +30391,7 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 1,
         "zdEmail": 0,
         "zdPhone": 0,
         "zdOpen": 0,
