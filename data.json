@@ -16167,17 +16167,17 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1782735205043,
+    "_refreshedAt": 1782735611067,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 5,
       "pendingTickets": 6,
-      "solvedThisWeek": 14,
+      "solvedThisWeek": 17,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:26.432Z"
+      "updatedAt": "2026-06-29T12:20:11.548Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
@@ -16188,7 +16188,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:26.790Z"
+      "updatedAt": "2026-06-29T12:20:11.776Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
@@ -16199,7 +16199,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:27.038Z"
+      "updatedAt": "2026-06-29T12:20:12.115Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -16210,7 +16210,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:28.049Z"
+      "updatedAt": "2026-06-29T12:20:13.006Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
@@ -16221,7 +16221,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:28.387Z"
+      "updatedAt": "2026-06-29T12:20:13.418Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -16232,7 +16232,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:28.633Z"
+      "updatedAt": "2026-06-29T12:20:13.667Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
@@ -16243,7 +16243,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:29.685Z"
+      "updatedAt": "2026-06-29T12:20:14.653Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
@@ -16254,7 +16254,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:30.040Z"
+      "updatedAt": "2026-06-29T12:20:14.896Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -16265,7 +16265,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:30.326Z"
+      "updatedAt": "2026-06-29T12:20:15.182Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -16276,7 +16276,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T12:13:31.220Z"
+      "updatedAt": "2026-06-29T12:20:16.159Z"
     }
   },
   "wtp_announcements": [
@@ -30247,20 +30247,20 @@
   },
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
-    "toDate": "2026-06-29",
-    "generated": "2026-06-29T12:20:04.573Z",
+    "toDate": "2026-07-05",
+    "generated": "2026-06-29T12:20:17.070Z",
     "agents": {
       "Jonas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 14,
+        "zdSolved": 17,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 5,
         "zdEmail": 0,
-        "zdPhone": 14,
+        "zdPhone": 17,
         "zdOpen": 5,
         "zdPending": 6
       },
@@ -30269,12 +30269,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 17,
+        "zdSolved": 18,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 5,
         "zdEmail": 1,
-        "zdPhone": 16,
+        "zdPhone": 17,
         "zdOpen": 9,
         "zdPending": 1
       },
@@ -30397,12 +30397,12 @@
       "missed": 0,
       "ansRate": null,
       "avgWait": 0,
-      "zdTotalSolved": 82,
-      "zdOpenNow": 31,
+      "zdTotalSolved": 87,
+      "zdOpenNow": 30,
       "zdEmailTotal": 5,
-      "zdPhoneTotal": 77,
+      "zdPhoneTotal": 82,
       "zdFetchedFrom": "2026-06-29",
-      "zdFetchedTo": "2026-06-29"
+      "zdFetchedTo": "2026-07-05"
     }
   },
   "wtp_agenda_vetle.bengtson@munu.cloud": [
