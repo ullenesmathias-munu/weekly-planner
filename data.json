@@ -20034,103 +20034,96 @@
       }
     },
     "2026-06-22": {
-      "Marie Gjengedal": {
-        "answered": 95,
-        "missed": 1,
-        "totalTalkSec": 44980,
-        "totalWaitSec": 858,
-        "offered": 96
-      },
-      "Thomas Hildre": {
-        "answered": 49,
-        "missed": 4,
-        "totalTalkSec": 29543,
-        "totalWaitSec": 305,
-        "offered": 54
-      },
-      "Jonas Johannes": {
-        "answered": 127,
-        "missed": 10,
-        "totalTalkSec": 51029,
-        "totalWaitSec": 1307,
-        "offered": 140
-      },
-      "Mathias Ullenes": {
-        "answered": 11,
+      "Markus Dalsb\u00f8e": {
+        "answered": 16,
         "missed": 0,
-        "totalTalkSec": 3499,
-        "totalWaitSec": 69,
-        "offered": 11
-      },
-      "Vetle Bengtson": {
-        "answered": 88,
-        "missed": 32,
-        "totalTalkSec": 48474,
-        "totalWaitSec": 843,
-        "offered": 128
-      },
-      "Mayl\u00e9n Milson": {
-        "answered": 46,
-        "missed": 25,
-        "totalTalkSec": 18416,
-        "totalWaitSec": 379,
-        "offered": 75
-      },
-      "Cecilie Steinkopf": {
-        "answered": 33,
-        "missed": 0,
-        "totalTalkSec": 19814,
-        "totalWaitSec": 165,
-        "offered": 33
-      },
-      "Katie Rooke": {
-        "answered": 0,
-        "missed": 0,
-        "totalTalkSec": 0,
-        "totalWaitSec": 0,
-        "offered": 0
+        "totalTalkSec": 3482,
+        "totalWaitSec": 64,
+        "offered": 16
       },
       "Andreas Bergevik": {
-        "answered": 62,
+        "answered": 180,
+        "missed": 4,
+        "totalTalkSec": 75443,
+        "totalWaitSec": 1087,
+        "offered": 190
+      },
+      "Marie Gjengedal": {
+        "answered": 190,
         "missed": 2,
-        "totalTalkSec": 26243,
-        "totalWaitSec": 386,
-        "offered": 66
+        "totalTalkSec": 89963,
+        "totalWaitSec": 1664,
+        "offered": 192
       },
       "Benjamin \u00d8deg\u00e5rd": {
-        "answered": 87,
-        "missed": 22,
-        "totalTalkSec": 40696,
-        "totalWaitSec": 715,
-        "offered": 111
+        "answered": 262,
+        "missed": 160,
+        "totalTalkSec": 106511,
+        "totalWaitSec": 2781,
+        "offered": 440
       },
-      "Lohany Veloso": {
-        "answered": 4,
-        "missed": 0,
-        "totalTalkSec": 2431,
-        "totalWaitSec": 47,
-        "offered": 4
+      "Thomas Hildre": {
+        "answered": 98,
+        "missed": 8,
+        "totalTalkSec": 59087,
+        "totalWaitSec": 599,
+        "offered": 108
+      },
+      "Jonas Johannes": {
+        "answered": 254,
+        "missed": 20,
+        "totalTalkSec": 102060,
+        "totalWaitSec": 2577,
+        "offered": 280
       },
       "Truls Johansen": {
-        "answered": 8,
-        "missed": 2,
-        "totalTalkSec": 1628,
-        "totalWaitSec": 64,
-        "offered": 10
+        "answered": 16,
+        "missed": 4,
+        "totalTalkSec": 3256,
+        "totalWaitSec": 128,
+        "offered": 20
       },
-      "Markus Dalsb\u00f8e": {
+      "Mathias Ullenes": {
+        "answered": 20,
+        "missed": 0,
+        "totalTalkSec": 6903,
+        "totalWaitSec": 101,
+        "offered": 20
+      },
+      "Vetle Bengtson": {
+        "answered": 176,
+        "missed": 64,
+        "totalTalkSec": 96949,
+        "totalWaitSec": 1723,
+        "offered": 256
+      },
+      "Mayl\u00e9n Milson": {
+        "answered": 92,
+        "missed": 50,
+        "totalTalkSec": 36833,
+        "totalWaitSec": 747,
+        "offered": 150
+      },
+      "Cecilie Steinkopf": {
+        "answered": 66,
+        "missed": 0,
+        "totalTalkSec": 39628,
+        "totalWaitSec": 330,
+        "offered": 66
+      },
+      "Lohany Veloso": {
         "answered": 8,
         "missed": 0,
-        "totalTalkSec": 1741,
-        "totalWaitSec": 32,
+        "totalTalkSec": 4862,
+        "totalWaitSec": 95,
         "offered": 8
       },
       "Ulrik Rosenberg": {
-        "answered": 1,
+        "answered": 2,
         "missed": 0,
-        "totalTalkSec": 375,
-        "totalWaitSec": 4,
-        "offered": 1
+        "totalTalkSec": 750,
+        "totalWaitSec": 8,
+        "offered": 2
       }
     }
   },
