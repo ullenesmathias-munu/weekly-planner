@@ -3141,8 +3141,10 @@ window.tryUnlock = async function() {
 <div id="tab-schedule" class="tab-content">
   <div class="topbar">
     <div class="topbar-left">
+      <button class="btn-nav" onclick="schedNavWeek(-1)" title="Previous week" style="font-size:14px;line-height:1;padding:4px 10px;">‹</button>
       <select class="week-select" id="sched-week-select" onchange="renderSchedule()"></select>
-      <button class="btn-nav" onclick="jumpScheduleToCurrentWeek()" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);">current</button>
+      <button class="btn-nav" onclick="schedNavWeek(1)" title="Next week" style="font-size:14px;line-height:1;padding:4px 10px;">›</button>
+      <button class="btn-nav" onclick="jumpScheduleToCurrentWeek()" style="font-size:11px;color:var(--cal-text);border-color:var(--cal-border);">today</button>
       <span id="sched-week-label" style="font-size:12px; color:var(--text3);"></span>
     </div>
   </div>
@@ -3914,8 +3916,45 @@ function roleClass(role) {
   return '';
 }
 
+function getISOWeekNum(date) {
+  const d = new Date(date.getTime());
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  const yearStart = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+}
+
+function ensureWeeksThruEndOfYear() {
+  if (!SCHEDULE.length) return;
+  const today = localToday();
+  const yearEnd = today.substring(0, 4) + '-12-31';
+  const existingMondays = new Set(SCHEDULE.map(w => w.dates[0]));
+  const sorted = [...SCHEDULE].sort((a, b) => a.dates[0] < b.dates[0] ? -1 : 1);
+  let d = new Date(sorted[sorted.length - 1].dates[0] + 'T00:00:00');
+  d.setDate(d.getDate() + 7);
+  let added = false;
+  while (fmtLocal(d) <= yearEnd) {
+    const monday = fmtLocal(d);
+    if (!existingMondays.has(monday)) {
+      const dates = [];
+      for (let i = 0; i < 7; i++) { const dd = new Date(d); dd.setDate(d.getDate() + i); dates.push(fmtLocal(dd)); }
+      const people = MY_TEAM.map(name => ({ name, shifts: ['','','','','','',''], roles: ['','','','','','',''] }));
+      SCHEDULE.push({ week: 'Week ' + getISOWeekNum(d), dates, people });
+      existingMondays.add(monday);
+      added = true;
+    }
+    d.setDate(d.getDate() + 7);
+  }
+  if (added) {
+    SCHEDULE.sort((a, b) => a.dates[0] < b.dates[0] ? -1 : 1);
+    try { localStorage.setItem('wtp_schedule', JSON.stringify(SCHEDULE)); } catch(e) {}
+  }
+}
+
 function initScheduleSelect() {
   const sel = document.getElementById('sched-week-select');
+  sel.innerHTML = '';
+  ensureWeeksThruEndOfYear();
   const today = localToday();
   let bestIdx = 0;
   let closestFuture = -1;
@@ -3946,6 +3985,15 @@ function jumpScheduleToCurrentWeek() {
   if (bestIdx === 0 && closestFuture !== -1 && today > SCHEDULE[0].dates[4]) bestIdx = closestFuture;
   document.getElementById('sched-week-select').value = bestIdx;
   renderSchedule();
+}
+
+function schedNavWeek(dir) {
+  const sel = document.getElementById('sched-week-select');
+  const next = parseInt(sel.value) + dir;
+  if (next >= 0 && next < SCHEDULE.length) {
+    sel.value = next;
+    renderSchedule();
+  }
 }
 
 function renderSchedule() {
@@ -4194,12 +4242,77 @@ function renderSchedule() {
         item.onmousedown = (ev) => {
           ev.stopPropagation();
           ev.preventDefault();
-          // Ensure shifts array is long enough (weekend days are index 5/6)
-          while (person.shifts.length <= dayIdx) person.shifts.push('');
-          person.shifts[dayIdx] = code;
-          saveSchedule();
           dd.remove();
-          renderPill();
+
+          const isWknd = dayIdx >= 5;
+          const scopeIdxs = isWknd ? [5, 6] : [0, 1, 2, 3, 4];
+          const scopeLabel = isWknd ? 'Sat–Sun (whole weekend)' : 'Mon–Fri (whole week)';
+          const dayName = DAY_NAMES[dayIdx];
+
+          // SO auto-generation for W1/W2 on weekends
+          const weekIdx = SCHEDULE.indexOf(w);
+          const isW1 = code.startsWith('W1');
+          const isW2 = code.startsWith('W2');
+          const soApplicable = isWknd && code !== '' && (isW1 || isW2);
+          const soCount = isW2 ? 2 : 1;
+          const nextWeek = soApplicable ? SCHEDULE[weekIdx + 1] : null;
+          const nextPerson = nextWeek ? nextWeek.people?.find(p => p.name === person.name) : null;
+
+          const applyNow = (indices) => {
+            indices.forEach(i => {
+              while (person.shifts.length <= i) person.shifts.push('');
+              person.shifts[i] = code;
+            });
+            if (soApplicable && nextPerson) {
+              const soIdxs = isW2 ? [0, 1] : [0];
+              soIdxs.forEach(si => {
+                while (nextPerson.shifts.length <= si) nextPerson.shifts.push('');
+                if (!nextPerson.shifts[si] || nextPerson.shifts[si] === 'SO') nextPerson.shifts[si] = 'SO';
+              });
+            }
+            saveSchedule();
+            renderPill();
+            if (soApplicable && nextPerson) renderSchedule();
+          };
+
+          // Build scope overlay
+          const overlay = document.createElement('div');
+          overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;';
+          const dialog = document.createElement('div');
+          dialog.style.cssText = 'background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:18px 20px;min-width:230px;max-width:290px;box-shadow:0 8px 32px rgba(0,0,0,0.5);';
+
+          const titleRow = document.createElement('div');
+          titleRow.style.cssText = 'font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;';
+          titleRow.textContent = code ? 'Apply ' + code + ' to…' : 'Clear shift…';
+          dialog.appendChild(titleRow);
+
+          const btnCol = document.createElement('div');
+          btnCol.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+          const mkScopeBtn = (label, primary, onclick) => {
+            const b = document.createElement('button');
+            b.style.cssText = 'font-family:inherit;font-size:12px;font-weight:600;padding:9px 14px;border-radius:var(--radius-md);cursor:pointer;border:1px solid;text-align:left;'
+              + (primary ? 'background:var(--cal-text);color:#000743;border-color:var(--cal-text);' : 'background:none;color:var(--text2);border-color:var(--border);');
+            b.textContent = label;
+            b.onmousedown = ev2 => { ev2.stopPropagation(); overlay.remove(); onclick(); };
+            return b;
+          };
+
+          btnCol.appendChild(mkScopeBtn(scopeLabel, true, () => applyNow(scopeIdxs)));
+          btnCol.appendChild(mkScopeBtn('Just ' + dayName, false, () => applyNow([dayIdx])));
+          dialog.appendChild(btnCol);
+
+          if (soApplicable && nextWeek) {
+            const soNote = document.createElement('div');
+            soNote.style.cssText = 'margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);';
+            const soLabel = isW2 ? 'Mon + Tue' : 'Mon';
+            soNote.textContent = 'Auto-SO: ' + person.name.split(' ')[0] + ' → ' + soLabel + ' (' + (nextWeek.week || 'next week') + ')';
+            dialog.appendChild(soNote);
+          }
+
+          overlay.appendChild(dialog);
+          document.body.appendChild(overlay);
+          overlay.addEventListener('mousedown', ev2 => { if (ev2.target === overlay) overlay.remove(); });
         };
         dd.appendChild(item);
       });
@@ -9618,6 +9731,7 @@ function renderAdminDashboard(root, viewerMode=false) {
   oldestBody.innerHTML = zdReady() ? '<div style="font-size:11px;color:var(--text3);">Loading…</div>' : '<div style="font-size:11px;color:var(--text3);">Zendesk not configured</div>';
   oldestSec.appendChild(oldestBody);
   col3.appendChild(oldestSec);
+  rowTop.appendChild(col3);
 
   if (zdReady()) {
     (async () => {
