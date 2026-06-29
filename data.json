@@ -5216,6 +5216,13 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-06-29T07:01:39.272Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
