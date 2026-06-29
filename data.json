@@ -12212,7 +12212,7 @@
       "hour": 17,
       "answered": 5,
       "missed": 5,
-      "avgWaitSec": 925,
+      "avgWaitSec": 784,
       "avgHandleSec": 844
     },
     "2026-06-26T18": {
@@ -12266,10 +12266,210 @@
     "2026-06-27T09": {
       "date": "2026-06-27",
       "hour": 9,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 87,
+      "avgHandleSec": 243
+    },
+    "2026-06-27T10": {
+      "date": "2026-06-27",
+      "hour": 10,
       "answered": 1,
       "missed": 0,
-      "avgWaitSec": 105,
-      "avgHandleSec": 475
+      "avgWaitSec": 89,
+      "avgHandleSec": 239
+    },
+    "2026-06-27T11": {
+      "date": "2026-06-27",
+      "hour": 11,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 32,
+      "avgHandleSec": 214
+    },
+    "2026-06-27T12": {
+      "date": "2026-06-27",
+      "hour": 12,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 123,
+      "avgHandleSec": 369
+    },
+    "2026-06-27T13": {
+      "date": "2026-06-27",
+      "hour": 13,
+      "answered": 4,
+      "missed": 1,
+      "avgWaitSec": 333,
+      "avgHandleSec": 357
+    },
+    "2026-06-27T14": {
+      "date": "2026-06-27",
+      "hour": 14,
+      "answered": 4,
+      "missed": 7,
+      "avgWaitSec": 411,
+      "avgHandleSec": 285
+    },
+    "2026-06-27T15": {
+      "date": "2026-06-27",
+      "hour": 15,
+      "answered": 6,
+      "missed": 12,
+      "avgWaitSec": 101,
+      "avgHandleSec": 305
+    },
+    "2026-06-27T16": {
+      "date": "2026-06-27",
+      "hour": 16,
+      "answered": 4,
+      "missed": 1,
+      "avgWaitSec": 27,
+      "avgHandleSec": 106
+    },
+    "2026-06-27T17": {
+      "date": "2026-06-27",
+      "hour": 17,
+      "answered": 6,
+      "missed": 0,
+      "avgWaitSec": 109,
+      "avgHandleSec": 419
+    },
+    "2026-06-27T18": {
+      "date": "2026-06-27",
+      "hour": 18,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 9,
+      "avgHandleSec": 524
+    },
+    "2026-06-27T19": {
+      "date": "2026-06-27",
+      "hour": 19,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 8,
+      "avgHandleSec": 65
+    },
+    "2026-06-27T20": {
+      "date": "2026-06-27",
+      "hour": 20,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 9,
+      "avgHandleSec": 455
+    },
+    "2026-06-27T21": {
+      "date": "2026-06-27",
+      "hour": 21,
+      "answered": 4,
+      "missed": 5,
+      "avgWaitSec": 207,
+      "avgHandleSec": 618
+    },
+    "2026-06-27T22": {
+      "date": "2026-06-27",
+      "hour": 22,
+      "answered": 4,
+      "missed": 3,
+      "avgWaitSec": 210,
+      "avgHandleSec": 540
+    },
+    "2026-06-28T01": {
+      "date": "2026-06-28",
+      "hour": 1,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 13,
+      "avgHandleSec": 231
+    },
+    "2026-06-28T08": {
+      "date": "2026-06-28",
+      "hour": 8,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 13,
+      "avgHandleSec": 63
+    },
+    "2026-06-28T10": {
+      "date": "2026-06-28",
+      "hour": 10,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 60,
+      "avgHandleSec": 267
+    },
+    "2026-06-28T11": {
+      "date": "2026-06-28",
+      "hour": 11,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 48,
+      "avgHandleSec": 281
+    },
+    "2026-06-28T12": {
+      "date": "2026-06-28",
+      "hour": 12,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 82,
+      "avgHandleSec": 191
+    },
+    "2026-06-28T13": {
+      "date": "2026-06-28",
+      "hour": 13,
+      "answered": 4,
+      "missed": 1,
+      "avgWaitSec": 701,
+      "avgHandleSec": 434
+    },
+    "2026-06-28T14": {
+      "date": "2026-06-28",
+      "hour": 14,
+      "answered": 3,
+      "missed": 0,
+      "avgWaitSec": 1297,
+      "avgHandleSec": 325
+    },
+    "2026-06-28T15": {
+      "date": "2026-06-28",
+      "hour": 15,
+      "answered": 2,
+      "missed": 5,
+      "avgWaitSec": 413,
+      "avgHandleSec": 189
+    },
+    "2026-06-28T16": {
+      "date": "2026-06-28",
+      "hour": 16,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 28,
+      "avgHandleSec": 207
+    },
+    "2026-06-28T18": {
+      "date": "2026-06-28",
+      "hour": 18,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 7,
+      "avgHandleSec": 397
+    },
+    "2026-06-28T19": {
+      "date": "2026-06-28",
+      "hour": 19,
+      "answered": 2,
+      "missed": 0,
+      "avgWaitSec": 6,
+      "avgHandleSec": 234
+    },
+    "2026-06-28T20": {
+      "date": "2026-06-28",
+      "hour": 20,
+      "answered": 1,
+      "missed": 0,
+      "avgWaitSec": 6,
+      "avgHandleSec": 312
     }
   },
   "wtp_notepad_mathias": "Uke 24 - Jonas\n25.Mai  - Cecilie\nUke 25 - Marie\n\n\n\n",
@@ -13768,7 +13968,7 @@
       "avgWaitMissedSec": 154,
       "callbackRequests": 0,
       "overKpi": 125,
-      "savedAt": "2026-06-27T08:40:02.523Z",
+      "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
     },
     {
@@ -13782,7 +13982,7 @@
       "avgWaitMissedSec": 162,
       "callbackRequests": 0,
       "overKpi": 54,
-      "savedAt": "2026-06-27T08:40:02.524Z",
+      "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
     },
     {
@@ -13796,7 +13996,7 @@
       "avgWaitMissedSec": 173,
       "callbackRequests": 2,
       "overKpi": 63,
-      "savedAt": "2026-06-27T08:40:02.524Z",
+      "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
     },
     {
@@ -13810,7 +14010,7 @@
       "avgWaitMissedSec": 129,
       "callbackRequests": 1,
       "overKpi": 70,
-      "savedAt": "2026-06-27T08:40:02.524Z",
+      "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
     },
     {
@@ -13818,27 +14018,41 @@
       "offered": 205,
       "answered": 121,
       "missed": 84,
-      "avgWaitSec": 451,
+      "avgWaitSec": 442,
       "avgHandleSec": 523,
       "avgWaitAnsweredSec": 620,
-      "avgWaitMissedSec": 223,
-      "callbackRequests": 6,
-      "overKpi": 166,
-      "savedAt": "2026-06-27T08:40:02.524Z",
+      "avgWaitMissedSec": 200,
+      "callbackRequests": 5,
+      "overKpi": 165,
+      "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
     },
     {
       "date": "2026-06-27",
-      "offered": 2,
-      "answered": 2,
-      "missed": 0,
-      "avgWaitSec": 134,
-      "avgHandleSec": 240,
-      "avgWaitAnsweredSec": 134,
-      "avgWaitMissedSec": 0,
+      "offered": 79,
+      "answered": 50,
+      "missed": 29,
+      "avgWaitSec": 165,
+      "avgHandleSec": 353,
+      "avgWaitAnsweredSec": 167,
+      "avgWaitMissedSec": 162,
       "callbackRequests": 0,
-      "overKpi": 2,
-      "savedAt": "2026-06-27T08:40:02.524Z",
+      "overKpi": 51,
+      "savedAt": "2026-06-29T06:50:56.432Z",
+      "source": "import"
+    },
+    {
+      "date": "2026-06-28",
+      "offered": 29,
+      "answered": 23,
+      "missed": 6,
+      "avgWaitSec": 367,
+      "avgHandleSec": 288,
+      "avgWaitAnsweredSec": 306,
+      "avgWaitMissedSec": 601,
+      "callbackRequests": 0,
+      "overKpi": 18,
+      "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
     }
   ],
