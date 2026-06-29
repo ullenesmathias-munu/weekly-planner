@@ -23953,7 +23953,7 @@
         {
           "name": "Benjamin",
           "shifts": [
-            "",
+            "SO",
             "",
             "",
             "",
@@ -30282,8 +30282,8 @@
   },
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
-    "toDate": "2026-07-05",
-    "generated": "2026-06-29T12:20:17.070Z",
+    "toDate": "2026-06-29",
+    "generated": "2026-06-29T13:18:00.187Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -30293,7 +30293,7 @@
         "zdSolved": 17,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 5,
+        "dayDays": 1,
         "zdEmail": 0,
         "zdPhone": 17,
         "zdOpen": 5,
@@ -30307,7 +30307,7 @@
         "zdSolved": 18,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 5,
+        "dayDays": 1,
         "zdEmail": 1,
         "zdPhone": 17,
         "zdOpen": 9,
@@ -30437,7 +30437,7 @@
       "zdEmailTotal": 5,
       "zdPhoneTotal": 82,
       "zdFetchedFrom": "2026-06-29",
-      "zdFetchedTo": "2026-07-05"
+      "zdFetchedTo": "2026-06-29"
     }
   },
   "wtp_agenda_vetle.bengtson@munu.cloud": [
