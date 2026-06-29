@@ -16237,28 +16237,28 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1782740900196,
+    "_refreshedAt": 1782753050639,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 5,
       "pendingTickets": 5,
-      "solvedThisWeek": 24,
+      "solvedThisWeek": 32,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:20.720Z"
+      "updatedAt": "2026-06-29T17:10:51.683Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
       "openTickets": 8,
       "pendingTickets": 1,
-      "solvedThisWeek": 23,
+      "solvedThisWeek": 28,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:20.942Z"
+      "updatedAt": "2026-06-29T17:10:51.879Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
@@ -16269,7 +16269,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:21.235Z"
+      "updatedAt": "2026-06-29T17:10:52.206Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -16280,18 +16280,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:22.125Z"
+      "updatedAt": "2026-06-29T17:10:53.127Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
       "openTickets": 0,
       "pendingTickets": 0,
-      "solvedThisWeek": 0,
+      "solvedThisWeek": 7,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:22.642Z"
+      "updatedAt": "2026-06-29T17:10:53.472Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
@@ -16302,7 +16302,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:22.927Z"
+      "updatedAt": "2026-06-29T17:10:53.736Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
@@ -16313,18 +16313,18 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:23.846Z"
+      "updatedAt": "2026-06-29T17:10:54.620Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
       "openTickets": 0,
       "pendingTickets": 0,
-      "solvedThisWeek": 0,
+      "solvedThisWeek": 21,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:24.074Z"
+      "updatedAt": "2026-06-29T17:10:54.874Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -16335,7 +16335,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:24.400Z"
+      "updatedAt": "2026-06-29T17:10:55.133Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -16346,7 +16346,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-06-29T13:48:25.315Z"
+      "updatedAt": "2026-06-29T17:10:56.120Z"
     }
   },
   "wtp_announcements": [
@@ -30318,19 +30318,19 @@
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
     "toDate": "2026-07-05",
-    "generated": "2026-06-29T13:48:26.221Z",
+    "generated": "2026-06-29T17:10:57.206Z",
     "agents": {
       "Jonas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 24,
+        "zdSolved": 32,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 1,
-        "zdPhone": 23,
+        "zdPhone": 31,
         "zdOpen": 5,
         "zdPending": 5
       },
@@ -30339,12 +30339,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 23,
+        "zdSolved": 28,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 1,
-        "zdPhone": 22,
+        "zdPhone": 27,
         "zdOpen": 8,
         "zdPending": 1
       },
@@ -30381,12 +30381,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0,
+        "zdSolved": 7,
         "isNight": true,
         "nightDays": 5,
         "dayDays": 0,
         "zdEmail": 0,
-        "zdPhone": 0,
+        "zdPhone": 7,
         "zdOpen": 0,
         "zdPending": 0
       },
@@ -30423,12 +30423,12 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0,
+        "zdSolved": 21,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 0,
+        "zdEmail": 14,
+        "zdPhone": 7,
         "zdOpen": 0,
         "zdPending": 0
       },
@@ -30467,10 +30467,10 @@
       "missed": 0,
       "ansRate": null,
       "avgWait": 0,
-      "zdTotalSolved": 107,
+      "zdTotalSolved": 154,
       "zdOpenNow": 28,
-      "zdEmailTotal": 7,
-      "zdPhoneTotal": 100,
+      "zdEmailTotal": 21,
+      "zdPhoneTotal": 133,
       "zdFetchedFrom": "2026-06-29",
       "zdFetchedTo": "2026-07-05"
     }
