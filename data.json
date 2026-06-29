@@ -23974,11 +23974,11 @@
         {
           "name": "Cecilie",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
             "",
             ""
           ],
@@ -30283,7 +30283,7 @@
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
     "toDate": "2026-06-29",
-    "generated": "2026-06-29T13:18:11.414Z",
+    "generated": "2026-06-29T13:18:29.276Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -30347,8 +30347,8 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
+        "isNight": true,
+        "nightDays": 1,
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
