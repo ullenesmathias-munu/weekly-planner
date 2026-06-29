@@ -5293,6 +5293,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-06-29T11:03:12.049Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -12559,7 +12566,7 @@
       "queueId": 43500
     },
     "43500_Jonas_Johannes": {
-      "ready": false,
+      "ready": true,
       "name": "Jonas Johannes",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
