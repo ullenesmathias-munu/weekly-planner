@@ -15724,6 +15724,24 @@
       "pendingName": "",
       "weekStamp": "2026-06-29",
       "done": false
+    },
+    {
+      "id": "1782716839895",
+      "day": "Tuesday",
+      "title": "Standup Every day",
+      "priority": "",
+      "due": "30 Jun",
+      "note": "",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "",
+      "pendingName": "",
+      "weekStamp": "2026-06-29",
+      "done": false
     }
   ],
   "wtp_review_2026-05-18": {
