@@ -4271,8 +4271,11 @@ function renderSchedule() {
               });
             }
             saveSchedule();
-            renderPill();
-            if (soApplicable && nextPerson) renderSchedule();
+            if (indices.length > 1 || (soApplicable && nextPerson)) {
+              renderSchedule();
+            } else {
+              renderPill();
+            }
           };
 
           // Build scope overlay
@@ -15803,17 +15806,20 @@ function zdGetAbsentNames(fromDate, toDate) {
   const absent = new Set();
   const OFF_ALL = new Set(['so','h','hd','os','abs','ol','']);
   MY_TEAM.forEach(name => {
+    let foundAny = false; // track whether any schedule entry exists in range
     let allOff = true;
     SCHEDULE.forEach(w => {
       w.dates.forEach((date, di) => {
         if (date < fromDate || date > toDate) return;
         const p = w.people.find(p => p.name === name);
         if (!p) return;
+        foundAny = true;
         const s = (p.shifts[di]||'').toLowerCase();
         if (!OFF_ALL.has(s)) allOff = false;
       });
     });
-    if (allOff) absent.add(name.toLowerCase());
+    // Only mark absent if schedule data exists AND every covered day is off
+    if (foundAny && allOff) absent.add(name.toLowerCase());
   });
   return absent;
 }
