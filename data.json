@@ -17204,8 +17204,8 @@
   ],
   "wtp_intel_snap_2026-06-22": {
     "fromDate": "2026-06-22",
-    "toDate": "2026-06-27",
-    "generated": "2026-06-27T14:27:47.579Z",
+    "toDate": "2026-06-28",
+    "generated": "2026-06-29T06:48:44.105Z",
     "agents": {
       "Jonas": {
         "answered": 180,
@@ -17232,7 +17232,7 @@
         "dayDays": 3,
         "zdEmail": 3,
         "zdPhone": 30,
-        "zdOpen": 8,
+        "zdOpen": 9,
         "zdPending": 1
       },
       "Maylen": {
@@ -17254,12 +17254,12 @@
         "missed": 24,
         "avgTalk": 473,
         "avgWait": 22,
-        "zdSolved": 81,
+        "zdSolved": 90,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 4,
         "zdEmail": 4,
-        "zdPhone": 77,
+        "zdPhone": 86,
         "zdOpen": 0,
         "zdPending": 0
       },
@@ -17302,7 +17302,7 @@
         "dayDays": 0,
         "zdEmail": 2,
         "zdPhone": 79,
-        "zdOpen": 4,
+        "zdOpen": 6,
         "zdPending": 7
       },
       "Andreas": {
@@ -17310,14 +17310,14 @@
         "missed": 3,
         "avgTalk": 428,
         "avgWait": 12,
-        "zdSolved": 109,
+        "zdSolved": 125,
         "isNight": false,
-        "nightDays": 1,
+        "nightDays": 2,
         "dayDays": 5,
-        "zdEmail": 59,
-        "zdPhone": 50,
-        "zdOpen": 7,
-        "zdPending": 4
+        "zdEmail": 61,
+        "zdPhone": 64,
+        "zdOpen": 0,
+        "zdPending": 0
       },
       "Julie": {
         "answered": 0,
@@ -17344,8 +17344,8 @@
         "dayDays": 5,
         "zdEmail": 1,
         "zdPhone": 86,
-        "zdOpen": 14,
-        "zdPending": 9
+        "zdOpen": 0,
+        "zdPending": 0
       }
     },
     "totals": {
@@ -17354,12 +17354,12 @@
       "missed": 163,
       "ansRate": 78,
       "avgWait": 273,
-      "zdTotalSolved": 582,
-      "zdOpenNow": 46,
-      "zdEmailTotal": 88,
-      "zdPhoneTotal": 494,
+      "zdTotalSolved": 608,
+      "zdOpenNow": 28,
+      "zdEmailTotal": 90,
+      "zdPhoneTotal": 518,
       "zdFetchedFrom": "2026-06-22",
-      "zdFetchedTo": "2026-06-27"
+      "zdFetchedTo": "2026-06-28"
     }
   },
   "wtp_intel_snap_2026-03-02": {
