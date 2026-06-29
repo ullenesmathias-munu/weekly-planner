@@ -23855,11 +23855,11 @@
         {
           "name": "Jonas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
             "",
             ""
           ],
@@ -30247,8 +30247,8 @@
   },
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
-    "toDate": "2026-07-05",
-    "generated": "2026-06-29T12:13:30.687Z",
+    "toDate": "2026-06-29",
+    "generated": "2026-06-29T12:19:30.947Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -30258,7 +30258,7 @@
         "zdSolved": 14,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 1,
         "zdEmail": 0,
         "zdPhone": 14,
         "zdOpen": 5,
@@ -30402,7 +30402,7 @@
       "zdEmailTotal": 5,
       "zdPhoneTotal": 77,
       "zdFetchedFrom": "2026-06-29",
-      "zdFetchedTo": "2026-07-05"
+      "zdFetchedTo": "2026-06-29"
     }
   },
   "wtp_agenda_vetle.bengtson@munu.cloud": [
