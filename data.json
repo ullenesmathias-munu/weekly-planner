@@ -15742,6 +15742,24 @@
       "pendingName": "",
       "weekStamp": "2026-06-29",
       "done": false
+    },
+    {
+      "id": "1782721162567",
+      "day": "Wednesday",
+      "title": "Wednesday Meeting",
+      "priority": "",
+      "due": "1 Jul",
+      "note": "Follow-up agents that are working the weekend.",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "",
+      "colour": "",
+      "pendingName": "",
+      "weekStamp": "2026-06-29",
+      "done": false
     }
   ],
   "wtp_review_2026-05-18": {
