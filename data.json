@@ -15690,6 +15690,26 @@
       "pendingName": "",
       "reminder": "",
       "done": false
+    },
+    {
+      "id": "1782716065730",
+      "day": "Monday",
+      "title": "Marie Vacation",
+      "priority": "",
+      "due": "29 Jun",
+      "note": "Marie wants to push her vacation one week forward. \nRight now it is Week 33 - 36, so then change it to 34 to 37.",
+      "people": [
+        "Marie"
+      ],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "reminder": "13:00",
+      "colour": "green",
+      "pendingName": "",
+      "weekStamp": "2026-06-29",
+      "done": false
     }
   ],
   "wtp_review_2026-05-18": {
