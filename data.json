@@ -46781,7 +46781,7 @@
           "name": "Benjamin",
           "shifts": [
             "D3 (9-17)",
-            "OS",
+            "D3 (9-17)",
             "OS",
             "OS",
             "OS",
@@ -53110,7 +53110,7 @@
   "wtp_intel_snap_2026-06-29": {
     "fromDate": "2026-06-29",
     "toDate": "2026-07-02",
-    "generated": "2026-07-01T22:34:30.804Z",
+    "generated": "2026-07-01T22:34:32.902Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -53162,7 +53162,7 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 2,
         "zdEmail": null,
         "zdPhone": null,
         "zdOpen": 0,
