@@ -192,13 +192,6 @@
   },
   "wtp_queue_log": [
     {
-      "ts": "2026-06-30T19:50:27.274Z",
-      "name": "Cecilie Steinkopf",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
       "ts": "2026-06-30T19:51:27.162Z",
       "name": "Thomas Hildre",
       "queue": "Innenfor \u00e5pningstid",
@@ -28190,6 +28183,13 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-02T04:00:32.027Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -35564,7 +35564,7 @@
       "queueId": 43499
     },
     "43499_Cecilie_Steinkopf": {
-      "ready": true,
+      "ready": false,
       "name": "Cecilie Steinkopf",
       "queue": "Vakt",
       "queueId": 43499
