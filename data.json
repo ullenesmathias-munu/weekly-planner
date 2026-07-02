@@ -192,13 +192,6 @@
   },
   "wtp_queue_log": [
     {
-      "ts": "2026-06-30T19:51:27.167Z",
-      "name": "Jonas Johannes",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500,
-      "event": "logged_off"
-    },
-    {
       "ts": "2026-06-30T19:51:27.170Z",
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
@@ -28190,6 +28183,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-02T06:01:57.135Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -35456,7 +35456,7 @@
       "queueId": 43500
     },
     "43500_Jonas_Johannes": {
-      "ready": false,
+      "ready": true,
       "name": "Jonas Johannes",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
