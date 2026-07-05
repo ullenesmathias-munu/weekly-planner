@@ -5958,6 +5958,20 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-05T08:29:08.219Z",
+      "name": "Marie Gjengedal",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-05T08:29:08.221Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -13296,7 +13310,7 @@
       "queueId": 43499
     },
     "43499_Marie_Gjengedal": {
-      "ready": false,
+      "ready": true,
       "name": "Marie Gjengedal",
       "queue": "Vakt",
       "queueId": 43499
@@ -13332,7 +13346,7 @@
       "queueId": 43499
     },
     "43499_Cecilie_Steinkopf": {
-      "ready": true,
+      "ready": false,
       "name": "Cecilie Steinkopf",
       "queue": "Vakt",
       "queueId": 43499
