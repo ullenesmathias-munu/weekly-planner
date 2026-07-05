@@ -5972,6 +5972,20 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-05T15:00:40.321Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-05T15:00:40.325Z",
+      "name": "Marie Gjengedal",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -13298,7 +13312,7 @@
       "queueId": 43499
     },
     "43499_Jonas_Johannes": {
-      "ready": false,
+      "ready": true,
       "name": "Jonas Johannes",
       "queue": "Vakt",
       "queueId": 43499
@@ -13310,7 +13324,7 @@
       "queueId": 43499
     },
     "43499_Marie_Gjengedal": {
-      "ready": true,
+      "ready": false,
       "name": "Marie Gjengedal",
       "queue": "Vakt",
       "queueId": 43499
