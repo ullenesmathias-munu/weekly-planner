@@ -17145,18 +17145,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1783330827402,
-    "Maylen": {
-      "zdAgentId": 24587357667869,
-      "openTickets": 0,
-      "pendingTickets": 0,
-      "solvedThisWeek": 0,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:27.567Z"
-    },
+    "_refreshedAt": 1783331049001,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 0,
@@ -17166,32 +17155,21 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:27.568Z"
+      "updatedAt": "2026-07-06T09:44:09.507Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
-      "openTickets": 8,
+      "openTickets": 7,
       "pendingTickets": 1,
       "solvedThisWeek": 7,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:27.598Z"
+      "updatedAt": "2026-07-06T09:44:09.732Z"
     },
-    "Cecilie": {
-      "zdAgentId": 28548167647261,
-      "openTickets": 8,
-      "pendingTickets": 0,
-      "solvedThisWeek": 3,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:28.249Z"
-    },
-    "Tord": {
-      "zdAgentId": 28865220830493,
+    "Maylen": {
+      "zdAgentId": 24587357667869,
       "openTickets": 0,
       "pendingTickets": 0,
       "solvedThisWeek": 0,
@@ -17199,7 +17177,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:28.399Z"
+      "updatedAt": "2026-07-06T09:44:09.934Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -17210,7 +17188,29 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:28.547Z"
+      "updatedAt": "2026-07-06T09:44:10.972Z"
+    },
+    "Cecilie": {
+      "zdAgentId": 28548167647261,
+      "openTickets": 8,
+      "pendingTickets": 0,
+      "solvedThisWeek": 3,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-07-06T09:44:11.263Z"
+    },
+    "Tord": {
+      "zdAgentId": 28865220830493,
+      "openTickets": 0,
+      "pendingTickets": 0,
+      "solvedThisWeek": 0,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-07-06T09:44:11.604Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
@@ -17221,7 +17221,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:29.208Z"
+      "updatedAt": "2026-07-06T09:44:12.470Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
@@ -17232,7 +17232,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:29.239Z"
+      "updatedAt": "2026-07-06T09:44:12.774Z"
     },
     "Julie": {
       "zdAgentId": 34641778544797,
@@ -17243,7 +17243,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:29.628Z"
+      "updatedAt": "2026-07-06T09:44:12.975Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -17254,7 +17254,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-06T09:40:30.282Z"
+      "updatedAt": "2026-07-06T09:44:13.956Z"
     }
   },
   "wtp_announcements": [
@@ -31393,7 +31393,7 @@
   "wtp_intel_snap_2026-07-06": {
     "fromDate": "2026-07-06",
     "toDate": "2026-07-12",
-    "generated": "2026-07-06T09:40:19.709Z",
+    "generated": "2026-07-06T09:44:15.034Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -31420,7 +31420,7 @@
         "dayDays": 0,
         "zdEmail": 2,
         "zdPhone": 5,
-        "zdOpen": 8,
+        "zdOpen": 7,
         "zdPending": 1
       },
       "Maylen": {
@@ -31543,7 +31543,7 @@
       "ansRate": null,
       "avgWait": 0,
       "zdTotalSolved": 26,
-      "zdOpenNow": 57,
+      "zdOpenNow": 56,
       "zdEmailTotal": 6,
       "zdPhoneTotal": 20,
       "zdFetchedFrom": "2026-07-06",
