@@ -6231,6 +6231,27 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:12:05.119Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:12:05.122Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:12:05.126Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -13491,7 +13512,7 @@
   "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n01.Juni\nPiazza \n\n\n\n\n\n\n\n\n\n\n\n\n",
   "wtp_queue_state": {
     "43500_Thomas_Hildre": {
-      "ready": false,
+      "ready": true,
       "name": "Thomas Hildre",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -13527,7 +13548,7 @@
       "queueId": 43500
     },
     "43500_Vetle_Bengtson": {
-      "ready": false,
+      "ready": true,
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -13557,7 +13578,7 @@
       "queueId": 43499
     },
     "43499_Jonas_Johannes": {
-      "ready": true,
+      "ready": false,
       "name": "Jonas Johannes",
       "queue": "Vakt",
       "queueId": 43499
