@@ -5986,6 +5986,251 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T05:49:45.932Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T05:49:45.955Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T05:55:37.612Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T05:55:37.616Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T05:56:10.104Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T05:56:10.108Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T05:58:08.124Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T05:58:08.126Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T05:59:08.220Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T05:59:08.224Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:00:08.115Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:00:08.117Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:01:08.155Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:01:08.157Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:02:08.171Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:02:08.178Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:03:08.167Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:03:08.171Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:04:08.112Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:04:08.115Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:05:08.121Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:05:08.123Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:06:08.128Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:06:08.131Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:07:08.106Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:07:08.110Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:08:08.140Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:08:08.145Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:09:08.106Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:09:08.108Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:10:08.075Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:10:08.078Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-06T06:11:08.169Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:11:08.176Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-06T06:11:08.182Z",
+      "name": "Jonas Johannes",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -16515,6 +16760,25 @@
       "colour": "",
       "pendingName": "",
       "weekStamp": "2026-06-29",
+      "done": false
+    },
+    {
+      "id": "1783318273176.8484",
+      "day": "Monday",
+      "title": "Approve Hours POGO",
+      "priority": "",
+      "due": "",
+      "note": "Remember to add hours in POGO.",
+      "people": [],
+      "isMeeting": false,
+      "timeStart": "09:00",
+      "timeEnd": "09:30",
+      "recurring": false,
+      "recurringFrom": "1777282594906",
+      "weekStamp": "2026-07-06",
+      "colour": "red",
+      "pendingName": "",
+      "reminder": "",
       "done": false
     }
   ],
