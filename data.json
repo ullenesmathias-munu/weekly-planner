@@ -25176,11 +25176,11 @@
         {
           "name": "Thomas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
             "",
             ""
           ],
@@ -31491,7 +31491,7 @@
   "wtp_intel_snap_2026-07-06": {
     "fromDate": "2026-07-06",
     "toDate": "2026-07-07",
-    "generated": "2026-07-07T06:33:56.881Z",
+    "generated": "2026-07-07T06:34:02.464Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -31515,7 +31515,7 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 2,
         "zdEmail": null,
         "zdPhone": null,
         "zdOpen": 0,
