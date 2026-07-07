@@ -25302,11 +25302,11 @@
         {
           "name": "Andreas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
             "",
             ""
           ],
@@ -31491,7 +31491,7 @@
   "wtp_intel_snap_2026-07-06": {
     "fromDate": "2026-07-06",
     "toDate": "2026-07-07",
-    "generated": "2026-07-07T06:34:52.726Z",
+    "generated": "2026-07-07T06:34:56.445Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -31597,8 +31597,8 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
+        "isNight": true,
+        "nightDays": 2,
         "dayDays": 0,
         "zdEmail": null,
         "zdPhone": null,
