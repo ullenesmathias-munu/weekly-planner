@@ -25323,11 +25323,11 @@
         {
           "name": "Julie",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
+            "ABS",
             "",
             ""
           ],
@@ -31491,7 +31491,7 @@
   "wtp_intel_snap_2026-07-06": {
     "fromDate": "2026-07-06",
     "toDate": "2026-07-07",
-    "generated": "2026-07-07T06:34:56.445Z",
+    "generated": "2026-07-07T06:34:59.541Z",
     "agents": {
       "Jonas": {
         "answered": 0,
