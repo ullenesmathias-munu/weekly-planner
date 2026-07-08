@@ -6805,6 +6805,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-08T14:55:35.093Z",
+      "name": "Andreas Bergevik",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -14137,7 +14144,7 @@
       "queueId": 43499
     },
     "43499_Andreas_Bergevik": {
-      "ready": false,
+      "ready": true,
       "name": "Andreas Bergevik",
       "queue": "Vakt",
       "queueId": 43499
