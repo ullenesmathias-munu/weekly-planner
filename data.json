@@ -31701,7 +31701,7 @@
   "wtp_intel_snap_2026-07-06": {
     "fromDate": "2026-07-06",
     "toDate": "2026-07-12",
-    "generated": "2026-07-07T08:22:29.268Z",
+    "generated": "2026-07-08T08:14:19.365Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -31722,14 +31722,14 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 22,
+        "zdSolved": 32,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 4,
-        "zdPhone": 18,
-        "zdOpen": 7,
-        "zdPending": 1
+        "zdEmail": 6,
+        "zdPhone": 26,
+        "zdOpen": 6,
+        "zdPending": 2
       },
       "Maylen": {
         "answered": 0,
@@ -31750,28 +31750,28 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 17,
+        "zdSolved": 36,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 17,
-        "zdOpen": 26,
-        "zdPending": 6
+        "zdEmail": 3,
+        "zdPhone": 33,
+        "zdOpen": 31,
+        "zdPending": 3
       },
       "Cecilie": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 12,
+        "zdSolved": 33,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 5,
         "zdEmail": 1,
-        "zdPhone": 11,
-        "zdOpen": 11,
-        "zdPending": 4
+        "zdPhone": 32,
+        "zdOpen": 12,
+        "zdPending": 5
       },
       "Tord": {
         "answered": 0,
@@ -31792,26 +31792,26 @@
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 0,
+        "zdSolved": 7,
         "isNight": false,
         "nightDays": 0,
         "dayDays": 3,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
+        "zdEmail": 4,
+        "zdPhone": 3,
+        "zdOpen": 5,
+        "zdPending": 2
       },
       "Andreas": {
         "answered": 0,
         "missed": 0,
         "avgTalk": 0,
         "avgWait": 0,
-        "zdSolved": 9,
+        "zdSolved": 56,
         "isNight": true,
         "nightDays": 5,
         "dayDays": 0,
-        "zdEmail": 5,
-        "zdPhone": 4,
+        "zdEmail": 32,
+        "zdPhone": 24,
         "zdOpen": 0,
         "zdPending": 0
       },
@@ -31840,7 +31840,7 @@
         "dayDays": 1,
         "zdEmail": 2,
         "zdPhone": 11,
-        "zdOpen": 0,
+        "zdOpen": 5,
         "zdPending": 0
       }
     },
@@ -31850,10 +31850,10 @@
       "missed": 0,
       "ansRate": null,
       "avgWait": 0,
-      "zdTotalSolved": 83,
-      "zdOpenNow": 48,
-      "zdEmailTotal": 16,
-      "zdPhoneTotal": 67,
+      "zdTotalSolved": 197,
+      "zdOpenNow": 65,
+      "zdEmailTotal": 57,
+      "zdPhoneTotal": 140,
       "zdFetchedFrom": "2026-07-06",
       "zdFetchedTo": "2026-07-12"
     }
