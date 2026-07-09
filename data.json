@@ -6889,6 +6889,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-09T13:36:19.443Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-07-09T13:36:19.447Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -14167,7 +14181,7 @@
       "queueId": 43500
     },
     "43500_Marie_Gjengedal": {
-      "ready": true,
+      "ready": false,
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -14185,7 +14199,7 @@
       "queueId": 43500
     },
     "43500_Vetle_Bengtson": {
-      "ready": false,
+      "ready": true,
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
