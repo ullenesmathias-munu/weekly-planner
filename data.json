@@ -25776,7 +25776,7 @@
           "shifts": [
             "D2 (8-16)",
             "OS",
-            "",
+            "D2 (8-16)",
             "",
             "",
             "",
@@ -31919,9 +31919,9 @@
     }
   ],
   "wtp_intel_snap_2026-07-06": {
-    "fromDate": "2026-07-09",
+    "fromDate": "2026-07-06",
     "toDate": "2026-07-09",
-    "generated": "2026-07-09T12:10:56.905Z",
+    "generated": "2026-07-09T12:11:14.289Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -31945,7 +31945,7 @@
         "zdSolved": 14,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 4,
         "zdEmail": 2,
         "zdPhone": 12,
         "zdOpen": 8,
@@ -31973,7 +31973,7 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 4,
         "zdEmail": 0,
         "zdPhone": 0,
         "zdOpen": 0,
@@ -31987,7 +31987,7 @@
         "zdSolved": 15,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 4,
         "zdEmail": 0,
         "zdPhone": 15,
         "zdOpen": 12,
@@ -32015,7 +32015,7 @@
         "zdSolved": 22,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 1,
+        "dayDays": 2,
         "zdEmail": 3,
         "zdPhone": 19,
         "zdOpen": 7,
@@ -32028,7 +32028,7 @@
         "avgWait": 0,
         "zdSolved": 0,
         "isNight": true,
-        "nightDays": 1,
+        "nightDays": 4,
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 0,
@@ -32053,7 +32053,7 @@
         "zdSolved": 11,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 2,
         "zdEmail": 1,
         "zdPhone": 10,
         "zdOpen": 6,
@@ -32070,7 +32070,7 @@
       "zdOpenNow": 36,
       "zdEmailTotal": 10,
       "zdPhoneTotal": 57,
-      "zdFetchedFrom": "2026-07-09",
+      "zdFetchedFrom": "2026-07-06",
       "zdFetchedTo": "2026-07-09"
     }
   },
