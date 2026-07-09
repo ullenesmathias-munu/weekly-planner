@@ -25777,7 +25777,7 @@
             "D2 (8-16)",
             "OS",
             "D3 (9-17)",
-            "",
+            "D3 (9-17)",
             "",
             "",
             ""
@@ -31921,7 +31921,7 @@
   "wtp_intel_snap_2026-07-06": {
     "fromDate": "2026-07-06",
     "toDate": "2026-07-09",
-    "generated": "2026-07-09T12:11:17.833Z",
+    "generated": "2026-07-09T12:11:20.254Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -32053,7 +32053,7 @@
         "zdSolved": 11,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 2,
+        "dayDays": 3,
         "zdEmail": 1,
         "zdPhone": 10,
         "zdOpen": 6,
