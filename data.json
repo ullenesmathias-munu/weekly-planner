@@ -17761,28 +17761,17 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1783599103645,
+    "_refreshedAt": 1784187116717,
     "Maylen": {
       "zdAgentId": 24587357667869,
-      "openTickets": 1,
+      "openTickets": 0,
       "pendingTickets": 0,
       "solvedThisWeek": 0,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:43.816Z"
-    },
-    "Thomas": {
-      "zdAgentId": 24587351734173,
-      "openTickets": 8,
-      "pendingTickets": 3,
-      "solvedThisWeek": 49,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:43.876Z"
+      "updatedAt": "2026-07-16T07:31:56.919Z"
     },
     "Jonas": {
       "zdAgentId": "24587351617949",
@@ -17793,32 +17782,10 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:43.876Z"
+      "updatedAt": "2026-07-16T07:31:57.220Z"
     },
-    "Cecilie": {
-      "zdAgentId": 28548167647261,
-      "openTickets": 12,
-      "pendingTickets": 8,
-      "solvedThisWeek": 63,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:44.536Z"
-    },
-    "Benjamin": {
-      "zdAgentId": "24587976723485",
-      "openTickets": 0,
-      "pendingTickets": 0,
-      "solvedThisWeek": 67,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:44.543Z"
-    },
-    "Tord": {
-      "zdAgentId": 28865220830493,
+    "Thomas": {
+      "zdAgentId": 24587351734173,
       "openTickets": 0,
       "pendingTickets": 0,
       "solvedThisWeek": 0,
@@ -17826,40 +17793,73 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:44.717Z"
+      "updatedAt": "2026-07-16T07:31:57.256Z"
+    },
+    "Benjamin": {
+      "zdAgentId": "24587976723485",
+      "openTickets": 0,
+      "pendingTickets": 0,
+      "solvedThisWeek": 32,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-07-16T07:31:59.299Z"
+    },
+    "Cecilie": {
+      "zdAgentId": 28548167647261,
+      "openTickets": 6,
+      "pendingTickets": 4,
+      "solvedThisWeek": 33,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-07-16T07:31:59.391Z"
+    },
+    "Tord": {
+      "zdAgentId": 28865220830493,
+      "openTickets": 5,
+      "pendingTickets": 2,
+      "solvedThisWeek": 15,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-07-16T07:31:59.939Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 7,
-      "pendingTickets": 3,
-      "solvedThisWeek": 49,
+      "openTickets": 5,
+      "pendingTickets": 10,
+      "solvedThisWeek": 76,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:45.377Z"
+      "updatedAt": "2026-07-16T07:32:01.287Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 0,
-      "pendingTickets": 0,
-      "solvedThisWeek": 72,
+      "openTickets": 8,
+      "pendingTickets": 7,
+      "solvedThisWeek": 94,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:45.381Z"
+      "updatedAt": "2026-07-16T07:32:01.550Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 6,
-      "pendingTickets": 0,
-      "solvedThisWeek": 24,
+      "openTickets": 8,
+      "pendingTickets": 1,
+      "solvedThisWeek": 7,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-07-09T12:11:46.042Z"
+      "updatedAt": "2026-07-16T07:32:02.249Z"
     }
   },
   "wtp_announcements": [
