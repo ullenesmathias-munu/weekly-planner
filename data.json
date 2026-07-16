@@ -14840,8 +14840,8 @@
   ],
   "wtp_intel_snap_2026-07-13": {
     "fromDate": "2026-07-13",
-    "toDate": "2026-07-19",
-    "generated": "2026-07-16T07:32:06.046Z",
+    "toDate": "2026-07-16",
+    "generated": "2026-07-16T07:32:33.841Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -14949,7 +14949,7 @@
         "zdSolved": 94,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 4,
         "zdEmail": 50,
         "zdPhone": 44,
         "zdOpen": 8,
@@ -14991,7 +14991,7 @@
       "zdEmailTotal": 83,
       "zdPhoneTotal": 186,
       "zdFetchedFrom": "2026-07-13",
-      "zdFetchedTo": "2026-07-19"
+      "zdFetchedTo": "2026-07-16"
     }
   },
   "wtp_ql_shared": [
@@ -26210,11 +26210,11 @@
         {
           "name": "Andreas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
             "",
             ""
           ],
