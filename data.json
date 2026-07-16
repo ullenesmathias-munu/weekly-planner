@@ -6903,6 +6903,27 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-16T07:32:22.847Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-16T07:32:22.850Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-07-16T07:32:22.852Z",
+      "name": "Tord Rott",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -14175,13 +14196,13 @@
       "queueId": 43500
     },
     "43500_Andreas_Bergevik": {
-      "ready": false,
+      "ready": true,
       "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
     "43500_Marie_Gjengedal": {
-      "ready": false,
+      "ready": true,
       "name": "Marie Gjengedal",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -14193,7 +14214,7 @@
       "queueId": 43500
     },
     "43500_Tord_Rott": {
-      "ready": false,
+      "ready": true,
       "name": "Tord Rott",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
