@@ -14841,7 +14841,7 @@
   "wtp_intel_snap_2026-07-13": {
     "fromDate": "2026-07-13",
     "toDate": "2026-07-16",
-    "generated": "2026-07-16T07:33:11.271Z",
+    "generated": "2026-07-16T07:33:15.590Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -14891,8 +14891,8 @@
         "avgTalk": 0,
         "avgWait": 0,
         "zdSolved": 32,
-        "isNight": false,
-        "nightDays": 0,
+        "isNight": true,
+        "nightDays": 4,
         "dayDays": 0,
         "zdEmail": 0,
         "zdPhone": 32,
@@ -26126,11 +26126,11 @@
         {
           "name": "Benjamin",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
             "",
             ""
           ],
