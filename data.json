@@ -14841,7 +14841,7 @@
   "wtp_intel_snap_2026-07-13": {
     "fromDate": "2026-07-13",
     "toDate": "2026-07-16",
-    "generated": "2026-07-16T07:33:22.516Z",
+    "generated": "2026-07-16T07:33:39.221Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -14921,7 +14921,7 @@
         "zdSolved": 15,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 4,
         "zdEmail": 5,
         "zdPhone": 10,
         "zdOpen": 5,
@@ -26168,11 +26168,11 @@
         {
           "name": "Tord",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
             "",
             ""
           ],
