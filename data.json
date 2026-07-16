@@ -14841,7 +14841,7 @@
   "wtp_intel_snap_2026-07-13": {
     "fromDate": "2026-07-13",
     "toDate": "2026-07-16",
-    "generated": "2026-07-16T07:33:39.221Z",
+    "generated": "2026-07-16T07:33:42.680Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -14973,7 +14973,7 @@
         "zdSolved": 7,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 4,
         "zdEmail": 3,
         "zdPhone": 4,
         "zdOpen": 8,
@@ -26252,11 +26252,11 @@
         {
           "name": "Vetle",
           "shifts": [
-            "SO",
-            "SO",
-            "",
-            "",
-            "",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
             "",
             ""
           ],
