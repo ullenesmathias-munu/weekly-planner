@@ -35473,12 +35473,6 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
-    "43500_Julie_Hanssen": {
-      "ready": false,
-      "name": "Julie Hanssen",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500
-    },
     "43500_Tord_Rott": {
       "ready": false,
       "name": "Tord Rott",
@@ -35530,12 +35524,6 @@
     "43499_Marie_Gjengedal": {
       "ready": false,
       "name": "Marie Gjengedal",
-      "queue": "Vakt",
-      "queueId": 43499
-    },
-    "43499_Julie_Hanssen": {
-      "ready": false,
-      "name": "Julie Hanssen",
       "queue": "Vakt",
       "queueId": 43499
     },
@@ -37717,13 +37705,6 @@
     "zdEnrichedAt": "2026-05-30T12:45:41.828Z"
   },
   "wtp_profile_andreas": {
-    "log": [],
-    "goals": [],
-    "rag": "green",
-    "focus": "",
-    "_open": true
-  },
-  "wtp_profile_maylen": {
     "log": [],
     "goals": [],
     "rag": "green",
@@ -52869,7 +52850,6 @@
   "wtp_team": [
     "Jonas",
     "Thomas",
-    "Maylen",
     "Benjamin",
     "Cecilie",
     "Tord",
