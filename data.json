@@ -15965,6 +15965,160 @@
       "zdFetchedTo": "2026-07-15"
     }
   },
+  "wtp_intel_snap_2026-08-03": {
+    "fromDate": "2026-08-03",
+    "toDate": "2026-08-04",
+    "generated": "2026-08-04T07:51:36.843Z",
+    "agents": {
+      "Jonas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 2,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Thomas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Maylen": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Benjamin": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Cecilie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Tord": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Marie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Andreas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Julie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Vetle": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0,
+        "zdEmail": null,
+        "zdPhone": null,
+        "zdOpen": 0,
+        "zdPending": 0
+      }
+    },
+    "totals": {
+      "offered": 0,
+      "answered": 0,
+      "missed": 0,
+      "ansRate": null,
+      "avgWait": 0,
+      "zdTotalSolved": 0,
+      "zdOpenNow": 0,
+      "zdFetchedFrom": "2026-08-03",
+      "zdFetchedTo": "2026-08-04"
+    }
+  },
   "wtp_wingman": [
     {
       "dates": "29/4 - 30/4",
@@ -27764,11 +27918,11 @@
         {
           "name": "Jonas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
             "",
             ""
           ],
