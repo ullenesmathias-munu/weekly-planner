@@ -7967,6 +7967,27 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-05T08:29:17.416Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-05T08:29:17.418Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-05T08:29:17.419Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -15233,13 +15254,13 @@
       "queueId": 43500
     },
     "43500_Jonas_Johannes": {
-      "ready": false,
+      "ready": true,
       "name": "Jonas Johannes",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
     },
     "43500_Andreas_Bergevik": {
-      "ready": false,
+      "ready": true,
       "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -15263,7 +15284,7 @@
       "queueId": 43500
     },
     "43500_Vetle_Bengtson": {
-      "ready": true,
+      "ready": false,
       "name": "Vetle Bengtson",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
