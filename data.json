@@ -8149,6 +8149,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-05T10:32:23.751Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
     }
   ],
   "wtp_profile_benjamin": {
@@ -15451,7 +15458,7 @@
       "queueId": 43500
     },
     "43500_Benjamin_\u00d8deg\u00e5rd": {
-      "ready": false,
+      "ready": true,
       "name": "Benjamin \u00d8deg\u00e5rd",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
