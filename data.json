@@ -8016,6 +8016,13 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-05T08:57:55.734Z",
+      "name": "Tord Rott",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -15306,7 +15313,7 @@
       "queueId": 43500
     },
     "43500_Tord_Rott": {
-      "ready": true,
+      "ready": false,
       "name": "Tord Rott",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
