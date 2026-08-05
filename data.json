@@ -15758,58 +15758,161 @@
     ],
     "notes": {}
   },
-  "wtp_oto_data": {
-    "sessions": [
-      {
-        "id": "1779440413287",
-        "person": "Vetle",
-        "date": "2026-05-22",
-        "notes": "We discussed the MUNU principles and his overall experience in the role. He stated that there are currently no major uncertainties regarding the position itself, but highlighted a need for more structure around ticket handling, including clearer guidance on escalation paths and points of contact.\n\nHe also raised concerns regarding the current culture of agents logging off the phone queue and emphasized the importance of improving this while still maintaining a manageable workload. In addition, he noted that there has been a somewhat negative atmosphere within the team.\n\nHe expressed that it is important for him to feel supported and visible, and that he values having accessible leadership and open communication. He would like an environment where challenges and concerns can be discussed openly.\n\nFor future 1:1s, he would like to focus on receiving actionable feedback, as well as reviewing his current status related to tickets, calls, ongoing plans, and any complex cases or incidents.\n\nI shared a quick win by highlighting that he remains calm and professional when interacting with customers, despite still being in the training phase. I also noted that he appears comfortable speaking with customers.\n\nHe explained that his limited phone activity so far is mainly due to wanting to feel more confident and secure, particularly having support available nearby should he need assistance during calls.\n\nWe agreed on a plan for him to reach the team\u2019s average call handling level within the next 30 days.",
-        "actions": [
-          {
-            "text": "Reach the teams average call handling leven within the next 30 days.",
-            "done": false
-          }
-        ],
-        "wins": []
+  "wtp_intel_snap_2026-08-03": {
+    "fromDate": "2026-08-03",
+    "toDate": "2026-08-09",
+    "generated": "2026-08-04T07:53:50.396Z",
+    "agents": {
+      "Jonas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 5,
+        "zdPending": 0
+      },
+      "Thomas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 23,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 6,
+        "zdPhone": 17,
+        "zdOpen": 9,
+        "zdPending": 0
+      },
+      "Maylen": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 2
+      },
+      "Benjamin": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 28,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 4,
+        "zdPhone": 24,
+        "zdOpen": 16,
+        "zdPending": 6
+      },
+      "Cecilie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 6,
+        "zdPending": 0
+      },
+      "Tord": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 28,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 7,
+        "zdPhone": 21,
+        "zdOpen": 5,
+        "zdPending": 8
+      },
+      "Marie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 9,
+        "isNight": true,
+        "nightDays": 5,
+        "dayDays": 0,
+        "zdEmail": 0,
+        "zdPhone": 9,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Andreas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 0,
+        "zdPhone": 0,
+        "zdOpen": 0,
+        "zdPending": 0
+      },
+      "Julie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Vetle": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 20,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 5,
+        "zdEmail": 1,
+        "zdPhone": 19,
+        "zdOpen": 7,
+        "zdPending": 0
       }
-    ],
-    "notes": {},
-    "people": [
-      {
-        "name": "Jonas"
-      },
-      {
-        "name": "Thomas"
-      },
-      {
-        "name": "Maylen"
-      },
-      {
-        "name": "Bernadett"
-      },
-      {
-        "name": "Benjamin"
-      },
-      {
-        "name": "Cecilie"
-      },
-      {
-        "name": "Tord"
-      },
-      {
-        "name": "Marie"
-      },
-      {
-        "name": "Andreas"
-      },
-      {
-        "name": "Julie"
-      },
-      {
-        "name": "Vetle"
-      }
-    ]
+    },
+    "totals": {
+      "offered": 0,
+      "answered": 0,
+      "missed": 0,
+      "ansRate": null,
+      "avgWait": 0,
+      "zdTotalSolved": 109,
+      "zdOpenNow": 52,
+      "zdEmailTotal": 19,
+      "zdPhoneTotal": 90,
+      "zdFetchedFrom": "2026-08-03",
+      "zdFetchedTo": "2026-08-09"
+    }
   },
   "wtp_fb_kate.rooke@munu.cloud": [],
   "wtp_profile_jonas": {
@@ -15979,220 +16082,59 @@
       "zdFetchedTo": "2026-07-15"
     }
   },
-  "wtp_intel_snap_2026-08-03": {
-    "fromDate": "2026-08-03",
-    "toDate": "2026-08-09",
-    "generated": "2026-08-04T07:53:50.396Z",
-    "agents": {
-      "Jonas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 5,
-        "zdPending": 0
-      },
-      "Thomas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 23,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 6,
-        "zdPhone": 17,
-        "zdOpen": 9,
-        "zdPending": 0
-      },
-      "Maylen": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 2
-      },
-      "Benjamin": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 28,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 4,
-        "zdPhone": 24,
-        "zdOpen": 16,
-        "zdPending": 6
-      },
-      "Cecilie": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 6,
-        "zdPending": 0
-      },
-      "Tord": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 28,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 7,
-        "zdPhone": 21,
-        "zdOpen": 5,
-        "zdPending": 8
-      },
-      "Marie": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 9,
-        "isNight": true,
-        "nightDays": 5,
-        "dayDays": 0,
-        "zdEmail": 0,
-        "zdPhone": 9,
-        "zdOpen": 0,
-        "zdPending": 0
-      },
-      "Andreas": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 0,
-        "zdPhone": 0,
-        "zdOpen": 0,
-        "zdPending": 0
-      },
-      "Julie": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 0,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 0
-      },
-      "Vetle": {
-        "answered": 0,
-        "missed": 0,
-        "avgTalk": 0,
-        "avgWait": 0,
-        "zdSolved": 20,
-        "isNight": false,
-        "nightDays": 0,
-        "dayDays": 5,
-        "zdEmail": 1,
-        "zdPhone": 19,
-        "zdOpen": 7,
-        "zdPending": 0
+  "wtp_oto_data": {
+    "sessions": [
+      {
+        "id": "1779440413287",
+        "person": "Vetle",
+        "date": "2026-05-22",
+        "notes": "We discussed the MUNU principles and his overall experience in the role. He stated that there are currently no major uncertainties regarding the position itself, but highlighted a need for more structure around ticket handling, including clearer guidance on escalation paths and points of contact.\n\nHe also raised concerns regarding the current culture of agents logging off the phone queue and emphasized the importance of improving this while still maintaining a manageable workload. In addition, he noted that there has been a somewhat negative atmosphere within the team.\n\nHe expressed that it is important for him to feel supported and visible, and that he values having accessible leadership and open communication. He would like an environment where challenges and concerns can be discussed openly.\n\nFor future 1:1s, he would like to focus on receiving actionable feedback, as well as reviewing his current status related to tickets, calls, ongoing plans, and any complex cases or incidents.\n\nI shared a quick win by highlighting that he remains calm and professional when interacting with customers, despite still being in the training phase. I also noted that he appears comfortable speaking with customers.\n\nHe explained that his limited phone activity so far is mainly due to wanting to feel more confident and secure, particularly having support available nearby should he need assistance during calls.\n\nWe agreed on a plan for him to reach the team\u2019s average call handling level within the next 30 days.",
+        "actions": [
+          {
+            "text": "Reach the teams average call handling leven within the next 30 days.",
+            "done": false
+          }
+        ],
+        "wins": []
       }
-    },
-    "totals": {
-      "offered": 0,
-      "answered": 0,
-      "missed": 0,
-      "ansRate": null,
-      "avgWait": 0,
-      "zdTotalSolved": 109,
-      "zdOpenNow": 52,
-      "zdEmailTotal": 19,
-      "zdPhoneTotal": 90,
-      "zdFetchedFrom": "2026-08-03",
-      "zdFetchedTo": "2026-08-09"
-    }
+    ],
+    "notes": {},
+    "people": [
+      {
+        "name": "Jonas"
+      },
+      {
+        "name": "Thomas"
+      },
+      {
+        "name": "Maylen"
+      },
+      {
+        "name": "Bernadett"
+      },
+      {
+        "name": "Benjamin"
+      },
+      {
+        "name": "Cecilie"
+      },
+      {
+        "name": "Tord"
+      },
+      {
+        "name": "Marie"
+      },
+      {
+        "name": "Andreas"
+      },
+      {
+        "name": "Julie"
+      },
+      {
+        "name": "Vetle"
+      }
+    ]
   },
-  "wtp_wingman": [
-    {
-      "dates": "29/4 - 30/4",
-      "days": "Wed-Thu",
-      "person": "Benjamin",
-      "from": "2026-04-29",
-      "to": "2026-04-30"
-    },
-    {
-      "dates": "4/5 - 5/5",
-      "days": "Mon-Tue",
-      "person": "Cecilie",
-      "from": "2026-05-04",
-      "to": "2026-05-05"
-    },
-    {
-      "dates": "6/5 - 7/5",
-      "days": "Wed-Thu",
-      "person": "Marie",
-      "from": "2026-05-06",
-      "to": "2026-05-07"
-    },
-    {
-      "dates": "11/5 - 12/5",
-      "days": "Mon-Tue",
-      "person": "Andreas",
-      "from": "2026-05-11",
-      "to": "2026-05-12"
-    },
-    {
-      "dates": "18/5 - 19/5",
-      "days": "Mon-Tue",
-      "person": "Thomas",
-      "from": "2026-05-18",
-      "to": "2026-05-19"
-    },
-    {
-      "dates": "1/6 - 2/6",
-      "days": "Mon-Tue",
-      "person": "Jonas",
-      "from": "2026-06-01",
-      "to": "2026-06-02"
-    },
-    {
-      "dates": "15/6 - 16/6",
-      "days": "Mon-Tue",
-      "person": "Vetle",
-      "from": "2026-06-15",
-      "to": "2026-06-16"
-    },
-    {
-      "dates": "22/6 - 23/6",
-      "days": "Mon-Tue",
-      "person": "Julie",
-      "from": "2026-06-22",
-      "to": "2026-06-23"
-    }
-  ],
   "wtp_ql_shared": [
     {
       "id": "1778621200640",
@@ -17117,6 +17059,64 @@
       "overKpi": 18,
       "savedAt": "2026-06-29T06:50:56.432Z",
       "source": "import"
+    }
+  ],
+  "wtp_wingman": [
+    {
+      "dates": "29/4 - 30/4",
+      "days": "Wed-Thu",
+      "person": "Benjamin",
+      "from": "2026-04-29",
+      "to": "2026-04-30"
+    },
+    {
+      "dates": "4/5 - 5/5",
+      "days": "Mon-Tue",
+      "person": "Cecilie",
+      "from": "2026-05-04",
+      "to": "2026-05-05"
+    },
+    {
+      "dates": "6/5 - 7/5",
+      "days": "Wed-Thu",
+      "person": "Marie",
+      "from": "2026-05-06",
+      "to": "2026-05-07"
+    },
+    {
+      "dates": "11/5 - 12/5",
+      "days": "Mon-Tue",
+      "person": "Andreas",
+      "from": "2026-05-11",
+      "to": "2026-05-12"
+    },
+    {
+      "dates": "18/5 - 19/5",
+      "days": "Mon-Tue",
+      "person": "Thomas",
+      "from": "2026-05-18",
+      "to": "2026-05-19"
+    },
+    {
+      "dates": "1/6 - 2/6",
+      "days": "Mon-Tue",
+      "person": "Jonas",
+      "from": "2026-06-01",
+      "to": "2026-06-02"
+    },
+    {
+      "dates": "15/6 - 16/6",
+      "days": "Mon-Tue",
+      "person": "Vetle",
+      "from": "2026-06-15",
+      "to": "2026-06-16"
+    },
+    {
+      "dates": "22/6 - 23/6",
+      "days": "Mon-Tue",
+      "person": "Julie",
+      "from": "2026-06-22",
+      "to": "2026-06-23"
     }
   ],
   "wtp_profile_tord": {
@@ -19137,28 +19137,28 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1785830023273,
+    "_refreshedAt": 1785918527295,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": 5,
       "pendingTickets": 0,
-      "solvedThisWeek": 0,
+      "solvedThisWeek": 12,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:43.819Z"
+      "updatedAt": "2026-08-05T08:28:51.442Z"
     },
     "Thomas": {
       "zdAgentId": 24587351734173,
-      "openTickets": 9,
+      "openTickets": 10,
       "pendingTickets": 0,
-      "solvedThisWeek": 23,
+      "solvedThisWeek": 43,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:44.011Z"
+      "updatedAt": "2026-08-05T08:28:51.893Z"
     },
     "Maylen": {
       "zdAgentId": 24587357667869,
@@ -19169,73 +19169,73 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:44.226Z"
+      "updatedAt": "2026-08-05T08:28:52.541Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
-      "openTickets": 16,
-      "pendingTickets": 6,
-      "solvedThisWeek": 28,
+      "openTickets": 14,
+      "pendingTickets": 5,
+      "solvedThisWeek": 44,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:45.124Z"
+      "updatedAt": "2026-08-05T08:28:53.482Z"
     },
     "Cecilie": {
       "zdAgentId": 28548167647261,
-      "openTickets": 6,
-      "pendingTickets": 0,
-      "solvedThisWeek": 0,
+      "openTickets": 5,
+      "pendingTickets": 2,
+      "solvedThisWeek": 18,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:45.345Z"
+      "updatedAt": "2026-08-05T08:28:54.231Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
-      "openTickets": 5,
-      "pendingTickets": 8,
-      "solvedThisWeek": 28,
+      "openTickets": 6,
+      "pendingTickets": 10,
+      "solvedThisWeek": 39,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:45.563Z"
+      "updatedAt": "2026-08-05T08:28:54.739Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
       "openTickets": 0,
       "pendingTickets": 0,
-      "solvedThisWeek": 9,
+      "solvedThisWeek": 12,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:46.523Z"
+      "updatedAt": "2026-08-05T08:28:55.733Z"
     },
     "Andreas": {
       "zdAgentId": 30219513904925,
-      "openTickets": 0,
+      "openTickets": 5,
       "pendingTickets": 0,
-      "solvedThisWeek": 0,
+      "solvedThisWeek": 2,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:46.794Z"
+      "updatedAt": "2026-08-05T08:28:56.005Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 7,
-      "pendingTickets": 0,
-      "solvedThisWeek": 20,
+      "openTickets": 6,
+      "pendingTickets": 1,
+      "solvedThisWeek": 33,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-04T07:53:47.731Z"
+      "updatedAt": "2026-08-05T08:28:56.957Z"
     }
   },
   "wtp_announcements": [
