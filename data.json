@@ -8611,6 +8611,20 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-06T10:00:55.809Z",
+      "name": "Tord Rott",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-06T10:00:55.813Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -15901,7 +15915,7 @@
       "queueId": 43500
     },
     "43500_Tord_Rott": {
-      "ready": false,
+      "ready": true,
       "name": "Tord Rott",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -15925,7 +15939,7 @@
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": true,
+      "ready": false,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
