@@ -8646,6 +8646,27 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-07T13:23:14.868Z",
+      "name": "Andreas Bergevik",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-07T13:23:14.872Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-07T13:23:14.875Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -15918,7 +15939,7 @@
       "queueId": 43500
     },
     "43500_Andreas_Bergevik": {
-      "ready": true,
+      "ready": false,
       "name": "Andreas Bergevik",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -15948,7 +15969,7 @@
       "queueId": 43500
     },
     "43500_Benjamin_\u00d8deg\u00e5rd": {
-      "ready": false,
+      "ready": true,
       "name": "Benjamin \u00d8deg\u00e5rd",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -15960,7 +15981,7 @@
       "queueId": 43500
     },
     "43500_Cecilie_Steinkopf": {
-      "ready": true,
+      "ready": false,
       "name": "Cecilie Steinkopf",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
