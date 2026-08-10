@@ -16314,8 +16314,8 @@
   },
   "wtp_intel_snap_2026-08-10": {
     "fromDate": "2026-08-10",
-    "toDate": "2026-08-16",
-    "generated": "2026-08-10T12:21:12.227Z",
+    "toDate": "2026-08-10",
+    "generated": "2026-08-10T12:21:17.619Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -16325,7 +16325,7 @@
         "zdSolved": 14,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0,
+        "dayDays": 1,
         "zdEmail": 1,
         "zdPhone": 13,
         "zdOpen": 6,
@@ -16461,7 +16461,7 @@
       "zdEmailTotal": 15,
       "zdPhoneTotal": 79,
       "zdFetchedFrom": "2026-08-10",
-      "zdFetchedTo": "2026-08-16"
+      "zdFetchedTo": "2026-08-10"
     }
   },
   "wtp_intel_snap_2026-04-20": {
@@ -29137,11 +29137,11 @@
         {
           "name": "Jonas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
             "",
             ""
           ],
