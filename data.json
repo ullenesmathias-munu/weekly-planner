@@ -16315,7 +16315,7 @@
   "wtp_intel_snap_2026-08-10": {
     "fromDate": "2026-08-10",
     "toDate": "2026-08-10",
-    "generated": "2026-08-10T12:21:26.601Z",
+    "generated": "2026-08-10T12:21:29.779Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -29221,7 +29221,7 @@
         {
           "name": "Cecilie",
           "shifts": [
-            "",
+            "SO",
             "",
             "",
             "",
