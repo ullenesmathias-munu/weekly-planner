@@ -8870,6 +8870,3072 @@
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:00:45.187Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:01:45.250Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:02:45.213Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:03:45.266Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:04:45.217Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:05:45.209Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:06:45.188Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:07:45.174Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:08:45.203Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:09:45.217Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:10:45.195Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:11:45.225Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:12:45.202Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:13:45.249Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:14:45.209Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:15:45.247Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:16:45.219Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:17:45.227Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:18:45.284Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:19:45.249Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:20:45.266Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:21:45.277Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:22:45.305Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:23:45.332Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:24:45.296Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:25:45.330Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:26:45.277Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:27:45.311Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:28:45.291Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:29:45.273Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:30:45.253Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:31:45.247Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:32:45.258Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:33:45.402Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:34:45.306Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:35:45.338Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:36:45.297Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:37:45.297Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:38:45.248Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:39:45.247Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:40:45.337Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:41:45.299Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:42:45.320Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:43:45.329Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:44:45.298Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:45:45.312Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:46:45.289Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:47:45.285Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:48:45.253Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:49:45.282Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:50:45.268Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:51:45.287Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:52:45.292Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:53:45.248Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:54:45.237Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:55:45.272Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:56:45.294Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T04:56:45.298Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:57:45.358Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T04:57:45.361Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:58:45.304Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T04:58:45.308Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T04:59:45.347Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T04:59:45.351Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:00:45.309Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:00:45.313Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:01:45.296Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:01:45.302Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:02:45.230Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:02:45.234Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:03:45.269Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:03:45.273Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:04:45.227Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:04:45.231Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:05:45.292Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:05:45.296Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:06:45.260Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:06:45.264Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:07:45.308Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:07:45.311Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:08:45.281Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:08:45.284Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:09:45.379Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:09:45.383Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:10:45.267Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:10:45.270Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:11:45.324Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:11:45.327Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:12:45.518Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:12:45.522Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:13:45.305Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:13:45.311Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:14:45.279Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:14:45.283Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:15:45.329Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:15:45.333Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:16:45.474Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:16:45.478Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:17:45.332Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:17:45.337Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:18:45.315Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:18:45.319Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:19:45.301Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:19:45.306Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:20:45.280Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:20:45.284Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:21:45.345Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:21:45.349Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:22:45.291Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:22:45.295Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:23:45.311Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:23:45.319Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:24:45.328Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:24:45.332Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:25:45.323Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:25:45.327Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:26:45.315Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:26:45.319Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:27:45.349Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:27:45.353Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:28:45.292Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:28:45.296Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:29:45.353Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:29:45.357Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:30:45.271Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:30:45.276Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:31:45.352Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:31:45.359Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:32:45.282Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:32:45.285Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:33:45.390Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:33:45.394Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:34:45.306Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:34:45.310Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:35:45.291Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:35:45.295Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:36:45.319Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:36:45.324Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:37:45.316Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:37:45.324Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:38:45.326Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:38:45.336Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:39:45.346Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:39:45.350Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:40:45.287Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:40:45.291Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:41:45.341Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:41:45.345Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:42:45.304Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:42:45.308Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:43:45.418Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:43:45.422Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:44:45.360Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:44:45.364Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:45:45.330Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:45:45.334Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:46:45.317Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:46:45.322Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:47:45.305Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:47:45.308Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:48:45.324Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:48:45.327Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:49:45.347Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:49:45.351Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:50:45.264Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:50:45.268Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:51:45.400Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:51:45.405Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:52:45.287Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:52:45.291Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:53:45.346Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:53:45.350Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:54:45.279Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:54:45.284Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:55:45.319Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:55:45.323Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:56:45.304Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:56:45.308Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:57:45.344Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:57:45.350Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:58:45.336Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:58:45.340Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T05:59:45.273Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T05:59:45.278Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:00:45.307Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:00:45.311Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:00:45.315Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:01:45.358Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:01:45.362Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:01:45.366Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:02:45.335Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:02:45.340Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:02:45.344Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:03:45.358Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:03:45.363Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:03:45.366Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:04:45.284Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:04:45.289Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:04:45.293Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:05:45.303Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:05:45.307Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:05:45.310Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:05:45.313Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:06:45.348Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:06:45.351Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:06:45.354Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:06:45.357Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:07:45.284Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:07:45.289Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:07:45.292Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:07:45.297Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:08:45.317Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:08:45.322Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:08:45.325Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:08:45.328Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:09:45.323Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:09:45.327Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:09:45.330Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:09:45.333Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:10:45.299Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:10:45.303Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:10:45.307Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:10:45.312Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:11:45.361Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:11:45.365Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:11:45.368Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:11:45.372Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:12:45.330Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:12:45.334Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:12:45.337Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:12:45.340Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:13:45.333Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:13:45.338Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:13:45.342Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:13:45.348Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:14:45.310Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:14:45.314Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:14:45.318Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:14:45.321Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:15:45.362Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:15:45.366Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:15:45.370Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:15:45.373Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:16:45.389Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:16:45.394Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:16:45.397Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:16:45.401Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:17:45.335Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:17:45.339Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:17:45.342Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:17:45.345Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:18:45.363Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:18:45.368Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:18:45.371Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:18:45.375Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:19:45.422Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:19:45.450Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:19:45.454Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:19:45.459Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:20:45.337Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:20:45.341Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:20:45.344Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:21:45.388Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:21:45.392Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:21:45.397Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:22:45.344Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:22:45.349Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:22:45.357Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:23:45.423Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:23:45.427Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:23:45.432Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:24:45.328Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:24:45.332Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:24:45.336Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:25:17.271Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:25:17.277Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:25:17.282Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:26:45.351Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:26:45.357Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:26:45.363Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:28:45.371Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:28:45.393Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:28:45.404Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:29:45.333Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:29:45.338Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:29:45.342Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:30:45.379Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:30:45.385Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:30:45.394Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:31:45.363Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:31:45.367Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:31:45.371Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:32:45.339Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:32:45.344Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:32:45.347Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:33:45.506Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:33:45.516Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:33:45.526Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:34:45.337Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:34:45.341Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:34:45.345Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:35:45.387Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:35:45.390Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:35:45.394Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:36:45.348Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:36:45.352Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:36:45.355Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:37:45.345Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:37:45.350Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:37:45.354Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:38:45.350Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:38:45.355Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:38:45.359Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:39:45.429Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:39:45.433Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:39:45.438Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:40:45.335Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:40:45.340Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:40:45.349Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:41:45.379Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:41:45.383Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:41:45.387Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:42:45.436Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:42:45.446Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:42:45.456Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:43:45.358Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:43:45.362Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:43:45.366Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:44:45.420Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:44:45.425Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:44:45.430Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:45:45.388Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:45:45.392Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:45:45.395Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:46:45.355Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:46:45.360Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:46:45.364Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:47:45.385Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:47:45.389Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:47:45.393Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:48:45.355Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:48:45.360Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:48:45.365Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:49:45.370Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:49:45.376Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:49:45.380Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:50:45.346Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:50:45.350Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:50:45.354Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:51:45.364Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:51:45.370Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:51:45.375Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:52:45.433Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:52:45.456Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:52:45.462Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:53:45.359Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:53:45.364Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:53:45.368Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:54:45.445Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:54:45.449Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:54:45.455Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:55:45.404Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:55:45.410Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:55:45.415Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:56:45.354Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:56:45.357Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:56:45.361Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:57:45.385Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:57:45.389Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:57:45.393Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:58:45.390Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:58:45.396Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:58:45.402Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T06:59:45.483Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:59:45.488Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T06:59:45.493Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:00:45.388Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:00:45.393Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:00:45.397Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:01:45.534Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:01:45.542Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:01:45.547Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:02:45.385Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:02:45.391Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:02:45.396Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:02:45.402Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:02:45.408Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:03:45.404Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:03:45.410Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:03:45.414Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:03:45.418Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:03:45.423Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:04:45.360Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:04:45.364Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:04:45.368Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:04:45.374Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:04:45.378Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:05:45.376Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:05:45.379Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:05:45.384Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:05:45.387Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:05:45.391Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:06:45.354Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:06:45.359Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:06:45.366Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:06:45.370Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:06:45.375Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:07:45.367Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:07:45.371Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:07:45.376Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:07:45.380Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:07:45.384Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:08:45.339Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:08:45.344Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:08:45.349Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:08:45.353Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:08:45.357Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:09:45.400Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:09:45.405Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:09:45.409Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:09:45.415Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:09:45.420Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:10:45.344Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:10:45.349Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:10:45.354Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:10:45.360Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:10:45.365Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:11:45.363Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:11:45.369Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:11:45.374Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:11:45.379Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:11:45.385Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-11T07:12:45.354Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:12:45.360Z",
+      "name": "Jonas Johannes",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:12:45.369Z",
+      "name": "Marie Gjengedal",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:12:45.373Z",
+      "name": "Vetle Bengtson",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:12:45.377Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-11T07:12:45.385Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -20230,94 +23296,94 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1786364531643,
+    "_refreshedAt": 1786648313155,
+    "Jonas": {
+      "zdAgentId": "24587351617949",
+      "openTickets": 5,
+      "pendingTickets": 2,
+      "solvedThisWeek": 62,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-08-13T19:11:53.856Z"
+    },
     "Thomas": {
       "zdAgentId": 24587351734173,
       "openTickets": 9,
-      "pendingTickets": 1,
-      "solvedThisWeek": 19,
+      "pendingTickets": 3,
+      "solvedThisWeek": 70,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:11.838Z"
-    },
-    "Jonas": {
-      "zdAgentId": "24587351617949",
-      "openTickets": 6,
-      "pendingTickets": 0,
-      "solvedThisWeek": 14,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:11.842Z"
-    },
-    "Cecilie": {
-      "zdAgentId": 28548167647261,
-      "openTickets": 0,
-      "pendingTickets": 0,
-      "solvedThisWeek": 0,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:12.516Z"
+      "updatedAt": "2026-08-13T19:11:53.866Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
-      "openTickets": 15,
+      "openTickets": 17,
       "pendingTickets": 3,
-      "solvedThisWeek": 24,
+      "solvedThisWeek": 130,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:12.519Z"
+      "updatedAt": "2026-08-13T19:11:54.565Z"
+    },
+    "Cecilie": {
+      "zdAgentId": 28548167647261,
+      "openTickets": 6,
+      "pendingTickets": 5,
+      "solvedThisWeek": 15,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-08-13T19:11:54.577Z"
     },
     "Tord": {
       "zdAgentId": 28865220830493,
-      "openTickets": 8,
-      "pendingTickets": 6,
-      "solvedThisWeek": 0,
+      "openTickets": 0,
+      "pendingTickets": 0,
+      "solvedThisWeek": 31,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:12.691Z"
-    },
-    "Andreas": {
-      "zdAgentId": 30219513904925,
-      "openTickets": 8,
-      "pendingTickets": 1,
-      "solvedThisWeek": 17,
-      "csatGood": 0,
-      "csatBad": 0,
-      "csatTotal": 0,
-      "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:13.397Z"
+      "updatedAt": "2026-08-13T19:11:54.638Z"
     },
     "Marie": {
       "zdAgentId": 28878682086429,
-      "openTickets": 9,
-      "pendingTickets": 0,
-      "solvedThisWeek": 19,
+      "openTickets": 5,
+      "pendingTickets": 5,
+      "solvedThisWeek": 89,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:13.404Z"
+      "updatedAt": "2026-08-13T19:11:55.520Z"
+    },
+    "Andreas": {
+      "zdAgentId": 30219513904925,
+      "openTickets": 5,
+      "pendingTickets": 2,
+      "solvedThisWeek": 103,
+      "csatGood": 0,
+      "csatBad": 0,
+      "csatTotal": 0,
+      "csatPct": null,
+      "updatedAt": "2026-08-13T19:11:55.837Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
-      "openTickets": 0,
-      "pendingTickets": 0,
-      "solvedThisWeek": 0,
+      "openTickets": 11,
+      "pendingTickets": 3,
+      "solvedThisWeek": 41,
       "csatGood": 0,
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-10T12:22:14.100Z"
+      "updatedAt": "2026-08-13T19:11:56.808Z"
     }
   },
   "wtp_announcements": [
