@@ -39249,6 +39249,100 @@
     "carry": "",
     "focus": ""
   },
+  "wtp_intel_snap_2026-08-17": {
+    "fromDate": "2026-08-17",
+    "toDate": "2026-08-18",
+    "generated": "2026-08-18T07:59:36.324Z",
+    "agents": {
+      "Jonas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 2
+      },
+      "Thomas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 2
+      },
+      "Benjamin": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 2
+      },
+      "Cecilie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": true,
+        "nightDays": 2,
+        "dayDays": 0
+      },
+      "Tord": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Marie": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Andreas": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      },
+      "Vetle": {
+        "answered": 0,
+        "missed": 0,
+        "avgTalk": 0,
+        "avgWait": 0,
+        "zdSolved": 0,
+        "isNight": false,
+        "nightDays": 0,
+        "dayDays": 0
+      }
+    },
+    "totals": {
+      "offered": 0,
+      "answered": 0,
+      "missed": 0,
+      "ansRate": null,
+      "avgWait": 0
+    }
+  },
   "wtp_intel_snap_2026-06-08": {
     "fromDate": "2026-06-08",
     "toDate": "2026-06-14",
@@ -48729,11 +48823,11 @@
         {
           "name": "Jonas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
+            "D1 (7-15)",
             "",
             ""
           ],
@@ -48750,11 +48844,11 @@
         {
           "name": "Thomas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
             "",
             ""
           ],
@@ -48792,11 +48886,11 @@
         {
           "name": "Benjamin",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
             "",
             ""
           ],
@@ -48813,11 +48907,11 @@
         {
           "name": "Cecilie",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
+            "E (17-6)",
             "",
             ""
           ],
