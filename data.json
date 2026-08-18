@@ -39252,7 +39252,7 @@
   "wtp_intel_snap_2026-08-17": {
     "fromDate": "2026-08-17",
     "toDate": "2026-08-18",
-    "generated": "2026-08-18T07:59:39.182Z",
+    "generated": "2026-08-18T07:59:43.042Z",
     "agents": {
       "Jonas": {
         "answered": 0,
@@ -39312,7 +39312,7 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0
+        "dayDays": 2
       },
       "Andreas": {
         "answered": 0,
@@ -39322,7 +39322,7 @@
         "zdSolved": 0,
         "isNight": false,
         "nightDays": 0,
-        "dayDays": 0
+        "dayDays": 2
       },
       "Vetle": {
         "answered": 0,
@@ -48949,11 +48949,11 @@
         {
           "name": "Marie",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
+            "D3 (9-17)",
             "",
             ""
           ],
@@ -48970,11 +48970,11 @@
         {
           "name": "Andreas",
           "shifts": [
-            "",
-            "",
-            "",
-            "",
-            "",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
+            "D2 (8-16)",
             "",
             ""
           ],
