@@ -192,48 +192,6 @@
   },
   "wtp_queue_log": [
     {
-      "ts": "2026-07-03T02:49:25.114Z",
-      "name": "Cecilie Steinkopf",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
-      "ts": "2026-07-03T02:50:25.050Z",
-      "name": "Thomas Hildre",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-07-03T02:50:25.055Z",
-      "name": "Jonas Johannes",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-07-03T02:50:25.059Z",
-      "name": "Andreas Bergevik",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-07-03T02:50:25.064Z",
-      "name": "Benjamin \u00d8deg\u00e5rd",
-      "queue": "Innenfor \u00e5pningstid",
-      "queueId": 43500,
-      "event": "logged_off"
-    },
-    {
-      "ts": "2026-07-03T02:50:25.067Z",
-      "name": "Cecilie Steinkopf",
-      "queue": "Vakt",
-      "queueId": 43499,
-      "event": "logged_on"
-    },
-    {
       "ts": "2026-07-03T02:51:25.035Z",
       "name": "Thomas Hildre",
       "queue": "Innenfor \u00e5pningstid",
@@ -28190,6 +28148,48 @@
       "queue": "Vakt",
       "queueId": 43499,
       "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-18T08:00:31.863Z",
+      "name": "Thomas Hildre",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-18T08:00:31.869Z",
+      "name": "Tord Rott",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-18T08:00:31.872Z",
+      "name": "Benjamin \u00d8deg\u00e5rd",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-18T08:00:31.877Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_on"
+    },
+    {
+      "ts": "2026-08-18T08:00:31.880Z",
+      "name": "Tord Rott",
+      "queue": "Vakt",
+      "queueId": 43499,
+      "event": "logged_off"
+    },
+    {
+      "ts": "2026-08-18T08:16:34.747Z",
+      "name": "Cecilie Steinkopf",
+      "queue": "Innenfor \u00e5pningstid",
+      "queueId": 43500,
+      "event": "logged_off"
     }
   ],
   "wtp_profile_benjamin": {
@@ -35450,7 +35450,7 @@
   "wtp_notepad_phone": "Varsel om fakturering ved innringer\n\nBytte mellom installasjoner strawberry. G\u00e5 via Fredrik \n\nPeppes\n80+ location will go live June 1st\nBooking to live May 12th\n\nCatering App - web based app\nYou search for everything and add all articles in the same search field. Straight forward. Write Pizza-ost (minus ost) and that article will be added without cheese.\n\nWhen end-customer uses Peppes App or Peppes.No, that is not MUNU. Over time they will use MUNU webshop, but not at the start. This will be communicated.\n\nBundles - New feature\nAdd articles all tied to a default price. All article can have child articles. \nBoth the bundle article itself, and the articles it consists of will be registered as sales, so you Get statistics on everything. \n\nThe bundles and article childs have the same UI, question is how to troubleshoot or spot the difference.\n\n\nTop 5 issues\nTop 5 customer interactions\n\n\nP\u00e5 til og med \n\n\n38314\n38631\n\n\n01.Juni\nPiazza \n\n\n\n\n\n\n\n\n\n\n\n\n",
   "wtp_queue_state": {
     "43500_Thomas_Hildre": {
-      "ready": false,
+      "ready": true,
       "name": "Thomas Hildre",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -35480,7 +35480,7 @@
       "queueId": 43500
     },
     "43500_Tord_Rott": {
-      "ready": false,
+      "ready": true,
       "name": "Tord Rott",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -35492,7 +35492,7 @@
       "queueId": 43500
     },
     "43500_Benjamin_\u00d8deg\u00e5rd": {
-      "ready": false,
+      "ready": true,
       "name": "Benjamin \u00d8deg\u00e5rd",
       "queue": "Innenfor \u00e5pningstid",
       "queueId": 43500
@@ -35540,7 +35540,7 @@
       "queueId": 43499
     },
     "43499_Tord_Rott": {
-      "ready": true,
+      "ready": false,
       "name": "Tord Rott",
       "queue": "Vakt",
       "queueId": 43499
@@ -39644,7 +39644,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1787039990749,
+    "_refreshedAt": 1787040010270,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": null,
@@ -39654,7 +39654,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-18T07:59:51.300Z"
+      "updatedAt": "2026-08-18T08:00:10.798Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -39665,7 +39665,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-18T07:59:51.506Z"
+      "updatedAt": "2026-08-18T08:00:11.630Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -39676,7 +39676,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-18T07:59:52.808Z"
+      "updatedAt": "2026-08-18T08:00:12.997Z"
     }
   },
   "wtp_announcements": [
