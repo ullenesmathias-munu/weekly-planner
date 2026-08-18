@@ -39550,7 +39550,7 @@
     "zdEnrichedAt": "2026-05-30T18:36:55.225Z"
   },
   "wtp_agent_live_stats": {
-    "_refreshedAt": 1787039944897,
+    "_refreshedAt": 1787039958194,
     "Jonas": {
       "zdAgentId": "24587351617949",
       "openTickets": null,
@@ -39560,7 +39560,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-18T07:59:05.876Z"
+      "updatedAt": "2026-08-18T07:59:18.776Z"
     },
     "Benjamin": {
       "zdAgentId": "24587976723485",
@@ -39571,7 +39571,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-18T07:59:06.123Z"
+      "updatedAt": "2026-08-18T07:59:19.024Z"
     },
     "Vetle": {
       "zdAgentId": "34928604435485",
@@ -39582,7 +39582,7 @@
       "csatBad": 0,
       "csatTotal": 0,
       "csatPct": null,
-      "updatedAt": "2026-08-18T07:59:07.471Z"
+      "updatedAt": "2026-08-18T07:59:20.394Z"
     }
   },
   "wtp_announcements": [
